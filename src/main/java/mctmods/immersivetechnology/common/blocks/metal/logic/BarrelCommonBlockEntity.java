@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
-import mctmods.immersivetechnology.common.blocks.helper.ITIClientTickableBE;
-import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import mctmods.immersivetechnology.common.blocks.helper.IClientTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.util.ITUtils;
+import mctmods.immersivetechnology.core.util.Utils;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
@@ -37,14 +37,14 @@ import java.util.EnumMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public abstract class BarrelCommonBlockEntity extends ITBaseBlockEntity implements ITIServerTickableBE, ITIClientTickableBE, ITIBlockInterfaces.IBlockOverlayText, ITIBlockInterfaces.IPlayerInteraction, ITIBlockInterfaces.IBlockEntityDrop, ITIBlockInterfaces.IComparatorOverride, ITIBlockInterfaces.IPlacementInteraction, ITIBlockInterfaces.IConfigurableSides {
-    public final ITMarkableFluidTank tank;
+public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IComparatorOverride, BlockInterfaces.IPlacementInteraction, BlockInterfaces.IConfigurableSides {
+    public final MarkableFluidTank tank;
     public EnumMap<Direction, IOSideConfig> sideConfig = new EnumMap<>(ImmutableMap.of(Direction.DOWN, IOSideConfig.OUTPUT, Direction.UP, IOSideConfig.INPUT));
     protected static final int transferSpeed = FluidType.BUCKET_VOLUME;
 
     public BarrelCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int tankSize) {
         super(type, pos, state);
-        this.tank = new ITMarkableFluidTank(tankSize, v -> {
+        this.tank = new MarkableFluidTank(tankSize, v -> {
             setChanged();
             markContainingBlockForUpdate(null);
         });
@@ -107,7 +107,7 @@ public abstract class BarrelCommonBlockEntity extends ITBaseBlockEntity implemen
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) return null;
-        if (ITUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
+        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty()) return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())};
             return new Component[]{Component.literal(TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fs.getHoverName().getString(), fs.getAmount()))};

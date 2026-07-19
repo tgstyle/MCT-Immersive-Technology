@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.metal.shapes.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
 public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage, ITrashCanShape {
-    public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ENERGY.get(), pos, state); }
+    public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ENERGY.get(), pos, state); }
 
     @SuppressWarnings("unused")
     public IEnergyStorage getEnergyHandler(@Nullable Direction side) {
@@ -33,5 +33,5 @@ public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEne
 
     @Override public boolean canReceive() { return true; }
 
-    @Override public TranslationKey text() { return ITClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE; }
+    @Override public TranslationKey text() { return ClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE; }
 }

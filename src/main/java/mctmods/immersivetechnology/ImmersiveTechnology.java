@@ -3,19 +3,19 @@ package mctmods.immersivetechnology;
 import java.util.ArrayList;
 import java.util.List;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.ITQueueProcessor;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.ITCommonConfig;
-import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.common.multiblocks.helper.QueueProcessor;
+import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.CommonConfig;
+import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.integration.top.OneProbeIMCHelper;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITFluids;
-import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
-import mctmods.immersivetechnology.core.util.loot.ITLootFunctions;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.ModFluids;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+import mctmods.immersivetechnology.core.util.loot.LootFunctions;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -33,8 +33,8 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper;
 
-import static mctmods.immersivetechnology.common.fluids.ITFluid.BUCKET_DISPENSE_BEHAVIOR;
-import static mctmods.immersivetechnology.core.lib.ITLib.MODID;
+import static mctmods.immersivetechnology.common.fluids.ModFluid.BUCKET_DISPENSE_BEHAVIOR;
+import static mctmods.immersivetechnology.core.lib.Reference.MODID;
 
 @SuppressWarnings("unused")
 @Mod(MODID)
@@ -47,24 +47,24 @@ public class ImmersiveTechnology {
     }
 
     public ImmersiveTechnology(ModContainer container, Dist dist, IEventBus modBus) {
-        ITLib.IT_LOGGER.info("IT Starting");
-        ITLib.MOD_BUS = modBus;
+        Reference.IT_LOGGER.info("IT Starting");
+        Reference.MOD_BUS = modBus;
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::enqueueIMC);
         modBus.addListener(RegisterCapabilitiesEvent.class, this::registerCapabilities);
-        ITLib.IT_LOGGER.info("Starting Proxy Mod Construction");
+        Reference.IT_LOGGER.info("Starting Proxy Mod Construction");
         CommonProxy.modConstruction(modBus);
-        ITLootFunctions.init(modBus);
-        ITLib.IT_LOGGER.info("Initializing Packet Handler");
-        container.registerConfig(ModConfig.Type.COMMON, ITCommonConfig.SPEC);
-        container.registerConfig(ModConfig.Type.SERVER, ITServerConfig.SPEC);
-        container.registerConfig(ModConfig.Type.CLIENT, ITClientConfig.SPEC);
+        LootFunctions.init(modBus);
+        Reference.IT_LOGGER.info("Initializing Packet Handler");
+        container.registerConfig(ModConfig.Type.COMMON, CommonConfig.SPEC);
+        container.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
+        container.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         NeoForge.EVENT_BUS.register(ImmersiveTechnology.class);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        ITLib.IT_LOGGER.info("HELLO FROM COMMON SETUP");
-        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
+        Reference.IT_LOGGER.info("HELLO FROM COMMON SETUP");
+        for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -72,18 +72,18 @@ public class ImmersiveTechnology {
     }
 
     @SubscribeEvent public static void onServerTick(ServerTickEvent.Post event) {
-        List<ITQueueProcessor> copy = new ArrayList<>(ITTemplateMultiblock.pendingQueues);
-        copy.forEach(ITQueueProcessor::tick);
-        ITTemplateMultiblock.pendingQueues.removeIf(ITQueueProcessor::isEmpty);
+        List<QueueProcessor> copy = new ArrayList<>(ModTemplateMultiblock.pendingQueues);
+        copy.forEach(QueueProcessor::tick);
+        ModTemplateMultiblock.pendingQueues.removeIf(QueueProcessor::isEmpty);
     }
 
     @SubscribeEvent public static void onServerStarted(ServerStartedEvent event) {
-        ITLib.IT_LOGGER.info("HELLO FROM SERVER STARTING");
-        ITMultiblockRegistry.init();
+        Reference.IT_LOGGER.info("HELLO FROM SERVER STARTING");
+        MultiblockRegistry.init();
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {
-        for (ITFluids.FluidEntry entry : ITFluids.ALL_ENTRIES) { event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ctx) -> new FluidBucketWrapper(stack), entry.getBucket()); }
-        ITBlockEntities.registerCapabilities(event);
+        for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) { event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ctx) -> new FluidBucketWrapper(stack), entry.getBucket()); }
+        BlockEntities.registerCapabilities(event);
     }
 }

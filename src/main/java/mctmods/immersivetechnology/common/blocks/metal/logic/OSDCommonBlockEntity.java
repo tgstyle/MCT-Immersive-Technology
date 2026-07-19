@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import java.text.DecimalFormat;
-import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
-import mctmods.immersivetechnology.common.blocks.helper.ITIClientTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.IClientTickableBE;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ITClientConfig;
+import mctmods.immersivetechnology.core.ClientConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements ITIServerTickableBE, ITIClientTickableBE, ITIBlockInterfaces.IBlockOverlayText {
+public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText {
     public long acceptedAmount = 0;
     public long lastAcceptedAmount = 0;
     public int secondCounter = 0;
@@ -48,7 +48,7 @@ public abstract class OSDCommonBlockEntity extends ITBaseBlockEntity implements 
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         if (level == null) { return new Component[0]; }
-        double rawValue = ITClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
+        double rawValue = ClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
         String valueStr = NUMBER_FORMAT.format(rawValue);
         return new Component[] { Component.translatable(text().getLocation(), valueStr) };
     }

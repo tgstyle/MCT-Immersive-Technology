@@ -2,12 +2,12 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.ROTATION;
 
-public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITIServerTickableBE, IFluidHandler, IFluidPipe {
+public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IFluidHandler, IFluidPipe {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
         @Override @NotNull public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
@@ -40,7 +40,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITI
 
     public int rotation = 0;
 
-    public ValveFluidBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_FLUID.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_FLUID_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_SECOND_LINE, 0); }
+    public ValveFluidBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.VALVE_FLUID.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_FLUID_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_FLUID_SNEAKING_SECOND_LINE, 0); }
 
     @Override public void tickServer() { updateBase(); }
 
@@ -62,13 +62,13 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITI
     @Override public boolean canOutputPressurized(boolean consumePower) { return true; }
 
     @SuppressWarnings("unused")
-    public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ITProperties.FACING_ALL).getOpposite(); }
+    public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ModProperties.FACING_ALL).getOpposite(); }
 
     @SuppressWarnings("unused")
     public IFluidHandler getFluidHandler(@Nullable Direction side) {
         if (side == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
         if (side.getAxis() == blockFacing.getAxis()) {
             if (side == blockFacing) {
                 return this;
@@ -86,15 +86,15 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITI
             return;
         }
         BlockState state = getBlockState();
-        if (state.hasProperty(ITProperties.FACING_ALL)) {
+        if (state.hasProperty(ModProperties.FACING_ALL)) {
             int newRot = rotation;
-            Direction currentFacing = state.getValue(ITProperties.FACING_ALL);
+            Direction currentFacing = state.getValue(ModProperties.FACING_ALL);
             if (facing.getAxis() == Direction.Axis.Y) {
                 if (currentFacing.getAxis() != Direction.Axis.Y) newRot = currentFacing.get2DDataValue();
             } else {
                 newRot = facing.get2DDataValue();
             }
-            state = state.setValue(ITProperties.FACING_ALL, facing).setValue(ROTATION, newRot);
+            state = state.setValue(ModProperties.FACING_ALL, facing).setValue(ROTATION, newRot);
             level.setBlock(worldPosition, state, 3);
             rotation = newRot;
         }
@@ -164,12 +164,12 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ITI
     public IFluidHandler getDestination() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         return level.getCapability(Capabilities.FluidHandler.BLOCK, dstPos, blockFacing);
     }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveFluidMenu.makeServer(ITMenuTypes.VALVE_FLUID.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveFluidMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
 
     @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
 

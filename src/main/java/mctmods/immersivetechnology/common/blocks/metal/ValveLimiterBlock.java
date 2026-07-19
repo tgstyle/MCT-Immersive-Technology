@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -21,21 +21,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterBlockEntity> {
+public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
     public ValveLimiterBlock(BiFunction<BlockPos, BlockState, ValveLimiterBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(ValveCommonBlockEntity.OPEN, true)
-                .setValue(ITProperties.FACING_ALL, Direction.NORTH)
-                .setValue(ITProperties.MIRRORED, false)
+                .setValue(ModProperties.FACING_ALL, Direction.NORTH)
+                .setValue(ModProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
+        builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
     }
 
     @Override public boolean canConnectRedstone(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos, Direction side) { return true; }
@@ -68,8 +68,8 @@ public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterBlockEntity> {
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
         return defaultBlockState()
-                .setValue(ITProperties.FACING_ALL, facing)
-                .setValue(ITProperties.MIRRORED, false)
+                .setValue(ModProperties.FACING_ALL, facing)
+                .setValue(ModProperties.MIRRORED, false)
                 .setValue(ValveCommonBlockEntity.OPEN, true)
                 .setValue(ROTATION, rotation);
     }

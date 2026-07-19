@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.ITGenericContainerData;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
+import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
+import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
+import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MeltingCrucibleMenu extends ITContainerMenu {
+public class MeltingCrucibleMenu extends ContainerMenu {
     public final SimpleContainerData state;
     public final FluidTank inputTank;
     public final FluidTank outputTank;
@@ -34,7 +34,7 @@ public class MeltingCrucibleMenu extends ITContainerMenu {
     }
 
     public static MeltingCrucibleMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.INPUT_TANK_CAPACITY), new FluidTank(MeltingCrucibleLogic.OUTPUT_TANK_CAPACITY), new MutableEnergyStorage(MeltingCrucibleLogic.ENERGY_CAPACITY), () -> null);
+        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT, SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.INPUT_TANK_CAPACITY), new FluidTank(MeltingCrucibleLogic.OUTPUT_TANK_CAPACITY), new MutableEnergyStorage(MeltingCrucibleLogic.ENERGY_CAPACITY), () -> null);
     }
 
     private MeltingCrucibleMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, IMutableEnergyStorage energy, Supplier<MeltingCrucibleLogic.State> mbStateSupplier) {
@@ -44,26 +44,26 @@ public class MeltingCrucibleMenu extends ITContainerMenu {
         this.energy = energy;
         this.mbStateSupplier = mbStateSupplier;
         this.state = new SimpleContainerData(4);
-        this.addSlot(new ITSlot.FluidContainer(inv, 0, 80, 17, 1) {
+        this.addSlot(new ModSlot.FluidContainer(inv, 0, 80, 17, 1) {
             @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 FluidStack fs = FluidUtil.getFluidContained(itemStack).orElse(FluidStack.EMPTY);
                 if (fs.isEmpty()) return false;
                 return inputTank.getFluidAmount() <= 0 || FluidStack.isSameFluid(fs, inputTank.getFluid());
             }
         });
-        this.addSlot(new ITSlot.Output(inv, 1, 80, 53));
-        this.addSlot(new ITSlot.FluidContainer(inv, 2, 148, 17, 0) {
+        this.addSlot(new ModSlot.Output(inv, 1, 80, 53));
+        this.addSlot(new ModSlot.FluidContainer(inv, 2, 148, 17, 0) {
             @Override public boolean mayPlace(@Nonnull ItemStack itemStack) {
                 return itemStack.getCapability(Capabilities.FluidHandler.ITEM) != null;
             }
         });
-        this.addSlot(new ITSlot.Output(inv, 3, 148, 53));
+        this.addSlot(new ModSlot.Output(inv, 3, 148, 53));
         ownSlotCount = 4;
         addPlayerInventorySlots(inventoryPlayer);
         addDataSlots(state);
-        addGenericData(ITGenericContainerData.fluid(inputTank));
-        addGenericData(ITGenericContainerData.fluid(outputTank));
-        addGenericData(ITGenericContainerData.energy(energy));
+        addGenericData(GenericContainerData.fluid(inputTank));
+        addGenericData(GenericContainerData.fluid(outputTank));
+        addGenericData(GenericContainerData.energy(energy));
     }
 
     @Override public void broadcastChanges() {

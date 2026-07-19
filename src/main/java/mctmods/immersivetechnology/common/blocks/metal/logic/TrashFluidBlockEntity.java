@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.metal.shapes.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TrashFluidBlockEntity extends OSDCommonBlockEntity implements IFluidHandler, ITrashCanShape {
-    public TrashFluidBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_FLUID.get(), pos, state); }
+    public TrashFluidBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_FLUID.get(), pos, state); }
 
     @SuppressWarnings("unused")
     public IFluidHandler getFluidHandler(@Nullable Direction side) {
@@ -37,5 +37,5 @@ public class TrashFluidBlockEntity extends OSDCommonBlockEntity implements IFlui
 
     @Override @NotNull public FluidStack drain(int maxDrain, @NotNull FluidAction action) { return FluidStack.EMPTY; }
 
-    @Override public TranslationKey text() { return ITClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE; }
+    @Override public TranslationKey text() { return ClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE; }
 }

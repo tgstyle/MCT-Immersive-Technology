@@ -4,14 +4,14 @@ import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
-import mctmods.immersivetechnology.core.util.ITUtils;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
+import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -50,31 +50,31 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.BiFunction;
 
-public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, ITIPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
+public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
 
-    public static final int INPUT_TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ITServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
+    public static final int INPUT_TANK_CAPACITY = ServerConfig.electrolyticCrucibleBatteryInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity;
+    public static final int ENERGY_CAPACITY = ServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ElectrolyticCrucibleBatteryShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS_0 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS_1 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS_2 = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output2");
-    private static final List<BlockPos> ENERGY_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
-    private static final RelativeBlockFace ENERGY_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
-    private static final RelativeBlockFace INPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FLUID_FACING_0 = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace OUTPUT_FLUID_FACING_1 = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
-    private static final RelativeBlockFace OUTPUT_FLUID_FACING_2 = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output2");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
-    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
+    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS_0 = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS_1 = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS_2 = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output2");
+    private static final List<BlockPos> ENERGY_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
+    private static final RelativeBlockFace ENERGY_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
+    private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING_0 = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING_1 = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING_2 = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output2");
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(MultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), MultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
+    private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
     private static final List<RelativeBlockFace> OUTPUT_FACINGS = ImmutableList.of(
-            ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0"),
-            ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1"),
-            ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output2")
+            MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0"),
+            MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1"),
+            MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output2")
     );
 
     private static final List<BlockPos> FLUID_OUTPUT_POIS = ImmutableList.of(OUTPUT_FLUID_POIS_0.getFirst(), OUTPUT_FLUID_POIS_1.getFirst(), OUTPUT_FLUID_POIS_2.getFirst());
@@ -83,13 +83,13 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
 
     @Override public List<RelativeBlockFace> getOutputFacings() { return OUTPUT_FACINGS; }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        List<BlockPos> soundPosList = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
+        List<BlockPos> soundPosList = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         if (soundPosList.isEmpty()) { return; }
         BlockPos soundBlockPos = soundPosList.getFirst();
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
@@ -99,7 +99,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(() -> state.active, ctx.isValid(), soundPos, ITSounds.electrolyticCrucibleBattery, () -> {
+            state.isSoundPlaying = ModSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.electrolyticCrucibleBattery, () -> {
                 LocalPlayer p = Minecraft.getInstance().player;
                 if (p == null) { return 0f; }
                 float a = (float) Math.max(p.distanceToSqr(soundPos) / 32f, 1f);
@@ -121,7 +121,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         pumpOutputs(ctx);
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack itemOutput = inventory.getStackInSlot(0);
-        if (!itemOutput.isEmpty()) { itemOutput = ITUtils.insertStackIntoInventory(state.outputRef, itemOutput, false); inventory.setStackInSlot(0, itemOutput); }
+        if (!itemOutput.isEmpty()) { itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false); inventory.setStackInSlot(0, itemOutput); }
         boolean activeChanged = wasActive != state.active;
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
@@ -167,14 +167,14 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         });
     }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { MultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ElectrolyticCrucibleBatteryShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, ITIDisplayContext {
-        public final BiFunction<Level, FluidStack, RecipeHolder<ElectrolyticCrucibleBatteryRecipe>> recipeGetter = ITCachedRecipe.cached(ElectrolyticCrucibleBatteryRecipe::findRecipe);
+    public static class State implements IMultiblockState, IProcessContext.IProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, IDisplayContext {
+        public final BiFunction<Level, FluidStack, RecipeHolder<ElectrolyticCrucibleBatteryRecipe>> recipeGetter = CachedRecipe.cached(ElectrolyticCrucibleBatteryRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ElectrolyticCrucibleBatteryTanks tanks;
         public IFluidHandler inputCap;
@@ -184,7 +184,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public IItemHandler invCap;
         public IItemHandler itemOutputCap;
         public Supplier<IItemHandler> outputRef;
-        public final ITSlotwiseItemHandler inventory;
+        public final SlotwiseItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<ElectrolyticCrucibleBatteryRecipe> processor;
         public AveragingEnergyStorage energy;
@@ -199,11 +199,11 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             this.tanks = new ElectrolyticCrucibleBatteryTanks(v -> { onChanged.run(); this.tanksDirty = true; });
             this.tankArray = new IFluidTank[]{tanks.input, tanks.output0, tanks.output1, tanks.output2};
-            inventory = new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.OUTPUT), () -> { onChanged.run(); this.inventoryDirty = true; });
-            this.inputCap = new ITArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.outputCap0 = new ITArrayFluidHandler(tanks.output0, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.outputCap1 = new ITArrayFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.outputCap2 = new ITArrayFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            inventory = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.OUTPUT), () -> { onChanged.run(); this.inventoryDirty = true; });
+            this.inputCap = new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.outputCap0 = new ArrayFluidHandler(tanks.output0, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.outputCap1 = new ArrayFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.outputCap2 = new ArrayFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.invCap = inventory;
             this.itemOutputCap = inventory;
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
@@ -211,7 +211,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
         }
 
-        public ITSlotwiseItemHandler getInventory() { return inventory; }
+        public SlotwiseItemHandler getInventory() { return inventory; }
         public ElectrolyticCrucibleBatteryTanks getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -268,9 +268,9 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         }
     }
 
-    public record ElectrolyticCrucibleBatteryTanks(ITMarkableFluidTank input, ITMarkableFluidTank output0, ITMarkableFluidTank output1, ITMarkableFluidTank output2) {
+    public record ElectrolyticCrucibleBatteryTanks(MarkableFluidTank input, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
         public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
         }
 
         public CompoundTag toNBT(HolderLookup.Provider provider) {

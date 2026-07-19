@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.common.items.WireCoilItem;
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
-import mctmods.immersivetechnology.core.registration.ITTags;
+import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -29,12 +29,12 @@ import java.util.function.BiFunction;
 
 import static mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity.OPEN;
 
-public class ValveLoadBlock extends ITIEntityBlock<ValveLoadBlockEntity> {
+public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
-    public ValveLoadBlock(BiFunction<BlockPos, BlockState, ValveLoadBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ITProperties.FACING_ALL, Direction.NORTH).setValue(ITProperties.MIRRORED, false).setValue(ROTATION, 0)); }
+    public ValveLoadBlock(BiFunction<BlockPos, BlockState, ValveLoadBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ModProperties.MIRRORED, false).setValue(ROTATION, 0)); }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION); }
+    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
 
     @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
 
@@ -43,7 +43,7 @@ public class ValveLoadBlock extends ITIEntityBlock<ValveLoadBlockEntity> {
     @Override @NotNull public VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
-        Direction facing = state.getValue(ITProperties.FACING_ALL);
+        Direction facing = state.getValue(ModProperties.FACING_ALL);
         int rotation = state.getValue(ROTATION);
         double baseThickness = 0.25;
         double connectorSize = 0.375;
@@ -118,7 +118,7 @@ public class ValveLoadBlock extends ITIEntityBlock<ValveLoadBlockEntity> {
 
     @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         ItemStack heldItem = player.getMainHandItem();
-        if (heldItem.is(ITTags.formationTools)) { return InteractionResult.PASS; }
+        if (heldItem.is(ModTags.formationTools)) { return InteractionResult.PASS; }
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
@@ -136,6 +136,6 @@ public class ValveLoadBlock extends ITIEntityBlock<ValveLoadBlockEntity> {
         assert context.getPlayer() != null;
         float yRot = context.getPlayer().getYRot();
         int rotation = Direction.fromYRot(yRot).get2DDataValue();
-        return defaultBlockState().setValue(ITProperties.FACING_ALL, facing).setValue(ITProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
+        return defaultBlockState().setValue(ModProperties.FACING_ALL, facing).setValue(ModProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
     }
 }

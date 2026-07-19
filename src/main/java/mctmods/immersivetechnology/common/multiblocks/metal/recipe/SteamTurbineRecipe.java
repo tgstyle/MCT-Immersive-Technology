@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.SteamTurbineRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SteamTurbineRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, SteamTurbineRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.STEAM_TURBINE);
+    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.STEAM_TURBINE);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -29,7 +29,7 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
     private final int time;
 
     public SteamTurbineRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time, float torque) {
-        super(TagOutput.EMPTY, ITRecipeTypes.STEAM_TURBINE, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(TagOutput.EMPTY, RecipeTypes.STEAM_TURBINE, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput = fluidOutput;

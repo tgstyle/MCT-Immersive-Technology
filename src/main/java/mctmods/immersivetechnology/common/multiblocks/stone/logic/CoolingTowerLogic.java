@@ -1,19 +1,19 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITParticles;
-import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Particles;
+import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -49,17 +49,17 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, ITIPressurizedFluidOutput<CoolingTowerLogic.State> {
-    public static final int INPUT_TANK_CAPACITY = ITServerConfig.coolingTowerInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.coolingTowerOutputTankCapacity;
+public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, IPressurizedFluidOutput<CoolingTowerLogic.State> {
+    public static final int INPUT_TANK_CAPACITY = ServerConfig.coolingTowerInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.coolingTowerOutputTankCapacity;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
 
-    public static final List<CapabilityPosition> INPUT_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
-    public static final List<CapabilityPosition> OUTPUT_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_output0");
+    public static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
+    public static final List<CapabilityPosition> OUTPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_output0");
     public static final List<BlockPos> INPUT_FLUID_POIS = INPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList());
-    public static final BlockPos PARTICLE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "particle0").getFirst();
-    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
+    public static final BlockPos PARTICLE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "particle0").getFirst();
+    public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
 
@@ -67,17 +67,17 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override public List<RelativeBlockFace> getOutputFacings() { return OUTPUT_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList()); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return List.of(state.tanks.output0(), state.tanks.output1(), state.tanks.output2(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2()); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return List.of(state.tanks.output0(), state.tanks.output1(), state.tanks.output2(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2()); }
 
     private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
-        if (ITServerConfig.coolingTowerBiomeTempFactor <= 0.0D) return 1.0D;
+        if (ServerConfig.coolingTowerBiomeTempFactor <= 0.0D) return 1.0D;
         Level level = ctx.getLevel().getRawLevel();
         if (level.dimension() == Level.NETHER) return 0.0D;
         BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         Biome biome = level.getBiome(worldPos).value();
         double temp = biome.getBaseTemperature();
         double deviation = temp - 0.8D;
-        return 1.0D + (deviation * ITServerConfig.coolingTowerBiomeTempFactor);
+        return 1.0D + (deviation * ServerConfig.coolingTowerBiomeTempFactor);
     }
 
     @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
@@ -99,14 +99,14 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
             double py = particleVec.y + rand.nextFloat() * 2f;
             double pz = particleVec.z + (rand.nextFloat() * 4f - 2f);
-            level.addParticle(ITParticles.SMOKE_CUSTOM.get(), px, py, pz, (rand.nextFloat() - 0.5) * 0.02, 0.01 + rand.nextFloat() * 0.02, (rand.nextFloat() - 0.5) * 0.02);
+            level.addParticle(Particles.SMOKE_CUSTOM.get(), px, py, pz, (rand.nextFloat() - 0.5) * 0.02, 0.01 + rand.nextFloat() * 0.02, (rand.nextFloat() - 0.5) * 0.02);
         }
     }
 
     private void handleSounds(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state) {
         if (state.isSoundPlaying.getAsBoolean()) { return; }
         Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
-        state.isSoundPlaying = ITSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, ITSounds.coolingTower, () -> {
+        state.isSoundPlaying = ModSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, Sounds.coolingTower, () -> {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) { return 0f; }
             return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(soundVec)) / 16, 0);
@@ -207,7 +207,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
 
-    private record CombinedInputFluidHandler(ITMarkableFluidTank tankA, ITMarkableFluidTank tankB, Runnable onChange) implements IFluidHandler {
+    private record CombinedInputFluidHandler(MarkableFluidTank tankA, MarkableFluidTank tankB, Runnable onChange) implements IFluidHandler {
         @Override public int getTanks() { return 2; }
 
         @Override @NotNull public FluidStack getFluidInTank(int tank) { return tank == 0 ? tankA.getFluid() : tankB.getFluid(); }
@@ -218,7 +218,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
         @Override public int fill(@NotNull FluidStack resource, @NotNull FluidAction action) {
             if (resource.isEmpty()) { return 0; }
-            ITMarkableFluidTank target;
+            MarkableFluidTank target;
             if (!tankA.isEmpty() && tankA.getFluid().getFluid() == resource.getFluid()) { target = tankA; }
             else if (!tankB.isEmpty() && tankB.getFluid().getFluid() == resource.getFluid()) { target = tankB; }
             else if (tankA.isEmpty()) { target = tankA; }
@@ -234,9 +234,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         @Override @NotNull public FluidStack drain(int maxDrain, @NotNull FluidAction action) { return FluidStack.EMPTY; }
     }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
-        public final ITCachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = ITCachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
-        public final ITCachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = ITCachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
+    public static class State implements IMultiblockState, IDisplayContext {
+        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = CachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
+        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = CachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
         public final CoolingTowerTanks tanks;
         public IFluidHandler inputCap;
         public IFluidHandler output0Cap;
@@ -257,9 +257,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
             this.tanks = new CoolingTowerTanks(v -> { onChanged.run(); this.tanksDirty = true; });
             this.inputCap = new CombinedInputFluidHandler(tanks.input0(), tanks.input1(), () -> { onChanged.run(); this.tanksDirty = true; });
-            this.output0Cap = new ITArrayFluidHandler(tanks.output0(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.output1Cap = new ITArrayFluidHandler(tanks.output1(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.output2Cap = new ITArrayFluidHandler(tanks.output2(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.output0Cap = new ArrayFluidHandler(tanks.output0(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.output1Cap = new ArrayFluidHandler(tanks.output1(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.output2Cap = new ArrayFluidHandler(tanks.output2(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -303,10 +303,10 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         }
     }
 
-    public record CoolingTowerTanks(ITMarkableFluidTank input0, ITMarkableFluidTank input1, ITMarkableFluidTank output0, ITMarkableFluidTank output1, ITMarkableFluidTank output2) {
+    public record CoolingTowerTanks(MarkableFluidTank input0, MarkableFluidTank input1, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
 
         public CoolingTowerTanks(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
         }
 
         public static CoolingTowerTanks makeClient() { return new CoolingTowerTanks(v -> {}); }

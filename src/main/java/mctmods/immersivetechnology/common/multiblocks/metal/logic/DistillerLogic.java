@@ -4,14 +4,14 @@ import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.DistillerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
-import mctmods.immersivetechnology.core.util.ITUtils;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
+import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
@@ -54,37 +54,37 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.BiFunction;
 
-public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITIPressurizedFluidOutput<DistillerLogic.State> {
+public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, IPressurizedFluidOutput<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
     public static final int OUTPUT_SLOT = 4;
 
-    public static final int INPUT_TANK_CAPACITY = ITServerConfig.distillerInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.distillerOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ITServerConfig.distillerEnergyCapacity;
+    public static final int INPUT_TANK_CAPACITY = ServerConfig.distillerInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.distillerOutputTankCapacity;
+    public static final int ENERGY_CAPACITY = ServerConfig.distillerEnergyCapacity;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DistillerShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    private static final List<BlockPos> ENERGY_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
-    private static final RelativeBlockFace ENERGY_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
-    private static final RelativeBlockFace INPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
+    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    private static final List<BlockPos> ENERGY_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
+    private static final RelativeBlockFace ENERGY_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
+    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(MultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), MultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
+    private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FLUID_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        List<BlockPos> soundPosList = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
+        List<BlockPos> soundPosList = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         BlockPos soundBlockPos = soundPosList.getFirst();
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
         LocalPlayer player = Minecraft.getInstance().player;
@@ -93,8 +93,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(
-                    () -> state.active, ctx.isValid(), soundPos, ITSounds.distiller,
+            state.isSoundPlaying = ModSound.startSound(
+                    () -> state.active, ctx.isValid(), soundPos, Sounds.distiller,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
@@ -127,17 +127,17 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (!drainedContainer.isEmpty()) {
-            drainedContainer = ITUtils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
+            drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
             inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer);
         }
         ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
         if (!filledContainer.isEmpty()) {
-            filledContainer = ITUtils.insertStackIntoInventory(state.outputRef, filledContainer, false);
+            filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
             inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
         }
         ItemStack itemOutput = inventory.getStackInSlot(OUTPUT_SLOT);
         if (!itemOutput.isEmpty()) {
-            itemOutput = ITUtils.insertStackIntoInventory(state.outputRef, itemOutput, false);
+            itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false);
             inventory.setStackInSlot(OUTPUT_SLOT, itemOutput);
         }
         boolean activeChanged = wasActive != state.active;
@@ -210,14 +210,14 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         });
     }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { MultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<DistillerRecipe>, ITIDisplayContext {
-        public final BiFunction<Level, FluidStack, RecipeHolder<DistillerRecipe>> recipeGetter = ITCachedRecipe.cached(DistillerRecipe::findRecipe);
+    public static class State implements IMultiblockState, IProcessContext.IProcessContextInMachine<DistillerRecipe>, IDisplayContext {
+        public final BiFunction<Level, FluidStack, RecipeHolder<DistillerRecipe>> recipeGetter = CachedRecipe.cached(DistillerRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final DistillerTank tanks;
         public IFluidHandler inputCap;
@@ -225,7 +225,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public IItemHandler invCap;
         public IItemHandler itemOutputCap;
         public Supplier<IItemHandler> outputRef;
-        public final ITSlotwiseItemHandler inventory;
+        public final SlotwiseItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
         public AveragingEnergyStorage energy;
@@ -241,35 +241,35 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             this.tanks = new DistillerTank(() -> { onChanged.run(); this.tanksDirty = true; });
             this.tankArray = new IFluidTank[]{tanks.input(), tanks.output()};
-            inventory = new ITSlotwiseItemHandler(
+            inventory = new SlotwiseItemHandler(
                     List.of(
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT
+                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT,
+                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );
-            this.inputCap = new ITArrayFluidHandler(tanks.input(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.outputCap = new ITArrayFluidHandler(tanks.output(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.inputCap = new ArrayFluidHandler(tanks.input(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.outputCap = new ArrayFluidHandler(tanks.output(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.invCap = inventory;
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
-            this.itemOutputCap = new ITWrappingItemHandler(
+            this.itemOutputCap = new WrappingItemHandler(
                     inventory,
                     false,
                     true,
                     List.of(
-                            new ITWrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
-                            new ITWrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1),
-                            new ITWrappingItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
+                            new WrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
+                            new WrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1),
+                            new WrappingItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
                     )
             );
             this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
         }
 
-        public ITSlotwiseItemHandler getInventory() { return inventory; }
+        public SlotwiseItemHandler getInventory() { return inventory; }
 
         public DistillerTank getTanks() { return tanks; }
 
@@ -337,9 +337,9 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         }
     }
 
-    public record DistillerTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
+    public record DistillerTank(MarkableFluidTank input, MarkableFluidTank output) {
         public DistillerTank(Runnable markDirty) {
-            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, v -> markDirty.run()), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> markDirty.run()));
+            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, v -> markDirty.run()), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> markDirty.run()));
         }
 
         public static DistillerTank makeClient() { return new DistillerTank(() -> {}); }

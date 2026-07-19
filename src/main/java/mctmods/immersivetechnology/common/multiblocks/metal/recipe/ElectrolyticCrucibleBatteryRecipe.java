@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.ElectrolyticCrucibleBatteryRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, ElectrolyticCrucibleBatteryRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
+    public static final CachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -34,7 +34,7 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     private final int energy;
 
     public ElectrolyticCrucibleBatteryRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput0, @Nullable FluidStack fluidOutput1, @Nullable FluidStack fluidOutput2, ItemStack itemOutput, int energy, int time) {
-        super(TagOutput.EMPTY, ITRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, time, energy, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(TagOutput.EMPTY, RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, time, energy, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput0 = fluidOutput0;

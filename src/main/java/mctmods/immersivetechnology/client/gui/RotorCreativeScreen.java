@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.client.gui;
 
 import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
-import mctmods.immersivetechnology.core.network.ITMessageTileSync;
-import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.network.MessageTileSync;
+import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("rotor");
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("rotor");
     private final RotorCreativeBlockEntity tile;
     private EditBox rpmField;
     private int prevRpm = Integer.MIN_VALUE;
@@ -60,7 +60,7 @@ public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMe
         int r = rStr.isEmpty() || rStr.equals("-") ? 0 : Integer.parseInt(rStr);
         CompoundTag message = new CompoundTag();
         message.putInt("rpm", r);
-        ITPacketHandler.sendToServer(new ITMessageTileSync(tile.getBlockPos(), message));
+        PacketHandler.sendToServer(new MessageTileSync(tile.getBlockPos(), message));
         Minecraft.getInstance().setScreen(null);
     }
 

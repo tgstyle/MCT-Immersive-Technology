@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
+import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.biome.Biome;
@@ -20,7 +20,7 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
     private static final Random RANDOM = new Random();
     private static final int tankSize = 12 * FluidType.BUCKET_VOLUME;
 
-    public BarrelOpenBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_OPEN.get(), pos, state, tankSize); }
+    public BarrelOpenBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.BARREL_OPEN.get(), pos, state, tankSize); }
 
     @Override public void tickServer() {
         boolean update = false;

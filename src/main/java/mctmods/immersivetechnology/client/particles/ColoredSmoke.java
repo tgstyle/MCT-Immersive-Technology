@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.client.particles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mctmods.immersivetechnology.core.registration.ITParticles;
+import mctmods.immersivetechnology.core.registration.Particles;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -42,5 +42,5 @@ public class ColoredSmoke implements ParticleOptions {
         this.collideVertical = collideVertical;
     }
 
-    @Override @NotNull public ParticleType<?> getType() { return ITParticles.COLORED_SMOKE.get(); }
+    @Override @NotNull public ParticleType<?> getType() { return Particles.COLORED_SMOKE.get(); }
 }

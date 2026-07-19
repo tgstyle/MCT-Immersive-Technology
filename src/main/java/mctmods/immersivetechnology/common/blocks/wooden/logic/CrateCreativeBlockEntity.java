@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -28,7 +28,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
     private ItemStack template = ItemStack.EMPTY;
 
     public CrateCreativeBlockEntity(BlockPos pos, BlockState state) {
-        super(ITBlockEntities.CRATE_CREATIVE.get(), pos, state);
+        super(BlockEntities.CRATE_CREATIVE.get(), pos, state);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
 
     @Override
     public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
-        return CrateCreativeMenu.makeServer(ITMenuTypes.CRATE_CREATIVE.getType(), id, inv, this);
+        return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this);
     }
 
     public boolean stillValid(Player player) {

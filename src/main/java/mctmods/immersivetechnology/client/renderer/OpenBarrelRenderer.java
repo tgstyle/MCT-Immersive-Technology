@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,7 +22,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenBlockEntity> {
+public class OpenBarrelRenderer extends BaseBlockEntityRenderer<BarrelOpenBlockEntity> {
 
     public OpenBarrelRenderer() {}
 

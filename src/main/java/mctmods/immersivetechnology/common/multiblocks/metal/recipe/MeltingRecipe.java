@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.MeltingRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class MeltingRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, MeltingRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.MELTING);
+    public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.MELTING);
 
     private final ResourceLocation id;
     public final TagKey<Fluid> inputTag;
@@ -32,7 +32,7 @@ public class MeltingRecipe extends MultiblockRecipe {
     public final double requiredTemp;
 
     public MeltingRecipe(ResourceLocation id, TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
-        super(TagOutput.EMPTY, ITRecipeTypes.MELTING, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(TagOutput.EMPTY, RecipeTypes.MELTING, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.id = id;
         this.inputTag = inputTag;
         this.inputAmount = inputAmount;

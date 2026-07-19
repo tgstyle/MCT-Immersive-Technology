@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.metal.shapes.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
@@ -16,8 +16,8 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, ITIBlockInterfaces.IInteractionObjectIT<TrashItemBlockEntity>, ITrashCanShape, Container {
-    public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.TRASH_ITEM.get(), pos, state); }
+public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, BlockInterfaces.IInteractionObjectIT<TrashItemBlockEntity>, ITrashCanShape, Container {
+    public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ITEM.get(), pos, state); }
 
     @SuppressWarnings("unused")
     public IItemHandlerModifiable getItemHandler(@Nullable Direction side) {
@@ -41,11 +41,11 @@ public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemH
 
     @Override public TrashItemBlockEntity getGuiMaster() { return this; }
 
-    @Override public ITMenuTypes.ArgContainer<? super TrashItemBlockEntity, ?> getContainerType() { return ITMenuTypes.TRASH_ITEM; }
+    @Override public MenuTypes.ArgContainer<? super TrashItemBlockEntity, ?> getContainerType() { return MenuTypes.TRASH_ITEM; }
 
     @Override public boolean canUseGui(Player player) { return true; }
 
-    @Override public TranslationKey text() { return ITClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE; }
+    @Override public TranslationKey text() { return ClientConfig.perTickTrashCans ? TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE; }
 
     @Override public int getContainerSize() { return 1; }
 

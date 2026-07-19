@@ -10,8 +10,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelCommonBlockEntity;
-import mctmods.immersivetechnology.core.ITCommonConfig;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.CommonConfig;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -25,8 +25,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class OneProbeHelper {
-    private static final double solarWorkingHeatLevel = ITCommonConfig.solarTowerWorkingHeatLevel;
-    private static final double solarMelterWorkingHeatLevel = ITCommonConfig.solarMelterWorkingHeatLevel;
+    private static final double solarWorkingHeatLevel = CommonConfig.solarTowerWorkingHeatLevel;
+    private static final double solarMelterWorkingHeatLevel = CommonConfig.solarMelterWorkingHeatLevel;
 
     public static void register(ITheOneProbe top) {
         top.registerProvider(new AlternatorProvider());
@@ -97,7 +97,7 @@ public class OneProbeHelper {
     }
 
     public static class AlternatorProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "alternator"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "alternator"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -110,7 +110,7 @@ public class OneProbeHelper {
     }
 
     public static class BoilerLiquidProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_liquid"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "boiler_liquid"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -125,7 +125,7 @@ public class OneProbeHelper {
     }
 
     public static class BoilerSolidProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_solid"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "boiler_solid"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -139,7 +139,7 @@ public class OneProbeHelper {
     }
 
     public static class BoilerTankProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "boiler_tank"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "boiler_tank"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -155,7 +155,7 @@ public class OneProbeHelper {
     }
 
     public static class CoolingTowerProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "cooling_tower"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "cooling_tower"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -172,7 +172,7 @@ public class OneProbeHelper {
     }
 
     public static class DistillerProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "distiller"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "distiller"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -190,7 +190,7 @@ public class OneProbeHelper {
     }
 
     public static class ElectrolyticCrucibleBatteryProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "electrolytic_crucible_battery"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "electrolytic_crucible_battery"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -207,7 +207,7 @@ public class OneProbeHelper {
     }
 
     public static class GasTurbineProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "gas_turbine"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "gas_turbine"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -221,7 +221,7 @@ public class OneProbeHelper {
     }
 
     public static class HeatExchangerProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "heat_exchanger"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "heat_exchanger"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             BlockEntity be = level.getBlockEntity(data.getPos());
@@ -244,7 +244,7 @@ public class OneProbeHelper {
     }
 
     public static class MeltingCrucibleProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "melting_crucible"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "melting_crucible"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -267,7 +267,7 @@ public class OneProbeHelper {
     }
 
     public static class RadiatorProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "radiator"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "radiator"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -291,7 +291,7 @@ public class OneProbeHelper {
     }
 
     public static class SolarMelterProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_melter"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "solar_melter"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -310,7 +310,7 @@ public class OneProbeHelper {
     }
 
     public static class SolarTowerProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "solar_tower"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "solar_tower"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -329,7 +329,7 @@ public class OneProbeHelper {
     }
 
     public static class SteamTurbineProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steam_turbine"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "steam_turbine"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -343,7 +343,7 @@ public class OneProbeHelper {
     }
 
     public static class SteelSheetmetalTankProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "steel_tank"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "steel_tank"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             IMultiblockContext<?> ctx = getContext(level, data.getPos());
@@ -355,7 +355,7 @@ public class OneProbeHelper {
     }
 
     public static class BarrelProvider implements IProbeInfoProvider {
-        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(ITLib.MODID, "barrel"); }
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "barrel"); }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
             BlockEntity be = level.getBlockEntity(data.getPos());

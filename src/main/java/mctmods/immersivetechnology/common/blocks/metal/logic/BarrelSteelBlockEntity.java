@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
+import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelSteelBlock;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
     private static final int tankSize = 24 * FluidType.BUCKET_VOLUME;
 
-    public BarrelSteelBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_STEEL.get(), pos, state, tankSize); }
+    public BarrelSteelBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.BARREL_STEEL.get(), pos, state, tankSize); }
 
     @Override public void tickServer() {
         if (level == null || level.isClientSide) return;

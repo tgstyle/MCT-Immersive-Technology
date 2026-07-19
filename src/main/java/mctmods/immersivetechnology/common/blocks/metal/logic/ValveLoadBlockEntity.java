@@ -6,13 +6,13 @@ import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHan
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.EnergyConnector;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.IEnergyWire;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -36,7 +36,7 @@ import java.util.Collection;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
 
-public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITIServerTickableBE, IImmersiveConnectable, EnergyConnector, ITIBlockInterfaces.IMirrorAble {
+public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IImmersiveConnectable, EnergyConnector, BlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
     protected static final int LEFT_INDEX = 1;
     protected WireType leftType;
@@ -45,7 +45,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITIS
     public int rotation = 0;
     private boolean isUnloading = false;
 
-    public ValveLoadBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_LOAD.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_LOAD_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LOAD_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LOAD_SNEAKING_SECOND_LINE, 1); }
+    public ValveLoadBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.VALVE_LOAD.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_LOAD_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LOAD_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LOAD_SNEAKING_SECOND_LINE, 1); }
 
     @Override @Nonnull public BlockState getState() { return getBlockState(); }
 
@@ -53,7 +53,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITIS
 
     @Override public void onLoad() {
         super.onLoad();
-        facing = getBlockState().getValue(ITProperties.FACING_ALL);
+        facing = getBlockState().getValue(ModProperties.FACING_ALL);
         rotation = getBlockState().getValue(ROTATION);
         if (level != null && !level.isClientSide) {
             GlobalWireNetwork.getNetwork(level).onConnectorLoad(this, level);
@@ -344,14 +344,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ITIS
 
     @Override public void setMirrored(boolean mirrored) {
         BlockState state = getBlockState();
-        if (state.getValue(ITProperties.MIRRORED) != mirrored) {
-            if (level != null) level.setBlock(worldPosition, state.setValue(ITProperties.MIRRORED, mirrored), 3);
+        if (state.getValue(ModProperties.MIRRORED) != mirrored) {
+            if (level != null) level.setBlock(worldPosition, state.setValue(ModProperties.MIRRORED, mirrored), 3);
         }
     }
 
-    @Override public boolean getIsMirrored() { return getBlockState().getValue(ITProperties.MIRRORED); }
+    @Override public boolean getIsMirrored() { return getBlockState().getValue(ModProperties.MIRRORED); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLoadMenu.makeServer(ITMenuTypes.VALVE_LOAD.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLoadMenu.makeServer(MenuTypes.VALVE_LOAD.getType(), id, inv, this); }
 
     @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
 

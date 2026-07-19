@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.immersiveconvergence.api.HeatCapabilities;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerLiquidRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BoilerLiquidRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, BoilerLiquidRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<BoilerLiquidRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER_LIQUID);
+    public static final CachedRecipeList<BoilerLiquidRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -30,7 +30,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
     private final Lazy<Integer> totalProcessTime;
 
     public BoilerLiquidRecipe(TagKey<Fluid> fluidTag, int amount, int time, double heatPerTick, double targetHeat) {
-        super(TagOutput.EMPTY, ITRecipeTypes.BOILER_LIQUID, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(TagOutput.EMPTY, RecipeTypes.BOILER_LIQUID, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.time = time;

@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.mixin.common;
 
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.mixer.MixerLogic.State;
-import mctmods.immersivetechnology.mixin.common.helper.IMixerStateDebounceAccessor;
+import mctmods.immersivetechnology.common.multiblocks.helper.IMixerStateDebounceAccessor;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;

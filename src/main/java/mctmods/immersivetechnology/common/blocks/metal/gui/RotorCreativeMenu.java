@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,18 +13,18 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class RotorCreativeMenu extends ITContainerMenu {
+public class RotorCreativeMenu extends ContainerMenu {
     public RotorCreativeBlockEntity tile;
     private int rpm;
 
     public RotorCreativeMenu(MenuType<?> type, int id, Inventory inv, RotorCreativeBlockEntity tile) {
-        super(ITContainerMenu.blockCtx(type, id, tile));
+        super(ContainerMenu.blockCtx(type, id, tile));
         this.tile = tile;
         addDataSlot(new DataSlot() { public int get() { return tile.rpm; } public void set(int v) { rpm = v; } });
     }
 
     public RotorCreativeMenu(MenuType<?> type, int id, Inventory inv, FriendlyByteBuf buffer) {
-        super(ITContainerMenu.clientCtx(type, id));
+        super(ContainerMenu.clientCtx(type, id));
         BlockPos pos = buffer.readBlockPos();
         this.tile = (RotorCreativeBlockEntity) inv.player.level().getBlockEntity(pos);
         addDataSlot(new DataSlot() { public int get() { return 0; } public void set(int v) { rpm = v; } });

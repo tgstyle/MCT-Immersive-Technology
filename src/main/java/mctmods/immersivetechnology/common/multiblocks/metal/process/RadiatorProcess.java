@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.process;
 
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -13,11 +13,11 @@ public class RadiatorProcess {
         this.recipe = recipe;
     }
 
-    public void tick(ITMarkableFluidTank output) {
+    public void tick(MarkableFluidTank output) {
         tick(output, 1.0D);
     }
 
-    public void tick(ITMarkableFluidTank output, double speedMult) {
+    public void tick(MarkableFluidTank output, double speedMult) {
         if (ticksProcessed >= recipe.getTotalProcessTime()) return;
 
         int advance = (int) Math.max(1, speedMult);

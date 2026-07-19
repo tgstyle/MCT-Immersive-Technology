@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.RadiatorRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RadiatorRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, RadiatorRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<RadiatorRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.RADIATOR);
+    public static final CachedRecipeList<RadiatorRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.RADIATOR);
 
     private final ResourceLocation id;
     public final TagKey<Fluid> fluidTag;
@@ -30,7 +30,7 @@ public class RadiatorRecipe extends MultiblockRecipe {
     private final int time;
 
     public RadiatorRecipe(ResourceLocation id, TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time) {
-        super(TagOutput.EMPTY, ITRecipeTypes.RADIATOR, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(TagOutput.EMPTY, RecipeTypes.RADIATOR, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.id = id;
         this.fluidTag = fluidTag;
         this.amount = amount;

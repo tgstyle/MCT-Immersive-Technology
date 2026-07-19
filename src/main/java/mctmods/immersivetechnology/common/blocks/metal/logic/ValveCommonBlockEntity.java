@@ -20,7 +20,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implements ITIServerTickableBE, ITIClientTickableBE, MenuProvider, ITIBlockInterfaces.IDirectionalBE, ITIBlockInterfaces.IBlockOverlayText, ITIBlockInterfaces.IHammerInteraction {
+public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
     final TranslationKey overlayNormal;
@@ -94,7 +94,7 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
 
     @Override public void onLoad() {
         super.onLoad();
-        facing = getBlockState().getValue(ITProperties.FACING_ALL);
+        facing = getBlockState().getValue(ModProperties.FACING_ALL);
     }
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
@@ -164,14 +164,14 @@ public abstract class ValveCommonBlockEntity extends ITBaseBlockEntity implement
         invalidateCapabilities();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
-            if (state.hasProperty(ITProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ITProperties.FACING_ALL, facing), 3);
+            if (state.hasProperty(ModProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ModProperties.FACING_ALL, facing), 3);
             markContainingBlockForUpdate(null);
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
         }
         efficientSetChanged();
     }
 
-    @Override @NotNull public ITPlacementLimitation getFacingLimitation() { return ITPlacementLimitation.SIDE_CLICKED; }
+    @Override @NotNull public PlacementLimitation getFacingLimitation() { return PlacementLimitation.SIDE_CLICKED; }
 
     @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
 

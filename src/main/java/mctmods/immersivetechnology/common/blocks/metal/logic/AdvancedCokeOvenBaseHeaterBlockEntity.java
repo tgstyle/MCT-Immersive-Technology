@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.helper.*;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITBlocks;
-import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.ModBlocks;
+import mctmods.immersivetechnology.core.registration.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -27,13 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 
-public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity implements ITIServerTickableBE, ITIClientTickableBE, ITIBlockInterfaces.IDirectionalBE, ITIBlockInterfaces.IHasDummyBlocks, IEnergyStorage, ITIModelOffsetProvider {
+public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IDirectionalBE, BlockInterfaces.IHasDummyBlocks, IEnergyStorage, IModelOffsetProvider {
 
-    private static final int MAX_ENERGY = ITServerConfig.advancedCokeOvenBaseheaterMaxEnergy;
-    private static final int ENERGY_CONSUMPTION = ITServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;
-    private static final float MAX_FAN_SPEED = (float) ITClientConfig.advancedCokeOvenBaseheaterMaxFanSpeed;
-    private static final float FAN_ACCEL = (float) ITClientConfig.advancedCokeOvenBaseheaterFanAccel;
-    private static final float FAN_DECEL = (float) ITClientConfig.advancedCokeOvenBaseheaterFanDecel;
+    private static final int MAX_ENERGY = ServerConfig.advancedCokeOvenBaseheaterMaxEnergy;
+    private static final int ENERGY_CONSUMPTION = ServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;
+    private static final float MAX_FAN_SPEED = (float) ClientConfig.advancedCokeOvenBaseheaterMaxFanSpeed;
+    private static final float FAN_ACCEL = (float) ClientConfig.advancedCokeOvenBaseheaterFanAccel;
+    private static final float FAN_DECEL = (float) ClientConfig.advancedCokeOvenBaseheaterFanDecel;
 
     private final EnergyStorage energyStorage = new EnergyStorage(MAX_ENERGY);
 
@@ -57,10 +57,10 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
     private BooleanSupplier soundHandle = () -> false;
 
     public AdvancedCokeOvenBaseHeaterBlockEntity(BlockPos pos, BlockState state) {
-        super(ITBlockEntities.ADVANCED_COKE_OVEN_BASEHEATER.get(), pos, state);
-        this.dummy = state.getValue(ITProperties.MULTIBLOCKSLAVE);
-        this.facing = state.getValue(ITProperties.FACING_HORIZONTAL);
-        this.active = state.getValue(ITProperties.ACTIVE);
+        super(BlockEntities.ADVANCED_COKE_OVEN_BASEHEATER.get(), pos, state);
+        this.dummy = state.getValue(ModProperties.MULTIBLOCKSLAVE);
+        this.facing = state.getValue(ModProperties.FACING_HORIZONTAL);
+        this.active = state.getValue(ModProperties.ACTIVE);
         this.masterPos = null;
         this.cachedMaster = null;
         this.wasSpeedupCalledThisTick = false;
@@ -111,7 +111,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
         for (BlockPos p : new BlockPos[]{masterPosLocal, masterPosLocal.relative(facing.getClockWise()), masterPosLocal.relative(facing.getCounterClockWise())}) {
             BlockState oldState = level.getBlockState(p);
-            if (oldState.getBlock() == ITBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get() && oldState.getValue(ITProperties.ACTIVE) != newActive) level.setBlock(p, oldState.setValue(ITProperties.ACTIVE, newActive), 3);
+            if (oldState.getBlock() == ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get() && oldState.getValue(ModProperties.ACTIVE) != newActive) level.setBlock(p, oldState.setValue(ModProperties.ACTIVE, newActive), 3);
         }
         setChanged();
         markContainingBlockForUpdate(null);
@@ -119,7 +119,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
     public boolean doSpeedup() {
         if (dummy) {
-            ITIBlockInterfaces.IGeneralMultiblock m = master();
+            BlockInterfaces.IGeneralMultiblock m = master();
             if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE) return masterBE.doSpeedup();
             return false;
         }
@@ -163,11 +163,11 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
             float att = (float) Math.max(player.distanceToSqr(soundPosCache) / 8, 1);
             float vol = Math.max(5f * soundVolume, 0.01f) / att;
             if (vol > 0.01f && !soundHandle.getAsBoolean()) {
-                soundHandle = ITSound.startSound(
+                soundHandle = ModSound.startSound(
                         () -> active || fanSpeed > 0.01f,
                         () -> level != null && !isRemoved(),
                         soundPosCache,
-                        ITSounds.advancedCokeOvenFan,
+                        Sounds.advancedCokeOvenFan,
                         () -> {
                             LocalPlayer p = Minecraft.getInstance().player;
                             if (p == null) return 0f;
@@ -182,7 +182,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
     public float getFanRotation(float partialTicks) { return prevFanRotation + (fanRotation - prevFanRotation) * partialTicks; }
 
-    @Override @Nullable public ITIBlockInterfaces.IGeneralMultiblock master() {
+    @Override @Nullable public BlockInterfaces.IGeneralMultiblock master() {
         if (!dummy) return this;
         if (cachedMaster == null || cachedMaster.isRemoved()) findMaster();
         return cachedMaster;
@@ -242,7 +242,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
 
     @Override public void setFacing(Direction f) { this.facing = f; }
 
-    @Override public ITPlacementLimitation getFacingLimitation() { return ITPlacementLimitation.HORIZONTAL; }
+    @Override public PlacementLimitation getFacingLimitation() { return PlacementLimitation.HORIZONTAL; }
 
     @Override public Direction getFacingForPlacement(BlockPlaceContext ctx) { return ctx.getHorizontalDirection().getOpposite(); }
 
@@ -273,7 +273,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
     public IEnergyStorage getEnergyHandler(@Nullable Direction side) {
         if (side == null || side == Direction.UP) {
             if (!dummy) return this;
-            ITIBlockInterfaces.IGeneralMultiblock m = master();
+            BlockInterfaces.IGeneralMultiblock m = master();
             if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE && !masterBE.isRemoved()) {
                 return new ForwardingEnergyStorage();
             }
@@ -297,7 +297,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends ITBaseBlockEntity imp
         @Override public int receiveEnergy(int maxReceive, boolean simulate) { return 0; }
         @Override public int extractEnergy(int maxExtract, boolean simulate) { return 0; }
         @Override public int getEnergyStored() {
-            ITIBlockInterfaces.IGeneralMultiblock m = master();
+            BlockInterfaces.IGeneralMultiblock m = master();
             if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE) return masterBE.energyStorage.getEnergyStored();
             return 0;
         }

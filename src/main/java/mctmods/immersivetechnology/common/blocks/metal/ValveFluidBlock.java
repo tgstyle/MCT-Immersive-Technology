@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
-import mctmods.immersivetechnology.core.registration.ITTags;
+import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -26,21 +26,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ValveFluidBlock extends ITIEntityBlock<ValveFluidBlockEntity> {
+public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
     public ValveFluidBlock(BiFunction<BlockPos, BlockState, ValveFluidBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(ValveCommonBlockEntity.OPEN, true)
-                .setValue(ITProperties.FACING_ALL, Direction.NORTH)
-                .setValue(ITProperties.MIRRORED, false)
+                .setValue(ModProperties.FACING_ALL, Direction.NORTH)
+                .setValue(ModProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
+        builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
     }
 
     @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
@@ -50,7 +50,7 @@ public class ValveFluidBlock extends ITIEntityBlock<ValveFluidBlockEntity> {
     @Override @NotNull public VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
-        Direction facing = state.getValue(ITProperties.FACING_ALL);
+        Direction facing = state.getValue(ModProperties.FACING_ALL);
         Direction.Axis axis = facing.getAxis();
         double minX = axis == Direction.Axis.X ? 0 : 2 / 16D;
         double maxX = axis == Direction.Axis.X ? 1 : 14 / 16D;
@@ -72,7 +72,7 @@ public class ValveFluidBlock extends ITIEntityBlock<ValveFluidBlockEntity> {
 
     @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         ItemStack heldItem = player.getMainHandItem();
-        if (heldItem.is(ITTags.formationTools)) { return InteractionResult.PASS; }
+        if (heldItem.is(ModTags.formationTools)) { return InteractionResult.PASS; }
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
@@ -93,8 +93,8 @@ public class ValveFluidBlock extends ITIEntityBlock<ValveFluidBlockEntity> {
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
         return defaultBlockState()
-                .setValue(ITProperties.FACING_ALL, facing)
-                .setValue(ITProperties.MIRRORED, false)
+                .setValue(ModProperties.FACING_ALL, facing)
+                .setValue(ModProperties.MIRRORED, false)
                 .setValue(ValveCommonBlockEntity.OPEN, true)
                 .setValue(ROTATION, rotation);
     }

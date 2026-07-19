@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.gui;
 
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -10,15 +10,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
-import mctmods.immersivetechnology.core.network.ITMessageTileSync;
-import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.network.MessageTileSync;
+import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("valve");
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("valve");
     private final ValveCommonBlockEntity tile;
     private EditBox packetLimitField;
     private EditBox timeLimitField;
@@ -91,7 +91,7 @@ public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
         message.putInt("packetLimit", pl);
         message.putInt("timeLimit", tl);
         message.putInt("keepSize", ks);
-        ITPacketHandler.sendToServer(new ITMessageTileSync(tile.getBlockPos(), message));
+        PacketHandler.sendToServer(new MessageTileSync(tile.getBlockPos(), message));
         Minecraft.getInstance().setScreen(null);
     }
 

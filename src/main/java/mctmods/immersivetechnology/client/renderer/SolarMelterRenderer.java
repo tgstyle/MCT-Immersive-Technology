@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.particles.ColoredBeam;
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 
@@ -17,7 +17,7 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
-public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
+public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
     public SolarMelterRenderer() {}
 
     @Override public @NotNull AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) {

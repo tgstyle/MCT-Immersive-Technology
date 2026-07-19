@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock.ROTATION;
 
-public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements ITIServerTickableBE, IItemHandler {
+public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IItemHandler {
     public record OutputItemHandler(ValveLimiterBlockEntity be) implements IItemHandler {
         @Override public int getSlots() { return be.getSource() != null ? be.getSource().getSlots() : 0; }
 
@@ -61,7 +61,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     public int rotation = 0;
 
-    public ValveLimiterBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.VALVE_LIMITER.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_SNEAKING_SECOND_LINE, 2); }
+    public ValveLimiterBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.VALVE_LIMITER.get(), pos, state, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_NORMAL_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_SNEAKING_FIRST_LINE, TranslationKey.OVERLAY_OSD_VALVE_LIMITER_SNEAKING_SECOND_LINE, 2); }
 
     @Override public void tickServer() { updateBase(); }
 
@@ -84,7 +84,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getItemHandler(@Nullable Direction side) {
         if (side == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
         if (side.getAxis() == blockFacing.getAxis()) {
             if (side == blockFacing) {
                 return this;
@@ -159,7 +159,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getDestination() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         return level.getCapability(Capabilities.ItemHandler.BLOCK, dstPos, blockFacing);
     }
@@ -167,12 +167,12 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getSource() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ITProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
         BlockPos srcPos = worldPosition.relative(blockFacing);
         return level.getCapability(Capabilities.ItemHandler.BLOCK, srcPos, blockFacing.getOpposite());
     }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLimiterMenu.makeServer(ITMenuTypes.VALVE_LIMITER.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLimiterMenu.makeServer(MenuTypes.VALVE_LIMITER.getType(), id, inv, this); }
 
     @Override public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LIMITER.location); }
 

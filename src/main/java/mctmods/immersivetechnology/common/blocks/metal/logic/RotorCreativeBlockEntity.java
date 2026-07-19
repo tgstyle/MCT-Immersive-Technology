@@ -2,12 +2,12 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
-import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITIClientTickableBE;
+import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.IClientTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -20,13 +20,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuProvider, ITIClientTickableBE {
+public class RotorCreativeBlockEntity extends BaseBlockEntity implements MenuProvider, IClientTickableBE {
     public int rpm;
     public float animation_rotation = 0f;
     public float animation_step = 0f;
     private final Provider mechanicalProvider = new Provider();
 
-    public RotorCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.ROTOR_CREATIVE.get(), pos, state); rpm = MechanicalCapabilities.MAX_RPM; }
+    public RotorCreativeBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.ROTOR_CREATIVE.get(), pos, state); rpm = MechanicalCapabilities.MAX_RPM; }
 
     public IMechanicalEnergyProvider getMechanicalProvider(@Nullable Direction side) {
         Direction facing = getBlockState().getValue(RotorCreativeBlock.FACING);
@@ -77,7 +77,7 @@ public class RotorCreativeBlockEntity extends ITBaseBlockEntity implements MenuP
 
     public boolean stillValid(Player player) { return player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) < 64; }
 
-    @Override @Nullable public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ITMenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
+    @Override @Nullable public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return MenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
 
     @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
 }

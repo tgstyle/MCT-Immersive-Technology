@@ -4,8 +4,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultibl
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.registration.ITTags;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -27,7 +27,7 @@ public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic
             if (hitDir != poiSide) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
         }
         ItemStack held = player.getItemInHand(hand);
-        if (!held.is(ITTags.igniters)) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
+        if (!held.is(ModTags.igniters)) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
         BoilerSolidLogic.State state = ctx.getState();
         if (state.pilotLit) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
         Level level = ctx.getLevel().getRawLevel();
@@ -41,8 +41,8 @@ public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic
         if (isClient) { return ItemInteractionResult.SUCCESS; }
         state.pilotLit = true;
         state.heatLevel = BoilerSolidLogic.PILOT_HEAT;
-        level.playSound(null, ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_POIS.getFirst()), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-        if (held.is(ITTags.igniters_consume)) { held.shrink(1); }
+        level.playSound(null, ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_POIS.getFirst()), Sounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
+        if (held.is(ModTags.igniters_consume)) { held.shrink(1); }
         else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND); }
         ctx.markMasterDirty();
         ctx.requestMasterBESync();

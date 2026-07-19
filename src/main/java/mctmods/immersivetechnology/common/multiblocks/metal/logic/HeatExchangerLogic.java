@@ -1,18 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.HeatExchangerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HeatExchangerShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -50,30 +50,30 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.State>, IServerTickableComponent<HeatExchangerLogic.State>, IClientTickableComponent<HeatExchangerLogic.State>, ITIPressurizedFluidOutput<HeatExchangerLogic.State> {
+public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.State>, IServerTickableComponent<HeatExchangerLogic.State>, IClientTickableComponent<HeatExchangerLogic.State>, IPressurizedFluidOutput<HeatExchangerLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(HeatExchangerShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
 
-    public static final List<BlockPos> INPUT_FLUID_0_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> INPUT_FLUID_1_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input1");
-    public static final List<BlockPos> OUTPUT_FLUID_0_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    public static final List<BlockPos> OUTPUT_FLUID_1_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
-    public static final List<BlockPos> ENERGY_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
-    public static final List<BlockPos> SOUND_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
+    public static final List<BlockPos> INPUT_FLUID_0_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> INPUT_FLUID_1_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input1");
+    public static final List<BlockPos> OUTPUT_FLUID_0_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> OUTPUT_FLUID_1_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
+    public static final List<BlockPos> ENERGY_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
+    public static final List<BlockPos> SOUND_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
 
     public static final List<BlockPos> INPUT_FLUID_POIS = ImmutableList.<BlockPos>builder().addAll(INPUT_FLUID_0_POIS).addAll(INPUT_FLUID_1_POIS).build();
 
-    private static final RelativeBlockFace INPUT_FLUID_0_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace INPUT_FLUID_1_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input1");
-    private static final RelativeBlockFace OUTPUT_FLUID_0_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace OUTPUT_FLUID_1_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
-    private static final RelativeBlockFace ENERGY_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
+    private static final RelativeBlockFace INPUT_FLUID_0_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace INPUT_FLUID_1_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input1");
+    private static final RelativeBlockFace OUTPUT_FLUID_0_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FLUID_1_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
+    private static final RelativeBlockFace ENERGY_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
 
-    private static final int INPUT_TANK_CAPACITY = ITServerConfig.heatExchangerInputTankCapacity;
-    private static final int OUTPUT_TANK_CAPACITY = ITServerConfig.heatExchangerOutputTankCapacity;
-    private static final int ENERGY_CAPACITY = ITServerConfig.heatExchangerEnergyCapacity;
-    private static final int ENERGY_MAX_IO = ITServerConfig.heatExchangerEnergyMaxIO;
+    private static final int INPUT_TANK_CAPACITY = ServerConfig.heatExchangerInputTankCapacity;
+    private static final int OUTPUT_TANK_CAPACITY = ServerConfig.heatExchangerOutputTankCapacity;
+    private static final int ENERGY_CAPACITY = ServerConfig.heatExchangerEnergyCapacity;
+    private static final int ENERGY_MAX_IO = ServerConfig.heatExchangerEnergyMaxIO;
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
@@ -88,8 +88,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(
-                    () -> state.active, ctx.isValid(), soundPos, ITSounds.heatExchanger,
+            state.isSoundPlaying = ModSound.startSound(
+                    () -> state.active, ctx.isValid(), soundPos, Sounds.heatExchanger,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
@@ -169,7 +169,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
     @Override public List<RelativeBlockFace> getOutputFacings() { return ImmutableList.of(OUTPUT_FLUID_0_FACING, OUTPUT_FLUID_1_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1); }
 
     @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
@@ -193,8 +193,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return HeatExchangerShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITIDisplayContext, ProcessContext.ProcessContextInMachine<HeatExchangerRecipe> {
-        public final ITCachedRecipe.TriFunction<Level, FluidStack, FluidStack, RecipeHolder<HeatExchangerRecipe>> recipeGetter = ITCachedRecipe.cached3(HeatExchangerRecipe::findRecipe);
+    public static class State implements IMultiblockState, IDisplayContext, ProcessContext.ProcessContextInMachine<HeatExchangerRecipe> {
+        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, RecipeHolder<HeatExchangerRecipe>> recipeGetter = CachedRecipe.cached3(HeatExchangerRecipe::findRecipe);
         public final HeatExchangerTanks tanks;
 
         public final IFluidHandler[] inputCap = new IFluidHandler[2];
@@ -224,10 +224,10 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new HeatExchangerTanks(onChanged);
             energy = new SyncEnergyStorage(ENERGY_CAPACITY, ENERGY_MAX_IO, onChanged);
-            inputCap[0] = new ITArrayFluidHandler(tanks.input0, false, true, onChanged);
-            inputCap[1] = new ITArrayFluidHandler(tanks.input1, false, true, onChanged);
-            outputCap[0] = new ITArrayFluidHandler(tanks.output0, true, false, onChanged);
-            outputCap[1] = new ITArrayFluidHandler(tanks.output1, true, false, onChanged);
+            inputCap[0] = new ArrayFluidHandler(tanks.input0, false, true, onChanged);
+            inputCap[1] = new ArrayFluidHandler(tanks.input1, false, true, onChanged);
+            outputCap[0] = new ArrayFluidHandler(tanks.output0, true, false, onChanged);
+            outputCap[1] = new ArrayFluidHandler(tanks.output1, true, false, onChanged);
             processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, HeatExchangerRecipe.RECIPES::getById);
         }
 
@@ -322,23 +322,23 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         }
     }
 
-    public record HeatExchangerTanks(ITMarkableFluidTank input0, ITMarkableFluidTank input1, ITMarkableFluidTank output0, ITMarkableFluidTank output1) {
+    public record HeatExchangerTanks(MarkableFluidTank input0, MarkableFluidTank input1, MarkableFluidTank output0, MarkableFluidTank output1) {
 
         public HeatExchangerTanks(Runnable onChanged) {
             this(
-                    new ITMarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
-                    new ITMarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
-                    new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run()),
-                    new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run())
+                    new MarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
+                    new MarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
+                    new MarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run()),
+                    new MarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run())
             );
         }
 
         public static HeatExchangerTanks makeClient() {
             return new HeatExchangerTanks(
-                    new ITMarkableFluidTank(10000, v -> {}),
-                    new ITMarkableFluidTank(10000, v -> {}),
-                    new ITMarkableFluidTank(10000, v -> {}),
-                    new ITMarkableFluidTank(10000, v -> {})
+                    new MarkableFluidTank(10000, v -> {}),
+                    new MarkableFluidTank(10000, v -> {}),
+                    new MarkableFluidTank(10000, v -> {}),
+                    new MarkableFluidTank(10000, v -> {})
             );
         }
 

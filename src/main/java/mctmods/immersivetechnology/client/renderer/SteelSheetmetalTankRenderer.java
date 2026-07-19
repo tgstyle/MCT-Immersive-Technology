@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.client.models.util.ITFluidRender;
-import mctmods.immersivetechnology.client.renderer.helper.ITRenderTypes;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.models.util.FluidRender;
+import mctmods.immersivetechnology.client.renderer.helper.RenderTypes;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<State>> {
+public class SteelSheetmetalTankRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<State>> {
 
     public SteelSheetmetalTankRenderer() {}
 
@@ -42,7 +42,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
             matrixStack.pushPose();
             matrixStack.translate(xx, 0, zz);
             Matrix4f mat = matrixStack.last().pose();
-            final VertexConsumer builder = bufferIn.getBuffer(ITRenderTypes.TRANSLUCENT_POSITION_COLOR);
+            final VertexConsumer builder = bufferIn.getBuffer(RenderTypes.TRANSLUCENT_POSITION_COLOR);
             builder.addVertex(mat, -4, -4, 0).setColor(0x22, 0x22, 0x22, 0xff);
             builder.addVertex(mat, -4, 80, 0).setColor(0x22, 0x22, 0x22, 0xff);
             builder.addVertex(mat, 30, 80, 0).setColor(0x22, 0x22, 0x22, 0xff);
@@ -50,7 +50,7 @@ public class SteelSheetmetalTankRenderer extends ITBaseBlockEntityRenderer<Multi
             if (!fs.isEmpty()) {
                 float h = fs.getAmount() / (float) state.tank.getCapacity();
                 matrixStack.translate(0, 8, 0.008f);
-                ITFluidRender.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 5, (1 - h) * 60, 16, h * 60);
+                FluidRender.drawRepeatedFluidSprite(bufferIn.getBuffer(RenderType.solid()), matrixStack, fs, 5, (1 - h) * 60, 16, h * 60);
             }
             matrixStack.popPose();
             matrixStack.mulPose(Axis.YP.rotationDegrees(180f));

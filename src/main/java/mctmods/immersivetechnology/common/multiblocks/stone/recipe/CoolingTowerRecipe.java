@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CoolingTowerRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, CoolingTowerRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.COOLING_TOWER);
+    public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.COOLING_TOWER);
 
     private final ResourceLocation id;
     public final TagKey<Fluid> inputTag0;
@@ -34,7 +34,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     private final int time;
 
     public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
-        super(TagOutput.EMPTY, ITRecipeTypes.COOLING_TOWER, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(TagOutput.EMPTY, RecipeTypes.COOLING_TOWER, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.id = id;
         this.inputTag0 = inputTag0;
         this.amount0 = amount0;

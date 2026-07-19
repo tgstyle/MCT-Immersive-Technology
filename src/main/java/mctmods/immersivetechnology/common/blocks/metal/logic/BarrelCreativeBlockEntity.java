@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.ITCommonConfig;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.CommonConfig;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.util.ITUtils;
+import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.IEApiDataComponents;
 import com.mojang.datafixers.util.Unit;
@@ -39,14 +39,14 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements ITIBlockInterfaces.IBlockEntityDrop, ITIBlockInterfaces.IPlayerInteraction, ITIBlockInterfaces.IBlockOverlayText {
+public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
 
-    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = ITCommonConfig.creativeBarrelOutputAmount;
+    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = CommonConfig.creativeBarrelOutputAmount;
 
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
-    public BarrelCreativeBlockEntity(BlockPos pos, BlockState state) { super(ITBlockEntities.BARREL_CREATIVE.get(), pos, state); }
+    public BarrelCreativeBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.BARREL_CREATIVE.get(), pos, state); }
 
     @Override public void tickServer() {
         if (selectedFluid.isEmpty() || level == null) { super.tickServer(); return; }
@@ -59,7 +59,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
             if (handler == null) { continue; }
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
-            FluidStack toFill = ITUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = Utils.copyFluidStackWithAmount(fsToOffer, accepted, false);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }
@@ -137,7 +137,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
         // Removed illegal packet send from render thread
         if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.getLocation())}; }
         Component fluidName = selectedFluid.getHoverName();
-        double rawValue = ITClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
+        double rawValue = ClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
         String value = NUMBER_FORMAT.format(rawValue);
         return new Component[]{Component.translatable(text().getLocation(), fluidName, value)};
     }
