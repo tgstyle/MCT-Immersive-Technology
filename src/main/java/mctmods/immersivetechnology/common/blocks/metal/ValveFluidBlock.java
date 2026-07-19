@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonIBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidIBlockEntity;
-import mctmods.immersivetechnology.core.registration.ITTags;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
+import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,14 +30,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ValveFluidBlock extends ITIEntityBlock<ValveFluidIBlockEntity> {
+public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
-    public ValveFluidBlock(BiFunction<BlockPos, BlockState, ValveFluidIBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ITProperties.FACING_ALL, Direction.NORTH).setValue(ITProperties.MIRRORED, false).setValue(ROTATION, 0)); }
+    public ValveFluidBlock(BiFunction<BlockPos, BlockState, ValveFluidBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ModProperties.MIRRORED, false).setValue(ROTATION, 0)); }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION); }
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
 
     @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
 
@@ -47,7 +47,7 @@ public class ValveFluidBlock extends ITIEntityBlock<ValveFluidIBlockEntity> {
     @Override @NotNull public VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
-        Direction facing = state.getValue(ITProperties.FACING_ALL);
+        Direction facing = state.getValue(ModProperties.FACING_ALL);
         Direction.Axis axis = facing.getAxis();
         double minX = axis == Direction.Axis.X ? 0 : 2 / 16D;
         double maxX = axis == Direction.Axis.X ? 1 : 14 / 16D;
@@ -64,15 +64,15 @@ public class ValveFluidBlock extends ITIEntityBlock<ValveFluidIBlockEntity> {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ValveCommonIBlockEntity valve) { valve.updateRedstoneState(); }
+        if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
     @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.is(ITTags.formationTools)) return super.use(state, level, pos, player, hand, hit);
+        if (heldItem.is(ModTags.formationTools)) return super.use(state, level, pos, player, hand, hit);
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ValveCommonIBlockEntity valve) {
+        if (be instanceof ValveCommonBlockEntity valve) {
             if (player.isCrouching()) {
                 valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1);
                 valve.updateRedstoneState();
@@ -93,6 +93,6 @@ public class ValveFluidBlock extends ITIEntityBlock<ValveFluidIBlockEntity> {
             float yRot = context.getPlayer().getYRot();
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
-        return defaultBlockState().setValue(ITProperties.FACING_ALL, facing).setValue(ITProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
+        return defaultBlockState().setValue(ModProperties.FACING_ALL, facing).setValue(ModProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
     }
 }

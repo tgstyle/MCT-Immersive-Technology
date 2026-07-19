@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<HeatExchangerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<HeatExchangerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.HEAT_EXCHANGER);
+    public static final CachedRecipeList<HeatExchangerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.HEAT_EXCHANGER);
 
     public static float timeModifier = 1;
     public static float energyModifier = 1;
@@ -33,7 +33,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
     int totalProcessEnergy;
 
     public HeatExchangerRecipe(ResourceLocation id, FluidTagInput input0, FluidTagInput input1, FluidStack output0, FluidStack output1, int energy, int time) {
-        super(LAZY_EMPTY, ITRecipeTypes.HEAT_EXCHANGER, id);
+        super(LAZY_EMPTY, RecipeTypes.HEAT_EXCHANGER, id);
         this.input0 = input0;
         this.input1 = input1;
         this.output0 = output0;

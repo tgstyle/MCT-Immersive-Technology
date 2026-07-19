@@ -10,7 +10,7 @@
     "common.InitializationTrackerMixin",
     "common.MixerLogicDebounceMixin",
     "common.MixerRecipePriorityMixin",
-    "common.IMixerStateExtensionMixin",
+    "common.MixerStateExtensionMixin",
     "common.MultiblockBEHelperMixin"
   ],
   "injectors": {

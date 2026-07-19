@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.connectors.gui;
 
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class ConnectorTimerMenu extends ITContainerMenu {
+public class ConnectorTimerMenu extends ContainerMenu {
     public ConnectorTimerBlockEntity tile;
 
     public ConnectorTimerMenu(MenuType<ConnectorTimerMenu> type, int id, Inventory _inv, ConnectorTimerBlockEntity tile) {

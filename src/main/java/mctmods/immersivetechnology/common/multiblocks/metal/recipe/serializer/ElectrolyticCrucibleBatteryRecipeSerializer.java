@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
 
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(); }
+    @Override public ItemStack getIcon() { return MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(); }
 
     @Override public ElectrolyticCrucibleBatteryRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext context) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));

@@ -6,7 +6,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import blusunrize.immersiveengineering.common.register.IEFluids;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<AdvancedCokeOvenRecipe>> SERIALIZER;
-    public static final CachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ADVANCED_COKE_OVEN);
+    public static final CachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.ADVANCED_COKE_OVEN);
 
     private static final List<AdvancedCokeOvenRecipe> IE_COPIED_RECIPES = new ArrayList<>();
 
@@ -33,7 +33,7 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     public final int creosoteOutput;
 
     public AdvancedCokeOvenRecipe(ResourceLocation id, IngredientWithSize input, Lazy<ItemStack> itemOutput, int time, int creosoteOutput) {
-        super(itemOutput, ITRecipeTypes.ADVANCED_COKE_OVEN, id);
+        super(itemOutput, RecipeTypes.ADVANCED_COKE_OVEN, id);
         this.input = input;
         this.itemOutput = itemOutput;
         this.time = time;

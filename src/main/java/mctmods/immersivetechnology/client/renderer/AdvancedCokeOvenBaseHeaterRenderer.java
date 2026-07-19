@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
-import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterIBlockEntity;
+import mctmods.immersivetechnology.client.models.ModDynamicModel;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
+import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,14 +20,14 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterIBlockEntity> {
+public class AdvancedCokeOvenBaseHeaterRenderer extends BaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterBlockEntity> {
     private static final Quaternionf ROT_Y = new Quaternionf();
     private static final Quaternionf ROT_X = new Quaternionf();
-    public static ITDynamicModel FAN_MODEL;
+    public static ModDynamicModel FAN_MODEL;
 
     public AdvancedCokeOvenBaseHeaterRenderer() {}
 
-    @Override public void render(@NotNull AdvancedCokeOvenBaseHeaterIBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull AdvancedCokeOvenBaseHeaterBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (tile.dummy || tile.getLevel() == null || FAN_MODEL == null) { return; }
         Level level = tile.getLevel();
         BlockPos pos = tile.getBlockPos();
@@ -46,10 +46,10 @@ public class AdvancedCokeOvenBaseHeaterRenderer extends ITBaseBlockEntityRendere
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
+    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
-        ITRenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
+        RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
         matrix.popPose();
     }
 }

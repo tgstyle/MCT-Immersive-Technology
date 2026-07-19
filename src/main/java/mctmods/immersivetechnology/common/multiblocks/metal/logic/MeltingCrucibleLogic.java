@@ -4,13 +4,13 @@ import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
@@ -54,40 +54,40 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 
-public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, ITIPressurizedFluidOutput<MeltingCrucibleLogic.State> {
+public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, IPressurizedFluidOutput<MeltingCrucibleLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
-    public static final int INPUT_TANK_CAPACITY = ITServerConfig.meltingCrucibleInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.meltingCrucibleOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ITServerConfig.meltingCrucibleEnergyCapacity;
+    public static final int INPUT_TANK_CAPACITY = ServerConfig.meltingCrucibleInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.meltingCrucibleOutputTankCapacity;
+    public static final int ENERGY_CAPACITY = ServerConfig.meltingCrucibleEnergyCapacity;
 
-    public static final double WORKING_HEAT_LEVEL = ITServerConfig.meltingCrucibleHeatWorkingLevel;
-    private static final double HEAT_LOSS_MULTIPLIER = ITServerConfig.meltingCrucibleHeatLossMultiplier;
-    private static final double HEAT_GAIN_BASE = ITServerConfig.meltingCrucibleHeatGainBase;
-    private static final int ENERGY_PER_TICK_TO_HEAT = ITServerConfig.meltingCrucibleEnergyPerTickToHeat;
-    private static final int ENERGY_PER_TICK_TO_MAINTAIN = ITServerConfig.meltingCrucibleEnergyPerTickToMaintain;
+    public static final double WORKING_HEAT_LEVEL = ServerConfig.meltingCrucibleHeatWorkingLevel;
+    private static final double HEAT_LOSS_MULTIPLIER = ServerConfig.meltingCrucibleHeatLossMultiplier;
+    private static final double HEAT_GAIN_BASE = ServerConfig.meltingCrucibleHeatGainBase;
+    private static final int ENERGY_PER_TICK_TO_HEAT = ServerConfig.meltingCrucibleEnergyPerTickToHeat;
+    private static final int ENERGY_PER_TICK_TO_MAINTAIN = ServerConfig.meltingCrucibleEnergyPerTickToMaintain;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(MeltingCrucibleShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    public static final CapabilityPosition ENERGY_INPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "energy_input0");
-    private static final List<BlockPos> FLUID_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final CapabilityPosition ENERGY_INPUT_POI = MultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "energy_input0");
+    private static final List<BlockPos> FLUID_OUTPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     @Override public List<BlockPos> getOutputPositions() { return FLUID_OUTPUT_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        List<BlockPos> soundPosList = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
+        List<BlockPos> soundPosList = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         if (soundPosList.isEmpty()) { return; }
         BlockPos soundBlockPos = soundPosList.get(0);
         Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
@@ -97,7 +97,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(() -> state.active, ctx.isValid(), soundPos, ITSounds.meltingCrucible, () -> {
+            state.isSoundPlaying = ModSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.meltingCrucible, () -> {
                 LocalPlayer p = Minecraft.getInstance().player;
                 if (p == null) { return 0f; }
                 float a = (float) Math.max(p.distanceToSqr(soundPos) / 32f, 1f);
@@ -204,21 +204,21 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         return LazyOptional.empty();
     }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { MultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return MeltingCrucibleShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITIProcessContext.ProcessContextInMachine<MeltingRecipe>, ITIDisplayContext {
-        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = ITCachedRecipe.cached(MeltingRecipe::findRecipe);
+    public static class State implements IMultiblockState, IProcessContext.ProcessContextInMachine<MeltingRecipe>, IDisplayContext {
+        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = CachedRecipe.cached(MeltingRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MeltingCrucibleTank tanks;
         public final StoredCapability<IEnergyStorage> energyCap;
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;
         public final StoredCapability<IItemHandler> invCap;
-        public final ITSlotwiseItemHandler inventory;
+        public final SlotwiseItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<MeltingRecipe> processor;
         public AveragingEnergyStorage energy;
@@ -235,24 +235,24 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new MeltingCrucibleTank(v -> onChanged.run());
             this.tankArray = new IFluidTank[]{tanks.input(), tanks.output()};
-            inventory = new ITSlotwiseItemHandler(
+            inventory = new SlotwiseItemHandler(
                     List.of(
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT
+                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT,
+                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT
                     ),
                     onChanged
             );
-            this.inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
-            this.outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
+            this.inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input(), false, true, onChanged));
+            this.outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
         }
 
-        public ITSlotwiseItemHandler getInventory() { return inventory; }
+        public SlotwiseItemHandler getInventory() { return inventory; }
         public MeltingCrucibleTank getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
@@ -313,9 +313,9 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         }
     }
 
-    public record MeltingCrucibleTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
+    public record MeltingCrucibleTank(MarkableFluidTank input, MarkableFluidTank output) {
         public MeltingCrucibleTank(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new ITMarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
         }
 
         public static MeltingCrucibleTank makeClient() { return new MeltingCrucibleTank(v -> {}); }
@@ -335,8 +335,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @SuppressWarnings("unused")
         public int getCapacity() { return Math.max(INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY); }
 
-        public ITMarkableFluidTank input() { return input; }
-        public ITMarkableFluidTank output() { return output; }
+        public MarkableFluidTank input() { return input; }
+        public MarkableFluidTank output() { return output; }
     }
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {

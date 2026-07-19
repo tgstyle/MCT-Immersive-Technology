@@ -4,8 +4,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultibl
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerLiquidLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.registration.ITTags;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +25,7 @@ public class BoilerLiquidProcess implements IMultiblockComponent<BoilerLiquidLog
             if (hitDir != poiSide) { return InteractionResult.PASS; }
         }
         ItemStack held = player.getItemInHand(hand);
-        if (!held.is(ITTags.igniters)) { return InteractionResult.PASS; }
+        if (!held.is(ModTags.igniters)) { return InteractionResult.PASS; }
         BoilerLiquidLogic.State state = ctx.getState();
         if (state.pilotLit) { return InteractionResult.PASS; }
         Level level = ctx.getLevel().getRawLevel();
@@ -33,8 +33,8 @@ public class BoilerLiquidProcess implements IMultiblockComponent<BoilerLiquidLog
         if (isClient) { return InteractionResult.SUCCESS; }
         state.pilotLit = true;
         state.heatLevel = BoilerLiquidLogic.PILOT_HEAT;
-        level.playSound(null, ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_POIS.get(0)), ITSounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
-        if (held.is(ITTags.igniters_consume)) { held.shrink(1); }
+        level.playSound(null, ctx.getLevel().toAbsolute(BoilerLiquidLogic.IGNITION_POIS.get(0)), Sounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
+        if (held.is(ModTags.igniters_consume)) { held.shrink(1); }
         else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand)); }
         ctx.markMasterDirty();
         ctx.requestMasterBESync();

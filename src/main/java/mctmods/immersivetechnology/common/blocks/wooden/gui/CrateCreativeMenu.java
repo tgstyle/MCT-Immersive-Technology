@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.wooden.gui;
 
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.ITGenericContainerData;
+import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
-import mctmods.immersivetechnology.common.gui.helper.ITGenericDataSerializers;
+import mctmods.immersivetechnology.common.gui.helper.GenericDataSerializers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -17,24 +17,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CrateCreativeMenu extends ITContainerMenu {
+public class CrateCreativeMenu extends ContainerMenu {
     private final IItemHandlerModifiable handler;
     private final CrateCreativeBlockEntity tile;
 
     public CrateCreativeMenu(MenuType<CrateCreativeMenu> type, int id, Inventory inv, CrateCreativeBlockEntity tile) {
-        super(ITContainerMenu.blockCtx(type, id, tile));
+        super(ContainerMenu.blockCtx(type, id, tile));
         this.handler = tile;
         this.tile = tile;
-        addGenericData(ITGenericContainerData.itemStack(() -> handler.getStackInSlot(0), stack -> handler.setStackInSlot(0, stack)));
+        addGenericData(GenericContainerData.itemStack(() -> handler.getStackInSlot(0), stack -> handler.setStackInSlot(0, stack)));
         addOwnSlots();
         addPlayerSlots(inv);
     }
 
     public CrateCreativeMenu(MenuType<CrateCreativeMenu> type, int id, Inventory inv) {
-        super(ITContainerMenu.clientCtx(type, id));
+        super(ContainerMenu.clientCtx(type, id));
         this.handler = new DummyHandler();
         this.tile = null;
-        addGenericData(ITGenericContainerData.itemStack(() -> handler.getStackInSlot(0), stack -> handler.setStackInSlot(0, stack)));
+        addGenericData(GenericContainerData.itemStack(() -> handler.getStackInSlot(0), stack -> handler.setStackInSlot(0, stack)));
         addOwnSlots();
         addPlayerSlots(inv);
     }
@@ -60,7 +60,7 @@ public class CrateCreativeMenu extends ITContainerMenu {
 
     @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override public void receiveSync(List<Pair<Integer, ITGenericDataSerializers.DataPair<?>>> synced) { super.receiveSync(synced); }
+    @Override public void receiveSync(List<Pair<Integer, GenericDataSerializers.DataPair<?>>> synced) { super.receiveSync(synced); }
 
     @Override public void clicked(int slotId, int button, @NotNull ClickType clickType, @NotNull Player player) {
         if (slotId == 0) {

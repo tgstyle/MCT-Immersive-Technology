@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 public class SteamTurbineRecipeSerializer extends IERecipeSerializer<SteamTurbineRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.STEAM_TURBINE.iconStack(); }
+    @Override public ItemStack getIcon() { return MultiblockRegistry.STEAM_TURBINE.iconStack(); }
 
     @Override public SteamTurbineRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(json.getAsJsonObject("input"));

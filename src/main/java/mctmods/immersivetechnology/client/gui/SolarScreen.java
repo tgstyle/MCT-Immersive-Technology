@@ -1,17 +1,17 @@
 package mctmods.immersivetechnology.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
+import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.InfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.SolarMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -25,16 +25,16 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SolarScreen extends ITContainerScreen<SolarMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("solar");
+public class SolarScreen extends ContainerScreen<SolarMenu> {
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("solar");
     public final boolean isMelter;
 
     public SolarScreen(SolarMenu container, Inventory inventoryPlayer, Component title) {
         super(container, inventoryPlayer, title, TEXTURE);
-        this.isMelter = menu.getType() == ITMenuTypes.SOLAR_MELTER_MENU.getType();
+        this.isMelter = menu.getType() == MenuTypes.SOLAR_MELTER_MENU.getType();
     }
 
-    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() { return ImmutableList.of(new ITFluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new ITFluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
+    @Override @Nonnull protected List<InfoArea> makeInfoAreas() { return ImmutableList.of(new FluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new FluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
 
     @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
         double heatLevel = menu.state.get(0);

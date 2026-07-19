@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchangerRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.HEAT_EXCHANGER.iconStack(); }
+    @Override public ItemStack getIcon() { return MultiblockRegistry.HEAT_EXCHANGER.iconStack(); }
 
     @Override public HeatExchangerRecipe readFromJson(ResourceLocation id, JsonObject json, ICondition.IContext context) {
         FluidTagInput input0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));

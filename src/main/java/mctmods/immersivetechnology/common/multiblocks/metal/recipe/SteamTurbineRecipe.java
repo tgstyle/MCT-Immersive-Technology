@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 public class SteamTurbineRecipe extends IESerializableRecipe {
     public static RegistryObject<IERecipeSerializer<SteamTurbineRecipe>> SERIALIZER;
-    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.STEAM_TURBINE);
+    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.STEAM_TURBINE);
 
     public final FluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
@@ -27,7 +27,7 @@ public class SteamTurbineRecipe extends IESerializableRecipe {
     Lazy<Integer> totalProcessTime;
 
     public SteamTurbineRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, float torque) {
-        super(LAZY_EMPTY, ITRecipeTypes.STEAM_TURBINE, id);
+        super(LAZY_EMPTY, RecipeTypes.STEAM_TURBINE, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.time = time;

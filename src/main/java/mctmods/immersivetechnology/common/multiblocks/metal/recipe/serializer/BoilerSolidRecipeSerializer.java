@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_SOLID.iconStack(); }
+    @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_SOLID.iconStack(); }
 
     @Override public BoilerSolidRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
         IngredientWithSize input = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));

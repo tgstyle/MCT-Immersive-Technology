@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
+import mctmods.immersivetechnology.client.models.ModDynamicModel;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.GasTurbineLogic;
-import mctmods.immersivetechnology.core.ITClientConfig;
+import mctmods.immersivetechnology.core.ClientConfig;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import java.util.List;
 
-public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
+public class GasTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
     private static final Quaternionf ROTATION = new Quaternionf();
 
     public GasTurbineRenderer() {}
@@ -41,21 +41,21 @@ public class GasTurbineRenderer extends ITBaseBlockEntityRenderer<MultiblockBloc
         Direction dir = orientation.front();
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());
         double angle = state.animation_fanRotation + state.animation_fanRotationStep * partialTicks;
-        if (!ITClientConfig.doSpecialRenderGasTurbine) { angle = 0; }
+        if (!ClientConfig.doSpecialRenderGasTurbine) { angle = 0; }
         Vec3 rotorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 0)).subtract(pos));
         poseStack.pushPose();
         poseStack.translate(rotorStart.x + 0.5, rotorStart.y + 0.5, rotorStart.z + 0.5);
         ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
         poseStack.mulPose(ROTATION);
-        ITDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
+        ModDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         renderDynamicModel(selectedModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
+    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
-        ITRenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
+        RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
         matrix.popPose();
     }
 }

@@ -1,23 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITClientMultiblockProperties;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.BlockPos;
 
-import java.util.function.Consumer;
-
-public class Distiller extends ITTemplateMultiblock {
+public class Distiller extends ModTemplateMultiblock {
     public static final Distiller INSTANCE = new Distiller();
 
-    public Distiller() { super(ITLib.rl("multiblocks/distiller"), DistillerShape.MASTER_POS, DistillerShape.TRIGGER_POS, new BlockPos(DistillerShape.WIDTH,DistillerShape.HEIGHT,DistillerShape.LENGTH), ITMultiblockProvider.DISTILLER); }
-
-    @Override public float getManualScale() { return DistillerShape.MANUAL_SCALE; }
-
-    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, DistillerShape.CLIENT_OFFSET.getX(), DistillerShape.CLIENT_OFFSET.getY(), DistillerShape.CLIENT_OFFSET.getZ())); }
-
-    @Override public boolean canBeMirrored() { return true; }
+    public Distiller() { super(Reference.rl("multiblocks/distiller"), DistillerShape.MASTER_POS, DistillerShape.TRIGGER_POS, new BlockPos(DistillerShape.WIDTH,DistillerShape.HEIGHT,DistillerShape.LENGTH), DistillerShape.CLIENT_OFFSET, DistillerShape.MANUAL_SCALE, MultiblockRegistry.DISTILLER); }
 }

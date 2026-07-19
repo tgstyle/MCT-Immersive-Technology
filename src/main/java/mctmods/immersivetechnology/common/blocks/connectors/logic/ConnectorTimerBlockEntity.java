@@ -10,11 +10,11 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.blocks.generic.ImmersiveConnectableBlockEntity;
 import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 
-public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements ITIServerTickableBE, IStateBasedDirectional, ITBlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
+public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
@@ -62,7 +62,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     public boolean rsDirty = false;
 
     public ConnectorTimerBlockEntity(BlockPos pos, BlockState state) {
-        this(ITBlockEntities.CONNECTOR_TIMER.get(), pos, state);
+        this(BlockEntities.CONNECTOR_TIMER.get(), pos, state);
     }
 
     public ConnectorTimerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -306,7 +306,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         return WireType.REDSTONE_CATEGORY.equals(cableType.getCategory());
     }
 
-    @Override @NotNull public Property<Direction> getFacingProperty() { return ITProperties.FACING_ALL; }
+    @Override @NotNull public Property<Direction> getFacingProperty() { return ModProperties.FACING_ALL; }
 
     @Override @NotNull public blusunrize.immersiveengineering.common.blocks.PlacementLimitation getFacingLimitation() {
         return blusunrize.immersiveengineering.common.blocks.PlacementLimitation.SIDE_CLICKED;
@@ -338,7 +338,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     }
 
     @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
-        return ConnectorTimerMenu.makeServer(ITMenuTypes.CONNECTOR_TIMER.getType(), id, inv, this);
+        return ConnectorTimerMenu.makeServer(MenuTypes.CONNECTOR_TIMER.getType(), id, inv, this);
     }
 
     @Override @NotNull public Component getDisplayName() {

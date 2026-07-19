@@ -1,16 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.client.util.ITClientUtils;
-import mctmods.immersivetechnology.core.util.ITLayeredComparatorOutput;
-import mctmods.immersivetechnology.core.util.ITUtils;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.core.util.LayeredComparatorOutput;
+import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
@@ -53,13 +53,13 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 
-public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, ITIPressurizedFluidOutput<SteelSheetmetalTankLogic.State> {
+public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IPressurizedFluidOutput<SteelSheetmetalTankLogic.State> {
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DATA.pointsOfInterest);
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    private static final List<CapabilityPosition> INPUT_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
-    private static final List<CapabilityPosition> IO_POIS = ITMultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
-    private static final BlockPos COMPARATOR_BASE = ITMultiblockPOIHelper.getPosList(RAW_POIS, "comparator_base0").get(0);
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    private static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
+    private static final List<CapabilityPosition> IO_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
+    private static final BlockPos COMPARATOR_BASE = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator_base0").get(0);
     private static final List<BlockPos> COMPARATOR_LAYERS;
 
     static {
@@ -72,16 +72,16 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     @Override public List<RelativeBlockFace> getOutputFacings() { return IO_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList()); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return Stream.generate(() -> state.tank).limit(IO_POIS.size()).collect(ImmutableList.toImmutableList()); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return Stream.generate(() -> state.tank).limit(IO_POIS.size()).collect(ImmutableList.toImmutableList()); }
 
-    @Override public int getTransferSpeed() { return ITServerConfig.steelSheetmetalTankTransferSpeed; }
+    @Override public int getTransferSpeed() { return ServerConfig.steelSheetmetalTankTransferSpeed; }
 
     @Override public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
         return state.rsState.isEnabled(ctx) && !state.tank.isEmpty();
     }
 
-    private record ConditionalFluidHandler(ITMarkableFluidTank tank, boolean canFill, boolean canDrain, Runnable onChange, Supplier<Boolean> allowDrain) implements IFluidHandler {
+    private record ConditionalFluidHandler(MarkableFluidTank tank, boolean canFill, boolean canDrain, Runnable onChange, Supplier<Boolean> allowDrain) implements IFluidHandler {
         @Override public int getTanks() { return 1; }
 
         @Override @NotNull public FluidStack getFluidInTank(int tank) { return this.tank.getFluid(); }
@@ -113,9 +113,9 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         }
     }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
-        public final ITMarkableFluidTank tank;
-        private final ITLayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
+    public static class State implements IMultiblockState, IDisplayContext {
+        public final MarkableFluidTank tank;
+        private final LayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
         private final StoredCapability<IFluidHandler> inputHandler;
         private final StoredCapability<IFluidHandler> ioHandler;
         public RSState rsState = RSState.disabledByDefault();
@@ -123,7 +123,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
         public State(IInitialMultiblockContext<State> capabilitySource) {
             Runnable changedAndSync = () -> { capabilitySource.getSyncRunnable().run(); capabilitySource.getMarkDirtyRunnable().run(); };
-            this.tank = new ITMarkableFluidTank(ITServerConfig.steelSheetmetalTankCapacity, v -> changedAndSync.run());
+            this.tank = new MarkableFluidTank(ServerConfig.steelSheetmetalTankCapacity, v -> changedAndSync.run());
             this.inputHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, false, changedAndSync, () -> false));
             this.ioHandler = new StoredCapability<>(new ConditionalFluidHandler(tank, true, true, changedAndSync, () -> true));
             try {
@@ -133,7 +133,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
             } catch (Exception e) {
                 throw new RuntimeException("Failed to set RSState positions", e);
             }
-            this.comparatorHelper = new ITLayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
+            this.comparatorHelper = new LayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
                     (ctx, value) -> {
                         BlockPos pos = COMPARATOR_BASE;
                         IMultiblockLevel level = ctx.getLevel();
@@ -225,7 +225,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     @Override public void dropExtraItems(State state, java.util.function.Consumer<net.minecraft.world.item.ItemStack> drop) { }
 
     @Override @Nullable public List<Component> getOverlayText(State state, Player player, boolean hammer) {
-        if (ITUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ITClientUtils.formatFluidStack(state.tank.getFluid()));
+        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ClientUtils.formatFluidStack(state.tank.getFluid()));
         return null;
     }
 

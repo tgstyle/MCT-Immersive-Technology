@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<ElectrolyticCrucibleBatteryRecipe>> SERIALIZER;
-    public static final CachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
+    public static final CachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
 
     public final FluidTagInput fluidInput0;
     @Nullable public final FluidStack fluidOutput0;
@@ -36,7 +36,7 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     Lazy<Integer> totalProcessEnergy;
 
     public ElectrolyticCrucibleBatteryRecipe(ResourceLocation id, FluidTagInput fluidInput0, @Nullable FluidStack fluidOutput0, @Nullable FluidStack fluidOutput1, @Nullable FluidStack fluidOutput2, ItemStack itemOutput, int energy, int time) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, id);
         this.fluidInput0 = fluidInput0;
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;

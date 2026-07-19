@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
-import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenIBlockEntity;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -23,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-public class OpenBarrelRenderer extends ITBaseBlockEntityRenderer<BarrelOpenIBlockEntity> {
+public class OpenBarrelRenderer extends BaseBlockEntityRenderer<BarrelOpenBlockEntity> {
 
     public OpenBarrelRenderer() {}
 
-    @Override public void render(BarrelOpenIBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    @Override public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         Level level = be.getLevel();
         if (level == null) { return; }
         FluidStack fluidStack = be.tank.getFluid();

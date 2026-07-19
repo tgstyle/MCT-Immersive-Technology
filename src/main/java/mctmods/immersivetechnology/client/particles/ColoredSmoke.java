@@ -4,7 +4,7 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mctmods.immersivetechnology.core.registration.ITParticles;
+import mctmods.immersivetechnology.core.registration.Particles;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
@@ -62,7 +62,7 @@ public class ColoredSmoke implements ParticleOptions {
         this.collideVertical = collideVertical;
     }
 
-    @Override @NotNull public ParticleType<?> getType() { return ITParticles.COLORED_SMOKE.get(); }
+    @Override @NotNull public ParticleType<?> getType() { return Particles.COLORED_SMOKE.get(); }
 
     @Override public void writeToNetwork(FriendlyByteBuf buf) {
         buf.writeFloat(color.x());

@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
-import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
+import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.InfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerTankMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -19,8 +19,8 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("boiler_tank");
+public class BoilerTankScreen extends ContainerScreen<BoilerTankMenu> {
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("boiler_tank");
 
     public BoilerTankScreen(BoilerTankMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
@@ -31,11 +31,11 @@ public class BoilerTankScreen extends ITContainerScreen<BoilerTankMenu> {
         graphics.blit(TEXTURE, leftPos + 67, topPos + 5, 176, 0, barWidth, 9);
     }
 
-    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
         return ImmutableList.of(
-                new ITFluidInfoArea(menu.tanks.input(), new Rect2i(leftPos + 67, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new ITFluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 92, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new ITInfoArea(new Rect2i(leftPos + 67, topPos + 5, 41, 9)) {
+                new FluidInfoArea(menu.tanks.input(), new Rect2i(leftPos + 67, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new FluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 92, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new InfoArea(new Rect2i(leftPos + 67, topPos + 5, 41, 9)) {
                     @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();

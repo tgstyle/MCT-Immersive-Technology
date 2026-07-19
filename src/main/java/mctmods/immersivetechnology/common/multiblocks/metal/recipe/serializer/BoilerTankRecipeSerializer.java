@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_TANK.iconStack(); }
+    @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_TANK.iconStack(); }
 
     @Override public BoilerTankRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));

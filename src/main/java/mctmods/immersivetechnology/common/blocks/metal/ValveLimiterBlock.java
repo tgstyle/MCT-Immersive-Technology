@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonIBlockEntity;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,22 +25,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterIBlockEntity> {
+public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
-    public ValveLimiterBlock(BiFunction<BlockPos, BlockState, ValveLimiterIBlockEntity> makeEntity, Properties p) {
+    public ValveLimiterBlock(BiFunction<BlockPos, BlockState, ValveLimiterBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(OPEN, true)
-                .setValue(ITProperties.FACING_ALL, Direction.NORTH)
-                .setValue(ITProperties.MIRRORED, false)
+                .setValue(ModProperties.FACING_ALL, Direction.NORTH)
+                .setValue(ModProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ITProperties.FACING_ALL, ITProperties.MIRRORED, OPEN, ROTATION);
+        builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION);
     }
 
     @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
@@ -49,13 +49,13 @@ public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterIBlockEntity> 
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ValveCommonIBlockEntity valve) { valve.updateRedstoneState(); }
+        if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
     @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ValveCommonIBlockEntity valve) {
+        if (be instanceof ValveCommonBlockEntity valve) {
             if (player.isCrouching()) {
                 valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1);
                 valve.updateRedstoneState();
@@ -75,8 +75,8 @@ public class ValveLimiterBlock extends ITIEntityBlock<ValveLimiterIBlockEntity> 
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
         return defaultBlockState()
-                .setValue(ITProperties.FACING_ALL, facing)
-                .setValue(ITProperties.MIRRORED, false)
+                .setValue(ModProperties.FACING_ALL, facing)
+                .setValue(ModProperties.MIRRORED, false)
                 .setValue(OPEN, true)
                 .setValue(ROTATION, rotation);
     }

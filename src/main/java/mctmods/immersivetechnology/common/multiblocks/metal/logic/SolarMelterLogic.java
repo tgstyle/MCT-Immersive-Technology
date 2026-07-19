@@ -2,19 +2,19 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
-import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITISolarMultiblockState;
+import mctmods.immersivetechnology.common.fluids.helper.SolarTank;
+import mctmods.immersivetechnology.common.multiblocks.helper.ISolarMultiblockState;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.ITCommonConfig;
-import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import mctmods.immersivetechnology.core.CommonConfig;
+import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -62,42 +62,42 @@ import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 import java.util.function.BiFunction;
 
-public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State>, ITIPressurizedFluidOutput<SolarMelterLogic.State> {
+public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State>, IPressurizedFluidOutput<SolarMelterLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
-    public static final int INPUT_TANK_CAPACITY = ITServerConfig.solarMelterInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ITServerConfig.solarMelterOutputTankCapacity;
+    public static final int INPUT_TANK_CAPACITY = ServerConfig.solarMelterInputTankCapacity;
+    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.solarMelterOutputTankCapacity;
 
-    public static final double WORKING_HEAT_LEVEL = ITCommonConfig.solarMelterWorkingHeatLevel;
-    private static final double DAY_MIN_HEAT_LOSS = ITServerConfig.solarMelterDayMinHeatLoss;
-    private static final double LOSS_PER_SECTION_DROP = ITServerConfig.solarMelterLossPerSectionDrop;
-    private static final double TEMP_DEPENDENT_LOSS_FACTOR = ITServerConfig.solarMelterTempDependentLossFactor;
-    private static final double HEAT_INCREASE_FACTOR = ITServerConfig.solarMelterHeatIncreaseFactor;
-    private static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = ITServerConfig.solarMelterTempToMinReflectorsDivisor;
-    private static final double REFLECTOR_TIER_OFFSET = ITServerConfig.solarMelterReflectorTierOffset;
-    public static final int PROGRESS_LOSS_OFF_TEMP = ITServerConfig.solarMelterProgressLossOffTemp;
-    public static final float SPEED_MULTIPLIER = (float) ITServerConfig.solarMelterSpeedMultiplier;
+    public static final double WORKING_HEAT_LEVEL = CommonConfig.solarMelterWorkingHeatLevel;
+    private static final double DAY_MIN_HEAT_LOSS = ServerConfig.solarMelterDayMinHeatLoss;
+    private static final double LOSS_PER_SECTION_DROP = ServerConfig.solarMelterLossPerSectionDrop;
+    private static final double TEMP_DEPENDENT_LOSS_FACTOR = ServerConfig.solarMelterTempDependentLossFactor;
+    private static final double HEAT_INCREASE_FACTOR = ServerConfig.solarMelterHeatIncreaseFactor;
+    private static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = ServerConfig.solarMelterTempToMinReflectorsDivisor;
+    private static final double REFLECTOR_TIER_OFFSET = ServerConfig.solarMelterReflectorTierOffset;
+    public static final int PROGRESS_LOSS_OFF_TEMP = ServerConfig.solarMelterProgressLossOffTemp;
+    public static final float SPEED_MULTIPLIER = (float) ServerConfig.solarMelterSpeedMultiplier;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarMelterShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final BlockPos LINK_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
-    public static final BlockPos PARTICLE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "particle0").get(0);
-    public static final BlockPos REFLECTOR_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "reflector0").get(0);
-    public static final BlockPos SUN_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos LINK_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
+    public static final BlockPos PARTICLE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "particle0").get(0);
+    public static final BlockPos REFLECTOR_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "reflector0").get(0);
+    public static final BlockPos SUN_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
+    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
@@ -117,12 +117,12 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                     if (vol > 0.01f) {
                         state.soundId++;
                         int thisId = state.soundId;
-                        state.isSoundPlaying = ITSound.startSound(() -> {
+                        state.isSoundPlaying = ModSound.startSound(() -> {
                             FluidStack fsActive = state.tanks.input().getFluid();
                             MeltingRecipe recipeActive = fsActive.getAmount() > 0 ? state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsActive) : null;
                             double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
                             return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
-                        }, ctx.isValid(), soundVec, ITSounds.solarMelter, () -> {
+                        }, ctx.isValid(), soundVec, Sounds.solarMelter, () -> {
                             LocalPlayer playerVol = Minecraft.getInstance().player;
                             if (playerVol == null) { return 0f; }
                             float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 8, 1);
@@ -369,20 +369,20 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) {
         Level level = state.levelSupplier.get();
         if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); }
-        ITMultiBlockInventoryUtils.dropItems(state.inventory, drop);
+        MultiBlockInventoryUtils.dropItems(state.inventory, drop);
         try {
             if (state.inputCap != null) state.inputCap.get(null).invalidate();
             if (state.outputCap != null) state.outputCap.get(null).invalidate();
         } catch (Exception ignored) {}
     }
 
-    public static class State implements ITISolarMultiblockState, ITIDisplayContext {
-        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = ITCachedRecipe.cached(MeltingRecipe::findRecipe);
+    public static class State implements ISolarMultiblockState, IDisplayContext {
+        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = CachedRecipe.cached(MeltingRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
-        public final ITSolarTank tanks;
+        public final SolarTank tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
-        public ITSlotwiseItemHandler inventory;
+        public SlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public double reflectorStrength = 0;
         public byte reflectorCount = 0;
@@ -411,10 +411,10 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new ITSolarTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
-            inventory = new ITSlotwiseItemHandler(List.of(ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT, ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT, ITSlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
-            inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input(), false, true, onChanged));
-            outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output(), true, false, onChanged));
+            tanks = new SolarTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
+            inventory = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT, SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
+            inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input(), false, true, onChanged));
+            outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output(), true, false, onChanged));
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
             MultiblockOrientation orientation = initialContext.orientation();
             BlockPos masterOffset = initialContext.masterOffset();
@@ -439,9 +439,9 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
 
         public boolean isSunVisible() { return sunVisible; }
 
-        public ITSolarTank getTanks() { return tanks; }
+        public SolarTank getTanks() { return tanks; }
 
-        public ITSlotwiseItemHandler getInventory() { return inventory; }
+        public SlotwiseItemHandler getInventory() { return inventory; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", this.tanks.toNBT());

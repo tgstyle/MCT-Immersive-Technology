@@ -5,9 +5,9 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
-import mctmods.immersivetechnology.core.util.ITAdvancements;
-import mctmods.immersivetechnology.core.util.ITRotationUtil;
+import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import mctmods.immersivetechnology.core.util.Advancements;
+import mctmods.immersivetechnology.core.util.RotationUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -95,25 +95,25 @@ public class FormationTool extends Item {
                 if (MultiblockHandler.postMultiblockFormationEvent(player, mb, pos, stack).isCanceled()) { continue; }
                 boolean formed = mb.createStructure(world, pos, multiblockSide, player);
                 if (formed) {
-                    if (player instanceof ServerPlayer sPlayer) { ITAdvancements.TRIGGER_MULTIBLOCK.trigger(sPlayer, mb, stack); }
+                    if (player instanceof ServerPlayer sPlayer) { Advancements.TRIGGER_MULTIBLOCK.trigger(sPlayer, mb, stack); }
                     return InteractionResult.SUCCESS;
                 }
             }
         }
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof ITBlockInterfaces.IConfigurableSides sideConfig) {
+        if (tile instanceof BlockInterfaces.IConfigurableSides sideConfig) {
             Direction activeSide = ((player != null) && player.isShiftKeyDown()) ? side.getOpposite() : side;
             assert player != null;
             if (sideConfig.toggleSide(activeSide, player)) { return InteractionResult.SUCCESS; }
             else { return InteractionResult.FAIL; }
         }
         else {
-            boolean rotate = !(tile instanceof ITBlockInterfaces.IDirectionalBE) && !(tile instanceof ITBlockInterfaces.IHammerInteraction);
-            if (!rotate && tile instanceof ITBlockInterfaces.IDirectionalBE dirBE) {
+            boolean rotate = !(tile instanceof BlockInterfaces.IDirectionalBE) && !(tile instanceof BlockInterfaces.IHammerInteraction);
+            if (!rotate && tile instanceof BlockInterfaces.IDirectionalBE dirBE) {
                 assert player != null;
                 rotate = dirBE.canHammerRotate(side, context.getClickLocation().subtract(Vec3.atLowerCornerOf(pos)), player); }
-            if (rotate && ITRotationUtil.rotateBlock(world, pos, player != null && (player.isShiftKeyDown() != side.equals(Direction.DOWN)))) { return InteractionResult.SUCCESS; }
-            else if (!rotate && tile instanceof ITBlockInterfaces.IHammerInteraction hammerInteraction) {
+            if (rotate && RotationUtil.rotateBlock(world, pos, player != null && (player.isShiftKeyDown() != side.equals(Direction.DOWN)))) { return InteractionResult.SUCCESS; }
+            else if (!rotate && tile instanceof BlockInterfaces.IHammerInteraction hammerInteraction) {
                 assert player != null;
                 if (hammerInteraction.hammerUseSide(side, player, context.getHand(), context.getClickLocation())) { return InteractionResult.SUCCESS; }
             }
@@ -138,7 +138,7 @@ public class FormationTool extends Item {
     @Override public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) { return true; }
 
     @Override @NotNull public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
-        if (!player.level().isClientSide && ITRotationUtil.rotateEntity(entity)) { return InteractionResult.SUCCESS; }
+        if (!player.level().isClientSide && RotationUtil.rotateEntity(entity)) { return InteractionResult.SUCCESS; }
         return InteractionResult.PASS;
     }
 

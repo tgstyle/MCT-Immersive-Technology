@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.util.multiblock;
 
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
@@ -22,13 +22,13 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
     private final Map<BlockPos, VoxelShape> shapeCache = new ConcurrentHashMap<>();
 
     public static int[] loadDimensions(String multiblockName, String category) {
-        String path = "/assets/" + ITLib.MODID + "/models/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
+        String path = "/assets/" + Reference.MODID + "/models/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
         double minZ = Double.MAX_VALUE, maxZ = Double.MIN_VALUE;
         InputStream is = GenericShape.class.getResourceAsStream(path);
         boolean hasVertices = false;
-        if (is == null) { ITLib.IT_LOGGER.error("OBJ file not found at resource path: {} for multiblock: {}", path, multiblockName); }
+        if (is == null) { Reference.IT_LOGGER.error("OBJ file not found at resource path: {} for multiblock: {}", path, multiblockName); }
         else {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String line;
@@ -50,8 +50,8 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
                         }
                     }
                 }
-                if (!hasVertices) { ITLib.IT_LOGGER.warn("OBJ file loaded but no vertices ('v ') found in: {} for multiblock: {}", path, multiblockName); }
-            } catch (Exception e) { ITLib.IT_LOGGER.error("Error reading OBJ file at {} for multiblock: {}", path, multiblockName, e); }
+                if (!hasVertices) { Reference.IT_LOGGER.warn("OBJ file loaded but no vertices ('v ') found in: {} for multiblock: {}", path, multiblockName); }
+            } catch (Exception e) { Reference.IT_LOGGER.error("Error reading OBJ file at {} for multiblock: {}", path, multiblockName, e); }
         }
         double dx = maxX - minX;
         double dy = maxY - minY;

@@ -1,20 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
+import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.ITCommonConfig;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.CommonConfig;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -60,26 +60,26 @@ import java.util.function.BiFunction;
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
 
-    public static final double HEAT_LOSS_PER_TICK = ITServerConfig.boilerSolidHeatLossPerTick;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITCommonConfig.boilerDefaultWorkingHeat;
-    public static final double PILOT_HEAT = ITServerConfig.boilerSolidPilotHeat;
-    public static final int PILOT_MULTIPLIER = ITServerConfig.boilerSolidPilotMultiplier;
-    public static final double DEFAULT_HEAT_PER_TICK = ITServerConfig.boilerSolidDefaultHeatPerTick;
+    public static final double HEAT_LOSS_PER_TICK = ServerConfig.boilerSolidHeatLossPerTick;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = CommonConfig.boilerDefaultWorkingHeat;
+    public static final double PILOT_HEAT = ServerConfig.boilerSolidPilotHeat;
+    public static final int PILOT_MULTIPLIER = ServerConfig.boilerSolidPilotMultiplier;
+    public static final double DEFAULT_HEAT_PER_TICK = ServerConfig.boilerSolidDefaultHeatPerTick;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
     private static final int WIDTH = BoilerSolidShape.WIDTH;
     private static final int LENGTH = BoilerSolidShape.LENGTH;
     private static final int HEIGHT = BoilerSolidShape.HEIGHT;
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    public static final List<BlockPos> IGNITION_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "ignition0");
-    public static final List<BlockPos> ITEM_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "item_input0");
-    public static final List<BlockPos> HEAT_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "heat_output0");
-    public static final BlockPos SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final List<BlockPos> EXHAUST_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "exhaust0");
-    private static final RelativeBlockFace ITEM_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "item_input0");
-    private static final RelativeBlockFace HEAT_OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "heat_output0");
-    public static final RelativeBlockFace IGNITION_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "ignition0");
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final List<BlockPos> IGNITION_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "ignition0");
+    public static final List<BlockPos> ITEM_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "item_input0");
+    public static final List<BlockPos> HEAT_OUTPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "heat_output0");
+    public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final List<BlockPos> EXHAUST_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "exhaust0");
+    private static final RelativeBlockFace ITEM_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "item_input0");
+    private static final RelativeBlockFace HEAT_OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_output0");
+    public static final RelativeBlockFace IGNITION_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "ignition0");
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
@@ -91,11 +91,11 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         float currentLevel = (float) (state.heatLevel / state.workingHeatLevel);
         float vol = (2 * currentLevel) / attenuation;
         if (state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(
+            state.isSoundPlaying = ModSound.startSound(
                     () -> state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
-                    ITSounds.boiler_solid,
+                    Sounds.boiler_solid,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
@@ -181,7 +181,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 } else {
                     ItemStack consumed = state.inventory.getRawHandler().extractItem(INPUT_FUEL_SLOT, consumeAmount, false);
                     if (consumed.getCount() == consumeAmount) {
-                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ITServerConfig.boilerSolidBurnTimeDivider;
+                        state.burnRemaining = (burnTimePerItem * consumeAmount) / ServerConfig.boilerSolidBurnTimeDivider;
                         state.totalBurnTime = state.burnRemaining;
                         state.heatPerTick = heatPerTick;
                         state.targetHeat = targetHeat;
@@ -204,15 +204,15 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
 
     private void updateAllBlocks(IMultiblockContext<State> ctx, Level level, boolean active) {
         if (level.isClientSide) { return; }
-        ResourceLocation boilerRL = ITLib.rl("boiler_solid");
+        ResourceLocation boilerRL = Reference.rl("boiler_solid");
         Block boilerBlock = ForgeRegistries.BLOCKS.getValue(boilerRL);
         if (boilerBlock == null) { return; }
         for (int y = 0; y < HEIGHT; y++) for (int z = 0; z < LENGTH; z++) for (int x = 0; x < WIDTH; x++) {
             BlockPos relPos = new BlockPos(x, y, z);
             BlockPos absPos = ctx.getLevel().toAbsolute(relPos);
             BlockState curr = level.getBlockState(absPos);
-            if (curr.getBlock() == boilerBlock && curr.hasProperty(ITProperties.ACTIVE)) {
-                BlockState newState = curr.setValue(ITProperties.ACTIVE, active);
+            if (curr.getBlock() == boilerBlock && curr.hasProperty(ModProperties.ACTIVE)) {
+                BlockState newState = curr.setValue(ModProperties.ACTIVE, active);
                 if (!curr.equals(newState)) { level.setBlock(absPos, newState, 3); }
             }
         }
@@ -229,13 +229,13 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         return LazyOptional.empty();
     }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { MultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerSolidShape.GETTER; }
 
-    private static class FuelItemHandler extends ITSlotwiseItemHandler {
+    private static class FuelItemHandler extends SlotwiseItemHandler {
         private final Supplier<Level> levelSupplier;
 
         public FuelItemHandler(Supplier<Level> levelSupplier, List<IOConstraint> constraints, Runnable onChanged) {
@@ -259,13 +259,13 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
     }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
-        public final BiFunction<Level, ItemStack, BoilerSolidRecipe> recipeGetter = ITCachedRecipe.cached(BoilerSolidRecipe::findRecipe);
+    public static class State implements IMultiblockState, IDisplayContext {
+        public final BiFunction<Level, ItemStack, BoilerSolidRecipe> recipeGetter = CachedRecipe.cached(BoilerSolidRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public StoredCapability<IItemHandlerModifiable> inputFuelCap;
         public StoredCapability<IHeatProvider> heatSourceCap;
         public CapabilityReference<IHeatConsumer> boilerInput;
-        public ITSlotwiseItemHandler inventory;
+        public SlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public int burnRemaining = 0;
         public int totalBurnTime = 0;
@@ -281,7 +281,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.inventoryDirty = true; };
-            inventory = new FuelItemHandler(ctx.levelSupplier(), List.of(ITSlotwiseItemHandler.IOConstraint.INPUT), onChanged);
+            inventory = new FuelItemHandler(ctx.levelSupplier(), List.of(SlotwiseItemHandler.IOConstraint.INPUT), onChanged);
             inputFuelCap = new StoredCapability<>(inventory);
             heatSourceCap = new StoredCapability<>(new HeatSourceImpl(this));
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_OUTPUT_FACING, HEAT_OUTPUT_POIS.get(0));

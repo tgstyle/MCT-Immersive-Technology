@@ -16,14 +16,14 @@ import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -52,13 +52,13 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
-    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final CapabilityPosition MECHANICAL_INPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_input0");
-    private static final List<BlockPos> ENERGY_LEFT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_left0");
-    private static final List<BlockPos> ENERGY_RIGHT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "energy_right0");
-    private static final RelativeBlockFace ENERGY_LEFT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_left0");
-    private static final RelativeBlockFace ENERGY_RIGHT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "energy_right0");
-    private static final RelativeBlockFace MECHANICAL_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_input0");
+    public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final CapabilityPosition MECHANICAL_INPUT_POI = MultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_input0");
+    private static final List<BlockPos> ENERGY_LEFT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_left0");
+    private static final List<BlockPos> ENERGY_RIGHT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_right0");
+    private static final RelativeBlockFace ENERGY_LEFT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_left0");
+    private static final RelativeBlockFace ENERGY_RIGHT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_right0");
+    private static final RelativeBlockFace MECHANICAL_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_input0");
 
     private static final LazyOptional<IMechanicalEnergyConsumer> MECHANICAL_CONSUMER = LazyOptional.of(MechanicalEnergyConsumer::new);
 
@@ -70,17 +70,17 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         float att = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
         float vol = 11f / att;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(
+            state.isSoundPlaying = ModSound.startSound(
                     () -> state.active,
                     ctx.isValid(),
                     soundPos,
-                    ITSounds.alternator,
+                    Sounds.alternator,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
                         return 11f / (float) Math.max(p.distanceToSqr(soundPos) / 32, 1);
                     },
-                    () -> ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.25f, state.speed)
+                    () -> Reference.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.25f, state.speed)
             );
         }
     }
@@ -101,7 +101,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         Direction inputFacing = ctx.getLevel().toAbsolute(MECHANICAL_INPUT_FACING);
         BlockPos inputPortAbs = ctx.getLevel().toAbsolute(MECHANICAL_INPUT_POI.posInMultiblock());
         if (inputFacing == null) {
-            ITLib.IT_LOGGER.warn("AlternatorLogic: Failed to resolve input facing");
+            Reference.IT_LOGGER.warn("AlternatorLogic: Failed to resolve input facing");
         } else {
             BlockPos providerAbsolutePos = inputPortAbs.relative(inputFacing);
             BlockEntity entity = level.getBlockEntity(providerAbsolutePos);
@@ -138,8 +138,8 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
         double ratio = (double) state.speed / MAX_SPEED;
-        double powerFactor = Math.max(0.0D, ITServerConfig.alternatorPowerFactor);
-        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * ITServerConfig.alternatorMaxOutput * powerFactor);
+        double powerFactor = Math.max(0.0D, ServerConfig.alternatorPowerFactor);
+        int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * ServerConfig.alternatorMaxOutput * powerFactor);
         List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);
         if (connected.isEmpty()) { state.energy.receiveEnergy(generatedThisTick, false); return; }
         int pushed = distributeFluxProper(connected, generatedThisTick);
@@ -220,12 +220,12 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
-        @Override public double getMass() { return ITServerConfig.alternatorBaseMass; }
-        @Override public double getFriction() { return ITServerConfig.alternatorFriction; }
+        @Override public double getMass() { return ServerConfig.alternatorBaseMass; }
+        @Override public double getFriction() { return ServerConfig.alternatorFriction; }
         @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
     }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
+    public static class State implements IMultiblockState, IDisplayContext {
         public AveragingEnergyStorage energy;
         public boolean active = false;
         public int speed = 0;
@@ -238,7 +238,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            this.energy = new SyncEnergyStorage(ITServerConfig.alternatorEnergyCapacity, onChanged);
+            this.energy = new SyncEnergyStorage(ServerConfig.alternatorEnergyCapacity, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
         }
 
@@ -280,7 +280,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
-            if (energy == null) { energy = new SyncEnergyStorage(ITServerConfig.alternatorEnergyCapacity, () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(ServerConfig.alternatorEnergyCapacity, () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }

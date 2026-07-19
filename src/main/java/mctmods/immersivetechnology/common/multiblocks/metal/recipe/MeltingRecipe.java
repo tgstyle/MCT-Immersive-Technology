@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class MeltingRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<MeltingRecipe>> SERIALIZER;
-    public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.MELTING);
+    public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.MELTING);
 
     public final FluidTagInput input;
     public final FluidStack fluidOutput;
@@ -25,7 +25,7 @@ public class MeltingRecipe extends MultiblockRecipe {
     public final double requiredTemp;
 
     public MeltingRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.MELTING, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.MELTING, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.time = time;

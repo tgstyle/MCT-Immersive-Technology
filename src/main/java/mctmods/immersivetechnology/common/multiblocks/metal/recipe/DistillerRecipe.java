@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public class DistillerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<DistillerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.DISTILLER);
+    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.DISTILLER);
 
     public final FluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
@@ -32,7 +32,7 @@ public class DistillerRecipe extends MultiblockRecipe {
     Lazy<Integer> totalProcessEnergy;
 
     public DistillerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.DISTILLER, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.DISTILLER, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.itemOutput = itemOutput;

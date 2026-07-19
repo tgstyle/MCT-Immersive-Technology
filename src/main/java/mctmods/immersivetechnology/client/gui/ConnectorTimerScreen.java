@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.client.gui;
 
-import mctmods.immersivetechnology.client.gui.elements.ITGuiButtonBoolean;
-import mctmods.immersivetechnology.client.gui.elements.ITGuiButtonState;
-import mctmods.immersivetechnology.client.util.ITClientUtils;
+import mctmods.immersivetechnology.client.gui.elements.GuiButtonBoolean;
+import mctmods.immersivetechnology.client.gui.elements.GuiButtonState;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.network.ITIMessageTileSync;
-import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.network.MessageTileSync;
+import mctmods.immersivetechnology.core.network.PacketHandler;
 
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
 import blusunrize.immersiveengineering.api.client.TextUtils;
@@ -27,11 +27,11 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimerMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("timer");
-    private static final ResourceLocation CONFIG_TEXTURE = ITLib.makeTextureLocation("immersiveengineering", "redstone_configuration");
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("timer");
+    private static final ResourceLocation CONFIG_TEXTURE = Reference.makeTextureLocation("immersiveengineering", "redstone_configuration");
     private final ConnectorTimerBlockEntity tile;
-    private ITGuiButtonState<IOSideConfig> buttonInOut;
-    private ITGuiButtonBoolean[] colorButtons;
+    private GuiButtonState<IOSideConfig> buttonInOut;
+    private GuiButtonBoolean[] colorButtons;
 
     public ConnectorTimerScreen(ConnectorTimerMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -47,14 +47,14 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         addRenderableWidget(Button.builder(Component.literal("+"), btn -> changeTarget(1)).bounds(leftPos + 39, topPos + 35, 16, 16).build());
         addRenderableWidget(Button.builder(Component.literal("-"), btn -> changeTarget(-1)).bounds(leftPos + 120, topPos + 35, 16, 16).build());
 
-        this.buttonInOut = new ITGuiButtonState<>(leftPos + 38, topPos + 80, 18, 18, Component.empty(),
+        this.buttonInOut = new GuiButtonState<>(leftPos + 38, topPos + 80, 18, 18, Component.empty(),
                 new IOSideConfig[]{IOSideConfig.INPUT, IOSideConfig.OUTPUT},
                 () -> tile.getIoMode() == 0 ? 0 : 1,
                 CONFIG_TEXTURE, 176, 0, 1,
                 (btn) -> sendConfig("ioMode", tile.getIoMode() == 0 ? 1 : 0));
         addRenderableWidget(this.buttonInOut);
 
-        this.colorButtons = new ITGuiButtonBoolean[16];
+        this.colorButtons = new GuiButtonBoolean[16];
         for (int i = 0; i < this.colorButtons.length; ++i) {
             DyeColor color = DyeColor.byId(i);
             this.colorButtons[i] = buildColorButton(this.colorButtons, leftPos + 82 + i % 4 * 14, topPos + 66 + i / 4 * 14,
@@ -66,13 +66,13 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
     private void changeTarget(int increment) {
         CompoundTag message = new CompoundTag();
         message.putInt("increment", increment);
-        ITPacketHandler.sendToServer(new ITIMessageTileSync(tile.getBlockPos(), message));
+        PacketHandler.sendToServer(new MessageTileSync(tile.getBlockPos(), message));
     }
 
     private void sendConfig(String key, int value) {
         CompoundTag message = new CompoundTag();
         message.putInt(key, value);
-        ITPacketHandler.sendToServer(new ITIMessageTileSync(tile.getBlockPos(), message));
+        PacketHandler.sendToServer(new MessageTileSync(tile.getBlockPos(), message));
 
         if ("ioMode".equals(key)) { tile.setIoMode(value); }
         else if ("redstoneChannel".equals(key)) { tile.redstoneChannel = DyeColor.byId(value); }
@@ -104,8 +104,8 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         if (!tooltip.isEmpty()) { graphics.renderTooltip(this.font, tooltip, Optional.empty(), mouseX, mouseY); }
     }
 
-    public static ITGuiButtonBoolean buildColorButton(ITGuiButtonBoolean[] buttons, int posX, int posY, Supplier<Boolean> active, final DyeColor color, Consumer<ITGuiButtonBoolean> onClick) {
-        return new ITGuiButtonBoolean(posX, posY, 12, 12, "", active, CONFIG_TEXTURE, 194, 0, 1, (btn) -> {
+    public static GuiButtonBoolean buildColorButton(GuiButtonBoolean[] buttons, int posX, int posY, Supplier<Boolean> active, final DyeColor color, Consumer<GuiButtonBoolean> onClick) {
+        return new GuiButtonBoolean(posX, posY, 12, 12, "", active, CONFIG_TEXTURE, 194, 0, 1, (btn) -> {
             if (btn.getNextState()) { onClick.accept(btn); }
             for (int j = 0; j < buttons.length; ++j) {
                 if (j != color.ordinal() && buttons[j].getState()) {
@@ -119,7 +119,7 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
                 super.render(graphics, mouseX, mouseY, partialTicks);
                 if (this.visible) {
                     int col = color.getTextColor();
-                    if (!this.getState()) { col = ITClientUtils.getDarkenedTextColour(col); }
+                    if (!this.getState()) { col = ClientUtils.getDarkenedTextColour(col); }
                     col = 0xFF000000 | col;
                     graphics.fillGradient(this.getX() + 3, this.getY() + 3, this.getX() + 9, this.getY() + 9, col, col);
                 }

@@ -2,19 +2,18 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.ITGenericContainerData;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.ITSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
+import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
+import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
+import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
+import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 
-public class DistillerMenu extends ITContainerMenu {
+public class DistillerMenu extends ContainerMenu {
     public final DistillerLogic.DistillerTank tanks;
     public final IMutableEnergyStorage energy;
 
@@ -27,13 +26,13 @@ public class DistillerMenu extends ITContainerMenu {
         return new DistillerMenu(
                 clientCtx(type, id),
                 invPlayer,
-                new ITSlotwiseItemHandler(
+                new SlotwiseItemHandler(
                         List.of(
-                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                                ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                                ITSlotwiseItemHandler.IOConstraint.OUTPUT
+                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                SlotwiseItemHandler.IOConstraint.OUTPUT,
+                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                                SlotwiseItemHandler.IOConstraint.OUTPUT,
+                                SlotwiseItemHandler.IOConstraint.OUTPUT
                         ),
                         () -> {}
                 ),
@@ -46,15 +45,14 @@ public class DistillerMenu extends ITContainerMenu {
         super(ctx);
         this.tanks = tanks;
         this.energy = energy;
-        this.addSlot(new ITSlot.FluidContainer(inv, DistillerLogic.SLOT_INPUT_FILLED, 26, 17, 2));
-        this.addSlot(new ITSlot.Output(inv, DistillerLogic.SLOT_INPUT_EMPTY, 26, 53));
-        this.addSlot(new ITSlot.FluidContainer(inv, DistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, 1));
-        this.addSlot(new ITSlot.Output(inv, DistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
-        this.addSlot(new ITSlot.Output(inv, DistillerLogic.OUTPUT_SLOT, 80, 35));
-        for (int i = 0; i < 3; i++) { for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); } }
-        for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
-        addGenericData(ITGenericContainerData.energy(energy));
-        addGenericData(ITGenericContainerData.fluid(tanks.input()));
-        addGenericData(ITGenericContainerData.fluid(tanks.output()));
+        this.addSlot(new ModSlot.FluidContainer(inv, DistillerLogic.SLOT_INPUT_FILLED, 26, 17, 2));
+        this.addSlot(new ModSlot.Output(inv, DistillerLogic.SLOT_INPUT_EMPTY, 26, 53));
+        this.addSlot(new ModSlot.FluidContainer(inv, DistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, 1));
+        this.addSlot(new ModSlot.Output(inv, DistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
+        this.addSlot(new ModSlot.Output(inv, DistillerLogic.OUTPUT_SLOT, 80, 35));
+        addPlayerInventorySlots(inventoryPlayer);
+        addGenericData(GenericContainerData.energy(energy));
+        addGenericData(GenericContainerData.fluid(tanks.input()));
+        addGenericData(GenericContainerData.fluid(tanks.output()));
     }
 }

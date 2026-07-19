@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.gui;
 
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -9,17 +9,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonIBlockEntity;
-import mctmods.immersivetechnology.core.network.ITIMessageTileSync;
-import mctmods.immersivetechnology.core.network.ITPacketHandler;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
+import mctmods.immersivetechnology.core.network.MessageTileSync;
+import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("valve");
-    private final ValveCommonIBlockEntity tile;
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("valve");
+    private final ValveCommonBlockEntity tile;
     private EditBox packetLimitField;
     private EditBox timeLimitField;
     private EditBox keepSizeField;
@@ -92,7 +92,7 @@ public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
         message.putInt("packetLimit", pl);
         message.putInt("timeLimit", tl);
         message.putInt("keepSize", ks);
-        ITPacketHandler.sendToServer(new ITIMessageTileSync(tile.getBlockPos(), message));
+        PacketHandler.sendToServer(new MessageTileSync(tile.getBlockPos(), message));
         Minecraft.getInstance().setScreen(null);
     }
 

@@ -1,18 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandler;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
+import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.ITCommonConfig;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -49,30 +49,30 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 
-public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State>, ITIPressurizedFluidOutput<BoilerTankLogic.State> {
+public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State>, IPressurizedFluidOutput<BoilerTankLogic.State> {
     public static final int INPUT_SLOT_FILLED = 0;
     public static final int INPUT_SLOT_EMPTY = 1;
     public static final int OUTPUT_SLOT_EMPTY = 2;
     public static final int OUTPUT_SLOT_FILLED = 3;
 
-    public static final int TANK_CAPACITY = ITServerConfig.boilerTankCapacity;
-    public static final int PROGRESS_LOSS_PER_TICK = ITServerConfig.boilerTankProgressLossPerTick;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = ITCommonConfig.boilerDefaultWorkingHeat;
+    public static final int TANK_CAPACITY = ServerConfig.boilerTankCapacity;
+    public static final int PROGRESS_LOSS_PER_TICK = ServerConfig.boilerTankProgressLossPerTick;
+    public static final double DEFAULT_WORKING_HEAT_LEVEL = CommonConfig.boilerDefaultWorkingHeat;
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
 
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    public static final List<BlockPos> HEAT_INPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "heat_input0");
-    private static final RelativeBlockFace INPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FLUID_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace HEAT_INPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "heat_input0");
+    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> HEAT_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "heat_input0");
+    private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
+    private static final RelativeBlockFace OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace HEAT_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_input0");
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FLUID_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         final State state = ctx.getState();
@@ -170,20 +170,20 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         return LazyOptional.empty();
     }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { ITMultiBlockInventoryUtils.dropItems(state.inventory, drop); }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { MultiBlockInventoryUtils.dropItems(state.inventory, drop); }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
-        public final BiFunction<Level, FluidStack, BoilerTankRecipe> recipeGetter = ITCachedRecipe.cached(BoilerTankRecipe::findRecipe);
+    public static class State implements IMultiblockState, IDisplayContext {
+        public final BiFunction<Level, FluidStack, BoilerTankRecipe> recipeGetter = CachedRecipe.cached(BoilerTankRecipe::findRecipe);
         public final BoilerTanks tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
         public StoredCapability<IHeatConsumer> boilerInputCap;
         public CapabilityReference<IHeatProvider> heatSource;
-        public ITSlotwiseItemHandler inventory;
+        public SlotwiseItemHandler inventory;
         public int recipeTimeRemaining = 0;
         public int totalProcessTime = 0;
         public BoilerTankRecipe lastRecipe;
@@ -198,17 +198,17 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             tanks = new BoilerTanks(v -> { onChanged.run(); this.tanksDirty = true; });
-            inventory = new ITSlotwiseItemHandler(
+            inventory = new SlotwiseItemHandler(
                     List.of(
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT,
-                            ITSlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            ITSlotwiseItemHandler.IOConstraint.OUTPUT
+                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT,
+                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
+                            SlotwiseItemHandler.IOConstraint.OUTPUT
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );
-            inputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
-            outputCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
+            outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             boilerInputCap = new StoredCapability<>(new BoilerInputImpl(tanks.input));
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POIS.get(0));
             CapabilityPosition heatOpposingCP = CapabilityPosition.opposing(heatMBFace);
@@ -271,13 +271,13 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         }
     }
 
-    private record BoilerInputImpl(ITMarkableFluidTank tank) implements IHeatConsumer {
+    private record BoilerInputImpl(MarkableFluidTank tank) implements IHeatConsumer {
         @Override public int getFluidAmount() { return tank.getFluidAmount(); }
     }
 
-    public record BoilerTanks(ITMarkableFluidTank input, ITMarkableFluidTank output) {
+    public record BoilerTanks(MarkableFluidTank input, MarkableFluidTank output) {
         public BoilerTanks(Consumer<Void> markDirty) {
-            this(new ITMarkableFluidTank(TANK_CAPACITY, markDirty), new ITMarkableFluidTank(TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(TANK_CAPACITY, markDirty), new MarkableFluidTank(TANK_CAPACITY, markDirty));
         }
 
         public static BoilerTanks makeClient() { return new BoilerTanks(v -> {}); }

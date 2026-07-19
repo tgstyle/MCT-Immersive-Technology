@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<SolarTowerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.SOLAR_TOWER);
+    public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.SOLAR_TOWER);
 
     public final FluidTagInput input;
     public final FluidStack fluidOutput;
@@ -25,7 +25,7 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     public final double requiredTemp;
 
     public SolarTowerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.SOLAR_TOWER, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.SOLAR_TOWER, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
         this.time = time;

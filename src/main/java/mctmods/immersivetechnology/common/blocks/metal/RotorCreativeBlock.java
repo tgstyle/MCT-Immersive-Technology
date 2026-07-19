@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,10 +28,10 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
-public class RotorCreativeBlock extends ITIEntityBlock<RotorCreativeIBlockEntity> {
+public class RotorCreativeBlock extends ModEntityBlock<RotorCreativeBlockEntity> {
     public static final net.minecraft.world.level.block.state.properties.Property<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public RotorCreativeBlock(BiFunction<BlockPos, BlockState, RotorCreativeIBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH)); }
+    public RotorCreativeBlock(BiFunction<BlockPos, BlockState, RotorCreativeBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH)); }
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(FACING); }
 

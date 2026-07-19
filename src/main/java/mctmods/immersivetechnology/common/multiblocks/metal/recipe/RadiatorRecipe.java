@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public class RadiatorRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<RadiatorRecipe>> SERIALIZER;
-    public static final CachedRecipeList<RadiatorRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.RADIATOR);
+    public static final CachedRecipeList<RadiatorRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.RADIATOR);
 
     public final FluidStack fluidOutput;
     public final FluidTagInput input;
@@ -28,7 +28,7 @@ public class RadiatorRecipe extends MultiblockRecipe {
     private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
 
     public RadiatorRecipe(ResourceLocation id, FluidStack fluidOutput, FluidTagInput input, int time) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.RADIATOR, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.RADIATOR, id);
         this.fluidOutput = fluidOutput;
         this.input = input;
         this.totalProcessTime = time;

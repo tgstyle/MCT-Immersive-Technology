@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
-import mctmods.immersivetechnology.core.registration.ITMenuTypes;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -28,7 +28,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
     private final LazyOptional<IItemHandlerModifiable> itemHandler = LazyOptional.of(() -> this);
 
     public CrateCreativeBlockEntity(BlockPos pos, BlockState state) {
-        super(ITBlockEntities.CRATE_CREATIVE.get(), pos, state);
+        super(BlockEntities.CRATE_CREATIVE.get(), pos, state);
     }
 
     @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
@@ -81,7 +81,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
 
     @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation()); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return CrateCreativeMenu.makeServer(ITMenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
 
     public boolean stillValid(Player player) {
         if (level != null && !level.isClientSide) {

@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RadiatorRecipeSerializer extends IERecipeSerializer<RadiatorRecipe> {
-    @Override public net.minecraft.world.item.ItemStack getIcon() { return ITMultiblockProvider.RADIATOR.iconStack(); }
+    @Override public net.minecraft.world.item.ItemStack getIcon() { return MultiblockRegistry.RADIATOR.iconStack(); }
 
     @Override public RadiatorRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));

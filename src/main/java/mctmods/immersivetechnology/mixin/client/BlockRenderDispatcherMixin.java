@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.mixin.client;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPartBlock;
+import mctmods.immersivetechnology.common.multiblocks.helper.ModMultiblockPartBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public abstract class BlockRenderDispatcherMixin {
     @ModifyVariable(method = "renderBreakingTexture(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/BlockAndTintGetter;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraftforge/client/model/data/ModelData;)V", at = @At(value = "STORE", ordinal = 0), remap = false, name = "bakedmodel")
     private BakedModel it$useFullBlockModelForDamage(BakedModel model, BlockState pState, BlockPos pPos, BlockAndTintGetter pLevel) {
-        if (pState.getBlock() instanceof ITMultiblockPartBlock) {
+        if (pState.getBlock() instanceof ModMultiblockPartBlock) {
             BlockModelShaper modelShapes = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
             return modelShapes.getBlockModel(Blocks.STONE.defaultBlockState());
         }

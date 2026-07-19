@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
-import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
@@ -14,10 +14,10 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
-public class BarrelOpenBlock extends ITIEntityBlock<BarrelOpenIBlockEntity> {
+public class BarrelOpenBlock extends ModEntityBlock<BarrelOpenBlockEntity> {
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);
 
-    public BarrelOpenBlock(BiFunction<BlockPos, BlockState, BarrelOpenIBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
+    public BarrelOpenBlock(BiFunction<BlockPos, BlockState, BarrelOpenBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
         super(makeEntity, blockProps);
         registerDefaultState(stateDefinition.any().setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));
     }

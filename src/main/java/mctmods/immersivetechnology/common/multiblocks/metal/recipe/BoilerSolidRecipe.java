@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
@@ -19,14 +19,14 @@ import javax.annotation.Nullable;
 
 public class BoilerSolidRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<BoilerSolidRecipe>> SERIALIZER;
-    public static final CachedRecipeList<BoilerSolidRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER_SOLID);
+    public static final CachedRecipeList<BoilerSolidRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.BOILER_SOLID);
 
     public IngredientWithSize input;
     private final double heatPerTick;
     private final double targetHeat;
 
     public BoilerSolidRecipe(ResourceLocation id, IngredientWithSize input, double heatPerTick, double targetHeat) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.BOILER_SOLID, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.BOILER_SOLID, id);
         this.input = input;
         this.heatPerTick = heatPerTick;
         this.targetHeat = Math.min(targetHeat, HeatCapabilities.MAX_HEAT);

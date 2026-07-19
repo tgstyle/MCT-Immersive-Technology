@@ -2,11 +2,11 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
+import mctmods.immersivetechnology.client.gui.helper.InfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerSolidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -18,8 +18,8 @@ import net.minecraft.world.entity.player.Inventory;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BoilerSolidScreen extends ITContainerScreen<BoilerSolidMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("boiler_solid");
+public class BoilerSolidScreen extends ContainerScreen<BoilerSolidMenu> {
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("boiler_solid");
 
     public BoilerSolidScreen(BoilerSolidMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
@@ -36,9 +36,9 @@ public class BoilerSolidScreen extends ITContainerScreen<BoilerSolidMenu> {
         }
     }
 
-    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
         return ImmutableList.of(
-                new ITInfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
+                new InfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
                     @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();

@@ -13,14 +13,14 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.core.ITClientConfig;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -48,17 +48,17 @@ import java.util.function.Supplier;
 public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarReflectorShape.DATA.pointsOfInterest);
 
-    public static final BlockPos DANCE_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final BlockPos LINK_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
-    public static final BlockPos SUN_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
-    public static final BlockPos BEAM_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "beam0").get(0);
+    public static final BlockPos DANCE_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos LINK_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
+    public static final BlockPos SUN_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
+    public static final BlockPos BEAM_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "beam0").get(0);
 
-    public static float getDanceDuration() { return (float) ITClientConfig.solarReflectorDanceDuration; }
+    public static float getDanceDuration() { return (float) ClientConfig.solarReflectorDanceDuration; }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         state.formedTicks++;
-        boolean specialRender = ITClientConfig.doSpecialRenderSolarReflector;
+        boolean specialRender = ClientConfig.doSpecialRenderSolarReflector;
         if (!specialRender) {
             if (state.isMirrorTaken) {
                 state.animation_supportRotation = state.computeTargetSupportRotation();
@@ -91,10 +91,10 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             }
             return;
         }
-        float baseFreq = (float) ITClientConfig.solarReflectorBaseFrequency;
-        float danceDuration = (float) ITClientConfig.solarReflectorDanceDuration;
-        boolean isDisabled = ITClientConfig.disableReflectorDance;
-        boolean isLoop = ITClientConfig.loopReflectorDance;
+        float baseFreq = (float) ClientConfig.solarReflectorBaseFrequency;
+        float danceDuration = (float) ClientConfig.solarReflectorDanceDuration;
+        boolean isDisabled = ClientConfig.disableReflectorDance;
+        boolean isLoop = ClientConfig.loopReflectorDance;
         long gameTime = ctx.getLevel().getRawLevel().getGameTime();
         int targetPhase;
         if (state.isMirrorTaken) { targetPhase = -4; }
@@ -232,15 +232,15 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
                     final Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(DANCE_SOUND_POI.getX() + 0.5, DANCE_SOUND_POI.getY() + 0.5, DANCE_SOUND_POI.getZ() + 0.5));
                     state.danceSoundId++;
                     int thisId = state.danceSoundId;
-                    state.isDanceSoundPlaying = ITSound.startSound(
-                            () -> (state.animationPhase == -2 || state.animationPhase == -3) && state.danceSoundId == thisId, ctx.isValid(), soundPos, ITSounds.dance, isLoop,
+                    state.isDanceSoundPlaying = ModSound.startSound(
+                            () -> (state.animationPhase == -2 || state.animationPhase == -3) && state.danceSoundId == thisId, ctx.isValid(), soundPos, Sounds.dance, isLoop,
                             () -> {
                                 LocalPlayer player = Minecraft.getInstance().player;
                                 if (player == null) { return 0f; }
                                 float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
                                 long gt = 0;
                                 if (Minecraft.getInstance().level != null) { gt = Minecraft.getInstance().level.getGameTime(); }
-                                float dd = (float) ITClientConfig.solarReflectorDanceDuration;
+                                float dd = (float) ClientConfig.solarReflectorDanceDuration;
                                 float cdp = (gt - state.danceStartTick) * 0.05f;
                                 if (cdp < 0) { return 0f; }
                                 float f;
@@ -368,7 +368,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { Level level = state.levelSupplier.get(); if (level != null && !level.isClientSide) { SolarRegistry.unregisterReflector(level, state.poiPos); } }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
+    public static class State implements IMultiblockState, IDisplayContext {
         public boolean isMirrorTaken;
         private BlockPos towerCollectorPosition;
         public float animation_supportRotation;

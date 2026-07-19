@@ -1,20 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.lib.ModSound;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.util.CachedRecipe;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -55,35 +55,35 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, ITIPressurizedFluidOutput<SteamTurbineLogic.State> {
+public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, IPressurizedFluidOutput<SteamTurbineLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SteamTurbineShape.DATA.pointsOfInterest);
 
-    public static final BlockPos REDSTONE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    public static final BlockPos RUNNING_SOUND_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").get(0);
-    public static final BlockPos SMOKE_POI = ITMultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
+    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").get(0);
+    public static final BlockPos SMOKE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
 
-    public static final List<BlockPos> INPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    public static final List<BlockPos> MECHANICAL_OUTPUT_POIS = ITMultiblockPOIHelper.getPosList(RAW_POIS, "mechanical_output0");
+    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
+    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
+    public static final List<BlockPos> MECHANICAL_OUTPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "mechanical_output0");
 
-    public static final CapabilityPosition INPUT_FLUID_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "fluid_input0");
-    public static final CapabilityPosition OUTPUT_FLUID_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "fluid_output0");
-    public static final CapabilityPosition MECHANICAL_OUTPUT_POI = ITMultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_output0");
+    public static final CapabilityPosition INPUT_FLUID_POI = MultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "fluid_input0");
+    public static final CapabilityPosition OUTPUT_FLUID_POI = MultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "fluid_output0");
+    public static final CapabilityPosition MECHANICAL_OUTPUT_POI = MultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_output0");
 
-    private static final RelativeBlockFace OUTPUT_FACING = ITMultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
-    private static final int INPUT_TANK_CAPACITY = ITServerConfig.steamTurbineInputTankCapacity;
-    private static final int OUTPUT_TANK_CAPACITY = ITServerConfig.steamTurbineOutputTankCapacity;
-    private static final double BASE_MASS = ITServerConfig.steamTurbineBaseMass;
-    private static final double DRIVE_TORQUE = ITServerConfig.steamTurbineDriveTorque;
-    private static final double FRICTION = ITServerConfig.steamTurbineFriction;
-    private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ITServerConfig.steamTurbineMaxSpeedFactor);
+    private static final int INPUT_TANK_CAPACITY = ServerConfig.steamTurbineInputTankCapacity;
+    private static final int OUTPUT_TANK_CAPACITY = ServerConfig.steamTurbineOutputTankCapacity;
+    private static final double BASE_MASS = ServerConfig.steamTurbineBaseMass;
+    private static final double DRIVE_TORQUE = ServerConfig.steamTurbineDriveTorque;
+    private static final double FRICTION = ServerConfig.steamTurbineFriction;
+    private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ServerConfig.steamTurbineMaxSpeedFactor);
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
     @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
 
-    @Override public List<ITMarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
+    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output); }
 
     @Override public boolean isOutputConnected(IMultiblockContext<State> ctx, int index) {
         BlockPos localPos = OUTPUT_FLUID_POIS.get(index);
@@ -101,9 +101,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         boolean targetActive = state.active || state.speed > 0;
-        float targetLevel = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.0f, state.speed);
+        float targetLevel = Reference.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; } else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
-        float targetPitch = ITLib.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.5f, state.speed);
+        float targetPitch = Reference.remapRange(0, state.effectiveMaxSpeed, 0.5f, 1.5f, state.speed);
         if (state.currentPitch == 0f) { state.currentPitch = targetPitch; } else { state.currentPitch = state.currentPitch * 0.95f + targetPitch * 0.05f; }
         if (state.currentPitch < 0.5f) { state.currentPitch = 0.5f; }
         float base = (state.speed / (float) state.effectiveMaxSpeed) * 72f;
@@ -121,11 +121,11 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
         float vol = (11 * (state.currentLevel - 0.5f)) / attenuation;
         if (targetActive && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ITSound.startSound(
+            state.isSoundPlaying = ModSound.startSound(
                     () -> state.active || state.speed > 0,
                     ctx.isValid(),
                     soundPos,
-                    ITSounds.steamTurbine,
+                    Sounds.steamTurbine,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
@@ -141,7 +141,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             boolean connected = isOutputConnected(ctx, 0);
             if (!connected) {
                 Vec3 smokePos = new Vec3(outputAbs.getX() + 0.5, outputAbs.getY() + 0.5, outputAbs.getZ() + 0.5);
-                float normSpeed = Math.max(0f, ITLib.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
+                float normSpeed = Math.max(0f, Reference.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
                 double dirVelHoriz = 0.125 * normSpeed;
                 double dirVelVert = 0.1 * normSpeed;
                 double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
@@ -239,7 +239,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         boolean triggerRelease = (!previouslyActive && state.active) || (!state.wasEnabled && currentlyEnabled);
         if (triggerRelease && state.pressureReleaseCooldown <= 0) {
             BlockPos soundPos = ctx.getLevel().toAbsolute(RUNNING_SOUND_POI);
-            level.playSound(null, soundPos, ITSounds.pressure_release.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+            level.playSound(null, soundPos, Sounds.pressure_release.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             state.pressureReleaseCooldown = 200;
         }
         state.wasEnabled = currentlyEnabled;
@@ -276,7 +276,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
 
-    public static class State implements IMultiblockState, ITIDisplayContext {
+    public static class State implements IMultiblockState, IDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final SteamTurbineTank tanks;
         public final StoredCapability<IFluidHandler> fluidCap;
@@ -308,9 +308,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.tanks = new SteamTurbineTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
-            this.fluidCap = new StoredCapability<>(new ITArrayFluidHandler(tanks.input, false, true, onChanged));
-            this.fluidCapExhaust = new StoredCapability<>(new ITArrayFluidHandler(tanks.output, true, false, onChanged));
-            this.recipeGetter = ITCachedRecipe.cached(SteamTurbineRecipe::findRecipe);
+            this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, onChanged));
+            this.fluidCapExhaust = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, onChanged));
+            this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
             this.inertia = new RotationInertiaProcess(BASE_MASS + connectedMass, DRIVE_TORQUE, FRICTION + connectedFriction, effectiveMaxSpeed);
             this.accumConsume = 0f;
             this.outAccum = 0f;
@@ -378,9 +378,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
     }
 
-    public record SteamTurbineTank(ITMarkableFluidTank input, ITMarkableFluidTank output) {
+    public record SteamTurbineTank(MarkableFluidTank input, MarkableFluidTank output) {
         public SteamTurbineTank(Consumer<Void> markDirty, int inputCapacity, int outputCapacity) {
-            this(new ITMarkableFluidTank(inputCapacity, markDirty), new ITMarkableFluidTank(outputCapacity, markDirty));
+            this(new MarkableFluidTank(inputCapacity, markDirty), new MarkableFluidTank(outputCapacity, markDirty));
         }
 
         public static SteamTurbineTank makeClient(int inputCapacity, int outputCapacity) { return new SteamTurbineTank(v -> {}, inputCapacity, outputCapacity); }

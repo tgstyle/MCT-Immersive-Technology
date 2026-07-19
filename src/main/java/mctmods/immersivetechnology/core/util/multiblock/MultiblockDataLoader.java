@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlock
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,7 +18,7 @@ public class MultiblockDataLoader {
         if (CACHE.containsKey(multiblockName)) { return CACHE.get(multiblockName); }
         MultiblockData data = null;
         try {
-            InputStream is = MultiblockDataLoader.class.getResourceAsStream("/assets/" + ITLib.MODID + "/multiblocks/" + multiblockName + ".json");
+            InputStream is = MultiblockDataLoader.class.getResourceAsStream("/assets/" + Reference.MODID + "/multiblocks/" + multiblockName + ".json");
             if (is != null) {
                 JsonReader reader = new JsonReader(new InputStreamReader(is));
                 Gson gson = new Gson();
@@ -39,8 +39,8 @@ public class MultiblockDataLoader {
                         }
                     }
                 }
-            } else { ITLib.IT_LOGGER.error("{} JSON resource not found at /assets/" + ITLib.MODID + "/multiblocks/{}.json", multiblockName, multiblockName); }
-        } catch (Exception e) { ITLib.IT_LOGGER.error("Error loading {} from JSON", multiblockName, e); }
+            } else { Reference.IT_LOGGER.error("{} JSON resource not found at /assets/" + Reference.MODID + "/multiblocks/{}.json", multiblockName, multiblockName); }
+        } catch (Exception e) { Reference.IT_LOGGER.error("Error loading {} from JSON", multiblockName, e); }
         if (data != null) { CACHE.put(multiblockName, data); }
         return data;
     }

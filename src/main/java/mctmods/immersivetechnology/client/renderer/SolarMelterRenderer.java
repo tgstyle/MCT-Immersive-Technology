@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.client.particles.ColoredBeam;
-import mctmods.immersivetechnology.client.renderer.helper.ITBaseBlockEntityRenderer;
+import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
-public class SolarMelterRenderer extends ITBaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
+public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
 
     public SolarMelterRenderer() {}
 

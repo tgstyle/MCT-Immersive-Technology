@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
-import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -15,12 +15,12 @@ import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
-public class BarrelSteelBlock extends ITIEntityBlock<BarrelSteelIBlockEntity> {
+public class BarrelSteelBlock extends ModEntityBlock<BarrelSteelBlockEntity> {
     public static final EnumProperty<IOSideConfig> TOP_CONFIG = EnumProperty.create("top_config", IOSideConfig.class);
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);
 
     @SuppressWarnings("unused")
-    public BarrelSteelBlock(BiFunction<BlockPos, BlockState, BarrelSteelIBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
+    public BarrelSteelBlock(BiFunction<BlockPos, BlockState, BarrelSteelBlockEntity> makeEntity, BlockBehaviour.Properties blockProps) {
         super(makeEntity, Properties.of().mapColor(MapColor.METAL).strength(3.0F, 20.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());
         registerDefaultState(stateDefinition.any().setValue(TOP_CONFIG, IOSideConfig.INPUT).setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));
     }

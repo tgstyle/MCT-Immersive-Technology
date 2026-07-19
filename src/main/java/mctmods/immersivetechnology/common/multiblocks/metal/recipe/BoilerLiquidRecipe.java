@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 public class BoilerLiquidRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<BoilerLiquidRecipe>> SERIALIZER;
-    public static final CachedRecipeList<BoilerLiquidRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.BOILER_LIQUID);
+    public static final CachedRecipeList<BoilerLiquidRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
 
     public final FluidTagInput input;
     private final int time;
@@ -27,7 +27,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
     Lazy<Integer> totalProcessTime;
 
     public BoilerLiquidRecipe(ResourceLocation id, FluidTagInput input, int time, double heatPerTick, double targetHeat) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.BOILER_LIQUID, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.BOILER_LIQUID, id);
         this.input = input;
         this.time = time;
         this.heatPerTick = heatPerTick;

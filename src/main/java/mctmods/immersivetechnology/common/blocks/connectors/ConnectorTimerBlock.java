@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
-import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
 
 import blusunrize.immersiveengineering.common.items.WireCoilItem;
 import net.minecraft.core.BlockPos;
@@ -29,31 +29,31 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-public class ConnectorTimerBlock extends ITIEntityBlock<ConnectorTimerBlockEntity> {
+public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
     public ConnectorTimerBlock(BiFunction<BlockPos, BlockState, ConnectorTimerBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
-        registerDefaultState(stateDefinition.any().setValue(ITProperties.FACING_ALL, Direction.NORTH).setValue(ROTATION, 0));
+        registerDefaultState(stateDefinition.any().setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ITProperties.FACING_ALL, ROTATION);
+        builder.add(ModProperties.FACING_ALL, ROTATION);
     }
 
-    @Override public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) { return ITBlockEntities.CONNECTOR_TIMER.get().create(pos, state); }
+    @Override public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) { return BlockEntities.CONNECTOR_TIMER.get().create(pos, state); }
 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (level.isClientSide) return null;
-        return type == ITBlockEntities.CONNECTOR_TIMER.get() ? (l, p, s, be) -> ((ConnectorTimerBlockEntity) be).tickServer() : null;
+        return type == BlockEntities.CONNECTOR_TIMER.get() ? (l, p, s, be) -> ((ConnectorTimerBlockEntity) be).tickServer() : null;
     }
 
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction facing = context.getClickedFace();
         float yRot = context.getPlayer() != null ? context.getPlayer().getYRot() : 0f;
         int rotation = Direction.fromYRot(yRot).get2DDataValue();
-        return defaultBlockState().setValue(ITProperties.FACING_ALL, facing).setValue(ROTATION, rotation);
+        return defaultBlockState().setValue(ModProperties.FACING_ALL, facing).setValue(ROTATION, rotation);
     }
 
     @Override public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity placer, @NotNull net.minecraft.world.item.ItemStack stack) {

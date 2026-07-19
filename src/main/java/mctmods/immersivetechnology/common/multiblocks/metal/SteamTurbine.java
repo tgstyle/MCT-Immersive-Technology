@@ -1,23 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITClientMultiblockProperties;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
-import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.BlockPos;
 
-import java.util.function.Consumer;
-
-public class SteamTurbine extends ITTemplateMultiblock {
+public class SteamTurbine extends ModTemplateMultiblock {
     public static final SteamTurbine INSTANCE = new SteamTurbine();
 
-    public SteamTurbine() { super(ITLib.rl("multiblocks/steam_turbine"), SteamTurbineShape.MASTER_POS, SteamTurbineShape.TRIGGER_POS, new BlockPos(SteamTurbineShape.WIDTH,SteamTurbineShape.HEIGHT,SteamTurbineShape.LENGTH), ITMultiblockProvider.STEAM_TURBINE); }
-
-    @Override public float getManualScale() { return SteamTurbineShape.MANUAL_SCALE; }
-
-    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SteamTurbineShape.CLIENT_OFFSET.getX(), SteamTurbineShape.CLIENT_OFFSET.getY(), SteamTurbineShape.CLIENT_OFFSET.getZ())); }
-
-    @Override public boolean canBeMirrored() { return true; }
+    public SteamTurbine() { super(Reference.rl("multiblocks/steam_turbine"), SteamTurbineShape.MASTER_POS, SteamTurbineShape.TRIGGER_POS, new BlockPos(SteamTurbineShape.WIDTH,SteamTurbineShape.HEIGHT,SteamTurbineShape.LENGTH), SteamTurbineShape.CLIENT_OFFSET, SteamTurbineShape.MANUAL_SCALE, MultiblockRegistry.STEAM_TURBINE); }
 }

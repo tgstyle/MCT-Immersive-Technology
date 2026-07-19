@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
-import mctmods.immersivetechnology.common.gui.helper.ITContainerMenu;
-import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterIBlockEntity;
+import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
+import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
-public class ValveLimiterMenu extends ITContainerMenu {
-    public ValveLimiterIBlockEntity tile;
+public class ValveLimiterMenu extends ContainerMenu {
+    public ValveLimiterBlockEntity tile;
 
     private int packetLimit;
 
@@ -21,8 +21,8 @@ public class ValveLimiterMenu extends ITContainerMenu {
 
     private int keepSize;
 
-    public ValveLimiterMenu(MenuType<ValveLimiterMenu> type, int id, Inventory inv, ValveLimiterIBlockEntity tile) {
-        super(ITContainerMenu.blockCtx(type, id, tile));
+    public ValveLimiterMenu(MenuType<ValveLimiterMenu> type, int id, Inventory inv, ValveLimiterBlockEntity tile) {
+        super(ContainerMenu.blockCtx(type, id, tile));
         this.tile = tile;
         addDataSlot(new DataSlot() { public int get() { return tile.packetLimit; } public void set(int v) { packetLimit = v; } });
         addDataSlot(new DataSlot() { public int get() { return tile.timeLimit; } public void set(int v) { timeLimit = v; } });
@@ -30,15 +30,15 @@ public class ValveLimiterMenu extends ITContainerMenu {
     }
 
     public ValveLimiterMenu(MenuType<ValveLimiterMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) {
-        super(ITContainerMenu.clientCtx(type, id));
+        super(ContainerMenu.clientCtx(type, id));
         BlockPos pos = buffer.readBlockPos();
-        this.tile = (ValveLimiterIBlockEntity) inv.player.level().getBlockEntity(pos);
+        this.tile = (ValveLimiterBlockEntity) inv.player.level().getBlockEntity(pos);
         addDataSlot(new DataSlot() { public int get() { return 0; } public void set(int v) { packetLimit = v; } });
         addDataSlot(new DataSlot() { public int get() { return 0; } public void set(int v) { timeLimit = v; } });
         addDataSlot(new DataSlot() { public int get() { return 0; } public void set(int v) { keepSize = v; } });
     }
 
-    public static ValveLimiterMenu makeServer(MenuType<ValveLimiterMenu> type, int id, Inventory inv, ValveLimiterIBlockEntity tile) { return new ValveLimiterMenu(type, id, inv, tile); }
+    public static ValveLimiterMenu makeServer(MenuType<ValveLimiterMenu> type, int id, Inventory inv, ValveLimiterBlockEntity tile) { return new ValveLimiterMenu(type, id, inv, tile); }
 
     public static ValveLimiterMenu makeClient(MenuType<ValveLimiterMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) { return new ValveLimiterMenu(type, id, inv, buffer); }
 

@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.client.gui.helper.ITContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.ITInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
+import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import mctmods.immersivetechnology.client.gui.helper.InfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.AdvancedCokeOvenMenu;
-import mctmods.immersivetechnology.core.lib.ITLib;
+import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -15,8 +15,8 @@ import net.minecraft.world.entity.player.Inventory;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class AdvancedCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMenu> {
-    private static final ResourceLocation TEXTURE = ITLib.makeTextureLocation("immersiveengineering", "coke_oven");
+public class AdvancedCokeOvenScreen extends ContainerScreen<AdvancedCokeOvenMenu> {
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("immersiveengineering", "coke_oven");
 
     public AdvancedCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
@@ -29,7 +29,7 @@ public class AdvancedCokeOvenScreen extends ITContainerScreen<AdvancedCokeOvenMe
         }
     }
 
-    @Override @Nonnull protected List<ITInfoArea> makeInfoAreas() {
-        return ImmutableList.of(new ITFluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE));
+    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
+        return ImmutableList.of(new FluidInfoArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE));
     }
 }

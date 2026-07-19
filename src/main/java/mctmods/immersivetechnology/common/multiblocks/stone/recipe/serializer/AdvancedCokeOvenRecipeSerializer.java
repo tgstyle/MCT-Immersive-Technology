@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
     @Override
-    public ItemStack getIcon() { return ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(); }
+    public ItemStack getIcon() { return MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(); }
 
     @Override
     public AdvancedCokeOvenRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {

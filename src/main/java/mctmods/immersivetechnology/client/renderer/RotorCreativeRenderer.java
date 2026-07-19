@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
-import mctmods.immersivetechnology.client.renderer.helper.ITRenderUtils;
+import mctmods.immersivetechnology.client.models.ModDynamicModel;
+import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.RotorCreativeBlock;
-import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeIBlockEntity;
+import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -23,17 +23,17 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import java.util.List;
 
-public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeIBlockEntity> {
+public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeBlockEntity> {
     private static final Quaternionf ROTATION = new Quaternionf();
 
     public RotorCreativeRenderer() {}
 
-    @Override public void render(@NotNull RotorCreativeIBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@NotNull RotorCreativeBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         BlockState state = tile.getBlockState();
         Direction dir = state.getValue(RotorCreativeBlock.FACING);
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());
         double angle = tile.animation_rotation + tile.animation_step * partialTicks * Math.signum(tile.rpm);
-        ITDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
+        ModDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
         ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
@@ -42,8 +42,8 @@ public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeI
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
+    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
-        ITRenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
+        RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
     }
 }

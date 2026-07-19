@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.particles;
 
-import mctmods.immersivetechnology.core.ITClientConfig;
+import mctmods.immersivetechnology.core.ClientConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.BaseAshSmokeParticle;
 import net.minecraft.client.particle.SpriteSet;
@@ -11,9 +11,9 @@ public class CustomSmoke extends BaseAshSmokeParticle {
         this.rCol = 1.0F;
         this.gCol = 1.0F;
         this.bCol = 1.0F;
-        float scale = (float)(ITClientConfig.customSmokeHeight / 3.0D);
+        float scale = (float)(ClientConfig.customSmokeHeight / 3.0D);
         this.gravity *= scale;
-        if (ITClientConfig.particleCollide) { this.hasPhysics = true; }
+        if (ClientConfig.particleCollide) { this.hasPhysics = true; }
     }
 
     @Override public void tick() {

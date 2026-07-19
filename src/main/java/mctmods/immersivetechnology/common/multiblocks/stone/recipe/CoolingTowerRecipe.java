@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 public class CoolingTowerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<CoolingTowerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(ITRecipeTypes.COOLING_TOWER);
+    public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.COOLING_TOWER);
 
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
@@ -31,7 +31,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
 
     public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidTagInput input0, FluidTagInput input1, int time) {
-        super(Lazy.of(() -> ItemStack.EMPTY), ITRecipeTypes.COOLING_TOWER, id);
+        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.COOLING_TOWER, id);
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;
         this.fluidOutput2 = fluidOutput2;
