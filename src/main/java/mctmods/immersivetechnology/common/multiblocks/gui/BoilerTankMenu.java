@@ -8,7 +8,6 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandl
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.List;
@@ -48,8 +47,7 @@ public class BoilerTankMenu extends ITContainerMenu {
         this.addSlot(new ITSlot.Output(inv, BoilerTankLogic.INPUT_SLOT_EMPTY, 43, 54));
         this.addSlot(new ITSlot.FluidContainer(inv, BoilerTankLogic.OUTPUT_SLOT_EMPTY, 116, 15, 1));
         this.addSlot(new ITSlot.Output(inv, BoilerTankLogic.OUTPUT_SLOT_FILLED, 116, 54));
-        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
-        for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
+        addPlayerInventorySlots(inventoryPlayer);
         addGenericData(ITGenericContainerData.fluid(tanks.input()));
         addGenericData(ITGenericContainerData.fluid(tanks.output()));
         addGenericData(new ITGenericContainerData<>(ITGenericDataSerializers.FLOAT, () -> (state != null ? (float)state.heatLevel : heatLevel), f -> this.heatLevel = f));

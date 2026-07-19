@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.blocks.metal.shape;
+package mctmods.immersivetechnology.common.blocks.metal.shapes;
 
 import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
 import net.minecraft.world.phys.shapes.CollisionContext;

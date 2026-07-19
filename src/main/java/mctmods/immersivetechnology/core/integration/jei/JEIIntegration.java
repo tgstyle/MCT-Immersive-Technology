@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeO
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.category.*;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -83,22 +83,22 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
-        registration.addRecipeCatalyst(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM);
-        registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
-        registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
-        registration.addRecipeCatalyst(ITMultiblockProvider.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
-        registration.addRecipeCatalyst(ITMultiblockProvider.COOLING_TOWER.iconStack(), JEIRecipeTypes.COOLING_TOWER);
-        registration.addRecipeCatalyst(ITMultiblockProvider.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
-        registration.addRecipeCatalyst(ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(), JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
-        registration.addRecipeCatalyst(ITMultiblockProvider.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
-        registration.addRecipeCatalyst(ITMultiblockProvider.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
-        registration.addRecipeCatalyst(ITMultiblockProvider.RADIATOR.iconStack(), JEIRecipeTypes.RADIATOR);
-        registration.addRecipeCatalyst(ITMultiblockProvider.RADIATOR_HORIZONTAL.iconStack(), JEIRecipeTypes.RADIATOR);
-        registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_MELTER.iconStack(), JEIRecipeTypes.MELTING);
-        registration.addRecipeCatalyst(ITMultiblockProvider.MELTING_CRUCIBLE.iconStack(), JEIRecipeTypes.MELTING);
-        registration.addRecipeCatalyst(ITMultiblockProvider.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
-        registration.addRecipeCatalyst(ITMultiblockProvider.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.COOLING_TOWER.iconStack(), JEIRecipeTypes.COOLING_TOWER);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.DISTILLER.iconStack(), JEIRecipeTypes.DISTILLER);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(), JEIRecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.GAS_TURBINE.iconStack(), JEIRecipeTypes.GAS_TURBINE);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.HEAT_EXCHANGER.iconStack(), JEIRecipeTypes.HEAT_EXCHANGER);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.RADIATOR.iconStack(), JEIRecipeTypes.RADIATOR);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.RADIATOR_HORIZONTAL.iconStack(), JEIRecipeTypes.RADIATOR);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.SOLAR_MELTER.iconStack(), JEIRecipeTypes.MELTING);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.MELTING_CRUCIBLE.iconStack(), JEIRecipeTypes.MELTING);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
+        registration.addRecipeCatalyst(ITMultiblockRegistry.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
     }
 
     @Override public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {

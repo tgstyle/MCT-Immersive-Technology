@@ -1,23 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITClientMultiblockProperties;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
-import net.minecraft.core.BlockPos;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 
-import java.util.function.Consumer;
+import net.minecraft.core.BlockPos;
 
 public class SteelSheetmetalTank extends ITTemplateMultiblock {
     public static final SteelSheetmetalTank INSTANCE = new SteelSheetmetalTank();
 
-    public SteelSheetmetalTank() { super(ITLib.rl("multiblocks/steel_sheetmetal_tank"), SteelSheetmetalTankShape.MASTER_POS, SteelSheetmetalTankShape.TRIGGER_POS, new BlockPos(SteelSheetmetalTankShape.WIDTH, SteelSheetmetalTankShape.HEIGHT, SteelSheetmetalTankShape.LENGTH), ITMultiblockProvider.STEEL_SHEETMETAL_TANK); }
-
-    @Override public float getManualScale() { return SteelSheetmetalTankShape.MANUAL_SCALE; }
-
-    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, SteelSheetmetalTankShape.CLIENT_OFFSET.getX(), SteelSheetmetalTankShape.CLIENT_OFFSET.getY(), SteelSheetmetalTankShape.CLIENT_OFFSET.getZ())); }
-
-    @Override public boolean canBeMirrored() { return true; }
+    public SteelSheetmetalTank() { super(ITLib.rl("multiblocks/steel_sheetmetal_tank"), SteelSheetmetalTankShape.MASTER_POS, SteelSheetmetalTankShape.TRIGGER_POS, new BlockPos(SteelSheetmetalTankShape.WIDTH, SteelSheetmetalTankShape.HEIGHT, SteelSheetmetalTankShape.LENGTH), SteelSheetmetalTankShape.CLIENT_OFFSET, SteelSheetmetalTankShape.MANUAL_SCALE, ITMultiblockRegistry.STEEL_SHEETMETAL_TANK); }
 }

@@ -7,14 +7,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_SOLID.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockRegistry.BOILER_SOLID.iconStack(); }
 
     @Override
     protected DualMapCodec<RegistryFriendlyByteBuf, BoilerSolidRecipe> codecs() {

@@ -92,7 +92,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             RadiatorProcess process = state.processQueue.get(i);
-            process.tick(state, biomeMult);
+            process.tick(state.tanks.output(), biomeMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
 

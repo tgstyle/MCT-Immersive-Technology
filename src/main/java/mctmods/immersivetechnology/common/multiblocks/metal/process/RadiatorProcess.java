@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.process;
 
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.RadiatorLogic;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -13,11 +13,11 @@ public class RadiatorProcess {
         this.recipe = recipe;
     }
 
-    public void tick(RadiatorLogic.State state) {
-        tick(state, 1.0D);
+    public void tick(ITMarkableFluidTank output) {
+        tick(output, 1.0D);
     }
 
-    public void tick(RadiatorLogic.State state, double speedMult) {
+    public void tick(ITMarkableFluidTank output, double speedMult) {
         if (ticksProcessed >= recipe.getTotalProcessTime()) return;
 
         int advance = (int) Math.max(1, speedMult);
@@ -25,7 +25,7 @@ public class RadiatorProcess {
             FluidStack outFluid = recipe.fluidOutput();
             if (outFluid != null && !outFluid.isEmpty()) {
                 int perTickOut = outFluid.getAmount() / recipe.getTotalProcessTime();
-                state.tanks.output().fill(new FluidStack(outFluid.getFluid(), perTickOut), FluidAction.EXECUTE);
+                output.fill(new FluidStack(outFluid.getFluid(), perTickOut), FluidAction.EXECUTE);
             }
 
             ticksProcessed++;
@@ -34,7 +34,7 @@ public class RadiatorProcess {
                 if (outFluid != null && !outFluid.isEmpty()) {
                     int remainder = outFluid.getAmount() % recipe.getTotalProcessTime();
                     if (remainder > 0) {
-                        state.tanks.output().fill(new FluidStack(outFluid.getFluid(), remainder), FluidAction.EXECUTE);
+                        output.fill(new FluidStack(outFluid.getFluid(), remainder), FluidAction.EXECUTE);
                     }
                 }
             }

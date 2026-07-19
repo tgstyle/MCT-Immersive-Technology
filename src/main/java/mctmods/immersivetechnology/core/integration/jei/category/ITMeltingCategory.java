@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -40,7 +40,7 @@ public class ITMeltingCategory extends ITRecipeCategory<MeltingRecipe> {
                 .build();
 
         setRecipeBackground(back);
-        setIcon(ITMultiblockProvider.SOLAR_MELTER.iconStack());
+        setIcon(ITMultiblockRegistry.SOLAR_MELTER.iconStack());
 
         tankOverlay = helper.drawableBuilder(background, 177, 31, 20, 51)
                 .setTextureSize(256, 256)

@@ -22,7 +22,7 @@ import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITItems;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -220,10 +220,10 @@ public class ClientProxy extends CommonProxy {
         registerBERender(event, ITBlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseHeaterRenderer());
         registerBERender(event, ITBlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
         registerBERender(event, ITBlockEntities.ROTOR_CREATIVE::get, context -> new RotorCreativeRenderer());
-        registerBERender(event, ITMultiblockProvider.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());
-        registerBERender(event, ITMultiblockProvider.GAS_TURBINE.masterBE(), ctx -> new GasTurbineRenderer());
-        registerBERender(event, ITMultiblockProvider.SOLAR_REFLECTOR.masterBE(), ctx1 -> new SolarReflectorRenderer());
-        registerBERender(event, ITMultiblockProvider.SOLAR_MELTER.masterBE(), ctx -> new SolarMelterRenderer());
-        registerBERender(event, ITMultiblockProvider.STEEL_SHEETMETAL_TANK.masterBE(), ctx -> new SteelSheetmetalTankRenderer());
+        registerBERender(event, ITMultiblockRegistry.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());
+        registerBERender(event, ITMultiblockRegistry.GAS_TURBINE.masterBE(), ctx -> new GasTurbineRenderer());
+        registerBERender(event, ITMultiblockRegistry.SOLAR_REFLECTOR.masterBE(), ctx1 -> new SolarReflectorRenderer());
+        registerBERender(event, ITMultiblockRegistry.SOLAR_MELTER.masterBE(), ctx -> new SolarMelterRenderer());
+        registerBERender(event, ITMultiblockRegistry.STEEL_SHEETMETAL_TANK.masterBE(), ctx -> new SteelSheetmetalTankRenderer());
     }
 }

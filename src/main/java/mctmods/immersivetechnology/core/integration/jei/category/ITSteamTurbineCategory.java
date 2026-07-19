@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -30,7 +30,7 @@ public class ITSteamTurbineCategory extends ITRecipeCategory<SteamTurbineRecipe>
         super(helper, JEIRecipeTypes.STEAM_TURBINE, "block.immersivetechnology.steam_turbine");
         ResourceLocation background = ITLib.makeTextureLocation("turbine_jei");
         setRecipeBackground(helper.createDrawable(background, 0, 0, 116, 69));
-        setIcon(ITMultiblockProvider.STEAM_TURBINE.iconStack());
+        setIcon(ITMultiblockRegistry.STEAM_TURBINE.iconStack());
 
         tankOverlay = helper.createDrawable(background, 118, 2, 16, 47);
 

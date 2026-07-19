@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels;
 import mctmods.immersivetechnology.common.data.models.ITNongeneratedModels.ITNongeneratedModel;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mctmods.immersivetechnology.common.data.generators.ITBlockState;
 
 import com.google.common.base.Preconditions;
@@ -97,7 +97,7 @@ public class ITMultiblockStateGenerator {
     private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures, @Nullable String renderType) {
         if (!hasActive) { defaultTextures = ImmutableMap.of(); activeTextures = ImmutableMap.of(); }
         ITLib.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
-        ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockProvider.getMBTemplate.apply(registry_name);
+        ITTemplateMultiblock multiblock = (ITTemplateMultiblock) ITMultiblockRegistry.getMBTemplate.apply(registry_name);
         boolean hasMirror = multiblock.getBlock().getStateDefinition().getProperties().contains(ITProperties.MIRRORED);
         boolean flipMirror = hasMirror && useSeparateMirror;
         String baseObjPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";

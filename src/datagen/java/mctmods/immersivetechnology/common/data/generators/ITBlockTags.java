@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.data.generators;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
@@ -20,19 +20,19 @@ import java.util.concurrent.CompletableFuture;
 
 public class ITBlockTags extends BlockTagsProvider {
     private static final MultiblockRegistration<?>[] MULTIBLOCKS = {
-            ITMultiblockProvider.ALTERNATOR,
-            ITMultiblockProvider.BOILER_LIQUID,
-            ITMultiblockProvider.BOILER_SOLID,
-            ITMultiblockProvider.BOILER_TANK,
-            ITMultiblockProvider.COOLING_TOWER,
-            ITMultiblockProvider.DISTILLER,
-            ITMultiblockProvider.GAS_TURBINE,
-            ITMultiblockProvider.HEAT_EXCHANGER,
-            ITMultiblockProvider.SOLAR_MELTER,
-            ITMultiblockProvider.SOLAR_REFLECTOR,
-            ITMultiblockProvider.SOLAR_TOWER,
-            ITMultiblockProvider.STEAM_TURBINE,
-            ITMultiblockProvider.STEEL_SHEETMETAL_TANK
+            ITMultiblockRegistry.ALTERNATOR,
+            ITMultiblockRegistry.BOILER_LIQUID,
+            ITMultiblockRegistry.BOILER_SOLID,
+            ITMultiblockRegistry.BOILER_TANK,
+            ITMultiblockRegistry.COOLING_TOWER,
+            ITMultiblockRegistry.DISTILLER,
+            ITMultiblockRegistry.GAS_TURBINE,
+            ITMultiblockRegistry.HEAT_EXCHANGER,
+            ITMultiblockRegistry.SOLAR_MELTER,
+            ITMultiblockRegistry.SOLAR_REFLECTOR,
+            ITMultiblockRegistry.SOLAR_TOWER,
+            ITMultiblockRegistry.STEAM_TURBINE,
+            ITMultiblockRegistry.STEEL_SHEETMETAL_TANK
     };
 
     public ITBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, ITLib.MODID, existingFileHelper); }

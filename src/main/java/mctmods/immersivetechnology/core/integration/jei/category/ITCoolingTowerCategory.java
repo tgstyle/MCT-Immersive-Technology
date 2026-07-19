@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -34,7 +34,7 @@ public class ITCoolingTowerCategory extends ITRecipeCategory<CoolingTowerRecipe>
         ResourceLocation background = ITLib.makeTextureLocation("cooling_tower_jei");
         IDrawableStatic back = helper.createDrawable(background, 0, 0, 159, 69);
         setRecipeBackground(back);
-        setIcon(ITMultiblockProvider.COOLING_TOWER.iconStack());
+        setIcon(ITMultiblockRegistry.COOLING_TOWER.iconStack());
 
         tankOverlay = helper.createDrawable(background, 161, 2, 16, 47);
 

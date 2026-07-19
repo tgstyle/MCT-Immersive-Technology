@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -34,7 +34,7 @@ public class ITBoilerTankCategory extends ITRecipeCategory<BoilerTankRecipe> {
                 .build();
 
         setRecipeBackground(back);
-        setIcon(ITMultiblockProvider.BOILER_TANK.iconStack());
+        setIcon(ITMultiblockRegistry.BOILER_TANK.iconStack());
 
         tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
     }

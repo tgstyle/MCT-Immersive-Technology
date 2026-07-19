@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -33,7 +33,7 @@ public class ITAdvancedCokeOvenCategory extends ITRecipeCategory<AdvancedCokeOve
         ResourceLocation background = ITLib.makeTextureLocation("immersiveengineering", "coke_oven");
         IDrawableStatic back = helper.createDrawable(background, 26, 16, 123, 55);
         setRecipeBackground(back);
-        setIcon(ITMultiblockProvider.ADVANCED_COKE_OVEN.iconStack());
+        setIcon(ITMultiblockRegistry.ADVANCED_COKE_OVEN.iconStack());
 
         tankOverlay = helper.createDrawable(background, 178, 33, 16, 47);
 

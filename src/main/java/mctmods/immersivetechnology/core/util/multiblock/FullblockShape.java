@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.metal.shapes;
+package mctmods.immersivetechnology.core.util.multiblock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;

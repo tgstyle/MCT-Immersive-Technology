@@ -6,7 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchangerRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.HEAT_EXCHANGER.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockRegistry.HEAT_EXCHANGER.iconStack(); }
 
     @Override
     protected DualMapCodec<RegistryFriendlyByteBuf, HeatExchangerRecipe> codecs() {

@@ -6,7 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.MELTING_CRUCIBLE.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockRegistry.MELTING_CRUCIBLE.iconStack(); }
 
     @Override
     protected DualMapCodec<RegistryFriendlyByteBuf, MeltingRecipe> codecs() {

@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -32,7 +32,7 @@ public class ITElectrolyticCrucibleBatteryCategory extends ITRecipeCategory<Elec
 
         ResourceLocation background = ITLib.makeTextureLocation("electrolytic_crucible_battery_jei");
         setRecipeBackground(helper.createDrawable(background, 0, 0, 176, 64));
-        setIcon(ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack());
+        setIcon(ITMultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack());
 
         tankOverlay = helper.createDrawable(background, 178, 2, 16, 47);
 

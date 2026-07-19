@@ -11,6 +11,7 @@ import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -44,6 +45,11 @@ public abstract class ITContainerMenu extends AbstractContainerMenu {
     }
 
     public void addGenericData(ITGenericContainerData<?> newData) { genericData.add(newData); }
+
+    protected void addPlayerInventorySlots(Inventory inventoryPlayer) {
+        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
+        for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
+    }
 
     @Override public void broadcastChanges() {
         super.broadcastChanges();

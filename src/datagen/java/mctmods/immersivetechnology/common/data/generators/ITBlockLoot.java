@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.core.util.loot.ITBEDropLootEntry;
 import mctmods.immersivetechnology.core.registration.ITBlocks;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
@@ -46,24 +46,24 @@ public class ITBlockLoot extends BlockLootSubProvider {
     }
 
     private void registerMultiblocksNoDrop() {
-        add(ITMultiblockProvider.ADVANCED_COKE_OVEN.block().get(), noDrop());
-        add(ITMultiblockProvider.ALTERNATOR.block().get(), noDrop());
-        add(ITMultiblockProvider.BOILER_LIQUID.block().get(), noDrop());
-        add(ITMultiblockProvider.BOILER_SOLID.block().get(), noDrop());
-        add(ITMultiblockProvider.BOILER_TANK.block().get(), noDrop());
-        add(ITMultiblockProvider.COOLING_TOWER.block().get(), noDrop());
-        add(ITMultiblockProvider.DISTILLER.block().get(), noDrop());
-        add(ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.block().get(), noDrop());
-        add(ITMultiblockProvider.GAS_TURBINE.block().get(), noDrop());
-        add(ITMultiblockProvider.HEAT_EXCHANGER.block().get(), noDrop());
-        add(ITMultiblockProvider.MELTING_CRUCIBLE.block().get(), noDrop());
-        add(ITMultiblockProvider.RADIATOR.block().get(), noDrop());
-        add(ITMultiblockProvider.RADIATOR_HORIZONTAL.block().get(), noDrop());
-        add(ITMultiblockProvider.SOLAR_MELTER.block().get(), noDrop());
-        add(ITMultiblockProvider.SOLAR_REFLECTOR.block().get(), noDrop());
-        add(ITMultiblockProvider.SOLAR_TOWER.block().get(), noDrop());
-        add(ITMultiblockProvider.STEAM_TURBINE.block().get(), noDrop());
-        add(ITMultiblockProvider.STEEL_SHEETMETAL_TANK.block().get(), noDrop());
+        add(ITMultiblockRegistry.ADVANCED_COKE_OVEN.block().get(), noDrop());
+        add(ITMultiblockRegistry.ALTERNATOR.block().get(), noDrop());
+        add(ITMultiblockRegistry.BOILER_LIQUID.block().get(), noDrop());
+        add(ITMultiblockRegistry.BOILER_SOLID.block().get(), noDrop());
+        add(ITMultiblockRegistry.BOILER_TANK.block().get(), noDrop());
+        add(ITMultiblockRegistry.COOLING_TOWER.block().get(), noDrop());
+        add(ITMultiblockRegistry.DISTILLER.block().get(), noDrop());
+        add(ITMultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.block().get(), noDrop());
+        add(ITMultiblockRegistry.GAS_TURBINE.block().get(), noDrop());
+        add(ITMultiblockRegistry.HEAT_EXCHANGER.block().get(), noDrop());
+        add(ITMultiblockRegistry.MELTING_CRUCIBLE.block().get(), noDrop());
+        add(ITMultiblockRegistry.RADIATOR.block().get(), noDrop());
+        add(ITMultiblockRegistry.RADIATOR_HORIZONTAL.block().get(), noDrop());
+        add(ITMultiblockRegistry.SOLAR_MELTER.block().get(), noDrop());
+        add(ITMultiblockRegistry.SOLAR_REFLECTOR.block().get(), noDrop());
+        add(ITMultiblockRegistry.SOLAR_TOWER.block().get(), noDrop());
+        add(ITMultiblockRegistry.STEAM_TURBINE.block().get(), noDrop());
+        add(ITMultiblockRegistry.STEEL_SHEETMETAL_TANK.block().get(), noDrop());
     }
 
     private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }

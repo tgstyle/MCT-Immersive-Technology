@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerReci
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -33,7 +33,7 @@ public class ITDistillerCategory extends ITRecipeCategory<DistillerRecipe> {
 
         ResourceLocation background = ITLib.makeTextureLocation("distiller");
         setRecipeBackground(helper.createDrawable(background, 0, 0, 176, 74));
-        setIcon(ITMultiblockProvider.DISTILLER.iconStack());
+        setIcon(ITMultiblockRegistry.DISTILLER.iconStack());
 
         tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);
     }

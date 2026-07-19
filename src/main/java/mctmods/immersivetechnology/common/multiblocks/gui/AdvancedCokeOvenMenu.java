@@ -8,7 +8,6 @@ import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOv
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
@@ -45,8 +44,7 @@ public class AdvancedCokeOvenMenu extends ITContainerMenu {
         this.addSlot(new ITSlot.FluidContainer(inv, AdvancedCokeOvenLogic.SLOT_EMPTY_CONTAINER, 152, 17, 0));
         this.addSlot(new ITSlot.Output(inv, AdvancedCokeOvenLogic.SLOT_FILLED_CONTAINER, 152, 53));
         this.ownSlotCount = 4;
-        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) {addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));}
-        for (int i = 0; i < 9; i++) {addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142));}
+        addPlayerInventorySlots(inventoryPlayer);
         addGenericData(ITGenericContainerData.fluid(tanks.output()));
         addGenericData(ITGenericContainerData.int32(() -> state != null ? state.get(AdvancedCokeOvenLogic.State.MAX_PROCESS_TIME) : maxProcessTime, i -> this.maxProcessTime = i));
         addGenericData(ITGenericContainerData.int32(() -> state != null ? state.get(AdvancedCokeOvenLogic.State.REMAINING_PROCESS_TIME) : remainingProcessTime, i -> this.remainingProcessTime = i));

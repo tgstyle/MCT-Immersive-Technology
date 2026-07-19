@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -35,7 +35,7 @@ public class ITHeatExchangerCategory extends ITRecipeCategory<HeatExchangerRecip
 
         ResourceLocation background = ITLib.makeTextureLocation("heat_exchanger_jei");
         setRecipeBackground(helper.createDrawable(background, 0, 0, 176, 64));
-        setIcon(ITMultiblockProvider.HEAT_EXCHANGER.iconStack());
+        setIcon(ITMultiblockRegistry.HEAT_EXCHANGER.iconStack());
 
         tankOverlay = helper.createDrawable(background, 178, 2, 16, 47);
 

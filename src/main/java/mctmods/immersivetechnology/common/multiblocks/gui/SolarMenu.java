@@ -10,7 +10,6 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITISolarMultiblockS
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -50,8 +49,7 @@ public class SolarMenu extends ITContainerMenu {
         }});
         this.addSlot(new ITSlot.Output(inv, 3, 148, 53));
         ownSlotCount = 4;
-        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
-        for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
+        addPlayerInventorySlots(inventoryPlayer);
         addDataSlots(state);
         addGenericData(ITGenericContainerData.fluid(inputTank));
         addGenericData(ITGenericContainerData.fluid(outputTank));

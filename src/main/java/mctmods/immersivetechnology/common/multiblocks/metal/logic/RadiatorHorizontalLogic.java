@@ -5,7 +5,7 @@ import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorHorizontalProcess;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorHorizontalShape;
 import mctmods.immersivetechnology.core.ITServerConfig;
@@ -91,8 +91,8 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         double biomeMult = getBiomeSpeedMultiplier(ctx);
 
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
-            RadiatorHorizontalProcess process = state.processQueue.get(i);
-            process.tick(state, biomeMult);
+            RadiatorProcess process = state.processQueue.get(i);
+            process.tick(state.tanks.output(), biomeMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
 
@@ -105,7 +105,7 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
                 boolean canOutput = (outF == null || outF.isEmpty() || state.tanks.output().fill(outF, FluidAction.SIMULATE) >= outF.getAmount());
                 if (input.getAmount() >= req && canOutput) {
                     state.tanks.input().drain(req, FluidAction.EXECUTE);
-                    state.processQueue.add(new RadiatorHorizontalProcess(recipe));
+                    state.processQueue.add(new RadiatorProcess(recipe));
                 }
             }
         }
@@ -113,7 +113,7 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         state.active = enabled && !state.processQueue.isEmpty();
 
         if (!state.processQueue.isEmpty()) {
-            RadiatorHorizontalProcess current = state.processQueue.getFirst();
+            RadiatorProcess current = state.processQueue.getFirst();
             int newProg = current.getTicksProcessed();
             int newTotal = current.getRecipe().getTotalProcessTime();
             if (newProg != state.processProgress || newTotal != state.totalProcessTime) { state.processProgress = newProg; state.totalProcessTime = newTotal; progressChanged = true; }
@@ -176,7 +176,7 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         public IFluidHandler outputCap;
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public boolean active;
-        public List<RadiatorHorizontalProcess> processQueue = new ArrayList<>();
+        public List<RadiatorProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;
         public int totalProcessTime = 0;

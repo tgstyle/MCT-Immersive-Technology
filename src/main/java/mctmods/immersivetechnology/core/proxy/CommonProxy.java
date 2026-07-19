@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.core.registration.ITCreativeTab;
 import mctmods.immersivetechnology.core.registration.ITFluids;
 import mctmods.immersivetechnology.core.registration.ITItems;
 import mctmods.immersivetechnology.core.registration.ITMenuTypes;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import mctmods.immersivetechnology.core.registration.ITSounds;
@@ -19,7 +19,7 @@ import net.neoforged.bus.api.IEventBus;
 public class CommonProxy {
     public static void modConstruction(IEventBus event) {
         ITLib.IT_LOGGER.info("Registering IT Content!");
-        ITMultiblockProvider.forceClassLoad();
+        ITMultiblockRegistry.forceClassLoad();
         ITMenuTypes.REGISTER.register(event);
         ITRecipeTypes.init(event);
         ITSounds.init(event);

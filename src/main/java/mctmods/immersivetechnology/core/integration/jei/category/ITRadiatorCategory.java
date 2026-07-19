@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.client.gui.helper.ITFluidInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -34,7 +34,7 @@ public class ITRadiatorCategory extends ITRecipeCategory<RadiatorRecipe> {
         ResourceLocation background = ITLib.makeTextureLocation("radiator_jei");
         IDrawableStatic back = helper.createDrawable(background, 0, 0, 159, 69);
         setRecipeBackground(back);
-        setIcon(ITMultiblockProvider.RADIATOR.iconStack());
+        setIcon(ITMultiblockRegistry.RADIATOR.iconStack());
 
         tankOverlay = helper.createDrawable(background, 161, 2, 16, 47);
 

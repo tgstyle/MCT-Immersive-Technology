@@ -6,7 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
-    @Override public ItemStack getIcon() { return ITMultiblockProvider.BOILER_TANK.iconStack(); }
+    @Override public ItemStack getIcon() { return ITMultiblockRegistry.BOILER_TANK.iconStack(); }
 
     @Override
     protected DualMapCodec<RegistryFriendlyByteBuf, BoilerTankRecipe> codecs() {

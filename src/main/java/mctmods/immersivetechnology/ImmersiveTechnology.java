@@ -14,7 +14,7 @@ import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.registration.ITFluids;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mctmods.immersivetechnology.core.util.loot.ITLootFunctions;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
@@ -79,7 +79,7 @@ public class ImmersiveTechnology {
 
     @SubscribeEvent public static void onServerStarted(ServerStartedEvent event) {
         ITLib.IT_LOGGER.info("HELLO FROM SERVER STARTING");
-        ITMultiblockProvider.init();
+        ITMultiblockRegistry.init();
     }
 
     private void registerCapabilities(final RegisterCapabilitiesEvent event) {

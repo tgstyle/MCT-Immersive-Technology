@@ -8,7 +8,6 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandl
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.List;
@@ -33,8 +32,7 @@ public class BoilerSolidMenu extends ITContainerMenu {
         super(ctx);
         this.addSlot(new ITSlot.Fuel(inv, BoilerSolidLogic.INPUT_FUEL_SLOT, 44, 34));
         ownSlotCount=1;
-        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
-        for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
+        addPlayerInventorySlots(inventoryPlayer);
         addGenericData(new ITGenericContainerData<>(ITGenericDataSerializers.FLOAT, () -> (state != null ? (float)state.heatLevel : heatLevel), f -> this.heatLevel = f));
         addGenericData(ITGenericContainerData.int32(() -> state != null ? state.burnRemaining : burnRemaining, i -> this.burnRemaining = i));
         addGenericData(ITGenericContainerData.int32(() -> state != null ? state.totalBurnTime : totalBurnTime, i -> this.totalBurnTime = i));

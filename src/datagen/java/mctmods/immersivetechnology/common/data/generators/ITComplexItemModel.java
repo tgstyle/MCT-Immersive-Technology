@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.common.data.models.ITTRSRModelBuilder;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -25,24 +25,24 @@ public class ITComplexItemModel extends ModelProvider<ITTRSRModelBuilder> {
     @Override @NotNull public String getName() { return getClass().getSimpleName(); }
 
     @Override protected void registerModels() {
-        generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockProvider.ADVANCED_COKE_OVEN.block(), new Vector3f(4.0f, -3.5f, -1.0f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("alternator", "metal", ITMultiblockProvider.ALTERNATOR.block(), new Vector3f(5.5f, -3.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("boiler_liquid", "metal", ITMultiblockProvider.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("boiler_solid", "metal", ITMultiblockProvider.BOILER_SOLID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("boiler_tank", "metal", ITMultiblockProvider.BOILER_TANK.block(), new Vector3f(-3.2f, 0.5f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("cooling_tower", "stone", ITMultiblockProvider.COOLING_TOWER.block(), new Vector3f(-3.0f, -2.9f, -1.5f), 0.075f, 0.0375f, 0.0375f);
-        generateMultiblockModel("distiller", "metal", ITMultiblockProvider.DISTILLER.block(), new Vector3f(0.5f, -0.5f, -0.5f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("electrolytic_crucible_battery", "metal", ITMultiblockProvider.ELECTROLYTIC_CRUCIBLE_BATTERY.block(), new Vector3f(-4.5f, -0.5f, -0.5f), 0.11f, 0.0625f, 0.0625f);
-        generateMultiblockModel("gas_turbine", "metal", ITMultiblockProvider.GAS_TURBINE.block(), new Vector3f(-4.2f, 2.4f, -3.5f), 0.13f, 0.05f, 0.05f);
-        generateMultiblockModel("heat_exchanger", "metal", ITMultiblockProvider.HEAT_EXCHANGER.block(), new Vector3f(-2.5f, 2.2f, -3.5f), 0.1875f, 0.05f, 0.05f);
-        generateMultiblockModel("melting_crucible", "metal", ITMultiblockProvider.MELTING_CRUCIBLE.block(), new Vector3f(0.0f, -1.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("radiator", "metal", ITMultiblockProvider.RADIATOR.block(), new Vector3f(-4.0f, 1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
-        generateMultiblockModel("radiator_horizontal", "metal", ITMultiblockProvider.RADIATOR_HORIZONTAL.block(), new Vector3f(0.0f, -1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
-        generateMultiblockModel("solar_melter", "metal", ITMultiblockProvider.SOLAR_MELTER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
-        generateMultiblockModel("solar_reflector", "metal", ITMultiblockProvider.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
-        generateMultiblockModel("solar_tower", "metal", ITMultiblockProvider.SOLAR_TOWER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
-        generateMultiblockModel("steam_turbine", "metal", ITMultiblockProvider.STEAM_TURBINE.block(), new Vector3f(6.75f, -4.5f, -5.5f), 0.11f, 0.04f, 0.04f);
-        generateMultiblockModel("steel_sheetmetal_tank", "metal", ITMultiblockProvider.STEEL_SHEETMETAL_TANK.block(), new Vector3f(2f, -2.0f, 0.5f), 0.075f, 0.0625f, 0.0625f);
+        generateMultiblockModel("advanced_coke_oven", "stone", ITMultiblockRegistry.ADVANCED_COKE_OVEN.block(), new Vector3f(4.0f, -3.5f, -1.0f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("alternator", "metal", ITMultiblockRegistry.ALTERNATOR.block(), new Vector3f(5.5f, -3.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("boiler_liquid", "metal", ITMultiblockRegistry.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("boiler_solid", "metal", ITMultiblockRegistry.BOILER_SOLID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("boiler_tank", "metal", ITMultiblockRegistry.BOILER_TANK.block(), new Vector3f(-3.2f, 0.5f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("cooling_tower", "stone", ITMultiblockRegistry.COOLING_TOWER.block(), new Vector3f(-3.0f, -2.9f, -1.5f), 0.075f, 0.0375f, 0.0375f);
+        generateMultiblockModel("distiller", "metal", ITMultiblockRegistry.DISTILLER.block(), new Vector3f(0.5f, -0.5f, -0.5f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("electrolytic_crucible_battery", "metal", ITMultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.block(), new Vector3f(-4.5f, -0.5f, -0.5f), 0.11f, 0.0625f, 0.0625f);
+        generateMultiblockModel("gas_turbine", "metal", ITMultiblockRegistry.GAS_TURBINE.block(), new Vector3f(-4.2f, 2.4f, -3.5f), 0.13f, 0.05f, 0.05f);
+        generateMultiblockModel("heat_exchanger", "metal", ITMultiblockRegistry.HEAT_EXCHANGER.block(), new Vector3f(-2.5f, 2.2f, -3.5f), 0.1875f, 0.05f, 0.05f);
+        generateMultiblockModel("melting_crucible", "metal", ITMultiblockRegistry.MELTING_CRUCIBLE.block(), new Vector3f(0.0f, -1.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("radiator", "metal", ITMultiblockRegistry.RADIATOR.block(), new Vector3f(-4.0f, 1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
+        generateMultiblockModel("radiator_horizontal", "metal", ITMultiblockRegistry.RADIATOR_HORIZONTAL.block(), new Vector3f(0.0f, -1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
+        generateMultiblockModel("solar_melter", "metal", ITMultiblockRegistry.SOLAR_MELTER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
+        generateMultiblockModel("solar_reflector", "metal", ITMultiblockRegistry.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("solar_tower", "metal", ITMultiblockRegistry.SOLAR_TOWER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
+        generateMultiblockModel("steam_turbine", "metal", ITMultiblockRegistry.STEAM_TURBINE.block(), new Vector3f(6.75f, -4.5f, -5.5f), 0.11f, 0.04f, 0.04f);
+        generateMultiblockModel("steel_sheetmetal_tank", "metal", ITMultiblockRegistry.STEEL_SHEETMETAL_TANK.block(), new Vector3f(2f, -2.0f, 0.5f), 0.075f, 0.0625f, 0.0625f);
     }
 
     private ITTRSRModelBuilder createObjModel(String modelPath, String jsonName) {

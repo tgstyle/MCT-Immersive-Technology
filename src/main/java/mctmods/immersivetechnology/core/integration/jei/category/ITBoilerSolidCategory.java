@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.core.integration.jei.category;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.ITLib;
-import mctmods.immersivetechnology.core.registration.ITMultiblockProvider;
+import mctmods.immersivetechnology.core.registration.ITMultiblockRegistry;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -30,7 +30,7 @@ public class ITBoilerSolidCategory extends ITRecipeCategory<BoilerSolidRecipe> {
                 .build();
 
         setRecipeBackground(back);
-        setIcon(ITMultiblockProvider.BOILER_SOLID.iconStack());
+        setIcon(ITMultiblockRegistry.BOILER_SOLID.iconStack());
     }
 
     @Override

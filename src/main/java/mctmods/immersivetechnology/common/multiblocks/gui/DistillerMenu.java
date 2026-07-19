@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.common.multiblocks.helper.ITSlotwiseItemHandl
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.List;
@@ -51,8 +50,7 @@ public class DistillerMenu extends ITContainerMenu {
         this.addSlot(new ITSlot.FluidContainer(inv, DistillerLogic.SLOT_OUTPUT_EMPTY, 134, 17, 1));
         this.addSlot(new ITSlot.Output(inv, DistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
         this.addSlot(new ITSlot.Output(inv, DistillerLogic.OUTPUT_SLOT, 80, 35));
-        for (int i = 0; i < 3; i++) { for (int j = 0; j < 9; j++) { addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); } }
-        for (int i = 0; i < 9; i++) { addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
+        addPlayerInventorySlots(inventoryPlayer);
         addGenericData(ITGenericContainerData.energy(energy));
         addGenericData(ITGenericContainerData.fluid(tanks.input()));
         addGenericData(ITGenericContainerData.fluid(tanks.output()));

@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.core.util.ITUtils;
 import mctmods.immersivetechnology.mixin.common.IStructureTemplateAccessorMixin;
 
 import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
+import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
@@ -47,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static net.minecraft.world.level.block.Mirror.FRONT_BACK;
 
@@ -62,20 +64,34 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     private List<StructureBlockInfo> sortedStructureBlocks;
     private Map<BlockPos, BlockState> triggerStateMap;
     private MultiblockRegistration<?> multiblockRegistration;
+    private final BlockPos clientOffset;
+    private final float manualScale;
 
-    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, MultiblockRegistration<?> logic) {
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, BlockPos clientOffset, float manualScale, MultiblockRegistration<?> logic) {
         super(loc, masterFromOrigin, triggerFromOrigin, size);
+        this.clientOffset = clientOffset;
+        this.manualScale = manualScale;
         this.multiblockRegistration = logic;
     }
 
-    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, List<BlockMatcher.MatcherPredicate> additionalPredicates, MultiblockRegistration<?> logic) {
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, BlockPos clientOffset, float manualScale, List<BlockMatcher.MatcherPredicate> additionalPredicates, MultiblockRegistration<?> logic) {
         super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates);
+        this.clientOffset = clientOffset;
+        this.manualScale = manualScale;
         this.multiblockRegistration = logic;
     }
 
-    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size) { super(loc, masterFromOrigin, triggerFromOrigin, size); }
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, BlockPos clientOffset, float manualScale) {
+        super(loc, masterFromOrigin, triggerFromOrigin, size);
+        this.clientOffset = clientOffset;
+        this.manualScale = manualScale;
+    }
 
-    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, List<BlockMatcher.MatcherPredicate> additionalPredicates) { super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates); }
+    public ITTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, BlockPos size, BlockPos clientOffset, float manualScale, List<BlockMatcher.MatcherPredicate> additionalPredicates) {
+        super(loc, masterFromOrigin, triggerFromOrigin, size, additionalPredicates);
+        this.clientOffset = clientOffset;
+        this.manualScale = manualScale;
+    }
 
     @SuppressWarnings("unused")
     public void setLogic(MultiblockRegistration<?> logic) { this.multiblockRegistration = logic; }
@@ -103,7 +119,9 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     @SuppressWarnings("deprecation")
     private static BlockState rotate(BlockState state, Rotation rotation) { return state.rotate(rotation); }
 
-    @Override public float getManualScale() { return 0; }
+    @Override public float getManualScale() { return manualScale; }
+
+    @Override public void initializeClient(Consumer<ClientMultiblocks.MultiblockManualData> consumer) { consumer.accept(new ITClientMultiblockProperties(this, clientOffset.getX(), clientOffset.getY(), clientOffset.getZ())); }
 
     @Override public boolean canBeMirrored() {
         if (multiblockRegistration != null) { return multiblockRegistration.mirrorable(); }
