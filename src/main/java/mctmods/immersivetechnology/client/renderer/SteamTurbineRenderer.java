@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteamTurbineLogic;
@@ -46,7 +46,7 @@ public class SteamTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBloc
         double angle = state.animation_fanRotation + state.animation_fanRotationStep * partialTicks;
         if (!ClientConfig.doSpecialRenderSteamTurbine) { angle = 0; }
         ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
-        ITDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
+        ModDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         Vec3 rotorStart1 = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(2, 1, 0)).subtract(pos));
         poseStack.pushPose();
         poseStack.translate(rotorStart1.x + 0.5, rotorStart1.y + 0.5, rotorStart1.z + 0.5);
@@ -61,7 +61,7 @@ public class SteamTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBloc
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light, boolean useCachedLight) {
+    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light, boolean useCachedLight) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
         RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, useCachedLight, 0xffffff, light);

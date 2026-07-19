@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SolarTowerCategory extends RecipeCategory<SolarTowerRecipe> {
+public class SolarTowerCategory extends ModRecipeCategory<SolarTowerRecipe> {
 
     private final IDrawableStatic tankOverlay;
 

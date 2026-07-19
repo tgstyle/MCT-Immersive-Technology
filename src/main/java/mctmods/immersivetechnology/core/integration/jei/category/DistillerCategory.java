@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DistillerCategory extends RecipeCategory<DistillerRecipe> {
+public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
 
     private final IDrawableStatic tankOverlay;
 

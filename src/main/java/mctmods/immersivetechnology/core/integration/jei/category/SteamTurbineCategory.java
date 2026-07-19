@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SteamTurbineCategory extends RecipeCategory<SteamTurbineRecipe> {
+public class SteamTurbineCategory extends ModRecipeCategory<SteamTurbineRecipe> {
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated turbineAndArrow;
 

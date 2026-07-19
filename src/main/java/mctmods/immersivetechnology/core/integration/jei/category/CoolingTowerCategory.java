@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CoolingTowerCategory extends RecipeCategory<CoolingTowerRecipe> {
+public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
 import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.common.data.DataGenUtils;
+import mctmods.immersivetechnology.common.data.util.GeneratorUtils;
 import mctmods.immersivetechnology.common.data.builders.SplitModelBuilder;
 import mctmods.immersivetechnology.common.data.builders.ModObjModelBuilder;
 import mctmods.immersivetechnology.common.data.builders.MirroredModelBuilder;
@@ -144,7 +144,7 @@ public class MultiblockStateGenerator {
         if (path.endsWith("_mirrored.obj")) {
             textureModel = ResourceLocation.fromNamespaceAndPath(objPath.getNamespace(), path.replace("_mirrored.obj", ".obj"));
         }
-        String particleTex = DataGenUtils.getTextureFromObj(textureModel, existingFileHelper);
+        String particleTex = GeneratorUtils.getTextureFromObj(textureModel, existingFileHelper);
         if (particleTex.charAt(0) == '#') { particleTex = textures.getOrDefault(particleTex.substring(1), main.modLoc("block/metal/technology_engineering")).toString(); }
         ret.texture("particle", particleTex);
         ModBlockState.generatedParticleTextures.put(ret.getLocation(), particleTex);

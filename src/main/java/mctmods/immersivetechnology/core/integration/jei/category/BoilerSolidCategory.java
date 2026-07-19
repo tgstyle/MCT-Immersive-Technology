@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-public class BoilerSolidCategory extends RecipeCategory<BoilerSolidRecipe> {
+public class BoilerSolidCategory extends ModRecipeCategory<BoilerSolidRecipe> {
 
     public BoilerSolidCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_SOLID, "block.immersivetechnology.boiler_solid");

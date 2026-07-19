@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GasTurbineCategory extends RecipeCategory<GasTurbineRecipe> {
+public class GasTurbineCategory extends ModRecipeCategory<GasTurbineRecipe> {
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated turbineAndArrow;
 

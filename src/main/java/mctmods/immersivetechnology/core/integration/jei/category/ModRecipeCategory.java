@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public abstract class RecipeCategory<T> implements IRecipeCategory<T> {
+public abstract class ModRecipeCategory<T> implements IRecipeCategory<T> {
     protected final IGuiHelper guiHelper;
     private final RecipeType<T> type;
     public MutableComponent title;
@@ -22,7 +22,7 @@ public abstract class RecipeCategory<T> implements IRecipeCategory<T> {
     private IDrawable icon;
     protected final Font font;
 
-    public RecipeCategory(IGuiHelper guiHelper, RecipeType<T> type, String localKey) {
+    public ModRecipeCategory(IGuiHelper guiHelper, RecipeType<T> type, String localKey) {
         this.guiHelper = guiHelper;
         this.type = type;
         this.title = Component.translatable(localKey);

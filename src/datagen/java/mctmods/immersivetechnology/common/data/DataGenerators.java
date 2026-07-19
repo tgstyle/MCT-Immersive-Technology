@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 @EventBusSubscriber(modid = Reference.MODID)
-public class ModDataProvider {
+public class DataGenerators {
 
     @SubscribeEvent
     public static void generate(GatherDataEvent event) {

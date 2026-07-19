@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class HeatExchangerCategory extends RecipeCategory<HeatExchangerRecipe> {
+public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;

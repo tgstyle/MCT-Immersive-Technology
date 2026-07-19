@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class RadiatorCategory extends RecipeCategory<RadiatorRecipe> {
+public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;

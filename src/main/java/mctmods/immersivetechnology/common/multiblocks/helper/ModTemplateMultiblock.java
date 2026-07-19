@@ -4,7 +4,6 @@ import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.util.Utils;
-import mctmods.immersivetechnology.mixin.common.IStructureTemplateAccessorMixin;
 
 import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
@@ -30,7 +29,6 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -215,7 +213,7 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
             ItemStack effectiveTool = tool.isEmpty() ? new ItemStack(Items.DIAMOND_PICKAXE) : tool;
             if (!activeDisassemblies.add(masterPos.immutable())) { return; }
             BlockEntity masterBE = world.getBlockEntity(masterPos);
-            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof ModIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
+            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IDisassemblingAware itH) { itH.it$markDisassembling(); }
             getTemplate(world);
             List<StructureBlockInfo> structure = sortedStructureBlocks;
             for (StructureBlockInfo info : structure) {
@@ -303,11 +301,11 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
         BlockEntity be = world.getBlockEntity(pos);
         if (be == null) { return; }
         boolean marked = false;
-        if (be instanceof ModIMultiblockBEHelper itBE) {
+        if (be instanceof IDisassemblingAware itBE) {
             itBE.it$markDisassembling();
             marked = true;
         }
-        if (be instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper() instanceof ModIMultiblockBEHelper itHelper) {
+        if (be instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper() instanceof IDisassemblingAware itHelper) {
             itHelper.it$markDisassembling();
             marked = true;
         }
@@ -325,11 +323,6 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
 
     @Nonnull @Override public TemplateData getTemplate(@Nullable Level world) {
         ResourceLocation loc = this.getTemplateLocation();
-        if (world == null) {
-            StructureTemplate cached = SYNCED_CLIENT_TEMPLATES.get(loc);
-            if (cached != null) { return buildTemplateData(cached); }
-            throw new IllegalStateException("getTemplate called with null world and no synced template loaded for " + loc);
-        }
         try {
             TemplateData result = super.getTemplate(world);
             Vec3i resultSize = result.template().getSize();
@@ -340,31 +333,5 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
             Reference.IT_LOGGER.error("getTemplate FAILED for loc: {} (world={})", loc, world.dimension().location(), e);
             throw e;
         }
-    }
-
-    private TemplateData buildTemplateData(StructureTemplate template) {
-        List<StructureBlockInfo> blocks = getNonAirBlocks(template);
-        BlockState trigger = null;
-        for (StructureBlockInfo info : blocks) {
-            if (info.pos().equals(this.triggerFromOrigin)) {
-                trigger = info.state();
-                break;
-            }
-        }
-        if (trigger == null) {
-            trigger = blocks.isEmpty() ? Blocks.AIR.defaultBlockState() : blocks.getFirst().state();
-        }
-        return new TemplateData(template, blocks, trigger);
-    }
-
-    private List<StructureBlockInfo> getNonAirBlocks(StructureTemplate template) {
-        List<StructureBlockInfo> blocks = new ArrayList<>();
-        List<StructureTemplate.Palette> palettes = ((IStructureTemplateAccessorMixin) template).it$getPalettes();
-        if (!palettes.isEmpty()) {
-            for (StructureBlockInfo info : palettes.getFirst().blocks()) {
-                if (!info.state().isAir()) { blocks.add(info); }
-            }
-        }
-        return blocks;
     }
 }

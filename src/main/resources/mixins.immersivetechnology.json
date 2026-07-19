@@ -10,8 +10,7 @@
     "common.MixerLogicDebounceMixin",
     "common.MixerRecipePriorityMixin",
     "common.MixerStateExtensionMixin",
-    "common.MultiblockBEHelperMixin",
-    "common.IStructureTemplateAccessorMixin"
+    "common.MultiblockBEHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MeltingCategory extends RecipeCategory<MeltingRecipe> {
+public class MeltingCategory extends ModRecipeCategory<MeltingRecipe> {
 
     private final IDrawableStatic tankOverlay;
 

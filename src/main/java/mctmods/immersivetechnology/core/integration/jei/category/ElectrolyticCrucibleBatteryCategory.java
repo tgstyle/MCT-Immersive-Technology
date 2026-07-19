@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ElectrolyticCrucibleBatteryCategory extends RecipeCategory<ElectrolyticCrucibleBatteryRecipe> {
+public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<ElectrolyticCrucibleBatteryRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;

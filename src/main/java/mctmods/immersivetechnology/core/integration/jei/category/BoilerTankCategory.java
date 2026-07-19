@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class BoilerTankCategory extends RecipeCategory<BoilerTankRecipe> {
+public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
 
     private final IDrawableStatic tankOverlay;
 

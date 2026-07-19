@@ -13,11 +13,11 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT) public class ITDynamicModel {
+@EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT) public class ModDynamicModel {
     private static final List<ModelResourceLocation> MODELS = new ArrayList<>();
     private final ModelResourceLocation name;
     @SubscribeEvent public static void registerModels(ModelEvent.RegisterAdditional ev) { for (ModelResourceLocation model : MODELS) { ev.register(model); } }
-    public ITDynamicModel(String desc) { this.name = new ModelResourceLocation(Reference.rl("dynamic/" + desc), "standalone"); MODELS.add(this.name); }
+    public ModDynamicModel(String desc) { this.name = new ModelResourceLocation(Reference.rl("dynamic/" + desc), "standalone"); MODELS.add(this.name); }
     public BakedModel get() {
         final BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
         return blockRenderer.getBlockModelShaper().getModelManager().getModel(this.name);

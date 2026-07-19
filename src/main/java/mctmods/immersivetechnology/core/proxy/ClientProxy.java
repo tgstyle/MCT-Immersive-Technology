@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.models.obj.ModObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.MirroredModelLoader;
@@ -204,11 +204,11 @@ public class ClientProxy extends CommonProxy {
         ev.register(ModelConfigurableSides.Loader.NAME, ModelConfigurableSides.Loader.INSTANCE);
         ev.register(SplitModelLoader.LOCATION, SplitModelLoader.INSTANCE);
         ev.register(MirroredModelLoader.ID, MirroredModelLoader.INSTANCE);
-        RotorModels.ROTOR = new ITDynamicModel("rotor");
-        RotorModels.ROTOR_EAST_WEST = new ITDynamicModel("rotor_east_west");
-        SolarReflectorModels.SUPPORT = new ITDynamicModel("solar_reflector_support");
-        SolarReflectorModels.MIRROR = new ITDynamicModel("solar_reflector_mirror");
-        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ITDynamicModel("advanced_coke_oven_baseheater_fan");
+        RotorModels.ROTOR = new ModDynamicModel("rotor");
+        RotorModels.ROTOR_EAST_WEST = new ModDynamicModel("rotor_east_west");
+        SolarReflectorModels.SUPPORT = new ModDynamicModel("solar_reflector_support");
+        SolarReflectorModels.MIRROR = new ModDynamicModel("solar_reflector_mirror");
+        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ModDynamicModel("advanced_coke_oven_baseheater_fan");
     }
 
     @SubscribeEvent

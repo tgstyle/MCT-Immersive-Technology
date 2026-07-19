@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.ITDynamicModel;
+import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
@@ -48,8 +48,8 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
         Direction dir = orientation.front();
         double supportAngle = state.animation_supportRotation;
         double mirrorAngle = state.animation_mirrorTilt;
-        ITDynamicModel supportModel = SolarReflectorModels.SUPPORT;
-        ITDynamicModel mirrorModel = SolarReflectorModels.MIRROR;
+        ModDynamicModel supportModel = SolarReflectorModels.SUPPORT;
+        ModDynamicModel mirrorModel = SolarReflectorModels.MIRROR;
         Vec3 start = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 0, 1)).subtract(pos));
         boolean isEW = dir.getStepX() != 0;
         Quaternionf orientRot = isEW ? ROT_Y90 : IDENTITY;
@@ -74,7 +74,7 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ITDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light, boolean useCachedLight) {
+    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light, boolean useCachedLight) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
         RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, useCachedLight, 0xffffff, light);
