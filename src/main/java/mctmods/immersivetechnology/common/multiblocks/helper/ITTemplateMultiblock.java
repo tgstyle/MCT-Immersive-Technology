@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
@@ -55,6 +54,7 @@ import static net.minecraft.world.level.block.Mirror.FRONT_BACK;
 public abstract class ITTemplateMultiblock extends TemplateMultiblock {
     public static final int DISASSEMBLE_QUEUE_SIZE = 8;
     public static final List<ITQueueProcessor> pendingQueues = new ArrayList<>();
+    public static final Set<BlockPos> activeDisassemblies = new HashSet<>();
     private final MultiblockRegistration<?> logic;
     private List<StructureBlockInfo> sortedStructureBlocks;
     private Map<BlockPos, BlockState> triggerStateMap;
@@ -125,16 +125,10 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             if (breakingPlayer != null && breakingPlayer.gameMode.getGameModeForPlayer() == GameType.CREATIVE) { dropItems = false; }
             ItemStack tool = breakingPlayer != null ? breakingPlayer.getMainHandItem() : ItemStack.EMPTY;
             ItemStack effectiveTool = tool.isEmpty() ? new ItemStack(Items.DIAMOND_PICKAXE) : tool;
-            IMultiblockBEHelperMaster<?> masterHelper = null;
             BlockEntity masterBE = world.getBlockEntity(masterPos);
-            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IMultiblockBEHelperMaster<?> h) { masterHelper = h; }
-
-            if (masterBE instanceof ITIMultiblockBEHelper itBE && itBE.it$isDisassembling()) { return; }
-            if (masterHelper instanceof ITIMultiblockBEHelper itH && itH.it$isDisassembling()) { return; }
             if (masterBE == null) { return; }
-
-            if (masterBE instanceof ITIMultiblockBEHelper itBE) { itBE.it$markDisassembling(); }
-            if (masterHelper instanceof ITIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
+            if (!activeDisassemblies.add(masterPos.immutable())) { return; }
+            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof ITIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
 
             getTemplate(world);
 
@@ -227,7 +221,8 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
                 }
             }
 
-            if (!templateMode && !toBreak.isEmpty()) { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops, masterPos)); }
+            if (templateMode || toBreak.isEmpty()) { activeDisassemblies.remove(masterPos); }
+            else { pendingQueues.add(new ITQueueProcessor(serverLevel, toBreak, breakingPlayer, dropItems, brokenPos, allDrops, masterPos)); }
         }
     }
 
