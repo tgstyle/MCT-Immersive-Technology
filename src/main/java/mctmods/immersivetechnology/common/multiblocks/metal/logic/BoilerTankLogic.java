@@ -1,17 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.HeatCapabilities;
-import com.immersiveconvergence.api.capability.IHeatConsumer;
-import com.immersiveconvergence.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiBlockInventoryUtils;
@@ -24,6 +12,20 @@ import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.capability.IHeatProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -42,10 +44,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State>, ITIPressurizedFluidOutput<BoilerTankLogic.State> {
     public static final int INPUT_SLOT_FILLED = 0;
@@ -86,7 +88,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         if (state.lastRecipe != null) {
             displayMax = Math.max(displayMax, state.lastRecipe.requiredHeat);
         } else if (state.tanks.input.getFluidAmount() > 0) {
-            BoilerTankRecipe potentialRecipe = BoilerTankRecipe.findRecipe(level, state.tanks.input.getFluid());
+            BoilerTankRecipe potentialRecipe = state.recipeGetter.apply(level, state.tanks.input.getFluid());
             if (potentialRecipe != null) {
                 displayMax = Math.max(displayMax, potentialRecipe.requiredHeat);
             }
@@ -109,7 +111,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                     }
                 }
             } else if (state.tanks.input.getFluidAmount() > 0) {
-                state.lastRecipe = BoilerTankRecipe.findRecipe(level, state.tanks.input.getFluid());
+                state.lastRecipe = state.recipeGetter.apply(level, state.tanks.input.getFluid());
                 if (state.lastRecipe != null && state.lastRecipe.input.getAmount() <= state.tanks.input.getFluidAmount() && state.lastRecipe.output.getAmount() <= state.tanks.output.getCapacity() - state.tanks.output.getFluidAmount()) {
                     if (heatLevel >= state.lastRecipe.requiredHeat) {
                         int reqAmount = state.lastRecipe.input.getAmount();
@@ -175,6 +177,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
 
     public static class State implements IMultiblockState, ITIDisplayContext {
+        public final BiFunction<Level, FluidStack, BoilerTankRecipe> recipeGetter = ITCachedRecipe.cached(BoilerTankRecipe::findRecipe);
         public final BoilerTanks tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;

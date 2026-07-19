@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<HeatExchangerRecipe>> SERIALIZER;
@@ -52,10 +53,13 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         return this;
     }
 
-    public static HeatExchangerRecipe findRecipe(Level level, FluidStack input0, FluidStack input1) {
-        for (HeatExchangerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.input0.test(input0) && (recipe.input1 == null || recipe.input1.test(input1))) return recipe;
-        }
+    public boolean matches(FluidStack fluid0, FluidStack fluid1) { return input0.test(fluid0) && (input1 == null || input1.test(fluid1)); }
+
+    public static HeatExchangerRecipe findRecipe(Level level, FluidStack input0, FluidStack input1) { return findRecipe(level, input0, input1, null); }
+
+    public static HeatExchangerRecipe findRecipe(Level level, FluidStack input0, FluidStack input1, @Nullable HeatExchangerRecipe hint) {
+        if (hint != null && hint.matches(input0, input1)) return hint;
+        for (HeatExchangerRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(input0, input1)) return recipe; }
         return null;
     }
 

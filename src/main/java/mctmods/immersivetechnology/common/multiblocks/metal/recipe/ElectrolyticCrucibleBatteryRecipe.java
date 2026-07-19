@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,6 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -59,10 +59,13 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         this.outputList = Lazy.of(NonNullList::create);
     }
 
-    public static ElectrolyticCrucibleBatteryRecipe findRecipe(Level level, FluidStack input) {
-        for (ElectrolyticCrucibleBatteryRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.fluidInput0.test(input)) return recipe;
-        }
+    public boolean matches(FluidStack fluid) { return fluidInput0.test(fluid); }
+
+    public static ElectrolyticCrucibleBatteryRecipe findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
+
+    public static ElectrolyticCrucibleBatteryRecipe findRecipe(Level level, FluidStack input, @Nullable ElectrolyticCrucibleBatteryRecipe hint) {
+        if (hint != null && hint.matches(input)) return hint;
+        for (ElectrolyticCrucibleBatteryRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(input)) return recipe; }
         return null;
     }
 

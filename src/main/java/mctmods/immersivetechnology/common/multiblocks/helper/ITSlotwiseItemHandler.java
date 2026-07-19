@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
-import blusunrize.immersiveengineering.common.util.Utils;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
@@ -90,7 +91,7 @@ public class ITSlotwiseItemHandler implements IItemHandlerModifiable, Iterable<I
     public record IOConstraint(boolean allowExtract, Predicate<ItemStack> allowInsert) {
         public static final IOConstraint INPUT = input($ -> true);
         public static final IOConstraint OUTPUT = new IOConstraint(true, $ -> false);
-        public static final IOConstraint FLUID_INPUT = IOConstraint.input(Utils::isFluidRelatedItemStack);
+        public static final IOConstraint FLUID_INPUT = IOConstraint.input(ITUtils::isFluidRelatedItemStack);
 
         public static IOConstraint input(Predicate<ItemStack> allow) { return new IOConstraint(true, allow); }
 

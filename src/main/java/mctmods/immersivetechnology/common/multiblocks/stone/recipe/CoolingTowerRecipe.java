@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nullable;
 
 public class CoolingTowerRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<CoolingTowerRecipe>> SERIALIZER;
@@ -41,11 +43,14 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         this.outputList = Lazy.of(NonNullList::create);
     }
 
-    public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) {
+    public boolean matches(FluidStack fluid0, FluidStack fluid1) { return input0.test(fluid0) && fluid0.getAmount() >= input0.getAmount() && input1.test(fluid1) && fluid1.getAmount() >= input1.getAmount(); }
+
+    public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) { return findRecipe(level, fluidInput0, fluidInput1, null); }
+
+    public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1, @Nullable CoolingTowerRecipe hint) {
         if (fluidInput0.isEmpty() || fluidInput1.isEmpty()) return null;
-        for (CoolingTowerRecipe r : RECIPES.getRecipes(level)) {
-            if (r.input0.test(fluidInput0) && fluidInput0.getAmount() >= r.input0.getAmount() && r.input1.test(fluidInput1) && fluidInput1.getAmount() >= r.input1.getAmount()) return r;
-        }
+        if (hint != null && hint.matches(fluidInput0, fluidInput1)) return hint;
+        for (CoolingTowerRecipe r : RECIPES.getRecipes(level)) { if (r.matches(fluidInput0, fluidInput1)) return r; }
         return null;
     }
 

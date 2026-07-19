@@ -1,13 +1,12 @@
 package mctmods.immersivetechnology.common.items.helper;
 
-import blusunrize.immersiveengineering.api.client.TextUtils;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.common.blocks.helper.ITIBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITIBaseBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.lib.ITLib;
+
+import blusunrize.immersiveengineering.api.client.TextUtils;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -27,13 +26,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class ITBlockItem extends BlockItem {
+    public static final String ENERGY_KEY = "energy";
+
     public ITBlockItem(Block b, Item.Properties props) { super(b, props); }
 
     public ITBlockItem(Block b) { this(b, new Item.Properties()); }
@@ -46,10 +46,11 @@ public class ITBlockItem extends BlockItem {
             tooltip.add(TextUtils.applyFormat(Component.translatable(flavourKey), ChatFormatting.GRAY));
         }
         super.appendHoverText(stack, world, tooltip, advanced);
-        if (ItemNBTHelper.hasKey(stack, EnergyHelper.ENERGY_KEY)) tooltip.add(TextUtils.applyFormat(Component.translatable(ITLib.DESC_INFO + "energyStored", ItemNBTHelper.getInt(stack, EnergyHelper.ENERGY_KEY)), ChatFormatting.GRAY));
-        if (ItemNBTHelper.hasKey(stack, "tank")) {
-            FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
-            if (fs != null) tooltip.add(TextUtils.applyFormat(Component.translatable(ITLib.DESC_INFO + "fluidStored", fs.getDisplayName(), fs.getAmount()), ChatFormatting.GRAY));
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains(ENERGY_KEY)) { tooltip.add(TextUtils.applyFormat(Component.translatable(ITLib.DESC_INFO + "energyStored", tag.getInt(ENERGY_KEY)), ChatFormatting.GRAY)); }
+        if (tag != null && tag.contains("tank")) {
+            FluidStack fs = FluidStack.loadFluidStackFromNBT(tag.getCompound("tank"));
+            if (!fs.isEmpty()) { tooltip.add(TextUtils.applyFormat(Component.translatable(ITLib.DESC_INFO + "fluidStored", fs.getDisplayName(), fs.getAmount()), ChatFormatting.GRAY)); }
         }
     }
 

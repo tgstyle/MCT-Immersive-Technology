@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nullable;
 
 public class RadiatorRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<RadiatorRecipe>> SERIALIZER;
@@ -35,11 +37,14 @@ public class RadiatorRecipe extends MultiblockRecipe {
         this.outputList = Lazy.of(NonNullList::create);
     }
 
-    public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput) {
+    public boolean matches(FluidStack fluidInput) { return input.test(fluidInput) && fluidInput.getAmount() >= input.getAmount(); }
+
+    public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput) { return findRecipe(level, fluidInput, null); }
+
+    public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput, @Nullable RadiatorRecipe hint) {
         if (fluidInput.isEmpty()) return null;
-        for (RadiatorRecipe r : RECIPES.getRecipes(level)) {
-            if (r.input.test(fluidInput) && fluidInput.getAmount() >= r.input.getAmount()) return r;
-        }
+        if (hint != null && hint.matches(fluidInput)) return hint;
+        for (RadiatorRecipe r : RECIPES.getRecipes(level)) { if (r.matches(fluidInput)) return r; }
         return null;
     }
 

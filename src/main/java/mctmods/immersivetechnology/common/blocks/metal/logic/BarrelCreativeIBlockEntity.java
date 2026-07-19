@@ -1,9 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
-import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
-import blusunrize.immersiveengineering.common.util.Utils;
-import java.text.DecimalFormat;
 import mctmods.immersivetechnology.common.blocks.helper.ITBlockInterfaces;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.network.ITOSDRequestMessage;
@@ -11,6 +7,11 @@ import mctmods.immersivetechnology.core.network.ITPacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
+import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
+import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
+import java.text.DecimalFormat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -101,7 +102,7 @@ public class BarrelCreativeIBlockEntity extends OSDCommonIBlockEntity implements
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
 
-            FluidStack toFill = Utils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = ITUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }

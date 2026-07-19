@@ -1,5 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
+import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.client.util.ITClientUtils;
+import mctmods.immersivetechnology.core.util.ITLayeredComparatorOutput;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
@@ -11,19 +23,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.client.utils.TextUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
-import blusunrize.immersiveengineering.common.util.LayeredComparatorOutput;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +44,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Comparator;
@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, ITIPressurizedFluidOutput<SteelSheetmetalTankLogic.State> {
@@ -116,7 +115,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     public static class State implements IMultiblockState, ITIDisplayContext {
         public final ITMarkableFluidTank tank;
-        private final LayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
+        private final ITLayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
         private final StoredCapability<IFluidHandler> inputHandler;
         private final StoredCapability<IFluidHandler> ioHandler;
         public RSState rsState = RSState.disabledByDefault();
@@ -134,7 +133,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
             } catch (Exception e) {
                 throw new RuntimeException("Failed to set RSState positions", e);
             }
-            this.comparatorHelper = new LayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
+            this.comparatorHelper = new ITLayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
                     (ctx, value) -> {
                         BlockPos pos = COMPARATOR_BASE;
                         IMultiblockLevel level = ctx.getLevel();
@@ -226,7 +225,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     @Override public void dropExtraItems(State state, java.util.function.Consumer<net.minecraft.world.item.ItemStack> drop) { }
 
     @Override @Nullable public List<Component> getOverlayText(State state, Player player, boolean hammer) {
-        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(TextUtils.formatFluidStack(state.tank.getFluid()));
+        if (ITUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ITClientUtils.formatFluidStack(state.tank.getFluid()));
         return null;
     }
 

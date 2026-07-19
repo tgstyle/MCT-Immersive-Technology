@@ -1,10 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.HeatCapabilities;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nullable;
 
 public class BoilerLiquidRecipe extends MultiblockRecipe {
     public static RegistryObject<IERecipeSerializer<BoilerLiquidRecipe>> SERIALIZER;
@@ -34,8 +36,13 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
         this.fluidInputList = Lists.newArrayList(this.input);
     }
 
-    public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input) {
-        for (BoilerLiquidRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.input.test(input)) return recipe; }
+    public boolean matches(FluidStack fluid) { return input.test(fluid); }
+
+    public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
+
+    public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerLiquidRecipe hint) {
+        if (hint != null && hint.matches(input)) return hint;
+        for (BoilerLiquidRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(input)) return recipe; }
         return null;
     }
 

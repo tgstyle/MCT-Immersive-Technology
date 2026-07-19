@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
-import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
-import blusunrize.immersiveengineering.common.util.Utils;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
+import mctmods.immersivetechnology.client.util.ITClientUtils;
+
+import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -13,7 +14,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
-
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class ITClientMultiblockProperties implements ClientMultiblocks.Multibloc
             this.materials = NonNullList.create();
             for (StructureTemplate.StructureBlockInfo info : structure) {
                 if (info.state().hasProperty(ITProperties.MULTIBLOCKSLAVE) && info.state().getValue(ITProperties.MULTIBLOCKSLAVE)) continue;
-                ItemStack picked = Utils.getPickBlock(info.state());
+                ItemStack picked = ITClientUtils.getPickBlock(info.state());
                 boolean added = false;
                 for (ItemStack existing : this.materials)
                     if (ItemStack.isSameItem(existing, picked)) {

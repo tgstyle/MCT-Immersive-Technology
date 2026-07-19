@@ -1,18 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.HeatCapabilities;
-import com.immersiveconvergence.api.capability.IHeatConsumer;
-import com.immersiveconvergence.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
@@ -27,6 +14,21 @@ import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.capability.IHeatProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -48,12 +50,12 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
@@ -159,7 +161,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 state.totalBurnTime = 0;
                 ItemStack fuelStack = state.inventory.getStackInSlot(INPUT_FUEL_SLOT);
                 BoilerSolidRecipe recipe = null;
-                if (!fuelStack.isEmpty()) { recipe = BoilerSolidRecipe.findRecipe(level, fuelStack); }
+                if (!fuelStack.isEmpty()) { recipe = state.recipeGetter.apply(level, fuelStack); }
                 ItemStack single = fuelStack.copy();
                 single.setCount(1);
                 int burnTimePerItem = ForgeHooks.getBurnTime(single, RecipeType.SMELTING);
@@ -258,6 +260,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     }
 
     public static class State implements IMultiblockState, ITIDisplayContext {
+        public final BiFunction<Level, ItemStack, BoilerSolidRecipe> recipeGetter = ITCachedRecipe.cached(BoilerSolidRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public StoredCapability<IItemHandlerModifiable> inputFuelCap;
         public StoredCapability<IHeatProvider> heatSourceCap;

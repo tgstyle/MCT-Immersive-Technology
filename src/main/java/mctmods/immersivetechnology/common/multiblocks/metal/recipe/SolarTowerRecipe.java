@@ -1,18 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends MultiblockRecipe {
@@ -34,11 +34,14 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
     }
 
-    @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) {
+    public boolean matches(FluidStack fluid) { return input.testIgnoringAmount(fluid) && fluid.getAmount() >= input.getAmount(); }
+
+    @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) { return findRecipe(level, fluid, null); }
+
+    @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid, @Nullable SolarTowerRecipe hint) {
         if (fluid == null || fluid.isEmpty()) return null;
-        for (SolarTowerRecipe recipe : RECIPES.getRecipes(level)) {
-            if (recipe.input.testIgnoringAmount(fluid) && fluid.getAmount() >= recipe.input.getAmount()) return recipe;
-        }
+        if (hint != null && hint.matches(fluid)) return hint;
+        for (SolarTowerRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(fluid)) return recipe; }
         return null;
     }
 

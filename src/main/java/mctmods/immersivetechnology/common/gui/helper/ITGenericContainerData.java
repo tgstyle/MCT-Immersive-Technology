@@ -1,13 +1,12 @@
 package mctmods.immersivetechnology.common.gui.helper;
 
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
-import blusunrize.immersiveengineering.common.gui.sync.GetterAndSetter;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ITGenericContainerData<T> {
     private final ITGenericDataSerializers.DataSerializer<T> serializer;
@@ -21,14 +20,8 @@ public class ITGenericContainerData<T> {
         this.set = set;
     }
 
-    @SuppressWarnings("unused")
-    public ITGenericContainerData(ITGenericDataSerializers.DataSerializer<T> serializer, GetterAndSetter<T> io) {
-        this.serializer = serializer;
-        this.get = io.getter();
-        this.set = io.setter();
-    }
-
     public static ITGenericContainerData<Integer> int32(Supplier<Integer> get, Consumer<Integer> set) { return new ITGenericContainerData<>(ITGenericDataSerializers.INT32, get, set); }
+
     public static ITGenericContainerData<Integer> energy(IMutableEnergyStorage storage) {
         Objects.requireNonNull(storage);
         Supplier<Integer> getEnergy = storage::getEnergyStored;

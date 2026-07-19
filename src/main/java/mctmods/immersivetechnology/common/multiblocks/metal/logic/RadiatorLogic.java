@@ -1,14 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
@@ -21,6 +12,17 @@ import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -39,12 +41,12 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, IServerTickableComponent<RadiatorLogic.State>, IClientTickableComponent<RadiatorLogic.State>, ITIPressurizedFluidOutput<RadiatorLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
@@ -96,7 +98,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
         if (enabled && state.processQueue.size() < 2) {
             FluidStack input = state.tanks.input().getFluid();
-            RadiatorRecipe recipe = RadiatorRecipe.findRecipe(level, input);
+            RadiatorRecipe recipe = state.recipeGetter.apply(level, input);
             if (recipe != null) {
                 if (input.getAmount() >= recipe.input.getAmount() &&
                         state.tanks.output().fill(recipe.fluidOutput, FluidAction.SIMULATE) >= recipe.fluidOutput.getAmount()) {
@@ -163,6 +165,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return RadiatorShape.GETTER; }
 
     public static class State implements IMultiblockState, ITIDisplayContext {
+        public final BiFunction<Level, FluidStack, RadiatorRecipe> recipeGetter = ITCachedRecipe.cached(RadiatorRecipe::findRecipe);
         public final RadiatorTanks tanks;
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;

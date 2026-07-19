@@ -1,17 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
-import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIPressurizedFluidOutput;
@@ -24,6 +12,20 @@ import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -38,11 +40,11 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -111,7 +113,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         boolean wasActive = state.active;
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
 
-        HeatExchangerRecipe recipe = HeatExchangerRecipe.findRecipe(level, state.tanks.input0.getFluid(), state.tanks.input1.getFluid());
+        HeatExchangerRecipe recipe = state.recipeGetter.apply(level, state.tanks.input0.getFluid(), state.tanks.input1.getFluid());
         tryEnqueueProcess(state, level, recipe);
 
         boolean progressChanged = false;
@@ -184,6 +186,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return HeatExchangerShape.GETTER; }
 
     public static class State implements IMultiblockState, ITIDisplayContext, ProcessContext.ProcessContextInMachine<HeatExchangerRecipe> {
+        public final ITCachedRecipe.TriFunction<Level, FluidStack, FluidStack, HeatExchangerRecipe> recipeGetter = ITCachedRecipe.cached3(HeatExchangerRecipe::findRecipe);
         public final HeatExchangerTanks tanks;
 
         @SuppressWarnings("unchecked")

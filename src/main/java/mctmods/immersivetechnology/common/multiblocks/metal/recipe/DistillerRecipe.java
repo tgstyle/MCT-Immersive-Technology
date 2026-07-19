@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,6 @@ import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
 
 public class DistillerRecipe extends MultiblockRecipe {
@@ -48,8 +48,13 @@ public class DistillerRecipe extends MultiblockRecipe {
         this.outputList = Lazy.of(NonNullList::create);
     }
 
-    public static DistillerRecipe findRecipe(Level level, FluidStack inputFluid) {
-        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.input.test(inputFluid)) return recipe; }
+    public boolean matches(FluidStack fluid) { return input.test(fluid); }
+
+    public static DistillerRecipe findRecipe(Level level, FluidStack inputFluid) { return findRecipe(level, inputFluid, null); }
+
+    public static DistillerRecipe findRecipe(Level level, FluidStack inputFluid, @Nullable DistillerRecipe hint) {
+        if (hint != null && hint.matches(inputFluid)) return hint;
+        for (DistillerRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(inputFluid)) return recipe; }
         return null;
     }
 
