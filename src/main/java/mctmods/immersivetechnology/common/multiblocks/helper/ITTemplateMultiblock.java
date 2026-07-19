@@ -16,17 +16,11 @@ import blusunrize.immersiveengineering.api.utils.DirectionUtils;
 import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -52,12 +46,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
 
 import static net.minecraft.world.level.block.Mirror.FRONT_BACK;
 
@@ -324,13 +313,7 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
             throw new IllegalStateException("getTemplate called with null world and no synced template loaded for " + loc);
         }
         try {
-            TemplateData result;
-            StructureTemplate manuallyLoaded = null;
-            MinecraftServer server = world.getServer();
-            if (server != null && server.getStructureManager().get(loc).isEmpty()) {
-                manuallyLoaded = tryManuallyLoadTemplate(server, loc);
-            }
-            result = manuallyLoaded != null ? buildTemplateData(manuallyLoaded) : super.getTemplate(world);
+            TemplateData result = super.getTemplate(world);
             Vec3i resultSize = result.template().getSize();
             Preconditions.checkState(resultSize.equals(this.size), "Wrong template size for multiblock %s, template size: %s", loc, resultSize);
             ensureCaches(result);
@@ -338,38 +321,6 @@ public abstract class ITTemplateMultiblock extends TemplateMultiblock {
         } catch (Exception e) {
             ITLib.IT_LOGGER.error("getTemplate FAILED for loc: {} (world={})", loc, world.dimension().location(), e);
             throw e;
-        }
-    }
-
-    @Nullable
-    private StructureTemplate tryManuallyLoadTemplate(MinecraftServer server, ResourceLocation loc) {
-        ResourceLocation structureRes = ResourceLocation.fromNamespaceAndPath(loc.getNamespace(), "structures/" + loc.getPath() + ".nbt");
-        Optional<Resource> opt = server.getResourceManager().getResource(structureRes);
-        if (opt.isEmpty()) { return null; }
-        try (InputStream is = opt.get().open()) {
-            byte[] data = is.readAllBytes();
-            CompoundTag compound = null;
-            try (GZIPInputStream gzis = new GZIPInputStream(new ByteArrayInputStream(data));
-                 DataInputStream dis = new DataInputStream(gzis)) {
-                compound = NbtIo.read(dis);
-            } catch (Exception e) {
-                ITLib.IT_LOGGER.warn("Failed GZIP load for {}: {}", loc, e.getMessage());
-            }
-            if (compound == null) {
-                try (DataInputStream dis2 = new DataInputStream(new ByteArrayInputStream(data))) {
-                    compound = NbtIo.read(dis2);
-                } catch (Exception e) {
-                    ITLib.IT_LOGGER.warn("Failed raw load for {}: {}", loc, e.getMessage());
-                }
-            }
-            if (compound == null) { return null; }
-            StructureTemplate template = new StructureTemplate();
-            HolderGetter<Block> blockGetter = server.registryAccess().lookup(Registries.BLOCK).orElseThrow();
-            template.load(blockGetter, compound);
-            return template;
-        } catch (IOException e) {
-            ITLib.IT_LOGGER.warn("IOException loading structure resource for {}: {}", loc, e.getMessage());
-            return null;
         }
     }
 
