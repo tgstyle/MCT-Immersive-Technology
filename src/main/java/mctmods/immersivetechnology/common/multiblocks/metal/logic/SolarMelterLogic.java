@@ -1,19 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
-import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.fluids.helper.ITSolarTank;
@@ -28,6 +14,22 @@ import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -48,7 +50,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -57,9 +58,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
+import java.util.function.BiFunction;
 
 public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State>, ITIPressurizedFluidOutput<SolarMelterLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
@@ -105,7 +106,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         if (!state.isSoundPlaying.getAsBoolean()) {
             Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
             FluidStack fs = state.tanks.input().getFluid();
-            MeltingRecipe recipe = MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs);
+            MeltingRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fs);
             double maxHeat = recipe != null ? recipe.requiredTemp : WORKING_HEAT_LEVEL;
             boolean shouldPlay = state.heatLevel >= maxHeat && state.sunVisible && state.reflectorStrength > 0;
             if (shouldPlay) {
@@ -120,7 +121,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                         int thisId = state.soundId;
                         state.isSoundPlaying = ITSound.startSound(() -> {
                             FluidStack fsActive = state.tanks.input().getFluid();
-                            MeltingRecipe recipeActive = MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsActive);
+                            MeltingRecipe recipeActive = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsActive);
                             double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
                             return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
                         }, ctx.isValid(), soundVec, ITSounds.solarMelter, () -> {
@@ -128,7 +129,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                             if (playerVol == null) { return 0f; }
                             float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 8, 1);
                             FluidStack fsVol = state.tanks.input().getFluid();
-                            MeltingRecipe recipeVol = MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsVol);
+                            MeltingRecipe recipeVol = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsVol);
                             double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
                             float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
                             return (2 * heatFactorVol) / a;
@@ -138,7 +139,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             }
         }
         FluidStack fsParticles = state.tanks.input().getFluid();
-        MeltingRecipe recipeParticles = MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fsParticles);
+        MeltingRecipe recipeParticles = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsParticles);
         double maxHeatParticles = recipeParticles != null ? recipeParticles.requiredTemp : WORKING_HEAT_LEVEL;
         if (state.heatLevel >= maxHeatParticles && state.sunVisible && state.reflectorStrength > 0) {
             Level clientLevel = ctx.getLevel().getRawLevel();
@@ -323,7 +324,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         FluidStack fs = state.tanks.input().getFluid();
         if (fs.getAmount() <= 0) { state.activeRecipe = null; state.processProgress = 0; state.totalProcessTime = 0; return false; }
         if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = MeltingRecipe.RECIPES.getById(level, state.activeRecipeId); state.activeRecipeId = null; }
-        if (state.activeRecipe == null || !state.activeRecipe.matches(fs)) { state.activeRecipe = MeltingRecipe.findRecipe(level, fs); state.processProgress = 0; state.totalProcessTime = 0; if (state.activeRecipe == null) { return false; } }
+        if (state.activeRecipe == null || !state.activeRecipe.matches(fs)) { state.activeRecipe = state.recipeGetter.apply(level, fs); state.processProgress = 0; state.totalProcessTime = 0; if (state.activeRecipe == null) { return false; } }
         if (state.activeRecipe == null) { state.processProgress = 0; state.totalProcessTime = 0; return false; }
         if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) { state.processProgress += (int) SPEED_MULTIPLIER; } else { state.processProgress = Math.max(0, state.processProgress - PROGRESS_LOSS_OFF_TEMP); }
         int total = state.activeRecipe.getTotalProcessTime();
@@ -361,8 +362,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
 
     public static int getSolarIncidenceAngleSection(Level level) { int skyDarken = level.getSkyDarken(); if (skyDarken == 3) { return 1; } else if (skyDarken == 2) { return 2; } else if (skyDarken == 1) { return 3; } else if (skyDarken == 0) { return 4; } return 0; }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -387,6 +387,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     }
 
     public static class State implements ITISolarMultiblockState, ITIDisplayContext {
+        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = ITCachedRecipe.cached(MeltingRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ITSolarTank tanks;
         public IFluidHandler inputCap;

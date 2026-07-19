@@ -1,20 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.util.CachedRecipe;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.MechanicalCapabilities;
-import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
-import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.client.particles.ColoredSmoke;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITMultiblockPOIHelper;
@@ -29,6 +14,22 @@ import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -47,7 +48,6 @@ import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -253,8 +253,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private static double particleXZSpeed() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.registerAt(Capabilities.FluidHandler.BLOCK, INPUT_FLUID_POI, state -> state.fluidInputHandler);
         for (CapabilityPosition outputPos : OUTPUT_FLUID_POIS_CAP) { register.registerAt(Capabilities.FluidHandler.BLOCK, outputPos, state -> state.fluidOutputHandler); }
         register.registerAt(MechanicalCapabilities.MECHANICAL_PROVIDER, MECHANICAL_OUTPUT_POI, state -> state.mechanicalProvider);
@@ -307,7 +306,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             this.tanks = new SteamTurbineTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
             this.fluidInputHandler = new ITArrayFluidHandler(tanks.input, false, true, onChanged);
             this.fluidOutputHandler = new ITArrayFluidHandler(tanks.output, true, false, onChanged);
-            this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
+            this.recipeGetter = ITCachedRecipe.cached(SteamTurbineRecipe::findRecipe);
             this.inertia = new RotationInertiaProcess(BASE_MASS + connectedMass, DRIVE_TORQUE, FRICTION + connectedFriction, effectiveMaxSpeed);
             this.accumConsume = 0f;
             this.outAccum = 0f;

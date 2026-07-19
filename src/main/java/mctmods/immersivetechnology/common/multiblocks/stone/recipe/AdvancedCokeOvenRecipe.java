@@ -34,6 +34,8 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     public final int time;
     public final int creosoteOutput;
 
+    private static int copiedAtReload = -1;
+
     public AdvancedCokeOvenRecipe(IngredientWithSize input, TagOutput itemOutput, int time, int creosoteOutput) {
         super(itemOutput, ITRecipeTypes.ADVANCED_COKE_OVEN, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.input = input;
@@ -100,14 +102,16 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     }
 
     public static void copyIECokeOvenRecipes(Level level) {
-        if (!IE_COPIED_RECIPES.isEmpty()) { return; }
+        if (copiedAtReload == CachedRecipeList.getReloadCount() && !IE_COPIED_RECIPES.isEmpty()) { return; }
+        IE_COPIED_RECIPES.clear();
+        copiedAtReload = CachedRecipeList.getReloadCount();
         for (RecipeHolder<CokeOvenRecipe> holder : CokeOvenRecipe.RECIPES.getRecipes(level)) {
             CokeOvenRecipe r = holder.value();
             ItemStack[] ieStacks = r.input.getMatchingStacks();
-            if (ieStacks.length == 0) { continue; }
-            ItemStack testStack = ieStacks[0];
             boolean alreadyHas = false;
-            for (RecipeHolder<AdvancedCokeOvenRecipe> h : RECIPES.getRecipes(level)) { if (h.value().matches(testStack)) { alreadyHas = true; break; } }
+            if (ieStacks.length > 0) {
+                for (RecipeHolder<AdvancedCokeOvenRecipe> h : RECIPES.getRecipes(level)) { if (h.value().matches(ieStacks[0])) { alreadyHas = true; break; } }
+            }
             if (!alreadyHas) {
                 AdvancedCokeOvenRecipe copied = new AdvancedCokeOvenRecipe(r.input, r.output, r.time, r.creosoteOutput);
                 ResourceLocation copiedId = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "advanced_coke_oven/copied/" + holder.id().getNamespace() + "/" + holder.id().getPath());

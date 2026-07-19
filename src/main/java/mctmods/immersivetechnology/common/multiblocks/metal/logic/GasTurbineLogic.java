@@ -14,6 +14,7 @@ import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ITLib;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
@@ -26,7 +27,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.util.CachedRecipe;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
@@ -447,7 +447,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             this.fluidOutputHandler = new ITArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY_HV);
             this.energyStorageMV = new AveragingEnergyStorage(ENERGY_CAPACITY_MV);
-            this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
+            this.recipeGetter = ITCachedRecipe.cached(GasTurbineRecipe::findRecipe);
             MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_FACING, ENERGY_INPUT_MV_POIS.getFirst());
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());

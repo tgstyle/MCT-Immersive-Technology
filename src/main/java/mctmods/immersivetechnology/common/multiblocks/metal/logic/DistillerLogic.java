@@ -1,5 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.DistillerProcess;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.lib.ITSound;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -12,18 +25,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.DistillerProcess;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -45,12 +47,12 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, ITIPressurizedFluidOutput<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
@@ -114,7 +116,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         RecipeHolder<DistillerRecipe> recipeHolder = state.lastRecipeCache;
         FluidStack currentFluid = state.tanks.input().getFluid();
         if (recipeHolder == null || !recipeHolder.value().matches(currentFluid)) {
-            recipeHolder = DistillerRecipe.findRecipe(ctx.getLevel().getRawLevel(), currentFluid);
+            recipeHolder = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), currentFluid);
             state.lastRecipeCache = recipeHolder;
         }
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
@@ -125,17 +127,17 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (!drainedContainer.isEmpty()) {
-            drainedContainer = Utils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
+            drainedContainer = ITUtils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
             inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer);
         }
         ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
         if (!filledContainer.isEmpty()) {
-            filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
+            filledContainer = ITUtils.insertStackIntoInventory(state.outputRef, filledContainer, false);
             inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
         }
         ItemStack itemOutput = inventory.getStackInSlot(OUTPUT_SLOT);
         if (!itemOutput.isEmpty()) {
-            itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false);
+            itemOutput = ITUtils.insertStackIntoInventory(state.outputRef, itemOutput, false);
             inventory.setStackInSlot(OUTPUT_SLOT, itemOutput);
         }
         boolean activeChanged = wasActive != state.active;
@@ -180,8 +182,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -216,6 +217,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
 
     public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<DistillerRecipe>, ITIDisplayContext {
+        public final BiFunction<Level, FluidStack, RecipeHolder<DistillerRecipe>> recipeGetter = ITCachedRecipe.cached(DistillerRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final DistillerTank tanks;
         public IFluidHandler inputCap;

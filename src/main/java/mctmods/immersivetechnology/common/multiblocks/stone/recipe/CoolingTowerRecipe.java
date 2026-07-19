@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -64,8 +65,11 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         return in0 != null && in0.is(this.inputTag0) && in1 != null && in1.is(this.inputTag1);
     }
 
-    @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) {
+    @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) { return findRecipe(level, fluidInput0, fluidInput1, null); }
+
+    @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1, @Nullable CoolingTowerRecipe hint) {
         if (fluidInput0 == null || fluidInput0.isEmpty() || fluidInput1 == null || fluidInput1.isEmpty()) return null;
+        if (hint != null && hint.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= hint.getInput0Amount() && fluidInput1.getAmount() >= hint.getInput1Amount()) return hint;
         for (var holder : RECIPES.getRecipes(level)) {
             CoolingTowerRecipe recipe = holder.value();
             if (recipe.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= recipe.getInput0Amount() && fluidInput1.getAmount() >= recipe.getInput1Amount()) return recipe;

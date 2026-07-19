@@ -1,5 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.lib.ITSound;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -13,16 +25,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockS
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.ITServerConfig;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -45,11 +47,11 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, ITIPressurizedFluidOutput<MeltingCrucibleLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
@@ -113,7 +115,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         boolean wasActive = state.active;
 
         FluidStack fs = state.tanks.input().getFluid();
-        MeltingRecipe recipe = fs.getAmount() > 0 ? MeltingRecipe.findRecipe(ctx.getLevel().getRawLevel(), fs) : null;
+        MeltingRecipe recipe = fs.getAmount() > 0 ? state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fs) : null;
 
         if (state.activeRecipe == null && state.activeRecipeId != null) {
             state.activeRecipe = MeltingRecipe.RECIPES.getById(ctx.getLevel().getRawLevel(), state.activeRecipeId);
@@ -185,7 +187,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     private void tryEnqueueProcess(State state, Level level, FluidStack currentInput) {
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
-        RecipeHolder<MeltingRecipe> recipeHolder = MeltingRecipe.findRecipeHolder(level, currentInput);
+        RecipeHolder<MeltingRecipe> recipeHolder = state.recipeHolderGetter.apply(level, currentInput);
         if (recipeHolder == null) { return; }
         MeltingRecipe recipe = recipeHolder.value();
         if (state.heatLevel < recipe.requiredTemp) { return; }
@@ -197,8 +199,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -228,6 +229,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return MeltingCrucibleShape.GETTER; }
 
     public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<MeltingRecipe>, ITIDisplayContext {
+        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = ITCachedRecipe.cached(MeltingRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, RecipeHolder<MeltingRecipe>> recipeHolderGetter = ITCachedRecipe.cached(MeltingRecipe::findRecipeHolder);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MeltingCrucibleTank tanks;
         public IFluidHandler inputCap;

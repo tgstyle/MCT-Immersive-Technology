@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.common.util.Utils;
-import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.common.blocks.helper.ITBaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.ITEnums.IOSideConfig;
@@ -9,6 +7,9 @@ import mctmods.immersivetechnology.common.blocks.helper.ITIClientTickableBE;
 import mctmods.immersivetechnology.common.blocks.helper.ITIServerTickableBE;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.core.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -106,7 +107,7 @@ public abstract class BarrelCommonBlockEntity extends ITBaseBlockEntity implemen
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) return null;
-        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
+        if (ITUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty()) return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())};
             return new Component[]{Component.literal(TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fs.getHoverName().getString(), fs.getAmount()))};

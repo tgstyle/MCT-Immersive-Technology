@@ -1,5 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
+import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
+import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
+import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.lib.ITSound;
+import mctmods.immersivetechnology.core.registration.ITSounds;
+import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -11,18 +24,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
-import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.core.lib.ITSound;
-import mctmods.immersivetechnology.core.registration.ITSounds;
-import mctmods.immersivetechnology.core.ITServerConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -41,12 +43,12 @@ import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, ITIPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
 
@@ -113,13 +115,13 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         boolean prevTanksDirty = state.tanksDirty;
         boolean prevInventoryDirty = state.inventoryDirty;
         boolean wasActive = state.active;
-        RecipeHolder<ElectrolyticCrucibleBatteryRecipe> holder = ElectrolyticCrucibleBatteryRecipe.findRecipe(ctx.getLevel().getRawLevel(), state.tanks.input.getFluid());
+        RecipeHolder<ElectrolyticCrucibleBatteryRecipe> holder = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), state.tanks.input.getFluid());
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), holder);
         pumpOutputs(ctx);
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack itemOutput = inventory.getStackInSlot(0);
-        if (!itemOutput.isEmpty()) { itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false); inventory.setStackInSlot(0, itemOutput); }
+        if (!itemOutput.isEmpty()) { itemOutput = ITUtils.insertStackIntoInventory(state.outputRef, itemOutput, false); inventory.setStackInSlot(0, itemOutput); }
         boolean activeChanged = wasActive != state.active;
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
@@ -143,8 +145,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -173,6 +174,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ElectrolyticCrucibleBatteryShape.GETTER; }
 
     public static class State implements IMultiblockState, ITIProcessContext.IProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, ITIDisplayContext {
+        public final BiFunction<Level, FluidStack, RecipeHolder<ElectrolyticCrucibleBatteryRecipe>> recipeGetter = ITCachedRecipe.cached(ElectrolyticCrucibleBatteryRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ElectrolyticCrucibleBatteryTanks tanks;
         public IFluidHandler inputCap;

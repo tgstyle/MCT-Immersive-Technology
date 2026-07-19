@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.DistillerRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.DistillerRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -53,8 +54,11 @@ public class DistillerRecipe extends MultiblockRecipe {
 
     public int getInputAmount() { return amount; }
 
-    public static RecipeHolder<DistillerRecipe> findRecipe(Level level, FluidStack inputFluid) {
+    public static RecipeHolder<DistillerRecipe> findRecipe(Level level, FluidStack inputFluid) { return findRecipe(level, inputFluid, null); }
+
+    public static RecipeHolder<DistillerRecipe> findRecipe(Level level, FluidStack inputFluid, @Nullable RecipeHolder<DistillerRecipe> hint) {
         if (inputFluid.isEmpty() || inputFluid.getAmount() <= 0) { return null; }
+        if (hint != null && hint.value().matches(inputFluid)) { return hint; }
         for (RecipeHolder<DistillerRecipe> holder : RECIPES.getRecipes(level)) {
             if (holder.value().matches(inputFluid)) { return holder; }
         }

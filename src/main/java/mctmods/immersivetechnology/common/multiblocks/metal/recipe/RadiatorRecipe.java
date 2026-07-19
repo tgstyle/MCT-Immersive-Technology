@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.RadiatorRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.RadiatorRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -51,8 +52,11 @@ public class RadiatorRecipe extends MultiblockRecipe {
         return stack != null && stack.is(this.fluidTag);
     }
 
-    @Nullable public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput) {
+    @Nullable public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput) { return findRecipe(level, fluidInput, null); }
+
+    @Nullable public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput, @Nullable RadiatorRecipe hint) {
         if (fluidInput == null || fluidInput.isEmpty()) return null;
+        if (hint != null && hint.matches(fluidInput) && fluidInput.getAmount() >= hint.getInputAmount()) return hint;
         for (var holder : RECIPES.getRecipes(level)) {
             RadiatorRecipe recipe = holder.value();
             if (recipe.matches(fluidInput) && fluidInput.getAmount() >= recipe.getInputAmount()) return recipe;

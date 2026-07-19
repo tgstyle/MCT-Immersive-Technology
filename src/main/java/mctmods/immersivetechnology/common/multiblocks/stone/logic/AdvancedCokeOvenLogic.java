@@ -1,22 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
-import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITFurnaceHandler;
@@ -33,6 +16,25 @@ import mctmods.immersivetechnology.core.ITServerConfig;
 import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+import mctmods.immersivetechnology.core.util.ITUtils;
+
+import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
+import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
+import blusunrize.immersiveengineering.api.ApiUtils;
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -59,14 +61,13 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenLogic.State>, IServerTickableComponent<AdvancedCokeOvenLogic.State>, IClientTickableComponent<AdvancedCokeOvenLogic.State> {
     public static final int SLOT_INPUT = 0;
@@ -140,7 +141,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         boolean wasActive = state.active;
         state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         state.active = !state.processor.getQueue().isEmpty();
-        RecipeHolder<AdvancedCokeOvenRecipe> recipeHolder = AdvancedCokeOvenRecipe.findRecipe(level, state.inventory.getStackInSlot(SLOT_INPUT), null);
+        RecipeHolder<AdvancedCokeOvenRecipe> recipeHolder = state.recipeGetter.apply(level, state.inventory.getStackInSlot(SLOT_INPUT));
         tryEnqueueProcess(state, level, recipeHolder);
         if (!state.processor.getQueue().isEmpty()) { state.active = true; }
         FluidUtils.fillFluidContainer(state.tanks.output, SLOT_EMPTY_CONTAINER, SLOT_FILLED_CONTAINER, state.inventory);
@@ -150,7 +151,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
                 FluidStack fs = state.tanks.output.getFluid().copy();
                 int accepted = output.fill(fs, FluidAction.SIMULATE);
                 if (accepted > 0) {
-                    int drained = output.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
+                    int drained = output.fill(ITUtils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
                     state.tanks.output.drain(drained, FluidAction.EXECUTE);
                 }
             }
@@ -158,12 +159,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         final IItemHandlerModifiable inventory = state.inventory;
         ItemStack itemOutput = inventory.getStackInSlot(SLOT_OUTPUT);
         if (!itemOutput.isEmpty()) {
-            itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false);
+            itemOutput = ITUtils.insertStackIntoInventory(state.outputRef, itemOutput, false);
             inventory.setStackInSlot(SLOT_OUTPUT, itemOutput);
         }
         ItemStack filledContainer = inventory.getStackInSlot(SLOT_FILLED_CONTAINER);
         if (!filledContainer.isEmpty()) {
-            filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
+            filledContainer = ITUtils.insertStackIntoInventory(state.outputRef, filledContainer, false);
             inventory.setStackInSlot(SLOT_FILLED_CONTAINER, filledContainer);
         }
         boolean activeChanged = wasActive != state.active;
@@ -185,8 +186,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         state.processor.addProcessToQueue(process, level, false);
     }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.ItemHandler.BLOCK, (state, position) -> {
             if (ITEM_INPUT_POI.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == ITEM_INPUT_POI.face())) { return state.itemInputCap; }
             if (ITEM_OUTPUT_POI.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == ITEM_OUTPUT_POI.face())) { return state.itemOutputCap; }
@@ -209,6 +209,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     }
 
     public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, ITFurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, ITIDisplayContext {
+        public final BiFunction<Level, ItemStack, RecipeHolder<AdvancedCokeOvenRecipe>> recipeGetter = ITCachedRecipe.cached(AdvancedCokeOvenRecipe::findRecipe);
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
         public static final int NUM_SLOTS = 2;

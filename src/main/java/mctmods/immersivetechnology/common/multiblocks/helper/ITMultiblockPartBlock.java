@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
 import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
+import mctmods.immersivetechnology.core.util.ITUtils;
 import mctmods.immersivetechnology.core.util.inventory.ITIDropInventory;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
@@ -50,7 +51,7 @@ public class ITMultiblockPartBlock<S extends IMultiblockState> extends Multibloc
 
     @Override public void entityInside(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         super.entityInside(state, level, pos, entity);
-        if (entity instanceof LivingEntity && isLadder(state, level, pos, (LivingEntity) entity)) { IEBaseBlock.IELadderBlock.applyLadderLogic(entity); }
+        if (entity instanceof LivingEntity && isLadder(state, level, pos, (LivingEntity) entity)) { ITUtils.applyLadderLogic(entity); }
     }
 
     @Nonnull @Override

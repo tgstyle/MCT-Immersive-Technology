@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerTankRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.immersiveconvergence.api.HeatCapabilities;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerTankRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nullable;
 
 public class BoilerTankRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, BoilerTankRecipeSerializer> SERIALIZER;
@@ -51,8 +53,11 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         return amount;
     }
 
-    public static BoilerTankRecipe findRecipe(Level level, FluidStack input) {
+    public static BoilerTankRecipe findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
+
+    public static BoilerTankRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerTankRecipe hint) {
         if (input.isEmpty() || input.getAmount() <= 0) return null;
+        if (hint != null && hint.matches(input)) return hint;
         for (RecipeHolder<BoilerTankRecipe> holder : RECIPES.getRecipes(level)) {
             BoilerTankRecipe recipe = holder.value();
             if (recipe.matches(input)) return recipe;

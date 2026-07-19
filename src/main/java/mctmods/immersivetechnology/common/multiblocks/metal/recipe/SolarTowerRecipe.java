@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.SolarTowerRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.SolarTowerRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -53,8 +54,11 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         return stack != null && stack.is(this.inputTag);
     }
 
-    @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) {
+    @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) { return findRecipe(level, fluid, null); }
+
+    @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid, @Nullable SolarTowerRecipe hint) {
         if (fluid == null || fluid.isEmpty()) return null;
+        if (hint != null && hint.matches(fluid) && fluid.getAmount() >= hint.getInputAmount()) return hint;
         for (var holder : RECIPES.getRecipes(level)) {
             SolarTowerRecipe recipe = holder.value();
             if (recipe.matches(fluid) && fluid.getAmount() >= recipe.getInputAmount()) return recipe;

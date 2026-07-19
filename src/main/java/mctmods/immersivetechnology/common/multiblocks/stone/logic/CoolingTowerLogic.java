@@ -1,15 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import com.google.common.collect.ImmutableList;
 import mctmods.immersivetechnology.common.fluids.helper.ITArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ITIDisplayContext;
@@ -23,6 +13,18 @@ import mctmods.immersivetechnology.core.lib.ITSound;
 import mctmods.immersivetechnology.core.registration.ITParticles;
 import mctmods.immersivetechnology.core.registration.ITSounds;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.core.util.ITCachedRecipe;
+
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -41,7 +43,6 @@ import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -130,10 +131,10 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         if (state.processQueue.size() < getProcessQueueMaxLength()) {
             FluidStack in0 = state.tanks.input0().getFluid();
             FluidStack in1 = state.tanks.input1().getFluid();
-            CoolingTowerRecipe recipe = CoolingTowerRecipe.findRecipe(level, in0, in1);
+            CoolingTowerRecipe recipe = state.recipeGetter.apply(level, in0, in1);
             boolean swapped = false;
             if (recipe == null) {
-                recipe = CoolingTowerRecipe.findRecipe(level, in1, in0);
+                recipe = state.recipeGetterSwapped.apply(level, in1, in0);
                 swapped = true;
             }
             if (recipe != null) {
@@ -182,8 +183,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     private int getProcessQueueMaxLength() { return 3; }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -235,6 +235,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     }
 
     public static class State implements IMultiblockState, ITIDisplayContext {
+        public final ITCachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = ITCachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
+        public final ITCachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = ITCachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
         public final CoolingTowerTanks tanks;
         public IFluidHandler inputCap;
         public IFluidHandler output0Cap;

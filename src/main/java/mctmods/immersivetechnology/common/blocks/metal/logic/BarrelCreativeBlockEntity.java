@@ -1,20 +1,17 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.IEApiDataComponents;
-import blusunrize.immersiveengineering.common.util.Utils;
-
-import com.mojang.datafixers.util.Unit;
-
-import java.text.DecimalFormat;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-
 import mctmods.immersivetechnology.common.blocks.helper.ITIBlockInterfaces;
 import mctmods.immersivetechnology.core.ITClientConfig;
 import mctmods.immersivetechnology.core.ITCommonConfig;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
 import mctmods.immersivetechnology.core.util.TranslationKey;
+import mctmods.immersivetechnology.core.util.ITUtils;
 
+import blusunrize.immersiveengineering.api.IEApiDataComponents;
+import com.mojang.datafixers.util.Unit;
+import java.text.DecimalFormat;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -33,14 +30,12 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.HitResult;
-
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +59,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements I
             if (handler == null) { continue; }
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
-            FluidStack toFill = Utils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = ITUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }

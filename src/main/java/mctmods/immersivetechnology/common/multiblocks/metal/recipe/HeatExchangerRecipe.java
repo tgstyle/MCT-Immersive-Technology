@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.HeatExchangerRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.HeatExchangerRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -69,8 +70,11 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         return stack != null && (this.input1Tag == null || stack.is(this.input1Tag));
     }
 
-    public static RecipeHolder<HeatExchangerRecipe> findRecipe(Level level, FluidStack input0, FluidStack input1) {
+    public static RecipeHolder<HeatExchangerRecipe> findRecipe(Level level, FluidStack input0, FluidStack input1) { return findRecipe(level, input0, input1, null); }
+
+    public static RecipeHolder<HeatExchangerRecipe> findRecipe(Level level, FluidStack input0, FluidStack input1, @Nullable RecipeHolder<HeatExchangerRecipe> hint) {
         if ((input0 == null || input0.isEmpty()) && (input1 == null || input1.isEmpty())) return null;
+        if (hint != null && hint.value().matchesInput0(input0) && hint.value().matchesInput1(input1)) return hint;
         for (RecipeHolder<HeatExchangerRecipe> holder : RECIPES.getRecipes(level)) {
             HeatExchangerRecipe recipe = holder.value();
             if (recipe.matchesInput0(input0) && recipe.matchesInput1(input1)) return holder;

@@ -9,6 +9,9 @@ import mctmods.immersivetechnology.common.fluids.helper.ITMarkableFluidTank;
 import mctmods.immersivetechnology.common.fluids.helper.ITDelegatingFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ITServerConfig;
+import mctmods.immersivetechnology.client.utils.ITClientUtils;
+import mctmods.immersivetechnology.core.util.ITLayeredComparatorOutput;
+import mctmods.immersivetechnology.core.util.ITUtils;
 
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
@@ -20,10 +23,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.client.utils.TextUtils;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
-import blusunrize.immersiveengineering.common.util.LayeredComparatorOutput;
-import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,7 +50,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, ITIPressurizedFluidOutput<SteelSheetmetalTankLogic.State>, ITIBlockInterfaces.ILadderPositionProvider {
@@ -123,7 +122,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     public static class State implements IMultiblockState, ITIDisplayContext {
         public final ITMarkableFluidTank tank;
-        private final LayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
+        private final ITLayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
         public IFluidHandler inputHandler;
         public IFluidHandler ioHandler;
         public IFluidHandler output0Handler;
@@ -145,7 +144,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
             this.output0Tank = new ITDelegatingFluidTank(tank);
             this.output1Tank = new ITDelegatingFluidTank(tank);
             this.output2Tank = new ITDelegatingFluidTank(tank);
-            this.comparatorHelper = new LayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
+            this.comparatorHelper = new ITLayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
                     (ctx, value) -> {
                         BlockPos pos = COMPARATOR_BASE;
                         IMultiblockLevel level = ctx.getLevel();
@@ -216,8 +215,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     @Override public State createInitialState(IInitialMultiblockContext<State> capabilitySource) { return new State(capabilitySource); }
 
-    @Override
-    public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
+    @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
             BlockPos posIn = position.posInMultiblock();
             RelativeBlockFace side = position.side();
@@ -234,7 +232,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     @Override public void dropExtraItems(State state, java.util.function.Consumer<net.minecraft.world.item.ItemStack> drop) { }
 
     @Override @Nullable public List<Component> getOverlayText(State state, BlockPos pos, BlockHitResult hit, Player player, boolean hammer) {
-        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(TextUtils.formatFluidStack(state.tank.getFluid()));
+        if (ITUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ITClientUtils.formatFluidStack(state.tank.getFluid()));
         return null;
     }
 

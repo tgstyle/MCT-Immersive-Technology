@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.items.helper;
 
-import blusunrize.immersiveengineering.api.client.TextUtils;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import mctmods.immersivetechnology.common.blocks.helper.ITIBaseBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITIBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.lib.ITLib;
+
+import blusunrize.immersiveengineering.api.client.TextUtils;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -31,13 +31,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public class ITBlockItem extends BlockItem {
+    public static final String ENERGY_KEY = "energy";
+
     public ITBlockItem(Block b, Item.Properties props) { super(b, props); }
 
     public ITBlockItem(Block b) { this(b, new Item.Properties()); }
@@ -55,8 +56,8 @@ public class ITBlockItem extends BlockItem {
         CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         CompoundTag tag = customData.copyTag();
 
-        if (tag.contains(EnergyHelper.ENERGY_KEY)) {
-            tooltipComponents.add(TextUtils.applyFormat(Component.translatable(ITLib.DESC_INFO + "energyStored", tag.getInt(EnergyHelper.ENERGY_KEY)), ChatFormatting.GRAY));
+        if (tag.contains(ENERGY_KEY)) {
+            tooltipComponents.add(TextUtils.applyFormat(Component.translatable(ITLib.DESC_INFO + "energyStored", tag.getInt(ENERGY_KEY)), ChatFormatting.GRAY));
         }
         if (tag.contains("tank")) {
             CompoundTag tankTag = tag.getCompound("tank");

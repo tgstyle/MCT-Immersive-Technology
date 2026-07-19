@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.ElectrolyticCrucibleBatteryRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
+
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.ElectrolyticCrucibleBatteryRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.ITRecipeTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -58,8 +59,11 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         return stack.is(this.fluidTag);
     }
 
-    public static RecipeHolder<ElectrolyticCrucibleBatteryRecipe> findRecipe(Level level, FluidStack input) {
+    public static RecipeHolder<ElectrolyticCrucibleBatteryRecipe> findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
+
+    public static RecipeHolder<ElectrolyticCrucibleBatteryRecipe> findRecipe(Level level, FluidStack input, @Nullable RecipeHolder<ElectrolyticCrucibleBatteryRecipe> hint) {
         if (input.isEmpty() || input.getAmount() <= 0) return null;
+        if (hint != null && hint.value().matches(input)) return hint;
         for (RecipeHolder<ElectrolyticCrucibleBatteryRecipe> holder : RECIPES.getRecipes(level)) {
             ElectrolyticCrucibleBatteryRecipe recipe = holder.value();
             if (recipe.matches(input)) return holder;
