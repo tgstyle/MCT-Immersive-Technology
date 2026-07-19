@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
-import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
-import blusunrize.immersiveengineering.common.items.WireCoilItem;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.ITIEntityBlock;
 import mctmods.immersivetechnology.common.blocks.helper.ITProperties;
 import mctmods.immersivetechnology.core.registration.ITBlockEntities;
+
+import blusunrize.immersiveengineering.common.items.WireCoilItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,8 +24,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,15 +98,6 @@ public class ConnectorTimerBlock extends ITIEntityBlock<ConnectorTimerBlockEntit
     @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         ItemStack held = player.getItemInHand(hand);
 
-        if (!held.isEmpty() && held.getItem() instanceof ScrewdriverItem) {
-            if (level.isClientSide) {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> mctmods.immersivetechnology.client.gui.ConnectorConfigScreen.open(
-                        (ConnectorTimerBlockEntity) level.getBlockEntity(pos)
-                ));
-            }
-            return InteractionResult.SUCCESS;
-        }
-
         if (!held.isEmpty() && held.getItem() instanceof WireCoilItem) { return InteractionResult.PASS; }
 
         if (level.isClientSide) return InteractionResult.SUCCESS;
@@ -121,7 +110,7 @@ public class ConnectorTimerBlock extends ITIEntityBlock<ConnectorTimerBlockEntit
                 timer.markContainingBlockForUpdate(null);
                 level.blockEvent(pos, this, 254, 0);
             }
-            else if (held.isEmpty()) { NetworkHooks.openScreen((ServerPlayer) player, timer, buf -> buf.writeBlockPos(pos)); }
+            else { NetworkHooks.openScreen((ServerPlayer) player, timer, buf -> buf.writeBlockPos(pos)); }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
