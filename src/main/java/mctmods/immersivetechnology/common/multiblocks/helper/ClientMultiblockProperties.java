@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.helper;
 
 import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.client.utils.ClientUtils;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 
 import blusunrize.immersiveengineering.api.multiblocks.ClientMultiblocks;
 import com.mojang.blaze3d.vertex.PoseStack;

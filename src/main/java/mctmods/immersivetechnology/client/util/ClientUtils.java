@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.client.utils;
+package mctmods.immersivetechnology.client.util;
 
 import mctmods.immersivetechnology.core.util.TranslationKey;
 

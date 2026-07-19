@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.common.fluids.helper.DelegatingFluidTank;
 import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.client.utils.ClientUtils;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.core.util.LayeredComparatorOutput;
 import mctmods.immersivetechnology.core.util.Utils;
 
