@@ -9,12 +9,12 @@ import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
-import mctmods.immersivetechnology.common.data.DataGenUtils;
+import mctmods.immersivetechnology.common.data.util.GeneratorUtils;
 import mctmods.immersivetechnology.common.data.builders.SplitModelBuilder;
 import mctmods.immersivetechnology.common.data.models.ModelProviderUtils;
 import mctmods.immersivetechnology.common.data.models.NongeneratedModels;
 import mctmods.immersivetechnology.common.data.models.NongeneratedModels.ITNongeneratedModel;
-import mctmods.immersivetechnology.common.data.models.SideConfig;
+import mctmods.immersivetechnology.common.data.builders.SideConfigBuilder;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.common.data.generators.ModBlockState;
@@ -96,7 +96,7 @@ public class BasicStateGenerator {
 
         VariantBlockStateBuilder steelBuilder = main.getVariantBuilder(ModBlocks.getBlock.apply("barrel_steel"));
         BlockModelBuilder steelModel = main.models().getBuilder("block/metal/barrel_steel")
-                .customLoader(SideConfig::begin)
+                .customLoader(SideConfigBuilder::begin)
                 .type(ModelConfigurableSides.Type.VERTICAL)
                 .baseName(main.modLoc("block/metal/barrel_steel"))
                 .end();
@@ -259,7 +259,7 @@ public class BasicStateGenerator {
         ModelFile model = loader.end();
         String particlePath = objLoc.getPath().replaceFirst("^models/", "");
         ResourceLocation particleObjLoc = ResourceLocation.fromNamespaceAndPath(objLoc.getNamespace(), particlePath);
-        String particleTex = DataGenUtils.getTextureFromObj(particleObjLoc, existingFileHelper);
+        String particleTex = GeneratorUtils.getTextureFromObj(particleObjLoc, existingFileHelper);
         builder.texture("particle", particleTex);
         return model;
     }

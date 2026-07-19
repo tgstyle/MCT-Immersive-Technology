@@ -21,13 +21,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
-public class ModMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements BlockInterfaces.IPlayerInteraction, IDropInventory, IModelOffsetProvider, ModIMultiblockBEHelper {
+public class ModMultiblockBlockEntityMaster<State extends IMultiblockState> extends MultiblockBlockEntityMaster<State> implements BlockInterfaces.IPlayerInteraction, IDropInventory, IModelOffsetProvider, IDisassemblingAware {
     private final MultiblockBlockEntityCommon<State> common;
     private boolean disassembling = false;
 
     public ModMultiblockBlockEntityMaster(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState, MultiblockRegistration<State> multiblock) { super(type, worldPosition, blockState, multiblock); this.common = new MultiblockBlockEntityCommon<>(multiblock, this::getHelper, this::getLevel); }
 
-    @Override public boolean it$isDisassembling() { return disassembling; }
+    @Override public boolean it$isDisassembling() { return !disassembling; }
     @Override public void it$markDisassembling() { this.disassembling = true; }
 
     @Override public boolean interact(Direction side, Player player, InteractionHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ) { return common.interact(side, player, hand, heldItem, hitX, hitY, hitZ); }

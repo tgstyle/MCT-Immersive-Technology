@@ -215,7 +215,7 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
             ItemStack effectiveTool = tool.isEmpty() ? new ItemStack(Items.DIAMOND_PICKAXE) : tool;
             if (!activeDisassemblies.add(masterPos.immutable())) { return; }
             BlockEntity masterBE = world.getBlockEntity(masterPos);
-            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof ModIMultiblockBEHelper itH) { itH.it$markDisassembling(); }
+            if (masterBE instanceof IMultiblockBE<?> mbBE && mbBE.getHelper() instanceof IDisassemblingAware itH) { itH.it$markDisassembling(); }
             getTemplate(world);
             List<StructureBlockInfo> structure = sortedStructureBlocks;
             for (StructureBlockInfo info : structure) {
@@ -303,11 +303,11 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
         BlockEntity be = world.getBlockEntity(pos);
         if (be == null) { return; }
         boolean marked = false;
-        if (be instanceof ModIMultiblockBEHelper itBE) {
+        if (be instanceof IDisassemblingAware itBE) {
             itBE.it$markDisassembling();
             marked = true;
         }
-        if (be instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper() instanceof ModIMultiblockBEHelper itHelper) {
+        if (be instanceof IMultiblockBE<?> multiblockBE && multiblockBE.getHelper() instanceof IDisassemblingAware itHelper) {
             itHelper.it$markDisassembling();
             marked = true;
         }

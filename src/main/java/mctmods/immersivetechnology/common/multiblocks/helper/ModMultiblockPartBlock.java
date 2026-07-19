@@ -8,7 +8,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockPartBlock;
-import blusunrize.immersiveengineering.common.blocks.IEBaseBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -71,7 +70,7 @@ public class ModMultiblockPartBlock<S extends IMultiblockState> extends Multiblo
             BlockEntity te = level.getBlockEntity(pos);
             if (te instanceof IMultiblockBE<?> be) {
                 var helper = be.getHelper();
-                if (!((ModIMultiblockBEHelper)helper).it$isDisassembling()) {
+                if (((IDisassemblingAware) helper).it$isDisassembling()) {
                     if (te instanceof IDropInventory dropInv) {
                         dropInv.getDroppedItems().forEach(stack -> {
                             if (!stack.isEmpty()) {
@@ -96,7 +95,7 @@ public class ModMultiblockPartBlock<S extends IMultiblockState> extends Multiblo
         try {
             if (!level.isClientSide && state.getBlock() != newState.getBlock()) {
                 BlockEntity te = level.getBlockEntity(pos);
-                if (te instanceof IMultiblockBE<?> be && !((ModIMultiblockBEHelper)be.getHelper()).it$isDisassembling()) {
+                if (te instanceof IMultiblockBE<?> be && ((IDisassemblingAware) be.getHelper()).it$isDisassembling()) {
                     ModTemplateMultiblock.currentlyBreakingPos = pos.immutable();
                     try { super.onRemove(state, level, pos, newState, isMoving); }
                     finally { ModTemplateMultiblock.currentlyBreakingPos = null; }

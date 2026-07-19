@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.helper;
+package mctmods.immersivetechnology.core.mixin.common;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;

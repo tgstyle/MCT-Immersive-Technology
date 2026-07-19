@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.data;
+package mctmods.immersivetechnology.common.data.util;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DataGenUtils {
+public class GeneratorUtils {
     private static final Pattern MTLLIB = Pattern.compile("^mtllib\\s+(.*)$", Pattern.MULTILINE);
     private static final Pattern USEMTL = Pattern.compile("^usemtl\\s+(.*)$", Pattern.MULTILINE);
     private static final Pattern NEWMTL = Pattern.compile("^newmtl\\s+(.*)$", Pattern.MULTILINE);
