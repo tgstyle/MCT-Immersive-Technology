@@ -36,13 +36,7 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
         List<List<FluidStack>> inputs = ingredients.getInputs(FluidStack.class);
         List<List<FluidStack>> outputs = ingredients.getOutputs(FluidStack.class);
 
-        int tankSize = 0;
-        for (List<FluidStack> lists : inputs) {
-            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
-        }
-        for (List<FluidStack> lists : outputs) {
-            for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
-        }
+        int tankSize = getMaxFluidAmount(inputs, outputs);
 
         int tankIndex = 0;
         IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();

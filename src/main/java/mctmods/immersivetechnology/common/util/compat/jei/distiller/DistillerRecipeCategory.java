@@ -33,13 +33,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 		List<List<FluidStack>> fluidInputs = ingredients.getInputs(VanillaTypes.FLUID);
 		List<List<FluidStack>> fluidOutputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
-		int tankCapacity = 0;
-		for (List<FluidStack> list : fluidInputs) {
-			for (FluidStack fluid : list) if (fluid.amount > tankCapacity) tankCapacity = fluid.amount;
-		}
-		for (List<FluidStack> list : fluidOutputs) {
-			for (FluidStack fluid : list) if (fluid.amount > tankCapacity) tankCapacity = fluid.amount;
-		}
+		int tankCapacity = getMaxFluidAmount(fluidInputs, fluidOutputs);
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 50, 8, 16, 47, tankCapacity, false, tankOverlay);

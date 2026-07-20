@@ -29,17 +29,14 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerFuelRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
-		int tankSize = 0;
-		for (List<FluidStack> lists : inputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
-		}
+		int tankSize = getMaxFluidAmount(inputs);
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 13, 20, 16, 47, tankSize, false, tankOverlay);
 		guiFluidStacks.set(0, inputs.get(0));
 		guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
 	}
-	
+
 	@Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull BoilerFuelRecipe recipe) {
 		return new BoilerFuelRecipeWrapper(recipe);
 	}

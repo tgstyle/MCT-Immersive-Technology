@@ -1,6 +1,11 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -8,11 +13,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
+import net.minecraftforge.fluids.FluidStack;
 
 @SuppressWarnings("unused")
 public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
@@ -53,4 +54,14 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	public boolean isRecipeValid(T recipe) { return true; }
 
 	@Override @Nonnull public String getModName() { return ImmersiveTechnology.NAME; }
+
+	@SafeVarargs protected static int getMaxFluidAmount(List<List<FluidStack>>... fluidLists) {
+		int max = 0;
+		for (List<List<FluidStack>> fluidList : fluidLists) {
+			for (List<FluidStack> stacks : fluidList) {
+				for (FluidStack fluid : stacks) { if (fluid.amount > max) { max = fluid.amount; } }
+			}
+		}
+		return max;
+	}
 }

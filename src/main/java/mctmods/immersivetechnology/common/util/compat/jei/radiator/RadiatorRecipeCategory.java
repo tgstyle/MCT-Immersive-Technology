@@ -35,17 +35,7 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 		List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
-		int tankCapacity = 0;
-		for (List<FluidStack> stacks : inputs) {
-			for (FluidStack stack : stacks) {
-				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
-			}
-		}
-		for (List<FluidStack> stacks : outputs) {
-			for (FluidStack stack : stacks) {
-				if (stack.amount > tankCapacity) tankCapacity = stack.amount;
-			}
-		}
+		int tankCapacity = getMaxFluidAmount(inputs, outputs);
 
 		IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
 		guiFluidStacks.init(0, true, 11, 11, 16, 47, tankCapacity, false, tankOverlay);

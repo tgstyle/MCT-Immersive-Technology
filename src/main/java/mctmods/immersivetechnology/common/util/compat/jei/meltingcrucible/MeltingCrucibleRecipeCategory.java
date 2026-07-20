@@ -37,10 +37,7 @@ public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCruci
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull MeltingCrucibleRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
 
-		int tankSize = 0;
-		for (List<FluidStack> lists : outputs) {
-			for (FluidStack fluid : lists) if (fluid.amount > tankSize) tankSize = fluid.amount;
-		}
+		int tankSize = getMaxFluidAmount(outputs);
 
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
 		guiItemStacks.init(0, true, 11, 41);
