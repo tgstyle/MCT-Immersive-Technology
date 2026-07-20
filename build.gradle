@@ -304,20 +304,6 @@ artifacts {
     archives datagenJar
 }
 
-void minimizePNGFile(File file) {
-    long size = file.length()
-    ExecOperations execOps = project.services.get(ExecOperations)
-    execOps.exec {
-        executable 'optipng'
-        args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
-    }
-    long newSize = file.length()
-    if (newSize < size) {
-        System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
-                file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
-    }
-}
-
 tasks.register('optimizePng') {
     def pngPatterns = ["**/*.png"]
     def resourceDirs = sourceSets.main.resources.srcDirs
