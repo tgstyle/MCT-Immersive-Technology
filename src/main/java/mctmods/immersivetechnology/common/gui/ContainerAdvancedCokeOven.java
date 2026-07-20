@@ -1,11 +1,10 @@
 package mctmods.immersivetechnology.common.gui;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
+
 import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
-
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -22,7 +21,6 @@ public class ContainerAdvancedCokeOven extends ContainerIEBase<TileEntityAdvance
         this.addSlotToContainer(new IESlot.FluidContainer(this, this.inv, 2, 152, 17, 0));
         this.addSlotToContainer(new IESlot.Output(this, this.inv, 3, 152, 53));
 
-        for (int i = 0; i < 3; i++) for (int j = 0; j < 9; j++) { addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18)); }
-        for (int i = 0; i < 9; i++) { addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142)); }
+        for (Slot slot : ITContainerHelper.playerInventorySlots(inventoryPlayer, 84)) { addSlotToContainer(slot); }
     }
 }

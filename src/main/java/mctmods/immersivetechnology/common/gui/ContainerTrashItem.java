@@ -2,25 +2,20 @@ package mctmods.immersivetechnology.common.gui;
 
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 public class ContainerTrashItem extends Container {
-
 	TileEntityTrashItem tile;
 
 	public ContainerTrashItem(InventoryPlayer inventoryPlayer, TileEntityTrashItem tile) {
 		this.tile = tile;
 		this.addSlotToContainer(new Slot(tile.inv, 0, 80, 34));
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 9; j++) { addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 85 + i * 18)); }
-		}
-		for (int i = 0; i < 9; i++) { addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 143)); }
+		for (Slot slot : ITContainerHelper.playerInventorySlots(inventoryPlayer, 85)) { addSlotToContainer(slot); }
 	}
 
 	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) {
