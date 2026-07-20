@@ -1,16 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.util.Utils;
-
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
-import mctmods.immersivetechnology.common.util.shapes.Shapes;
-import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
+import blusunrize.immersiveengineering.common.util.Utils;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -18,21 +18,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.entity.player.EntityPlayer;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
@@ -90,6 +79,12 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
         return master;
     }
 
+    @Override protected GenericShape getShapeGetter() { return RadiatorShape.GETTER; }
+
+    @Override protected AxisAlignedBB preprocessShapeAABB(AxisAlignedBB aabb) {
+        return mirrored ? new AxisAlignedBB(aabb.minY, aabb.minX, aabb.minZ, aabb.maxY, aabb.maxX, aabb.maxZ) : aabb;
+    }
+
     @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
@@ -139,45 +134,6 @@ public class TileEntityRadiatorSlave extends TileEntityITMultiblock<TileEntityRa
     @Override public int getComparatorInputOverride() {
         TileEntityRadiatorMaster m = master();
         return m == null ? 0 : m.getComparatorInputOverride();
-    }
-
-    public BlockPos posToMultiblock() {
-        int originalWidth = TileEntityITMultiblockPartRadiator.instance.width;
-        int originalLength = TileEntityITMultiblockPartRadiator.instance.length;
-        int posIdx = pos;
-        int y = posIdx / (originalLength * originalWidth);
-        int rem = posIdx % (originalLength * originalWidth);
-        int z = rem / originalWidth;
-        int x = rem % originalWidth;
-        return new BlockPos(x, y, z);
-    }
-
-    private VoxelShape getVoxelShape() {
-        BlockPos posInMultiblock = posToMultiblock();
-        List<AxisAlignedBB> list = RadiatorShape.GETTER.getShape(posInMultiblock);
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) {
-            if (mirrored) {
-                aabb = new AxisAlignedBB(aabb.minY, aabb.minX, aabb.minZ, aabb.maxY, aabb.maxX, aabb.maxZ);
-            }
-            rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
-        }
-        VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
-        return vs.optimize();
-    }
-
-    @Nonnull @Override public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Nonnull @Override public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
-
-    @Nonnull @Override public float[] getBlockBounds() {
-        VoxelShape vs = getVoxelShape();
-        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
-        AxisAlignedBB bb = vs.bounds();
-        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

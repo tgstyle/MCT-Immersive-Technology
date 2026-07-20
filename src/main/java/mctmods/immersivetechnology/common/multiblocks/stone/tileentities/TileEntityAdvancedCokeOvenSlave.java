@@ -1,12 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IActiveState;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
@@ -14,30 +7,27 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.shapes.Shapes;
-import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
-import net.minecraft.entity.player.EntityPlayer;
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IActiveState;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
@@ -82,6 +72,14 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
         TileEntity te = world.getTileEntity(masterPos);
         master = te instanceof TileEntityAdvancedCokeOvenMaster ? (TileEntityAdvancedCokeOvenMaster)te : null;
         return master;
+    }
+
+    @Override protected GenericShape getShapeGetter() { return AdvancedCokeOvenShape.GETTER; }
+
+    @Override protected boolean useMirroredShape() { return false; }
+
+    @Override protected BlockPos adjustPosInMultiblock(BlockPos posInMultiblock, int width) {
+        return mirrored ? new BlockPos(width - 1 - posInMultiblock.getX(), posInMultiblock.getY(), posInMultiblock.getZ()) : posInMultiblock;
     }
 
     @Override public boolean getIsActive() {
@@ -149,40 +147,6 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
     @Override public int getComparatorInputOverride() {
         TileEntityAdvancedCokeOvenMaster m = master();
         return m != null ? m.getComparatorInputOverride() : 0;
-    }
-
-    private BlockPos posToMultiblock() {
-        int width = TileEntityITMultiblockPartAdvancedCokeOven.instance.width;
-        int length = TileEntityITMultiblockPartAdvancedCokeOven.instance.length;
-        int y = pos / (length * width);
-        int rem = pos % (length * width);
-        int z = rem / width;
-        int x = rem % width;
-        if (mirrored) x = width - 1 - x;
-        return new BlockPos(x, y, z);
-    }
-
-    private VoxelShape getVoxelShape() {
-        BlockPos posInMultiblock = posToMultiblock();
-        List<AxisAlignedBB> list = AdvancedCokeOvenShape.GETTER.getShape(posInMultiblock);
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing));
-        VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
-        return vs.optimize();
-    }
-
-    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
-
-    @Override @Nonnull public float[] getBlockBounds() {
-        VoxelShape vs = getVoxelShape();
-        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
-        AxisAlignedBB bb = vs.bounds();
-        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

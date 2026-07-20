@@ -1,5 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
+
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
@@ -7,39 +16,20 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-
-import mctmods.immersivetechnology.api.ITGUI;
-import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
-import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.shapes.*;
-
-import net.minecraft.entity.player.EntityPlayer;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IFluxReceiver, EnergyHelper.IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
@@ -79,6 +69,8 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
         master = te instanceof TileEntityDistillerMaster ? (TileEntityDistillerMaster)te : null;
         return master;
     }
+
+    @Override protected GenericShape getShapeGetter() { return DistillerShape.GETTER; }
 
     @Override public NonNullList<ItemStack> getInventory() {
         TileEntityDistillerMaster m = master();
@@ -197,38 +189,5 @@ public class TileEntityDistillerSlave extends TileEntityITMultiblock<TileEntityD
             if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
         }
         return super.getCapability(capability, facing);
-    }
-
-    private BlockPos posToMultiblock() {
-        int width = TileEntityITMultiblockPartDistiller.instance.width;
-        int length = TileEntityITMultiblockPartDistiller.instance.length;
-        int y = pos / (length * width);
-        int rem = pos % (length * width);
-        int z = rem / width;
-        int x = rem % width;
-        return new BlockPos(x, y, z);
-    }
-
-    private VoxelShape getVoxelShape() {
-        BlockPos posInMultiblock = posToMultiblock();
-        List<AxisAlignedBB> list = DistillerShape.GETTER.getShape(posInMultiblock);
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing, mirrored));
-        VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
-        return vs.optimize();
-    }
-
-    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
-
-    @Override @Nonnull public float[] getBlockBounds() {
-        VoxelShape vs = getVoxelShape();
-        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
-        AxisAlignedBB bb = vs.bounds();
-        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 }

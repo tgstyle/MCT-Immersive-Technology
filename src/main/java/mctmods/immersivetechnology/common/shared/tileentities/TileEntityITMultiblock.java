@@ -1,16 +1,25 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
+import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
+import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
+import mctmods.immersivetechnology.common.util.shapes.Shapes;
+import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
+
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
-
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,10 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import java.util.Objects;
+import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T, R, M>, R extends IMultiblockRecipe, M extends T> extends TileEntityMultiblockMetal<T, R> {
     private int blockUpdateCooldown = 0;
@@ -38,6 +45,12 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     public TileEntityITMultiblock(TileEntityITMultiblockPart<?> instance, int energyCapacity, boolean redstoneControl) { super(instance, new int[]{instance.height, instance.length, instance.width}, energyCapacity, redstoneControl); }
 
     public abstract M master();
+
+    protected abstract GenericShape getShapeGetter();
+
+    protected boolean useMirroredShape() { return true; }
+
+    protected AxisAlignedBB preprocessShapeAABB(AxisAlignedBB aabb) { return aabb; }
 
     protected abstract IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position);
 
@@ -93,7 +106,41 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
         return super.getCapability(capability, facing);
     }
 
-    @Override @Nonnull public float[] getBlockBounds() { return new float[]{0f, 0f, 0f, 1f, 1f, 1f}; }
+    private BlockPos posToMultiblock() {
+        TileEntityITMultiblockPart<?> instance = (TileEntityITMultiblockPart<?>)mutliblockInstance;
+        int width = instance.width;
+        int length = instance.length;
+        int y = pos / (length * width);
+        int rem = pos % (length * width);
+        int z = rem / width;
+        int x = rem % width;
+        return adjustPosInMultiblock(new BlockPos(x, y, z), width);
+    }
+
+    protected BlockPos adjustPosInMultiblock(BlockPos posInMultiblock, int width) { return posInMultiblock; }
+
+    private VoxelShape getVoxelShape() {
+        BlockPos posInMultiblock = posToMultiblock();
+        List<AxisAlignedBB> list = getShapeGetter().getShape(posInMultiblock);
+        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
+        for (AxisAlignedBB aabb : list) { rotatedList.add(ITUtils.rotateAABB(preprocessShapeAABB(aabb), facing, useMirroredShape() && mirrored)); }
+        VoxelShape vs = Shapes.empty();
+        for (AxisAlignedBB aabb : rotatedList) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
+        return vs.optimize();
+    }
+
+    @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+
+    @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+
+    public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+
+    @Override @Nonnull public float[] getBlockBounds() {
+        VoxelShape vs = getVoxelShape();
+        if (vs.isEmpty()) { return new float[]{0f, 0f, 0f, 1f, 1f, 1f}; }
+        AxisAlignedBB bb = vs.bounds();
+        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
+    }
 
     @Override @Nonnull public ItemStack getOriginalBlock() { return MultiblockUtils.GetItemStack(pos, ((TileEntityITMultiblockPart<?>)this.mutliblockInstance).structureExport); }
 

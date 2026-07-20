@@ -1,34 +1,23 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.api.crafting.DummyRecipe;
+import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
-import mctmods.immersivetechnology.common.util.shapes.*;
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
-
-import net.minecraft.entity.player.EntityPlayer;
+import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-
-import javax.annotation.Nonnull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEntitySolarReflectorSlave, IMultiblockRecipe, TileEntitySolarReflectorMaster> implements ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds {
 
@@ -66,6 +55,10 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
         return master;
     }
 
+    @Override protected GenericShape getShapeGetter() { return SolarReflectorShape.GETTER; }
+
+    @Override protected boolean useMirroredShape() { return false; }
+
     @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }
 
     @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
@@ -91,37 +84,4 @@ public class TileEntitySolarReflectorSlave extends TileEntityITMultiblock<TileEn
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
-
-    public BlockPos posToMultiblock() {
-        int width = TileEntityITMultiblockPartSolarReflector.instance.width;
-        int length = TileEntityITMultiblockPartSolarReflector.instance.length;
-        int y = pos / (length * width);
-        int rem = pos % (length * width);
-        int z = rem / width;
-        int x = rem % width;
-        return new BlockPos(x, y, z);
-    }
-
-    private VoxelShape getVoxelShape() {
-        BlockPos posInMultiblock = posToMultiblock();
-        List<AxisAlignedBB> list = SolarReflectorShape.GETTER.getShape(posInMultiblock);
-        List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
-        for (AxisAlignedBB aabb : list) rotatedList.add(ITUtils.rotateAABB(aabb, facing));
-        VoxelShape vs = Shapes.empty();
-        for (AxisAlignedBB aabb : rotatedList) vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR);
-        return vs.optimize();
-    }
-
-    @Override @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
-
-    @Override public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
-
-    @Override @Nonnull public float[] getBlockBounds() {
-        VoxelShape vs = getVoxelShape();
-        if (vs.isEmpty()) return new float[]{0f, 0f, 0f, 1f, 1f, 1f};
-        AxisAlignedBB bb = vs.bounds();
-        return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
-    }
 }

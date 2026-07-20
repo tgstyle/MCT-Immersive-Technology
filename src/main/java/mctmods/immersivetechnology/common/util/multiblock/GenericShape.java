@@ -33,7 +33,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
         return base;
     }
 
-    protected List<AxisAlignedBB> getShape(BlockPos posInMultiblock) {
+    public List<AxisAlignedBB> getShape(BlockPos posInMultiblock) {
         int x = posInMultiblock.getX(), y = posInMultiblock.getY(), z = posInMultiblock.getZ();
         if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= length) { return new ArrayList<>(); }
         int index = computeIndex(x, y, z);
