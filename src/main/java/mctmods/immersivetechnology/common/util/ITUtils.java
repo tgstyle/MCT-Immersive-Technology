@@ -13,12 +13,13 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public class ITUtils {
     public static IFluidTank[] emptyIFluidTankList = new IFluidTank[0];
 
-    public static final Set<TileEntity> REMOVE_FROM_TICKING = new HashSet<>();
+    public static final Set<TileEntity> REMOVE_FROM_TICKING = ConcurrentHashMap.newKeySet();
 
     public static void RemoveDummyFromTicking(TileEntity te) { REMOVE_FROM_TICKING.add(te); }
 
@@ -28,6 +29,7 @@ public class ITUtils {
 
     public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, boolean mirrored) { return LocalOffsetToWorldBlockPos(origin, mirrored ? -x : x, y, z, facing, EnumFacing.UP); }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, EnumFacing up) {
         if (facing.getAxis() == up.getAxis()) { throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!"); }
         switch (up) {
@@ -105,10 +107,6 @@ public class ITUtils {
 
     public static <T> T make(Supplier<T> pSupplier) {
         return pSupplier.get();
-    }
-
-    public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing) {
-        return rotateAABB(aabb, facing, false);
     }
 
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing, boolean mirrored) {
