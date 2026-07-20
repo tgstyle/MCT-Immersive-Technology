@@ -320,9 +320,21 @@ void minimizePNGFile(File file) {
 
 tasks.register('optimizePng') {
     def pngPatterns = ["**/*.png"]
+    def resourceDirs = sourceSets.main.resources.srcDirs
+    def pngFiles = resourceDirs.collectMany { dir -> fileTree(dir: dir, includes: pngPatterns).files as List }
+    def execOps = project.services.get(ExecOperations)
     doLast {
-        for (dir in sourceSets.main.resources.srcDirs) {
-            fileTree(dir: dir, includes: pngPatterns).each { minimizePNGFile(it) }
+        pngFiles.each { File file ->
+            long size = file.length()
+            execOps.exec {
+                executable 'optipng'
+                args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+            }
+            long newSize = file.length()
+            if (newSize < size) {
+                System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
+                        file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
+            }
         }
     }
 }
