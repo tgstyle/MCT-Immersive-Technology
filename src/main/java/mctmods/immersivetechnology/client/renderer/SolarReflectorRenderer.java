@@ -66,10 +66,10 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
         poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
         poseStack.mulPose(orientRot);
         poseStack.mulPose(ROT_SUPPORT);
-        poseStack.translate(0, 2, 0);
+        poseStack.translate(0, 2.57, 0);
         ROT_MIRROR.rotationAxis((float)(-mirrorAngle * Mth.DEG_TO_RAD), AXIS);
         poseStack.mulPose(ROT_MIRROR);
-        poseStack.translate(0, -2, 0);
+        poseStack.translate(0, -2.57, 0);
         renderDynamicModel(mirrorModel, poseStack, buffer, level, pos, packedLight, true);
         poseStack.popPose();
     }
