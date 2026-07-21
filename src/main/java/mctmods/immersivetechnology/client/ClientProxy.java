@@ -170,7 +170,7 @@ public class ClientProxy extends CommonProxy {
         if (prevVolume != volumeAdjustment) { ITSoundHandler.UpdateAllVolumes(); }
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "ConstantConditions"})
     @SubscribeEvent public static void registerModels(ModelRegistryEvent evt) {
         WireApi.registerConnectorForRender("conn_timer", new ResourceLocation("immersivetech:block/connector/connectors_timer.obj.ie"), null);
         WireApi.registerConnectorForRender("conn_con_net", new ResourceLocation("immersivetech:block/connector/connectors_con_net.obj.ie"), null);

@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Locale;
-
 @Mixin(value = IEContent.class, remap = false)
 public abstract class MixinIEIEContent {
     @Inject(method = "registerTile(Ljava/lang/Class;)V", at = @At("HEAD"), cancellable = true)
@@ -27,7 +25,7 @@ public abstract class MixinIEIEContent {
         if (MCTMixinConfig.mixinSettings.replace_IE_pipes && (tile == TileEntityFluidPipe.class || tile == TileEntityFluidPump.class)) {
             Class<? extends TileEntity> alt = (tile == TileEntityFluidPipe.class) ? TileEntityFluidPipeAlternative.class : TileEntityFluidPumpAlternative.class;
             String s = tile.getSimpleName();
-            s = s.substring("TileEntity".length()).toLowerCase(Locale.US);
+            s = s.substring("TileEntity".length());
             GameRegistry.registerTileEntity(alt, new ResourceLocation(ImmersiveEngineering.MODID, s));
             MCTMixin.LOGGER.info("Replaced IE {} registration with IT alternative", s);
             ci.cancel();

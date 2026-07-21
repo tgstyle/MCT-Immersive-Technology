@@ -56,7 +56,9 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
     private final int transferRate = Settings.experimental.pipe_transfer_rate;
     private final int transferRatePressurized = Settings.experimental.pipe_pressurized_transfer_rate;
     private final PipeFluidHandler[] sidedHandlers = {new PipeFluidHandler(EnumFacing.DOWN), new PipeFluidHandler(EnumFacing.UP), new PipeFluidHandler(EnumFacing.NORTH), new PipeFluidHandler(EnumFacing.SOUTH), new PipeFluidHandler(EnumFacing.WEST), new PipeFluidHandler(EnumFacing.EAST)};
-    public static HashMap<BlockPos, List<ITDirectionalFluidOutput>> indirectConnections = new HashMap<>();
+    public static final Map<Integer, Map<BlockPos, List<ITDirectionalFluidOutput>>> indirectConnections = new HashMap<>();
+
+    private static Map<BlockPos, List<ITDirectionalFluidOutput>> getIndirectConnectionsForWorld(World world) { return indirectConnections.computeIfAbsent(world.provider.getDimension(), k -> new HashMap<>()); }
 
     public EnumDyeColor getColor() { return color; }
     public void setColor(EnumDyeColor color) { this.color = color; }
@@ -116,7 +118,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         while (!openList.isEmpty() && closedSet.size() < 1024) {
             BlockPos next = openList.poll();
             TileEntity pipeTile = Utils.getExistingTileEntity(world, next);
-            if (pipeTile instanceof TileEntityFluidPipeAlternative) { indirectConnections.remove(next); }
+            if (pipeTile instanceof TileEntityFluidPipeAlternative) { getIndirectConnectionsForWorld(world).remove(next); }
             if (pipeTile instanceof TileEntityFluidPipe) {
                 MixinIETileEntityFluidPipe mixin = (MixinIETileEntityFluidPipe)pipeTile;
                 for (int i = 0; i < 6; i++) {
@@ -303,8 +305,9 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
     }
 
     public static List<ITDirectionalFluidOutput> getITConnectedFluidHandlers(BlockPos node, World world) {
-        if (indirectConnections.containsKey(node)) {
-            List<ITDirectionalFluidOutput> res = indirectConnections.get(node);
+        Map<BlockPos, List<ITDirectionalFluidOutput>> cache = getIndirectConnectionsForWorld(world);
+        if (cache.containsKey(node)) {
+            List<ITDirectionalFluidOutput> res = cache.get(node);
             if (res.isEmpty()) { return res; }
             boolean valid = true;
             for (ITDirectionalFluidOutput sample : res) {
@@ -316,7 +319,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
                 }
             }
             if (valid) { return res; }
-            indirectConnections.remove(node);
+            cache.remove(node);
         }
         LinkedList<BlockPos> openList = new LinkedList<>();
         Set<BlockPos> visited = new HashSet<>();
@@ -364,7 +367,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         List<DistOutput> tempList = new ArrayList<>(handlerMap.values());
         tempList.sort(Comparator.comparingInt(o -> o.dist));
         List<ITDirectionalFluidOutput> fluidHandlers = tempList.stream().map(d -> d.out).collect(Collectors.toList());
-        indirectConnections.put(node, fluidHandlers);
+        cache.put(node, fluidHandlers);
         return fluidHandlers;
     }
 

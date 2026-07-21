@@ -37,6 +37,11 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         fuelMap.put(fluidInput.getFluid(), recipe);
     }
 
+    public static void removeFuel(FluidStack fluidInput) {
+        recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+        fuelMap.values().removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+    }
+
     public static GasTurbineRecipe findFuel(FluidStack fluidInput) {
         if (fluidInput == null) { return null; }
         GasTurbineRecipe recipe = fuelMap.get(fluidInput.getFluid());

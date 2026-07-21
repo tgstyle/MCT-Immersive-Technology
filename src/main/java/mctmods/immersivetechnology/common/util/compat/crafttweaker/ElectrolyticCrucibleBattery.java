@@ -48,7 +48,7 @@ public class ElectrolyticCrucibleBattery {
 
         public Remove(FluidStack inputFluid0) { this.inputFluid0 = inputFluid0; }
 
-        @Override public void apply() { ElectrolyticCrucibleBatteryRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput0.isFluidEqual(inputFluid0)); }
+        @Override public void apply() { ElectrolyticCrucibleBatteryRecipe.removeRecipe(inputFluid0); }
 
         @Override public String describe() { return "Removing Electrolytic Crucible Battery Recipe for " + inputFluid0.getLocalizedName(); }
     }

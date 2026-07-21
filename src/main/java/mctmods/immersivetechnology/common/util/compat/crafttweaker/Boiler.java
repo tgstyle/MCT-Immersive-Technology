@@ -69,7 +69,7 @@ public class Boiler {
 
         public Remove(FluidStack inputFluid) { this.inputFluid = inputFluid; }
 
-        @Override public void apply() { BoilerRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+        @Override public void apply() { BoilerRecipe.removeRecipe(inputFluid); }
 
         @Override public String describe() { return "Removing Boiler Input Recipe for " + inputFluid.getLocalizedName(); }
     }
@@ -79,7 +79,7 @@ public class Boiler {
 
         public RemoveFuel(FluidStack inputFluid) { this.inputFluid = inputFluid; }
 
-        @Override public void apply() { BoilerRecipe.fuelList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+        @Override public void apply() { BoilerRecipe.removeFuel(inputFluid); }
 
         @Override public String describe() { return "Removing Boiler Fuel Recipe for " + inputFluid.getLocalizedName(); }
     }

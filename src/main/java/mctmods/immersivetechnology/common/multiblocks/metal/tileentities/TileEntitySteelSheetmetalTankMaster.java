@@ -130,7 +130,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     @Override public int getComparatorInputOverride() {
-        if (!formed) { return 0; }
+        if (!formed || tank.getCapacity() <= 0) { return 0; }
         return 15 * tank.getFluidAmount() / tank.getCapacity();
     }
 

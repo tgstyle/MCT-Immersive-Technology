@@ -59,9 +59,7 @@ public class HeatExchanger {
         }
 
         @Override public void apply() {
-            HeatExchangerRecipe.recipeList.removeIf(recipe -> recipe != null &&
-                    recipe.fluidInput0.isFluidEqual(inputFluid0) &&
-                    (inputFluid1 == null || (recipe.fluidInput1 != null && recipe.fluidInput1.isFluidEqual(inputFluid1))));
+            HeatExchangerRecipe.removeRecipe(inputFluid0, inputFluid1);
         }
 
         @Override public String describe() {

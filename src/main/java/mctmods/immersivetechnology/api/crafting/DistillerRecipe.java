@@ -49,6 +49,11 @@ public class DistillerRecipe extends MultiblockRecipe {
         return r;
     }
 
+    public static void removeRecipe(FluidStack fluidInput) {
+        recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+        recipeMap.values().removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+    }
+
     public static DistillerRecipe findRecipe(FluidStack fluidInput) {
         if (fluidInput == null) return null;
         DistillerRecipe recipe = recipeMap.get(fluidInput.getFluid());

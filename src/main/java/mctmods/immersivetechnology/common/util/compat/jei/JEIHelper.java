@@ -51,7 +51,7 @@ public class JEIHelper implements IModPlugin {
     public static ITooltipCallback<FluidStack> fluidTooltipCallback = new ITFluidTooltipCallback();
 
     @SuppressWarnings("deprecation")
-    @Override public void registerIngredients(@Nonnull IModIngredientRegistration registry) { registry.register(GenericMultiblockIngredient.class, GenericMultiblockIngredient.list, new GenericMultiblockHelper(), new GenericMultiblockRenderer()); }
+    @Override public void registerIngredients(@Nonnull IModIngredientRegistration registry) { registry.register(GenericMultiblockIngredient.class, GenericMultiblockIngredient.list, new GenericMultiblockHelper(), GenericMultiblockRenderer.INSTANCE); }
 
     @SuppressWarnings("rawtypes")
     Map<Class, ITRecipeCategory> categories = new LinkedHashMap<>();

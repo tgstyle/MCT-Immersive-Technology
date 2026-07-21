@@ -43,7 +43,7 @@ public class SolarTower {
 
         public Remove(FluidStack inputFluid) { this.inputFluid = inputFluid; }
 
-        @Override public void apply() { SolarTowerRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+        @Override public void apply() { SolarTowerRecipe.removeRecipe(inputFluid); }
 
         @Override public String describe() { return "Removing Solar Tower Input Recipe for " + inputFluid.getLocalizedName(); }
     }

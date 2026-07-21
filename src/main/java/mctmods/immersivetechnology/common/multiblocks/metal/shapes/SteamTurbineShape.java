@@ -1,113 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.shapes;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-
-import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockJSONSchema;
+import mctmods.immersivetechnology.common.util.multiblock.ShapeData;
 
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-public class SteamTurbineShape extends GenericShape {
-    public static SteamTurbineShape GETTER = new SteamTurbineShape();
-    public static int WIDTH, HEIGHT, LENGTH;
-    public static BlockPos MASTER_GRID_POS;
-    public static MultiblockJSONSchema DATA;
-    private static final List<List<AxisAlignedBB>> SHAPES;
-
-    static {
-        List<List<AxisAlignedBB>> rawShapes = new ArrayList<>();
-        String[] structure = new String[0];
-        BlockPos masterPos = BlockPos.ORIGIN;
-        MultiblockJSONSchema data;
-        try {
-            InputStream is = SteamTurbineShape.class.getResourceAsStream("/assets/immersivetech/multiblocks/steam_turbine.json");
-            if (is != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                data = new Gson().fromJson(reader, MultiblockJSONSchema.class);
-                reader.close();
-                if (data != null) {
-                    DATA = data;
-                    WIDTH = data.width;
-                    HEIGHT = data.height;
-                    LENGTH = data.length;
-                    if (data.structure != null) {
-                        structure = data.structure;
-                    }
-                    int totalPositions = WIDTH * HEIGHT * LENGTH;
-                    for (int i = 0; i < totalPositions; i++) rawShapes.add(new ArrayList<>());
-                    if (data.shapeAABB != null && data.shapeAABB.isJsonArray()) {
-                        JsonArray shapeArray = data.shapeAABB.getAsJsonArray();
-                        int idx = 0;
-                        for (JsonElement posElem : shapeArray) {
-                            if (idx >= rawShapes.size()) break;
-                            List<AxisAlignedBB> posShapes = rawShapes.get(idx);
-                            if (posElem.isJsonNull() || !posElem.isJsonArray()) {
-                                idx++;
-                                continue;
-                            }
-                            JsonArray posArray = posElem.getAsJsonArray();
-                            for (JsonElement aabbElem : posArray) {
-                                if (!aabbElem.isJsonArray()) continue;
-                                JsonArray aabbArray = aabbElem.getAsJsonArray();
-                                if (aabbArray.size() != 6) continue;
-                                double[] vals = {0,0,0,0,0,0};
-                                boolean valid = true;
-                                for (int j = 0; j < 6; j++) {
-                                    try { vals[j] = aabbArray.get(j).getAsDouble(); } catch (Exception e) { valid = false; break; }
-                                }
-                                if (valid) posShapes.add(new AxisAlignedBB(vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]));
-                            }
-                            idx++;
-                        }
-                    }
-                    int structIdx = 0;
-                    for (int y = 0; y < HEIGHT; y++) {
-                        for (int z = 0; z < LENGTH; z++) {
-                            if (structIdx >= structure.length) break;
-                            String layer = structure[structIdx++];
-                            if (layer.length() != WIDTH) continue;
-                            for (int x = 0; x < WIDTH; x++) {
-                                int posIdx = x + z * WIDTH + y * WIDTH * LENGTH;
-                                if (posIdx >= rawShapes.size()) continue;
-                                List<AxisAlignedBB> posShapes = rawShapes.get(posIdx);
-                                char blockChar = layer.charAt(x);
-                                if (blockChar != ' ' && posShapes.isEmpty()) {
-                                    posShapes.add(new AxisAlignedBB(0,0,0,1,1,1));
-                                }
-                            }
-                        }
-                    }
-                    masterPos = new BlockPos(data.master.x, data.master.y, data.master.z);
-                }
-                ITLogger.info("SteamTurbineShape loaded: SHAPES size=" + rawShapes.size() + ", master pos=" + masterPos);
-            }
-        } catch (Exception e) {
-            ITLogger.error("Failed to load SteamTurbineShape: " + e.getMessage(), e);
-        }
-        SHAPES = rawShapes;
-        MASTER_GRID_POS = masterPos;
-        if(FMLCommonHandler.instance().getSide().isClient()) ITLogger.info("SteamTurbineShape loaded on client: SHAPES size=" + rawShapes.size());
-    }
-
-    public SteamTurbineShape() { super(WIDTH, HEIGHT, LENGTH, new int[]{1, 2, 0}); }
-
-    @Override public List<AxisAlignedBB> getShape(BlockPos posInMultiblock) {
-        int x = posInMultiblock.getX();
-        int y = posInMultiblock.getY();
-        int z = posInMultiblock.getZ();
-        int index = x + z * WIDTH + y * WIDTH * LENGTH;
-        if (index < 0 || index >= SHAPES.size()) return new ArrayList<>();
-        return SHAPES.get(index);
-    }
+public class SteamTurbineShape {
+    private static final ShapeData SHAPE = ShapeData.load("steam_turbine");
+    public static final MultiblockJSONSchema DATA = SHAPE.data;
+    public static final GenericShape GETTER = SHAPE;
+    public static final int WIDTH = SHAPE.width, HEIGHT = SHAPE.height, LENGTH = SHAPE.length;
+    public static final BlockPos MASTER_GRID_POS = SHAPE.masterPos;
 }

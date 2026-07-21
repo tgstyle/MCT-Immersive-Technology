@@ -83,8 +83,6 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 
     @Override public int getSlotLimit(int slot) { return Integer.MAX_VALUE; }
 
-    @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
-
     @Override public boolean canOpenGui() { return true; }
 
     @Override public int getGuiID() { return ITGUI.GUIID_Trash_Item; }

@@ -54,6 +54,12 @@ public class TileEntityFluidPumpAlternative extends blusunrize.immersiveengineer
         int closedSize = nbt.getInteger("closedListSize");
         closedList.clear();
         for (int i = 0; i < closedSize; i++) { closedList.add(new BlockPos(nbt.getInteger("closedX" + i), nbt.getInteger("closedY" + i), nbt.getInteger("closedZ" + i))); }
+        int openSize = nbt.getInteger("openListSize");
+        openList.clear();
+        for (int i = 0; i < openSize; i++) { openList.add(new BlockPos(nbt.getInteger("openX" + i), nbt.getInteger("openY" + i), nbt.getInteger("openZ" + i))); }
+        int checkedSize = nbt.getInteger("checkedListSize");
+        checked.clear();
+        for (int i = 0; i < checkedSize; i++) { checked.add(new BlockPos(nbt.getInteger("checkedX" + i), nbt.getInteger("checkedY" + i), nbt.getInteger("checkedZ" + i))); }
         super.readCustomNBT(nbt, descPacket);
     }
 
@@ -69,10 +75,27 @@ public class TileEntityFluidPumpAlternative extends blusunrize.immersiveengineer
             nbt.setInteger("closedY" + i, pos.getY());
             nbt.setInteger("closedZ" + i, pos.getZ());
         }
+        int openSize = openList.size();
+        nbt.setInteger("openListSize", openSize);
+        int openIndex = 0;
+        for (BlockPos p : openList) {
+            nbt.setInteger("openX" + openIndex, p.getX());
+            nbt.setInteger("openY" + openIndex, p.getY());
+            nbt.setInteger("openZ" + openIndex, p.getZ());
+            openIndex++;
+        }
+        int checkedSize = checked.size();
+        nbt.setInteger("checkedListSize", checkedSize);
+        for (int i = 0; i < checkedSize; i++) {
+            BlockPos p = checked.get(i);
+            nbt.setInteger("checkedX" + i, p.getX());
+            nbt.setInteger("checkedY" + i, p.getY());
+            nbt.setInteger("checkedZ" + i, p.getZ());
+        }
         super.writeCustomNBT(nbt, descPacket);
     }
 
-    @Override public void update() {
+    @SuppressWarnings("ConstantConditions") @Override public void update() {
         ApiUtils.checkForNeedlessTicking(this);
         if (dummy || world.isRemote) { return; }
         if (world.getTotalWorldTime() % 20 == 0) { rsPower = getRSPower(getPos()); }
@@ -289,7 +312,9 @@ public class TileEntityFluidPumpAlternative extends blusunrize.immersiveengineer
 
     @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         if (!Utils.isWirecutter(heldItem)) { return false; }
-        master().flipFillMode(player);
+        TileEntityFluidPumpAlternative master = master();
+        if (master == null) { return false; }
+        master.flipFillMode(player);
         return true;
     }
 

@@ -62,9 +62,7 @@ public class CoolingTower {
         }
 
         @Override public void apply() {
-            CoolingTowerRecipe.recipeList.removeIf(recipe -> recipe != null &&
-                    recipe.fluidInput0.isFluidEqual(inputFluid0) &&
-                    (inputFluid1 == null || (recipe.fluidInput1 != null && recipe.fluidInput1.isFluidEqual(inputFluid1))));
+            CoolingTowerRecipe.removeRecipe(inputFluid0, inputFluid1);
         }
 
         @Override public String describe() {

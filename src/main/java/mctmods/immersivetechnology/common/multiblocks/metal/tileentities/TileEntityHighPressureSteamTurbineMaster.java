@@ -301,7 +301,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return false;
     }
 
-    @Override public int getComparatorInputOverride() { return 15 * speed / maxSpeed; }
+    @Override public int getComparatorInputOverride() { return maxSpeed <= 0 ? 0 : 15 * speed / maxSpeed; }
 
     @Override public boolean isDummy() { return false; }
 

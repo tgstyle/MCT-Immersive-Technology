@@ -43,7 +43,7 @@ public class Radiator {
 
         public Remove(FluidStack inputFluid) { this.inputFluid = inputFluid; }
 
-        @Override public void apply() { RadiatorRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+        @Override public void apply() { RadiatorRecipe.removeRecipe(inputFluid); }
 
         @Override public String describe() { return "Removing Radiator Input Recipe for " + inputFluid.getLocalizedName(); }
     }

@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -35,9 +34,7 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 		for (GenericMultiblockIngredient stack : displayStacks) if (stack != null) registry.addRecipeCatalyst(stack, getUid());
 	}
 
-	@Override @Nullable public IDrawable getIcon() { return null; }
-
-	@Override @Nonnull public String getUid() { return "it." + uniqueName; }
+    @Override @Nonnull public String getUid() { return "it." + uniqueName; }
 
 	@Override @Nonnull public String getTitle() { return localizedName; }
 

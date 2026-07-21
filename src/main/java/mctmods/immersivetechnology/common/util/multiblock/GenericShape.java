@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
-    protected final int width, height, length;
+    public final int width, height, length;
     protected final int[] axisOrder;
     protected static List<List<AxisAlignedBB>> SHAPES;
 

@@ -37,6 +37,11 @@ public class BoilerRecipe extends MultiblockRecipe {
         return recipe;
     }
 
+    public static void removeRecipe(FluidStack fluidInput) {
+        recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+        recipeMap.values().removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+    }
+
     public static BoilerRecipe findRecipe(FluidStack fluidInput) {
         if (fluidInput == null) { return null; }
         BoilerRecipe recipe = recipeMap.get(fluidInput.getFluid());
@@ -69,6 +74,11 @@ public class BoilerRecipe extends MultiblockRecipe {
         BoilerFuelRecipe recipe = new BoilerFuelRecipe(fluidInput, time, heat);
         fuelList.add(recipe);
         fuelMap.put(fluidInput.getFluid(), recipe);
+    }
+
+    public static void removeFuel(FluidStack fluidInput) {
+        fuelList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+        fuelMap.values().removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
     }
 
     public static BoilerFuelRecipe findFuel(FluidStack fluidInput) {

@@ -37,6 +37,11 @@ public class HighPressureSteamTurbineRecipe extends MultiblockRecipe {
         recipeMap.put(fluidInput.getFluid(), recipe);
     }
 
+    public static void removeFuel(FluidStack fluidInput) {
+        recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+        recipeMap.values().removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+    }
+
     public static HighPressureSteamTurbineRecipe findFuel(FluidStack fluidInput) {
         if (fluidInput == null) {
             return null;

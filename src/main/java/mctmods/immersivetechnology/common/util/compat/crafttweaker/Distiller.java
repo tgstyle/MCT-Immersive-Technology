@@ -71,7 +71,7 @@ public class Distiller {
         }
 
         @Override public void apply() {
-            DistillerRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid));
+            DistillerRecipe.removeRecipe(inputFluid);
         }
 
         @Override public String describe() {

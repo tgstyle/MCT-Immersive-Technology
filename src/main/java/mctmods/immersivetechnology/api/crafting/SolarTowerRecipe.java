@@ -37,6 +37,11 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         return recipe;
     }
 
+    public static void removeRecipe(FluidStack fluidInput) {
+        recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+        recipeMap.values().removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(fluidInput));
+    }
+
     public static SolarTowerRecipe findRecipe(FluidStack fluidInput) {
         if (fluidInput == null) return null;
         SolarTowerRecipe recipe = recipeMap.get(fluidInput.getFluid());

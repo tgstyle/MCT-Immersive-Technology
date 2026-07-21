@@ -55,8 +55,10 @@ import net.minecraftforge.oredict.OreIngredient;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @EventBusSubscriber(modid = ImmersiveTechnology.MODID)
 public class ITContent {
@@ -114,7 +116,7 @@ public class ITContent {
     public static Fluid fluidSuperheatedMoltenSodium;
     public static Fluid fluidChlorine;
 
-    public static ArrayList<Fluid> normallyPressurized = new ArrayList<>();
+    public static Set<Fluid> normallyPressurized = new HashSet<>();
 
     public static TileEntityITMultiblockPartAdvancedCokeOven multiblockAdvancedCokeOven;
     public static TileEntityITMultiblockPartBoiler multiblockBoiler;

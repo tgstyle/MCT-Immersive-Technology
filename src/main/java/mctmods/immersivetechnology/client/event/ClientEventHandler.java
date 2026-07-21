@@ -89,13 +89,13 @@ public class ClientEventHandler {
         for (int i = 0; i < bounds.size(); i++) {
             AxisAlignedBB aabb = bounds.get(i);
             boundsHash = 31 * boundsHash + aabb.hashCode();
-            if (i < 64 && !asb.isOverrideBox(aabb, player, target, bounds)) { mask |= 1L << i; }
+            if (i < 64 && asb.isOverrideBox(aabb, player, target, bounds)) { mask |= 1L << i; }
         }
         if (cachedUnion != null && pos.equals(cachedPos) && mask == cachedMask && boundsHash == cachedBoundsHash) { return cachedUnion; }
 
         VoxelShape union = Shapes.empty();
         for (int i = 0; i < bounds.size(); i++) {
-            boolean included = i < 64 ? (mask & (1L << i)) != 0 : !asb.isOverrideBox(bounds.get(i), player, target, bounds);
+            boolean included = i < 64 ? (mask & (1L << i)) != 0 : asb.isOverrideBox(bounds.get(i), player, target, bounds);
             if (included) { union = Shapes.joinUnoptimized(union, Shapes.create(bounds.get(i)), BooleanOp.OR); }
         }
         union = union.optimize();

@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
@@ -35,6 +36,7 @@ public class CommonProxy implements IGuiHandler {
 
 	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {
 		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) { ITUtils.REMOVE_FROM_TICKING.removeIf(te -> te.getWorld() == event.getWorld()); }
+		TileEntityFluidPipeAlternative.indirectConnections.remove(event.getWorld().provider.getDimension());
 	}
 
 	@SubscribeEvent public void onWorldTick(TickEvent.WorldTickEvent event) {

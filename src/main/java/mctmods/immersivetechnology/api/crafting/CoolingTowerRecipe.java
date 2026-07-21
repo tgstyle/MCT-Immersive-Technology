@@ -54,6 +54,16 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         return recipe;
     }
 
+    public static void removeRecipe(FluidStack fluidInput0, FluidStack fluidInput1) {
+        java.util.function.Predicate<CoolingTowerRecipe> matches = recipe -> recipe != null &&
+                recipe.fluidInput0.isFluidEqual(fluidInput0) &&
+                (fluidInput1 == null || (recipe.fluidInput1 != null && recipe.fluidInput1.isFluidEqual(fluidInput1)));
+        recipeList.removeIf(matches);
+        recipeMap.values().removeIf(matches);
+        input0Map.values().removeIf(matches);
+        input1Map.values().removeIf(matches);
+    }
+
     public static CoolingTowerRecipe findRecipe(FluidStack fluidInput0, FluidStack fluidInput1) {
         if (fluidInput0 == null || fluidInput1 == null) return null;
         CoolingTowerRecipe recipe = recipeMap.get(new FluidPair(fluidInput0.getFluid(), fluidInput1.getFluid()));

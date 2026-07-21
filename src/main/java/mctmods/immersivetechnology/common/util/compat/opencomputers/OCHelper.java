@@ -15,6 +15,7 @@ public class OCHelper extends ITCompatModule {
 		if (Multiblocks.enable.enable_solarTower) API.driver.add(new SolarTowerDriver());
 		if (Multiblocks.enable.enable_gasTurbine) API.driver.add(new GasTurbineDriver());
 		if (Multiblocks.enable.enable_heatExchanger) API.driver.add(new HeatExchangerDriver());
+		if (Multiblocks.enable.enable_highPressureSteamTurbine) API.driver.add(new HighPressureSteamTurbineDriver());
 	}
 
 	@Override public void postInit() {

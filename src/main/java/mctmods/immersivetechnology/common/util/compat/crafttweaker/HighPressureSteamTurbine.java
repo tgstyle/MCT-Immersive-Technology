@@ -46,7 +46,7 @@ public class HighPressureSteamTurbine {
 
         public Remove(FluidStack inputFluid) { this.inputFluid = inputFluid; }
 
-        @Override public void apply() { HighPressureSteamTurbineRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.fluidInput.isFluidEqual(inputFluid)); }
+        @Override public void apply() { HighPressureSteamTurbineRecipe.removeFuel(inputFluid); }
 
         @Override public String describe() { return "Removing High Pressure Steam Turbine Fuel for " + inputFluid.getLocalizedName(); }
     }

@@ -133,7 +133,7 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
 
     @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
 
-    public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return false; }
+    @SuppressWarnings("unused") public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return true; }
 
     @Override @Nonnull public float[] getBlockBounds() {
         VoxelShape vs = getVoxelShape();
@@ -228,19 +228,6 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
                     else replaceStructureBlock(pos2, state, s, h, l, w);
                 }
             }
-        }
-    }
-
-    protected AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing f) {
-        switch (f) {
-            case SOUTH:
-                return new AxisAlignedBB(1 - aabb.maxX, aabb.minY, 1 - aabb.maxZ, 1 - aabb.minX, aabb.maxY, 1 - aabb.minZ);
-            case EAST:
-                return new AxisAlignedBB(1 - aabb.maxZ, aabb.minY, aabb.minX, 1 - aabb.minZ, aabb.maxY, aabb.maxX);
-            case WEST:
-                return new AxisAlignedBB(aabb.minZ, aabb.minY, 1 - aabb.maxX, aabb.maxZ, aabb.maxY, 1 - aabb.minX);
-            default:
-                return aabb;
         }
     }
 
