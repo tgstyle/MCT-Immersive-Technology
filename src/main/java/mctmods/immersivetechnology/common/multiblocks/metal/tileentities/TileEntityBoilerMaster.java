@@ -73,6 +73,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     public int fuelBurnRemaining = 0;
     public int processTimeRemaining = 0;
+    public int processTimeMax = 0;
     public double heatLevel = 0;
 
     private float soundVolume = 0f;
@@ -98,6 +99,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         heatLevel = nbt.getDouble("heatLevel");
         fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        processTimeMax = nbt.getInteger("processTimeMax");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
@@ -116,6 +118,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
@@ -189,6 +192,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         buf.writeDouble(heatLevel);
         buf.writeInt(fuelBurnRemaining);
         buf.writeInt(processTimeRemaining);
+        buf.writeInt(processTimeMax);
         buf.writeBoolean(isRunning);
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
     }
@@ -197,6 +201,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         heatLevel = message.readDouble();
         fuelBurnRemaining = message.readInt();
         processTimeRemaining = message.readInt();
+        processTimeMax = message.readInt();
         isRunning = message.readBoolean();
     }
 
@@ -309,6 +314,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                 cachedBoilerRecipe = (cachedBoilerRecipe != null && Objects.requireNonNull(tanks[1].getFluid()).isFluidEqual(cachedBoilerRecipe.fluidInput)) ? cachedBoilerRecipe : BoilerRecipe.findRecipe(tanks[1].getFluid());
                 if (cachedBoilerRecipe != null && cachedBoilerRecipe.fluidInput.amount <= tanks[1].getFluidAmount() && cachedBoilerRecipe.fluidOutput.amount == tanks[2].fillInternal(cachedBoilerRecipe.fluidOutput, false)) {
                     processTimeRemaining = cachedBoilerRecipe.getTotalProcessTime();
+                    processTimeMax = processTimeRemaining;
                     if (gainProgress()) update = true;
                 }
             }

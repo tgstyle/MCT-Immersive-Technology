@@ -63,6 +63,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     public IItemHandler insertionHandler;
 
     public int processTimeRemaining = 0;
+    public int processTimeMax = 0;
     public double heatLevel = 0;
     public MeltingCrucibleRecipe cachedMeltingRecipe;
 
@@ -92,6 +93,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         if (nbt.hasKey("inventory")) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        processTimeMax = nbt.getInteger("processTimeMax");
         heatLevel = nbt.getDouble("heatLevel");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         isRunning = nbt.getBoolean("isRunning");
@@ -108,6 +110,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("inventory", Utils.writeInventory(inventory));
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setBoolean("isRunning", isRunning);
@@ -201,6 +204,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             buf.writeInt(energyStorage.getEnergyStored());
             buf.writeDouble(heatLevel);
             buf.writeInt(processTimeRemaining);
+            buf.writeInt(processTimeMax);
             buf.writeBoolean(isRunning);
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
@@ -250,6 +254,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
                     if (input.getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
                     doGraphicalUpdates(0);
                     processTimeRemaining = recipe.getTotalProcessTime() * progressResolution;
+                    processTimeMax = processTimeRemaining;
                     efficientMarkDirty();
                     update = true;
                 }
@@ -412,6 +417,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         energyStorage.modifyEnergyStored(energy - energyStorage.getEnergyStored());
         heatLevel = buf.readDouble();
         processTimeRemaining = buf.readInt();
+        processTimeMax = buf.readInt();
         isRunning = buf.readBoolean();
     }
 }

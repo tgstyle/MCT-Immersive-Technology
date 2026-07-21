@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
+import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import io.netty.buffer.ByteBuf;
@@ -259,6 +260,19 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (tempFactor > 0) { multiplier -= (world.getBiome(getPos()).getDefaultTemperature() - 0.8) * tempFactor; }
         if (humidityFactor > 0) { multiplier += 0.075 * humidityFactor * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5); }
         return Math.max(multiplier, 0.01);
+    }
+
+    @Override @Nonnull protected NBTTagCompound writeProcessToNBT(@Nonnull TileEntityMultiblockMetal.MultiblockProcess process) {
+        NBTTagCompound tag = super.writeProcessToNBT(process);
+        tag.setInteger("process_maxTicks", process.maxTicks);
+        return tag;
+    }
+
+    @Override @Nonnull protected TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> loadProcessFromNBT(@Nonnull NBTTagCompound tag) {
+        @SuppressWarnings("unchecked")
+        TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> process = super.loadProcessFromNBT(tag);
+        if (tag.hasKey("process_maxTicks")) { process.maxTicks = tag.getInteger("process_maxTicks"); }
+        return process;
     }
 
     private void InitializePoIs() {

@@ -76,6 +76,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt);
         animation.readFromNBT(nbt);
+        speed = nbt.getInteger("speed");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && formed) {
             needsPoIInit = true;
@@ -87,6 +88,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         super.writeCustomNBT(nbt, descPacket);
         energyStorage.writeToNBT(nbt);
         animation.writeToNBT(nbt);
+        nbt.setInteger("speed", speed);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
 

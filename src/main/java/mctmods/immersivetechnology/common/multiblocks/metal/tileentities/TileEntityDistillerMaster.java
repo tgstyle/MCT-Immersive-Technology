@@ -67,6 +67,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
     public int processTimeRemaining = 0;
+    public int processTimeMax = 0;
 
     private boolean isRunning = false;
     private float soundVolume = 0f;
@@ -93,6 +94,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        processTimeMax = nbt.getInteger("processTimeMax");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket) {
             if (nbt.hasKey("cachedRecipe")) cachedDistillerRecipe = DistillerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
@@ -114,6 +116,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
         if (!descPacket) {
             if (cachedDistillerRecipe != null) nbt.setTag("cachedRecipe", cachedDistillerRecipe.writeToNBT(new NBTTagCompound()));
@@ -180,6 +183,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
                     boolean canOutput = cachedDistillerRecipe.fluidOutput == null || tanks[1].fill(cachedDistillerRecipe.fluidOutput, false) == cachedDistillerRecipe.fluidOutput.amount;
                     if (canOutput) {
                         processTimeRemaining = cachedDistillerRecipe.getTotalProcessTime();
+                        processTimeMax = processTimeRemaining;
                         tanks[0].drain(cachedDistillerRecipe.fluidInput.amount, true);
                         update = true;
                     }
@@ -281,6 +285,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(energyStorage.getEnergyStored() - oldEnergy);
             buf.writeInt(processTimeRemaining);
+            buf.writeInt(processTimeMax);
             buf.writeBoolean(isRunning);
             BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
@@ -444,6 +449,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         int delta = message.readInt();
         energyStorage.modifyEnergyStored(delta);
         processTimeRemaining = message.readInt();
+        processTimeMax = message.readInt();
         isRunning = message.readBoolean();
     }
 

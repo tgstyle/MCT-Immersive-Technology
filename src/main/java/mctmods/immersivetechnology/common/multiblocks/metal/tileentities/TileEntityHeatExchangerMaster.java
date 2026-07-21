@@ -64,6 +64,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     };
 
     public int processTimeRemaining;
+    public int processTimeMax;
     public HeatExchangerRecipe cachedExchangeRecipe;
 
     private float soundVolume = 0f;
@@ -96,6 +97,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        processTimeMax = nbt.getInteger("processTimeMax");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
@@ -114,6 +116,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setBoolean("isRunning", isRunning);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
@@ -226,6 +229,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                         if (needed1 > 0) tanks[1].drain(needed1, true);
                         cachedExchangeRecipe = recipe;
                         processTimeRemaining = recipe.getTotalProcessTime();
+                        processTimeMax = processTimeRemaining;
                         update = true;
                     }
                 }

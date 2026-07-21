@@ -459,7 +459,14 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         int[] inputTanks = tag.getIntArray("process_inputTanks");
         ElectrolyticCrucibleBatteryProcess process = new ElectrolyticCrucibleBatteryProcess(recipe, inputSlots);
         if (inputTanks.length > 0) process.setInputTanks(inputTanks);
+        if (tag.hasKey("process_maxTicks")) { process.maxTicks = tag.getInteger("process_maxTicks"); }
         return process;
+    }
+
+    @Override @Nonnull protected NBTTagCompound writeProcessToNBT(@Nonnull MultiblockProcess process) {
+        NBTTagCompound tag = super.writeProcessToNBT(process);
+        tag.setInteger("process_maxTicks", process.maxTicks);
+        return tag;
     }
 
     static class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {

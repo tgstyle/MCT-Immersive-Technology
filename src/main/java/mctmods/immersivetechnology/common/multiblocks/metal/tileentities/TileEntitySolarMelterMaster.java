@@ -71,6 +71,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
 
     public int processTimeRemaining = 0;
+    public int processTimeMax = 0;
     public double heatLevel = 0;
     public double reflectorStrength = 0;
     public int solarIncidenceAngleSection = 0;
@@ -112,6 +113,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
+        processTimeMax = nbt.getInteger("processTimeMax");
         heatLevel = nbt.getDouble("heatLevel");
         reflectorStrength = nbt.getDouble("reflectorStrength");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
@@ -137,6 +139,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
+        nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setDouble("reflectorStrength", reflectorStrength);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
@@ -357,6 +360,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                     if (inputStack.getCount() <= 0) inventory.set(0, ItemStack.EMPTY);
                     doGraphicalUpdates(0);
                     processTimeRemaining = recipe.getTotalProcessTime() * progressResolution;
+                    processTimeMax = processTimeRemaining;
                     update = true;
                 }
             }
