@@ -133,7 +133,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             addFluidTankDisplay(probeInfo, master.tank);
-            int currentProg = (master.processTimeRemaining > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
+            int currentProg = (master.processTimeRemaining > 0 && master.processTimeMax > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
             addProcessPercent(probeInfo, currentProg);
         }
     }
@@ -168,7 +168,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             addTemperature(probeInfo, master.heatLevel, boilerWorkingHeatLevel);
-            int currentProg = (master.processTimeRemaining > 0 && master.cachedBoilerRecipe != null) ? (master.cachedBoilerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedBoilerRecipe.getTotalProcessTime() : 0;
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedBoilerRecipe != null && master.cachedBoilerRecipe.getTotalProcessTime() > 0) ? (master.cachedBoilerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedBoilerRecipe.getTotalProcessTime() : 0;
             addProcessPercent(probeInfo, currentProg);
         }
     }
@@ -187,6 +187,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             for (TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> process : master.processQueue) {
+                if (process.maxTicks <= 0) continue;
                 int currentProg = process.processTick * 100 / process.maxTicks;
                 addProcessPercent(probeInfo, currentProg);
             }
@@ -206,7 +207,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            int currentProg = (master.processTimeRemaining > 0 && master.cachedDistillerRecipe != null) ? (master.cachedDistillerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedDistillerRecipe.getTotalProcessTime() : 0;
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedDistillerRecipe != null && master.cachedDistillerRecipe.getTotalProcessTime() > 0) ? (master.cachedDistillerRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedDistillerRecipe.getTotalProcessTime() : 0;
             addProcessPercent(probeInfo, currentProg);
         }
     }
@@ -232,6 +233,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, pos);
             if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
             for (TileEntityMultiblockMetal.MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process : master.processQueue) {
+                if (process.maxTicks <= 0) continue;
                 int currentProg = process.processTick * 100 / process.maxTicks;
                 addProcessPercent(probeInfo, currentProg);
             }
@@ -277,7 +279,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, pos);
             if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
-            int currentProg = (master.processTimeRemaining > 0 && master.cachedExchangeRecipe != null) ? (master.cachedExchangeRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedExchangeRecipe.getTotalProcessTime() : 0;
+            int currentProg = (master.processTimeRemaining > 0 && master.cachedExchangeRecipe != null && master.cachedExchangeRecipe.getTotalProcessTime() > 0) ? (master.cachedExchangeRecipe.getTotalProcessTime() - master.processTimeRemaining) * 100 / master.cachedExchangeRecipe.getTotalProcessTime() : 0;
             addProcessPercent(probeInfo, currentProg);
         }
     }
@@ -332,7 +334,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            int currentProg = (master.processTimeRemaining > 0) ? (master.processTimeTotal - master.processTimeRemaining) * 100 / master.processTimeTotal : 0;
+            int currentProg = (master.processTimeRemaining > 0 && master.processTimeTotal > 0) ? (master.processTimeTotal - master.processTimeRemaining) * 100 / master.processTimeTotal : 0;
             addProcessPercent(probeInfo, currentProg);
         }
     }

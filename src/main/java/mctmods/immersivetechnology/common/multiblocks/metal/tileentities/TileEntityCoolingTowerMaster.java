@@ -197,8 +197,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                 if (canOutput) {
                     @SuppressWarnings("unchecked")
                     MultiblockProcessInMachine<CoolingTowerRecipe> process = new MultiblockProcessInMachine<>(cachedCoolingRecipe).setInputTanks(swapped ? 1 : 0, swapped ? 0 : 1);
-                    if (ITCompatModule.isAdvancedRocketryLoaded) process.maxTicks *= (int)(1 / AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()));
-                    process.maxTicks *= (int)(1 / getBiomeSpeedMultiplier());
+                    if (ITCompatModule.isAdvancedRocketryLoaded) process.maxTicks = Math.max(1, (int)(process.maxTicks / AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos())));
+                    process.maxTicks = Math.max(1, (int)(process.maxTicks / getBiomeSpeedMultiplier()));
                     if (addProcessToQueue(process, true)) {
                         addProcessToQueue(process, false);
                         update = true;
