@@ -39,6 +39,10 @@ import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
 public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T, R, M>, R extends IMultiblockRecipe, M extends T> extends TileEntityMultiblockMetal<T, R> {
     private int blockUpdateCooldown = 0;
+    private VoxelShape voxelShapeCache;
+    private int voxelShapeCachePos = Integer.MIN_VALUE;
+    private EnumFacing voxelShapeCacheFacing;
+    private boolean voxelShapeCacheMirrored;
 
     public TileEntityITMultiblock(MultiblockHandler.IMultiblock instance, int[] structureDimensions, int energyCapacity, boolean redstoneControl) { super(instance, structureDimensions, energyCapacity, redstoneControl); }
 
@@ -120,13 +124,19 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     protected BlockPos adjustPosInMultiblock(BlockPos posInMultiblock, int width) { return posInMultiblock; }
 
     private VoxelShape getVoxelShape() {
+        if (voxelShapeCache != null && voxelShapeCachePos == pos && voxelShapeCacheFacing == facing && voxelShapeCacheMirrored == mirrored) { return voxelShapeCache; }
         BlockPos posInMultiblock = posToMultiblock();
         List<AxisAlignedBB> list = getShapeGetter().getShape(posInMultiblock);
         List<AxisAlignedBB> rotatedList = new ArrayList<>(list.size());
         for (AxisAlignedBB aabb : list) { rotatedList.add(ITUtils.rotateAABB(preprocessShapeAABB(aabb), facing, useMirroredShape() && mirrored)); }
         VoxelShape vs = Shapes.empty();
         for (AxisAlignedBB aabb : rotatedList) { vs = Shapes.joinUnoptimized(vs, Shapes.create(aabb), OR); }
-        return vs.optimize();
+        vs = vs.optimize();
+        voxelShapeCache = vs;
+        voxelShapeCachePos = pos;
+        voxelShapeCacheFacing = facing;
+        voxelShapeCacheMirrored = mirrored;
+        return vs;
     }
 
     @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
