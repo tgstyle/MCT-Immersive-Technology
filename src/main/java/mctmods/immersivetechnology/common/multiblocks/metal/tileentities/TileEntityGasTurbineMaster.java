@@ -85,6 +85,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private float targetSoundLevel;
     private float soundVolume = 0f;
     private int soundGracePeriod = 0;
+    private int igniteSoundDelay = 0;
     private int tickCountdown = 5;
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
@@ -198,7 +199,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos2.getX(), soundPos2.getY(), soundPos2.getZ()) / 8, 1);
             ITSounds.gasTurbineSpark.PlayOnce(soundPos2, 1 / attenuation, 1);
-        } else {
+        }
+        else if (buf.readableBytes() == 1 && buf.readByte() == 1) {
+            if (soundPos3 == null) InitializePoIs();
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos3.getX(), soundPos3.getY(), soundPos3.getZ()) / 8, 1);
+            ITSounds.gasIgnite.PlayOnce(soundPos3, 1 / attenuation, 1);
+        }
+        else {
             speed = buf.readInt();
             starterRunning = buf.readBoolean();
             targetSoundLevel = (float)speed / maxSpeed;
@@ -277,6 +285,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
         if (pumpOutputOut()) update = true;
 
+        if (igniteSoundDelay > 0) {
+            igniteSoundDelay--;
+            if (igniteSoundDelay == 0 && starterRunning) { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1)); }
+        }
+
         boolean didWork = speed > 0;
         if (didWork) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
@@ -340,6 +353,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         ignited = true;
         ignitionGracePeriod = 60;
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
+        igniteSoundDelay = 3;
     }
 
     private boolean canIgnite() {

@@ -127,7 +127,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
-            ITSounds.gasTurbineArc.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
+            ITSounds.electrolyticCrucibleBattery.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
         }
     }
 

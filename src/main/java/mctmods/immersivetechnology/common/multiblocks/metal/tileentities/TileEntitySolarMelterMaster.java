@@ -168,7 +168,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }else {
             double distance = Math.sqrt(distanceSqToTE);
             float attenuation = Math.max((float)distance / 16f, 1f);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+            ITSounds.solarMelter.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
 

@@ -108,7 +108,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
             float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
-            ITSounds.turbine.PlayRepeating(soundPos0, (11f * (level - 0.5f)) / attenuation, level);
+            ITSounds.steamTurbine.PlayRepeating(soundPos0, (11f * (level - 0.5f)) / attenuation, level);
         }
     }
 
@@ -135,8 +135,16 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
-        speed = buf.readInt();
-        isRunning = buf.readBoolean();
+        if (buf.readableBytes() == 1 && buf.readByte() == 1) {
+            if (soundPos0 == null) InitializePoIs();
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
+            ITSounds.pressureRelease.PlayOnce(soundPos0, 1 / attenuation, 1);
+        }
+        else {
+            speed = buf.readInt();
+            isRunning = buf.readBoolean();
+        }
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}

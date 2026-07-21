@@ -1,1 +1,128 @@
-{"advancedCokeOven":{"category":"block","sounds":["immersivetech:advanced_coke_oven"],"subtitle":"subtitle.immersivetech.advancedCokeOven"},"advancedCokeOvenFan":{"category":"block","sounds":["immersivetech:advanced_coke_oven_fan"],"subtitle":"subtitle.immersivetech.advancedCokeOvenFan"},"alternator":{"category":"block","sounds":["immersivetech:alternator"],"subtitle":"subtitle.immersivetech.alternator"},"boiler":{"category":"block","sounds":["immersivetech:boiler"],"subtitle":"subtitle.immersivetech.boiler"},"coolingTower":{"category":"block","sounds":["immersivetech:cooling_tower"],"subtitle":"subtitle.immersivetech.coolingTower"},"distiller":{"category":"block","sounds":["immersivetech:distiller"],"subtitle":"subtitle.immersivetech.distiller"},"gasTurbineArc":{"category":"block","sounds":["immersivetech:gas_arc"],"subtitle":"subtitle.immersivetech.gasTurbineArc"},"gasTurbineRunning":{"category":"block","sounds":["immersivetech:gas_running"],"subtitle":"subtitle.immersivetech.gasTurbineRunning"},"gasTurbineSpark":{"category":"block","sounds":["immersivetech:gas_spark"],"subtitle":"subtitle.immersivetech.gasTurbineSpark"},"gasTurbineStarter":{"category":"block","sounds":["immersivetech:gas_starter"],"subtitle":"subtitle.immersivetech.gasTurbineStarter"},"heatExchanger":{"category":"block","sounds":["immersivetech:heat_exchanger"],"subtitle":"subtitle.immersivetech.heatExchanger"},"solarTower":{"category":"block","sounds":["immersivetech:solar_tower"],"subtitle":"subtitle.immersivetech.solarTower"},"turbine":{"category":"block","sounds":["immersivetech:turbine"],"subtitle":"subtitle.immersivetech.turbine"}}
+{
+  "advancedCokeOven": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:advanced_coke_oven"
+    ],
+    "subtitle": "subtitle.immersivetech.advancedCokeOven"
+  },
+  "advancedCokeOvenFan": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:advanced_coke_oven_fan"
+    ],
+    "subtitle": "subtitle.immersivetech.advancedCokeOvenFan"
+  },
+  "alternator": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:alternator"
+    ],
+    "subtitle": "subtitle.immersivetech.alternator"
+  },
+  "boiler": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:boiler"
+    ],
+    "subtitle": "subtitle.immersivetech.boiler"
+  },
+  "coolingTower": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:cooling_tower"
+    ],
+    "subtitle": "subtitle.immersivetech.coolingTower"
+  },
+  "distiller": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:distiller"
+    ],
+    "subtitle": "subtitle.immersivetech.distiller"
+  },
+  "electrolyticCrucibleBattery": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:electrolytic_crucible_battery"
+    ],
+    "subtitle": "subtitle.immersivetech.electrolyticCrucibleBattery"
+  },
+  "gasTurbineArc": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:gas_arc"
+    ],
+    "subtitle": "subtitle.immersivetech.gasTurbineArc"
+  },
+  "gasIgnite": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:gas_ignite"
+    ],
+    "subtitle": "subtitle.immersivetech.gasIgnite"
+  },
+  "gasTurbineRunning": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:gas_running"
+    ],
+    "subtitle": "subtitle.immersivetech.gasTurbineRunning"
+  },
+  "gasTurbineSpark": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:gas_spark"
+    ],
+    "subtitle": "subtitle.immersivetech.gasTurbineSpark"
+  },
+  "gasTurbineStarter": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:gas_starter"
+    ],
+    "subtitle": "subtitle.immersivetech.gasTurbineStarter"
+  },
+  "heatExchanger": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:heat_exchanger"
+    ],
+    "subtitle": "subtitle.immersivetech.heatExchanger"
+  },
+  "meltingCrucible": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:melting_crucible"
+    ],
+    "subtitle": "subtitle.immersivetech.meltingCrucible"
+  },
+  "pressureRelease": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:pressure_release"
+    ],
+    "subtitle": "subtitle.immersivetech.meltingCrucible"
+  },
+  "solarMelter": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:solar_melter"
+    ],
+    "subtitle": "subtitle.immersivetech.solarMelter"
+  },
+  "solarTower": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:solar_tower"
+    ],
+    "subtitle": "subtitle.immersivetech.solarTower"
+  },
+  "steamTurbine": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:steam_turbine"
+    ],
+    "subtitle": "subtitle.immersivetech.steamTurbine"
+  }
+}

@@ -61,6 +61,9 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     private boolean isRunning = false;
     private int tickCountdown = 5;
     private int oldComparatorOutput = 0;
+    private boolean active = false;
+    private boolean wasEnabled = false;
+    private int pressureReleaseCooldown = 0;
 
     public SteamTurbineRecipe cachedTurbineRecipe;
     private IMechanicalEnergy alternator;
@@ -106,7 +109,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
             float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
-            ITSounds.turbine.PlayRepeating(soundPos0, (11f * (level - 0.5f)) / attenuation, level);
+            ITSounds.steamTurbine.PlayRepeating(soundPos0, (11f * (level - 0.5f)) / attenuation, level);
         }
     }
 
@@ -133,8 +136,16 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
-        speed = buf.readInt();
-        isRunning = buf.readBoolean();
+        if (buf.readableBytes() == 1 && buf.readByte() == 1) {
+            if (soundPos0 == null) InitializePoIs();
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
+            ITSounds.pressureRelease.PlayOnce(soundPos0, 1 / attenuation, 1);
+        }
+        else {
+            speed = buf.readInt();
+            isRunning = buf.readBoolean();
+        }
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
@@ -163,12 +174,16 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
 
         boolean changed = false;
         int prevSpeed = speed;
+        boolean wasActive = active;
+        active = false;
+        boolean currentlyEnabled = !isRSDisabled();
 
         if (fuelBurnRemaining > 0) {
             fuelBurnRemaining--;
             speed = Math.min(maxSpeed, speed + speedGainPerTick);
             changed = true;
-        } else if (!isRSDisabled() && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
+            active = true;
+        } else if (currentlyEnabled && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
             FluidStack fluid = tanks[0].getFluid();
 
             SteamTurbineRecipe recipe;
@@ -185,12 +200,21 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
                 if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
                 speed = Math.min(maxSpeed, speed + speedGainPerTick);
                 changed = true;
+                active = true;
             } else {
                 speed = Math.max(0, speed - speedLossPerTick);
             }
         } else {
             speed = Math.max(0, speed - speedLossPerTick);
         }
+
+        if (pressureReleaseCooldown > 0) { pressureReleaseCooldown--; }
+        boolean triggerRelease = (!wasActive && active) || (!wasEnabled && currentlyEnabled);
+        if (triggerRelease && pressureReleaseCooldown <= 0) {
+            BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1));
+            pressureReleaseCooldown = 200;
+        }
+        wasEnabled = currentlyEnabled;
 
         if (speed != prevSpeed) changed = true;
         if (pumpOutputOut()) changed = true;

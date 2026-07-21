@@ -18,13 +18,18 @@ public class ITSounds {
 	public static ITSoundEvent boiler = registerSound("boiler");
 	public static ITSoundEvent coolingTower = registerSound("coolingTower");
 	public static ITSoundEvent distiller = registerSound("distiller");
+	public static ITSoundEvent electrolyticCrucibleBattery = registerSound("electrolyticCrucibleBattery");
+	public static ITSoundEvent gasIgnite = registerSound("gasIgnite");
 	public static ITSoundEvent gasTurbineArc = registerSound("gasTurbineArc");
 	public static ITSoundEvent gasTurbineRunning = registerSound("gasTurbineRunning");
 	public static ITSoundEvent gasTurbineSpark = registerSound("gasTurbineSpark");
 	public static ITSoundEvent gasTurbineStarter = registerSound("gasTurbineStarter");
 	public static ITSoundEvent heatExchanger = registerSound("heatExchanger");
+	public static ITSoundEvent meltingCrucible = registerSound("meltingCrucible");
+	public static ITSoundEvent pressureRelease = registerSound("pressureRelease");
+	public static ITSoundEvent solarMelter = registerSound("solarMelter");
 	public static ITSoundEvent solarTower = registerSound("solarTower");
-	public static ITSoundEvent turbine = registerSound("turbine");
+	public static ITSoundEvent steamTurbine = registerSound("steamTurbine");
 
 	private static ITSoundEvent registerSound(String name) {
 		ResourceLocation location = new ResourceLocation(ImmersiveTechnology.MODID, name);

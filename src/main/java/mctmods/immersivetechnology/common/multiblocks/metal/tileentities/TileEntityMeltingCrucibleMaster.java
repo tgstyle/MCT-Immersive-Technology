@@ -140,7 +140,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         else {
             float distance = (float)Math.sqrt(dSq);
             float attenuation = Math.max(distance / 16f, 1f);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+            ITSounds.meltingCrucible.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
 
