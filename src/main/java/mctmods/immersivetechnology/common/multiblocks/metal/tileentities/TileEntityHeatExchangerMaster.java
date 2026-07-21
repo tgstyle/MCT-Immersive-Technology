@@ -215,7 +215,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         if (processTimeRemaining == 0 && shouldRun) {
             FluidStack input0 = tanks[0].getFluid();
             FluidStack input1 = tanks[1].getFluid();
-            HeatExchangerRecipe recipe = HeatExchangerRecipe.findRecipe(input0, input1);
+            HeatExchangerRecipe recipe = cachedExchangeRecipe;
+            boolean stillValid = recipe != null && input0 != null && input0.isFluidEqual(recipe.fluidInput0) && (recipe.fluidInput1 == null || (input1 != null && input1.isFluidEqual(recipe.fluidInput1)));
+            if (!stillValid) { recipe = HeatExchangerRecipe.findRecipe(input0, input1); }
             if (recipe != null) {
                 int avail0 = input0.amount;
                 int avail1 = input1.amount;
@@ -246,9 +248,10 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                     isRunning = true;
                     update = true;
                     if (processTimeRemaining <= 0) {
-                        tanks[2].fillInternal(cachedExchangeRecipe.fluidOutput0, true);
-                        if (cachedExchangeRecipe.fluidOutput1 != null) tanks[3].fillInternal(cachedExchangeRecipe.fluidOutput1, true);
+                        HeatExchangerRecipe completingRecipe = cachedExchangeRecipe;
                         cachedExchangeRecipe = null;
+                        tanks[2].fillInternal(completingRecipe.fluidOutput0, true);
+                        if (completingRecipe.fluidOutput1 != null) tanks[3].fillInternal(completingRecipe.fluidOutput1, true);
                     }
                 }
             } else processTimeRemaining = 0;
@@ -354,7 +357,10 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return update;
     }
 
-    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() {
+        if (processTimeRemaining == 0) { cachedExchangeRecipe = null; }
+        markContainingBlockForUpdate(null);
+    }
 
     @Override public boolean isRSDisabled() {
         if (computerOn.isPresent()) return !computerOn.get();

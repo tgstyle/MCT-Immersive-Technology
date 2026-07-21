@@ -392,8 +392,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (cachedBoilerRecipe == null) { processTimeRemaining = 0; return true; }
         processTimeRemaining--;
         if (processTimeRemaining == 0) {
-            tanks[1].drain(cachedBoilerRecipe.fluidInput.amount, true);
-            tanks[2].fillInternal(cachedBoilerRecipe.fluidOutput, true);
+            BoilerRecipe completingRecipe = cachedBoilerRecipe;
+            cachedBoilerRecipe = null;
+            tanks[1].drain(completingRecipe.fluidInput.amount, true);
+            tanks[2].fillInternal(completingRecipe.fluidOutput, true);
             return true;
         }
         return false;
@@ -413,7 +415,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return drained > 0;
     }
 
-    @Override public void TankContentsChanged() { markContainingBlockForUpdate(null); }
+    @Override public void TankContentsChanged() {
+        if (processTimeRemaining == 0) { cachedBoilerRecipe = null; }
+        markContainingBlockForUpdate(null);
+    }
 
     @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
 

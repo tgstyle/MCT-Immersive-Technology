@@ -449,7 +449,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
             processTimeTotal = 0;
             FluidStack input = tanks[0].getFluid();
             if (input != null && input.amount > 0) {
-                RadiatorRecipe recipe = RadiatorRecipe.findRecipe(input);
+                RadiatorRecipe recipe = cachedRadiatorRecipe;
+                if (recipe == null || !input.isFluidEqual(recipe.fluidInput)) { recipe = RadiatorRecipe.findRecipe(input); }
                 if (recipe != null) {
                     int[] amounts = getProcessedFluidAmounts(recipe);
                     boolean inputOk = amounts[0] <= input.amount;
@@ -483,7 +484,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     @Override public void TankContentsChanged() {
-        cachedRadiatorRecipe = null;
+        if (processTimeRemaining == 0) { cachedRadiatorRecipe = null; }
         efficientMarkDirty();
         markContainingBlockForUpdate(null);
     }

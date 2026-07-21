@@ -178,13 +178,15 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         if (processTimeRemaining == 0 && shouldRun) {
             FluidStack input = tanks[0].getFluid();
             if (input != null && input.amount > 0) {
-                cachedDistillerRecipe = DistillerRecipe.findRecipe(input);
-                if (cachedDistillerRecipe != null && cachedDistillerRecipe.fluidInput != null && input.amount >= cachedDistillerRecipe.fluidInput.amount) {
-                    boolean canOutput = cachedDistillerRecipe.fluidOutput == null || tanks[1].fill(cachedDistillerRecipe.fluidOutput, false) == cachedDistillerRecipe.fluidOutput.amount;
+                DistillerRecipe recipe = cachedDistillerRecipe;
+                if (recipe == null || recipe.fluidInput == null || !input.isFluidEqual(recipe.fluidInput)) { recipe = DistillerRecipe.findRecipe(input); }
+                if (recipe != null && recipe.fluidInput != null && input.amount >= recipe.fluidInput.amount) {
+                    boolean canOutput = recipe.fluidOutput == null || tanks[1].fill(recipe.fluidOutput, false) == recipe.fluidOutput.amount;
                     if (canOutput) {
-                        processTimeRemaining = cachedDistillerRecipe.getTotalProcessTime();
+                        cachedDistillerRecipe = recipe;
+                        processTimeRemaining = recipe.getTotalProcessTime();
                         processTimeMax = processTimeRemaining;
-                        tanks[0].drain(cachedDistillerRecipe.fluidInput.amount, true);
+                        tanks[0].drain(recipe.fluidInput.amount, true);
                         update = true;
                     }
                 }
@@ -354,7 +356,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     private void notifyPort(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, getBlockType(), true); }
 
     @Override public void TankContentsChanged() {
-        if (processTimeRemaining == 0) cachedDistillerRecipe = null;
+        if (processTimeRemaining == 0) { cachedDistillerRecipe = null; }
         efficientMarkDirty();
         markContainingBlockForUpdate(null);
     }

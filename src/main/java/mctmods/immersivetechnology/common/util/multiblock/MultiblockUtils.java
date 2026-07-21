@@ -97,8 +97,6 @@ public class MultiblockUtils {
                 structure[Math.floorDiv(rowIndex, length)][rowIndex % length][x] = palette.get(characters[x]);
             }
         }
-        ITLogger.info("structure[0][1][0] = " + structure[0][1][0].toString());
-        ITLogger.info("structure[0][2][0] = " + structure[0][2][0].toString());
         return structure;
     }
 
