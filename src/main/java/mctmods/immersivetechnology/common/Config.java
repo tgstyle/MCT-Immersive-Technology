@@ -89,8 +89,8 @@ public class Config {
                 public int boiler_progress_lossInTicks = 1;
             }
             public static class CoolingTower {
-                @Comment({"The capacity of the input tanks for the Cooling Tower [Default=20000]"})
-                public int coolingTower_input_tankSize = 20000;
+                @Comment({"The capacity of the input tanks for the Cooling Tower [Default=100000]"})
+                public int coolingTower_input_tankSize = 100000;
                 @Comment({"The capacity of the output tanks for the Cooling Tower [Default=20000]"})
                 public int coolingTower_output_tankSize = 20000;
                 @Comment({"Biome temperature effect strength on cooling tower speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8 [Default=0.5]"})
@@ -327,10 +327,10 @@ public class Config {
                 public boolean per_tick_trash_cans = false;
                 @Comment({"Should pipes use round robin (false), which is more CPU intensive, or last served (true), which remembers the last valid path (closest first) [Default=false]"})
                 public boolean pipe_last_served = false;
-                @Comment({"How much should the pipes be capable of transferring when pressurized, in mb. [Default=1000]"})
-                public int pipe_pressurized_transfer_rate = 1000;
-                @Comment({"How much should the pipes be capable of transferring, in mb. [Default=50]"})
-                public int pipe_transfer_rate = 50;
+                @Comment({"How much should the pipes be capable of transferring when pressurized, in mb. [Default=2500]"})
+                public int pipe_pressurized_transfer_rate = 2500;
+                @Comment({"How much should the pipes be capable of transferring, in mb. [Default=100]"})
+                public int pipe_transfer_rate = 100;
             }
         }
     }

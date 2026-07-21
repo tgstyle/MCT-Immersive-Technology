@@ -96,7 +96,7 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
         return m != null && m.additionalCanProcessCheck(process);
     }
 
-    @Override public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 3; }
 
     @Override public int getProcessQueueMaxLength() {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();

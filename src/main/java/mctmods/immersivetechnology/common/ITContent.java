@@ -324,6 +324,7 @@ public class ITContent {
         MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartSteelSheetmetalTank.instance);
         multiblockSteelSheetmetalTank = TileEntityITMultiblockPartSteelSheetmetalTank.instance;
         if (MCTMixinConfig.mixinSettings.replace_IE_pipes) {
+            normallyPressurized.add(FluidRegistry.getFluid("water"));
             normallyPressurized.add(FluidRegistry.getFluid("steam"));
             normallyPressurized.add(FluidRegistry.getFluid("fluegas"));
             normallyPressurized.add(FluidRegistry.getFluid("exhauststeam"));

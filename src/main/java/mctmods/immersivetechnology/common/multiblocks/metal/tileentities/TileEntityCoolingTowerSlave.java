@@ -81,11 +81,9 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return true; }
 
-    @Override public int getMaxProcessPerTick() { return 1; }
+    @Override public int getMaxProcessPerTick() { return 3; }
 
-    @Override public int getProcessQueueMaxLength() { return 1; }
-
-    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<CoolingTowerRecipe> process) { return 1; }
+    @Override public int getProcessQueueMaxLength() { return 3; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
         TileEntityCoolingTowerMaster m = master();
