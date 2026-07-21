@@ -93,6 +93,10 @@ public class Config {
                 public int coolingTower_input_tankSize = 20000;
                 @Comment({"The capacity of the output tanks for the Cooling Tower [Default=20000]"})
                 public int coolingTower_output_tankSize = 20000;
+                @Comment({"Biome temperature effect strength on cooling tower speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8 [Default=0.5]"})
+                public double coolingTower_biome_temp_factor = 0.5;
+                @Comment({"How much the local biome's humidity affects Cooling Tower speed. 0 disables the effect entirely. Drier biomes speed it up, wetter biomes slow it down [Default=3.0]"})
+                public double coolingTower_biome_humidity_factor = 3.0;
             }
             public static class Distiller {
                 @Comment({"The capacity of the input tank for the Distiller [Default=24000]"})
@@ -229,6 +233,10 @@ public class Config {
                 public int radiator_output_tankSize = 8000;
                 @Comment({"The heat speed multiplier applied to all Radiator recipes [Default=1]"})
                 public float radiator_speed_multiplier = 1;
+                @Comment({"Biome temperature effect strength on radiator speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8 [Default=0.5]"})
+                public double radiator_biome_temp_factor = 0.5;
+                @Comment({"How much the local biome's humidity affects Radiator efficiency. 0 disables the effect entirely. Drier biomes give a bonus, wetter biomes a penalty [Default=3.0]"})
+                public double radiator_biome_humidity_factor = 3.0;
             }
             public static class Recipes {
                 @Comment({"Should default Boiler recipes be registered ? [Default=true]"})

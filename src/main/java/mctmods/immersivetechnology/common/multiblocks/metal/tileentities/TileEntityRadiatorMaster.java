@@ -432,7 +432,12 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     private double getTotalRadiationEfficiency(int temp) {
         if (world.provider.isNether()) return 0;
-        return ITCompatModule.isAdvancedRocketryLoaded ? AdvancedRocketryHelper.getRadiatorHeatTransferCoefficient(world, getPos(), temp, radiationEfficiency) : radiationEfficiency;
+        double eff = ITCompatModule.isAdvancedRocketryLoaded ? AdvancedRocketryHelper.getRadiatorHeatTransferCoefficient(world, getPos(), temp, radiationEfficiency) : radiationEfficiency;
+        double tempFactor = Multiblocks.radiator.radiator_biome_temp_factor;
+        if (tempFactor > 0) { eff *= 1.0 - (world.getBiome(getPos()).getDefaultTemperature() - 0.8) * tempFactor; }
+        double humidityFactor = Multiblocks.radiator.radiator_biome_humidity_factor;
+        if (humidityFactor > 0) { eff += 0.075 * humidityFactor * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5); }
+        return Math.max(eff, 0);
     }
 
     private boolean recipeLogic() {

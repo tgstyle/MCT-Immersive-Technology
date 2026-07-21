@@ -176,6 +176,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             return;
         }
         if (ITCompatModule.isAdvancedRocketryLoaded && AdvancedRocketryHelper.isAtmosphereUnsuitableForCooling(world, getPos())) return;
+        if (Multiblocks.coolingTower.coolingTower_biome_temp_factor > 0 && world.provider.isNether()) return;
         super.update();
         boolean update = pumpOutputOut();
         boolean prevIsRunning = isRunning;
@@ -197,6 +198,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                     @SuppressWarnings("unchecked")
                     MultiblockProcessInMachine<CoolingTowerRecipe> process = new MultiblockProcessInMachine<>(cachedCoolingRecipe).setInputTanks(swapped ? 1 : 0, swapped ? 0 : 1);
                     if (ITCompatModule.isAdvancedRocketryLoaded) process.maxTicks *= (int)(1 / AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()));
+                    process.maxTicks *= (int)(1 / getBiomeSpeedMultiplier());
                     if (addProcessToQueue(process, true)) {
                         addProcessToQueue(process, false);
                         update = true;
@@ -247,6 +249,16 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             }
         }
         return changed;
+    }
+
+    private double getBiomeSpeedMultiplier() {
+        double tempFactor = Multiblocks.coolingTower.coolingTower_biome_temp_factor;
+        double humidityFactor = Multiblocks.coolingTower.coolingTower_biome_humidity_factor;
+        if (tempFactor <= 0 && humidityFactor <= 0) { return 1.0; }
+        double multiplier = 1.0;
+        if (tempFactor > 0) { multiplier -= (world.getBiome(getPos()).getDefaultTemperature() - 0.8) * tempFactor; }
+        if (humidityFactor > 0) { multiplier += 0.075 * humidityFactor * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5); }
+        return Math.max(multiplier, 0.01);
     }
 
     private void InitializePoIs() {
