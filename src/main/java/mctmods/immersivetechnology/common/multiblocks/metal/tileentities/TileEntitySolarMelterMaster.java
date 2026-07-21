@@ -10,6 +10,7 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.api.particles.ParticleSmokeCustom;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
@@ -32,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 
@@ -52,6 +54,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
@@ -62,6 +65,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private static final double heatLossMultiplier = Multiblocks.solarMelter.solarMelter_heat_loss_multiplier;
     private static final float speedMult = Multiblocks.solarMelter.solarMelter_speed_multiplier;
     private static final double workingHeatLevel = Multiblocks.solarMelter.solarMelter_heat_workingLevel;
+    public static double getWorkingHeatLevel() { return workingHeatLevel; }
     private static final double maximumReflectorStrength = Multiblocks.solarMelter.solarMelter_maximum_reflector_strength;
     private static final int progressResolution = 64;
 
@@ -96,9 +100,11 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     PoICache redstonePos0;
 
     BlockPos basePos0;
-    BlockPos collectorPos0;
     BlockPos fluidOutputTEPos0;
-    BlockPos soundPos0;
+    public BlockPos soundPos0;
+    public BlockPos particlePos0;
+    public BlockPos reflectorPos0;
+    BlockPos sunPos0;
 
     private boolean needsPoIInit = true;
     private boolean needsNotify = false;
@@ -232,8 +238,14 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                 case "link0":
                     basePos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
                     break;
-                case "collector0":
-                    collectorPos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
+                case "particle0":
+                    particlePos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "reflector0":
+                    reflectorPos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
+                    break;
+                case "sun0":
+                    sunPos0 = getBlockPosForPos(new PoICache(facing, poi, mirrored).position);
                     break;
             }
         }
@@ -263,6 +275,40 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             }
         }
         handleSounds();
+        spawnParticles();
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void spawnParticles() {
+        if (particlePos0 == null) return;
+        if (heatLevel < workingHeatLevel || reflectorStrength <= 0) return;
+        Random rand = new Random();
+        long time = world.getTotalWorldTime();
+        double baseX = particlePos0.getX() + 0.5;
+        double baseZ = particlePos0.getZ() + 0.5;
+        if (time % 4 == 0) {
+            double py = particlePos0.getY() + 3;
+            for (int i = 0; i < 12; i++) {
+                float g = rand.nextFloat();
+                ParticleSmokeCustom cloud = new ParticleSmokeCustom(world,
+                        baseX + (rand.nextFloat() - 0.5F) * 3, py, baseZ + (rand.nextFloat() - 0.5F) * 3, 0, 0.15f, 0, 1F, 3.0F);
+                cloud.setRBGColorF(1F, g, 0F);
+                Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
+            }
+        }
+        if (time % 10 == 0) {
+            double py = particlePos0.getY() + 1;
+            world.spawnParticle(EnumParticleTypes.LAVA, baseX + (rand.nextDouble() - 0.5) * 0.5, py, baseZ + (rand.nextDouble() - 0.5) * 0.5, 0, 0, 0);
+            for (int i = 0; i < 10; i++) {
+                double spx = baseX + (rand.nextDouble() - 0.5) * 0.3;
+                double spy = particlePos0.getY() + 0.5 + rand.nextDouble() * 0.5;
+                double spz = baseZ + (rand.nextDouble() - 0.5) * 0.3;
+                double vx = (rand.nextDouble() - 0.5) * 0.1;
+                double vy = rand.nextDouble() * 0.2 + 0.1;
+                double vz = (rand.nextDouble() - 0.5) * 0.1;
+                world.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, spx, spy, spz, vx, vy, vz);
+            }
+        }
     }
 
     private int computeSolarIncidenceAngleSection() {
@@ -291,7 +337,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntitySolarReflectorSlave) {
                 TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
-                if (ref != null && ref.isMirrorTaken && !ref.getCollectorPosition().equals(collectorPos0)) ref.detachTower();
+                if (ref != null && ref.isMirrorTaken && !ref.getCollectorPosition().equals(reflectorPos0)) ref.detachTower();
             }
         }
         double totalMirrorStrength = 0;
@@ -299,7 +345,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileEntitySolarReflectorSlave) {
                 TileEntitySolarReflectorMaster ref = ((TileEntitySolarReflectorSlave)tile).master();
-                if (ref != null && ref.setTowerCollectorPosition(collectorPos0)) totalMirrorStrength += ref.getSolarCollectorStrength();
+                if (ref != null && ref.setTowerCollectorPosition(reflectorPos0)) totalMirrorStrength += ref.getSolarCollectorStrength();
             }
         }
         totalMirrorStrength *= world.isRaining() ? 0.4 : 1;
@@ -326,10 +372,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private boolean cooldown() {
         double previous = heatLevel;
-        double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(collectorPos0).getTemperature(collectorPos0), collectorPos0.getY());
+        double heatLost = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(reflectorPos0).getTemperature(reflectorPos0), reflectorPos0.getY());
         if (heatLost <= 0) heatLost = 0.1;
         double conduction = 1.0;
-        if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, collectorPos0);
+        if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, reflectorPos0);
         heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier * conduction), 0);
         return previous != heatLevel;
     }
