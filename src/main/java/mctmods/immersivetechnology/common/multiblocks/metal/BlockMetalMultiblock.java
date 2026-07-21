@@ -49,6 +49,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
         setHardness(3.0F);
         setResistance(15.0F);
         setMetaBlockLayer(BlockType_MetalMultiblock.STEEL_TANK.getMeta(), BlockRenderLayer.CUTOUT);
+        setMetaBlockLayer(BlockType_MetalMultiblock.BOILER.getMeta(), BlockRenderLayer.CUTOUT);
+        setMetaBlockLayer(BlockType_MetalMultiblock.BOILER_SLAVE.getMeta(), BlockRenderLayer.CUTOUT);
         setAllNotNormalBlock();
         lightOpacity = 0;
     }
