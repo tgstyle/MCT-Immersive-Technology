@@ -1,14 +1,16 @@
 package mctmods.immersivetechnology.core.util.multiblock;
 
+import mctmods.immersivetechnology.core.lib.Reference;
+
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
-import mctmods.immersivetechnology.core.lib.Reference;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MultiblockDataLoader {
@@ -28,19 +30,22 @@ public class MultiblockDataLoader {
                     if (poi.facing != null) {
                         if (poi.facing.isJsonPrimitive()) {
                             String str = poi.facing.getAsString();
-                            RelativeBlockFace face = str.isEmpty() || str.equalsIgnoreCase("any") ? null : RelativeBlockFace.valueOf(str.toUpperCase());
+                            RelativeBlockFace face = str.isEmpty() || str.equalsIgnoreCase("any") ? null : RelativeBlockFace.valueOf(str.toUpperCase(Locale.ROOT));
                             poi.relativeFaces.add(face);
-                        } else if (poi.facing.isJsonArray()) {
+                        }
+                        else if (poi.facing.isJsonArray()) {
                             for (JsonElement el : poi.facing.getAsJsonArray()) {
                                 String str = el.getAsString();
-                                RelativeBlockFace face = str.isEmpty() || str.equalsIgnoreCase("any") ? null : RelativeBlockFace.valueOf(str.toUpperCase());
+                                RelativeBlockFace face = str.isEmpty() || str.equalsIgnoreCase("any") ? null : RelativeBlockFace.valueOf(str.toUpperCase(Locale.ROOT));
                                 poi.relativeFaces.add(face);
                             }
                         }
                     }
                 }
-            } else { Reference.IT_LOGGER.error("{} JSON resource not found at /assets/" + Reference.MODID + "/multiblocks/{}.json", multiblockName, multiblockName); }
-        } catch (Exception e) { Reference.IT_LOGGER.error("Error loading {} from JSON", multiblockName, e); }
+            }
+            else { Reference.IT_LOGGER.error("{} JSON resource not found at /assets/" + Reference.MODID + "/multiblocks/{}.json", multiblockName, multiblockName); }
+        }
+        catch (Exception e) { Reference.IT_LOGGER.error("Error loading {} from JSON", multiblockName, e); }
         if (data != null) { CACHE.put(multiblockName, data); }
         return data;
     }
