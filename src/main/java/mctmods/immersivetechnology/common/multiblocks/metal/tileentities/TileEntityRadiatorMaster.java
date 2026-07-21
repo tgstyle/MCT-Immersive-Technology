@@ -137,7 +137,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
         boolean update = false;
         double oldEff = radiationEfficiency;
-        if (radiationEfficiency == 0 || world.getTotalWorldTime() % 600 == 0) checkReflectorEfficiency();
+        if (radiationEfficiency == 0 || world.getTotalWorldTime() % 600 == Math.abs(getPos().hashCode()) % 600) checkReflectorEfficiency();
         if (radiationEfficiency != oldEff) update = true;
 
         update |= recipeLogic();
@@ -400,8 +400,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     private double checkColumnEfficiency(BlockPos pos, EnumFacing dir) {
-        for (int i = 1; i < 49; i++) {
-            if (!world.isAirBlock(pos.offset(dir, i))) return 1.0 / ((49 - i) * (49 - i));
+        for (int i = 1; i < 25; i++) {
+            if (!world.isAirBlock(pos.offset(dir, i))) return 1.0 / ((25 - i) * (25 - i));
         }
         return 1;
     }
