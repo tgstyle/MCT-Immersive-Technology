@@ -119,10 +119,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         if (!descPacket) {
-            if (processTimeRemaining > 0 && !inventory.get(0).isEmpty()) {
-                cachedSolarMelterRecipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
-                if (cachedSolarMelterRecipe == null) processTimeRemaining = 0;
-            }
+            if (nbt.hasKey("cachedRecipe")) cachedSolarMelterRecipe = MeltingCrucibleRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
+            if (processTimeRemaining > 0 && cachedSolarMelterRecipe == null) processTimeRemaining = 0;
             reCheckOnLoad = true;
         }
         registered = nbt.getBoolean("registered");
@@ -148,6 +146,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         nbt.setBoolean("savedRegistered", savedRegistered);
         nbt.setBoolean("reCheckOnLoad", reCheckOnLoad);
         nbt.setBoolean("isLoaded", isLoaded);
+        if (!descPacket && cachedSolarMelterRecipe != null) nbt.setTag("cachedRecipe", cachedSolarMelterRecipe.writeToNBT(new NBTTagCompound()));
     }
 
     @SideOnly(Side.CLIENT)

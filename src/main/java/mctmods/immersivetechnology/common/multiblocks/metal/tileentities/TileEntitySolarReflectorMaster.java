@@ -27,6 +27,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     boolean isMirrorTaken = false;
     private boolean initialized = false;
+    private boolean needsPoIInit = false;
 
     private PoICache link0;
     private BlockPos collectorPosition0;
@@ -44,6 +45,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         animationRotations[0] = nbt.getFloat("rotation0");
         animationRotations[1] = nbt.getFloat("rotation1");
         initialized = nbt.getBoolean("initialized");
+        if (formed && !descPacket) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -92,8 +94,11 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         super.update();
         if (!formed) return;
         if (world.isRemote) return;
-        if (!initialized) {
+        if (needsPoIInit || link0 == null) {
             InitializePoIs();
+            needsPoIInit = false;
+        }
+        if (!initialized) {
             SolarRegistry.registerReflector(world, getBlockPosForPos(link0.position));
             initialized = true;
         }

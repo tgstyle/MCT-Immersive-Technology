@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -88,6 +89,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
     private boolean isRunning = false;
+    private boolean needsPoIInit = false;
 
     public GasTurbineRecipe lastRecipe;
     private GasTurbineRecipe cachedFuelRecipe;
@@ -113,6 +115,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         isRunning = nbt.getBoolean("isRunning");
+        if (formed && !descPacket) needsPoIInit = true;
         if (world.isRemote) {
             targetSoundLevel = (float)speed / maxSpeed;
             soundVolume = targetSoundLevel;
@@ -214,7 +217,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     @Override public void update() {
-        if (formed && energyInputPos0 == null) InitializePoIs();
+        if (formed && (needsPoIInit || energyInputPos0 == null)) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) {
@@ -464,6 +470,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (energyInputPos0.isPoI(facing, position)) return starterStorage;
         if (energyInputPos1.isPoI(facing, position)) return sparkplugStorage;
         return null;
+    }
+
+    public FluxStorage getFluxStorageAtPosition(int position) {
+        if (energyInputPos0 == null) InitializePoIs();
+        return energyInputPos1.position == position ? sparkplugStorage : starterStorage;
     }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {

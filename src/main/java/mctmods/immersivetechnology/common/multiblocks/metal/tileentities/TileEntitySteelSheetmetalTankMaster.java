@@ -36,10 +36,12 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     private final List<PoICache> fluidInputs0 = new ArrayList<>();
     private final List<PoICache> fluidOutputs0 = new ArrayList<>();
     private PoICache redstonePos0;
+    private boolean needsPoIInit = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         tank.readFromNBT(nbt.getCompoundTag("tank"));
+        if (formed && !descPacket) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -51,7 +53,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
 
     @Override public void update() {
         if (!formed) { return; }
-        if (redstonePos0 == null) { InitializePoIs(); }
+        if (needsPoIInit || redstonePos0 == null) { InitializePoIs(); needsPoIInit = false; }
         super.update();
         if (world.isRemote || tank.getFluidAmount() == 0) { return; }
         if (world.getRedstonePowerFromNeighbors(getBlockPosForPos(redstonePos0.position)) > 0) {

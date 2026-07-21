@@ -10,7 +10,11 @@ import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultib
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
+import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
+import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
+import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
@@ -21,11 +25,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
 
     protected int loadGrace = 0;
     protected TileEntityGasTurbineMaster master;
@@ -124,6 +129,29 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
             if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)m.getEnergyAtPosition(facing, pos);
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override @Nonnull public FluxStorage getFluxStorage() {
+        TileEntityGasTurbineMaster m = master();
+        return m == null ? new FluxStorage(0) : m.getFluxStorageAtPosition(pos);
+    }
+
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
+        TileEntityGasTurbineMaster m = master();
+        return formed && m != null && m.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
+    }
+
+    @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
+        TileEntityGasTurbineMaster m = master();
+        if (!formed || m == null) return 0;
+        IEnergyStorage storage = m.getEnergyAtPosition(from, pos);
+        if (storage == null) return 0;
+        int received = storage.receiveEnergy(energy, simulate);
+        if (!simulate && received > 0) {
+            m.efficientMarkDirty();
+            m.markContainingBlockForUpdate(null);
+        }
+        return received;
     }
 
     @Override public boolean isValid() { return formed; }

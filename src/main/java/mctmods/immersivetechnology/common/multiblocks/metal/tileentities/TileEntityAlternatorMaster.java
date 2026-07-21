@@ -278,7 +278,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         return true;
     }
 
-    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
+    @Override public int getComparatorInputOverride() {
+        if (!formed) return 0;
+        return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
+    }
 
     public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
         if (mechanicalInputPos0 == null) InitializePoIs();

@@ -103,7 +103,11 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
-        if (!descPacket) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        if (!descPacket) {
+            inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+            if (nbt.hasKey("cachedRecipe")) cachedBoilerRecipe = BoilerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
+            if (processTimeRemaining > 0 && cachedBoilerRecipe == null) processTimeRemaining = 0;
+        }
         if (formed && !descPacket) {
             needsPoIInit = true;
             needsNotify = true;
@@ -122,7 +126,10 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
-        if (!descPacket) nbt.setTag("inventory", Utils.writeInventory(inventory));
+        if (!descPacket) {
+            nbt.setTag("inventory", Utils.writeInventory(inventory));
+            if (cachedBoilerRecipe != null) nbt.setTag("cachedRecipe", cachedBoilerRecipe.writeToNBT(new NBTTagCompound()));
+        }
     }
 
     @SideOnly(Side.CLIENT)

@@ -150,6 +150,10 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         if (soundPos0 != null) {
             ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
+            inventory.clear();
+        }
         super.disassemble();
     }
 
@@ -374,7 +378,10 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         return false;
     }
 
-    @Override public int getComparatorInputOverride() { return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored(); }
+    @Override public int getComparatorInputOverride() {
+        if (!formed) return 0;
+        return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
+    }
 
     @Override public boolean isDummy() { return false; }
 

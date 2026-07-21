@@ -98,6 +98,10 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
+        if (!descPacket) {
+            if (nbt.hasKey("cachedRecipe")) cachedMeltingRecipe = MeltingCrucibleRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
+            if (processTimeRemaining > 0 && cachedMeltingRecipe == null) processTimeRemaining = 0;
+        }
         if (formed) {
             needsPoIInit = true;
             needsNotify = true;
@@ -115,6 +119,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
         nbt.setBoolean("isRunning", isRunning);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
+        if (!descPacket && cachedMeltingRecipe != null) nbt.setTag("cachedRecipe", cachedMeltingRecipe.writeToNBT(new NBTTagCompound()));
     }
 
     @SideOnly(Side.CLIENT)

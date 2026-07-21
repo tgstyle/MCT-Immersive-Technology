@@ -66,6 +66,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     private CokeOvenRecipe cachedRecipe;
     private int soundGracePeriod = 0;
     private boolean isRunning = false;
+    private boolean needsPoIInit = false;
 
     PoICache itemInputPos0;
     PoICache itemOutputPos0;
@@ -91,6 +92,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
+        if (formed && !descPacket) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -167,7 +169,10 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public void update() {
         if (!formed) return;
-        if (itemInputPos0 == null) InitializePoIs();
+        if (needsPoIInit || itemInputPos0 == null) {
+            InitializePoIs();
+            needsPoIInit = false;
+        }
         if (world.isRemote) {
             handleSounds();
             return;

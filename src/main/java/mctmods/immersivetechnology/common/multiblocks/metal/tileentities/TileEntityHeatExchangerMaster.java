@@ -101,6 +101,10 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
+        if (!descPacket) {
+            if (nbt.hasKey("cachedRecipe")) cachedExchangeRecipe = HeatExchangerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
+            if (processTimeRemaining > 0 && cachedExchangeRecipe == null) processTimeRemaining = 0;
+        }
         if (formed && !descPacket) {
             needsPoIInit = true;
             needsNotify = true;
@@ -120,6 +124,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setBoolean("isRunning", isRunning);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
+        if (!descPacket && cachedExchangeRecipe != null) nbt.setTag("cachedRecipe", cachedExchangeRecipe.writeToNBT(new NBTTagCompound()));
     }
 
     @SideOnly(Side.CLIENT)
