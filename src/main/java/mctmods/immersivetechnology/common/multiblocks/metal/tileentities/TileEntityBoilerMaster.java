@@ -9,6 +9,8 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
+import mctmods.immersivetechnology.api.particles.ParticleFlameCustom;
+import mctmods.immersivetechnology.api.particles.ParticleSmokeCustom;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
@@ -46,6 +48,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -89,7 +92,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     private boolean needsNotify = false;
 
     protected PoICache fluidInputPos0, fluidInputPos1, fluidOutputPos0, redstonePos0;
-    private BlockPos fluidOutputTEPos0, soundPos0;
+    private BlockPos fluidOutputTEPos0, soundPos0, particlePos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -147,6 +150,30 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     }
 
     @SideOnly(Side.CLIENT)
+    public void spawnParticles() {
+        if (particlePos0 == null) InitializePoIs();
+        Random rand = new Random();
+        int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
+        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        double distanceLimit = 64;
+        if (particlePos0.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
+        if (isRunning) {
+            Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleFlameCustom(world,
+                    particlePos0.getX() + 0.5, particlePos0.getY() + 0.1, particlePos0.getZ() + 0.5,
+                    rand.nextFloat() * 0.0625f - 0.03125f, 0.0625f, rand.nextFloat() * 0.0625f - 0.03125f));
+        }
+        if (isRunning && rand.nextInt(40) != 0) {
+            ParticleSmokeCustom cloud = new ParticleSmokeCustom(world,
+                    particlePos0.getX() + 0.5,
+                    particlePos0.getY() + 1,
+                    particlePos0.getZ() + 0.5, 0, 0.02f, 0, 2.5f);
+            cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
+            Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
         if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
         super.onChunkUnload();
@@ -183,6 +210,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
                     break;
+                case "particle0":
+                    particlePos0 = getBlockPosForPos(poi.position);
+                    break;
             }
         }
     }
@@ -217,7 +247,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @Override public void update() {
         super.update();
         if (!formed) return;
-        if (needsPoIInit || fluidInputPos0 == null || fluidInputPos1 == null || fluidOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
+        if (needsPoIInit || fluidInputPos0 == null || fluidInputPos1 == null || fluidOutputPos0 == null || redstonePos0 == null || soundPos0 == null || particlePos0 == null) {
             InitializePoIs();
             needsPoIInit = false;
         }
@@ -227,6 +257,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         }
         if (world.isRemote) {
             handleSounds();
+            spawnParticles();
             return;
         }
         boolean changed = heatLogic();
