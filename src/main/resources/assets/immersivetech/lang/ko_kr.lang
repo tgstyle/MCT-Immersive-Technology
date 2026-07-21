@@ -182,7 +182,8 @@ ie.manual.entry.advancedCokeOven.name=고급 코크스 오븐
 ie.manual.entry.advancedCokeOven.subtext=이제 빠릅니다
 ie.manual.entry.advancedCokeOven0=고급 코크스 오븐은 코크스 석탄과 크레오소트유를 더 빨리 생산할 수 있게 해 주는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강화 코크스 벽돌 블록의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.advancedCokeOven1=입력 및 출력 아이템의 자동화를 허용하며, 뜨거운 공기를 추가하여 베이스히터로 프로세스를 가속화할 수도 있습니다.<br>용광로는 강화 벽돌로 만들어지므로 첫 번째 강철 배치를 이 업그레이드에 사용하는 것이 좋습니다.<br>개선된 용광로와 유사하게 코크스 석탄은 전면에 출력되고 크레오소트유는 후면에 출력됩니다. 석탄은 상단을 통해 공급됩니다.
-ie.manual.entry.advancedCokeOven2=코크스 오븐 베이스히터는 석탄의 정제 과정을 가속화하는 데 사용됩니다. 각 오븐은 양측 포트에 최대 두 개의 베이스히터를 연결할 수 있으며, 각 베이스히터는 작동하기 위해 <config;i;cokeOvenBaseheater_consumption> Flux/t가 필요합니다.
+ie.manual.entry.advancedCokeOven2=코크스 오븐 베이스히터는 석탄의 정제 과정을 가속화하는 데 사용됩니다. 각 오븐은 양측 포트에 최대 두 개의 베이스히터를 연결할 수 있으며, 각 베이스히터는 작동하기 위해 <config;i;cokeOvenBaseheater_consumption> Flux/t가 필요합니다. 기본 설정에서는 활성화된 베이스히터 하나당 처리 속도가 두 배로 증가합니다.
+ie.manual.entry.advancedCokeOven3=멀티블록에 비교기를 설치하면 현재 작업 진행도에 비례하는 신호를 출력합니다. 대기 중일 때는 0, 거의 완료되었을 때는 15입니다.
 
 ie.manual.entry.alternator.name=교류 발전기
 ie.manual.entry.alternator.subtext=변환합시다
@@ -195,40 +196,50 @@ ie.manual.entry.boiler.subtext=유체 연료 방법
 ie.manual.entry.boiler0=보일러는 유체 연료와 물을 사용하여 증기를 생산하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 철 판금 블록(긴 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.boiler1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>물과 <link;distiller;§n§o증류수§r>는 파란색 점으로 표시된 왼쪽 해치를 통해 보일러에 입력할 수 있습니다. 연료는 오른쪽 파란색 점이 있는 해치에 입력할 수 있습니다. 상단 주황색 점이 있는 해치는 유체 출력으로 사용됩니다.
 ie.manual.entry.boiler2=물을 끓이기 전에 구조물이 먼저 가열되어야 하며, 이는 연료를 필요로 합니다. 비활성화되거나 충분한 연료가 공급되지 않으면 구조물이 천천히 식으며, 작업 온도에서 완전히 식는 데 약 <config;d;boiler_cooldownTime> 초가 걸립니다. 기본 연료는 디젤입니다.
+ie.manual.entry.boiler3=작업 온도 아래로 열이 떨어지면 진행 중인 작업이 완전히 초기화되지 않고 서서히 되돌아갑니다. 따라서 짧은 연료 부족은 진행도를 일부만 소모시킵니다. 멀티블록에 비교기를 설치하면 현재 열 수준에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.distiller.name=증류기
 ie.manual.entry.distiller.subtext=물보다 맑음
 ie.manual.entry.distiller0=증류기는 물을 증류수와 소금으로 바꾸는 멀티블록 기계입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 철 판금의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.distiller1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>물은 오른쪽 파란색 점으로 표시된 해치를 통해 증류기에 입력할 수 있습니다. 왼쪽 주황색 점이 있는 해치는 유체 출력으로, 후면 다른 해치는 아이템 출력으로 사용됩니다.<br>증류수와 소금을 생산하려면 에너지가 필요합니다.<br>물 한 양동이는 500 mB의 증류수를 생산합니다.
+ie.manual.entry.distiller2=아이템 출력은 확정이 아니라 확률에 따른 것입니다. 멀티블록에 비교기를 설치하면 내부 Flux 저장량에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.openBarrel.name=개방형 금속 배럴
 ie.manual.entry.openBarrel.subtext=태양이나 구름에 열린?
 ie.manual.entry.openBarrel0=§6개방형 금속 배럴§r은 금속 배럴과 같은 단일 블록 탱크이지만 상단이 열려 있습니다. 유체를 손으로 넣을 수 있습니다. 상단은 입력 전용이고 하단은 출력 전용입니다. 비에 노출시키면 채워지는 것을 지켜보세요! 뇌우에서는 두 배로 빠릅니다! 그러나 따뜻한 환경에 두지 마세요, 물이 증발할 수 있습니다.
+ie.manual.entry.openBarrel1=개방형 금속 배럴은 기체는 받아들이지 않으며, 액체만 가능합니다.
 
 ie.manual.entry.solarTower.name=태양탑
 ie.manual.entry.solarTower.subtext=자동 새 구이 기계 2056
 ie.manual.entry.solarTower0=태양탑은 태양의 빛을 사용하여 물을 증기로 가열하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 가벼운 엔지니어링 블록의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.solarTower1=태양탑은 물과 <link;distiller;§n§o증류수§r>로부터 증기를 생산할 수 있습니다. 물은 파란색 점으로 표시된 해치를 통해 태양탑에 입력할 수 있습니다. 주황색 점이 있는 해치는 유체 출력으로 사용됩니다. 태양탑은 작동하려면 최소 하나의 태양광 반사기가 필요하며, 전체 효율을 위해 많은 반사기가 필요합니다. 최대 반사기 수 중 반사기의 비율이 레시피 처리 비율입니다. 오버월드에서 전체 출력에 도달하려면 약 230개의 반사기가 필요합니다.
-ie.manual.entry.solarTower2=태양광 반사기는 태양의 빛을 태양탑 중앙으로 반사하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 은 블록의 엔지니어의 망치를 사용하여 형성됩니다. 탑/용융기의 콘크리트 기초 층 위에 배치되어야 합니다. 너무 낮거나 높으면 연결되지 않습니다.
-ie.manual.entry.solarTower3=태양탑으로부터의 반사기 거리는 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 블록 사이여야 합니다. 반사기는 밤이나 뇌우 동안 작동하지 않으며, 비 동안 효율이 감소합니다. 효율은 새벽과 황혼에 태양광 입사각이 너무 낮아 쉽게 수집되지 않을 때도 감소하며, 높은 주변 습도에 의해서도 감소합니다. 전체 반사기 효율은 전체 하늘 접근에 따라 달라집니다. §lAdvanced Rocketry§r가 존재하면 반사기 강도는 행성당 수신된 태양광 양에 따라 달라집니다.
+ie.manual.entry.solarTower2=태양광 반사기는 태양의 빛을 태양탑 중앙으로 반사하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 은 블록의 엔지니어의 망치를 사용하여 형성됩니다.
+ie.manual.entry.solarTower2a=탑/용융기의 콘크리트 기초 층 위에 배치되어야 합니다. 너무 낮거나 높으면 연결되지 않습니다.
+ie.manual.entry.solarTower3=태양탑으로부터의 반사기 거리는 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 블록 사이여야 합니다. 반사기는 밤이나 뇌우 동안 작동하지 않으며, 비 동안 효율이 감소합니다. 효율은 새벽과 황혼에 태양광 입사각이 너무 낮아 쉽게 수집되지 않을 때도 감소하며, 높은 주변 습도에 의해서도 감소합니다. 전체 반사기 효율은 전체 하늘 접근에 따라 달라집니다. §lAdvanced Rocketry§r 설치 시, 강도는 행성마다 다릅니다.
+ie.manual.entry.solarTower4=각 태양 반사기는 한 번에 하나의 수집기(태양탑 또는 태양열 제련 도가니)에만 연결될 수 있습니다. 여러 개의 태양열 수집기를 서로 가깝게 지으면 같은 반사기 풀을 두고 경쟁하게 되어 각각 최대 효율에 도달하지 못할 수 있습니다. 태양탑에 비교기를 설치하면 현재 열 수준에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.controlBlocks.name=제한기 및 제어 장치
 ie.manual.entry.controlBlocks.subtext=처리량은 과대평가됨
-ie.manual.entry.controlBlocks0=§6스택 제한기§r는 그것을 통과하는 아이템을 제한할 수 있습니다. GUI에서 특정 매개변수를 지정하거나 레드스톤 신호 강도로 제어할 수 있습니다. 신호 15의 레드스톤은 꺼짐입니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
-ie.manual.entry.controlBlocks1=§6부하 컨트롤러§r는 그것을 통과하는 에너지를 제한할 수 있습니다. GUI에서 특정 매개변수를 지정하거나 레드스톤 신호 강도로 제어할 수 있습니다. 신호 15의 레드스톤은 꺼짐입니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
-ie.manual.entry.controlBlocks2=§6유체 밸브§r는 그것을 통과하는 유체를 제한할 수 있습니다. GUI에서 특정 매개변수를 지정하거나 레드스톤 신호 강도로 제어할 수 있습니다. 신호 15의 레드스톤은 꺼짐입니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
+ie.manual.entry.controlBlocks0=§6스택 제한기§r는 그것을 통과하는 아이템을 제한할 수 있습니다. GUI에서 일정 시간 동안의 누적 총량 제한, 목적지가 이미 보유한 해당 아이템의 양을 넘지 않도록 하는 제한, 단일 전송당 제한을 설정할 수 있으며 이 세 가지는 함께 사용할 수 있습니다. 레드스톤 신호 강도로도 조절할 수 있습니다:
+ie.manual.entry.controlBlocks0a=한 모드는 신호가 강해질수록 처리량이 줄어들고(신호 15는 꺼짐), 다른 모드는 신호가 강해질수록 처리량이 늘어납니다. 어느 모드가 활성화되는지는 GUI에서 설정합니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
+ie.manual.entry.controlBlocks1=§6부하 컨트롤러§r는 그것을 통과하는 에너지를 제한할 수 있습니다. GUI에서 일정 시간 동안의 누적 총량 제한, 목적지가 이미 보유한 에너지의 양을 넘지 않도록 하는 제한, 단일 전송당 제한을 설정할 수 있으며 이 세 가지는 함께 사용할 수 있습니다. 레드스톤 신호 강도로도 조절할 수 있습니다:
+ie.manual.entry.controlBlocks1a=한 모드는 신호가 강해질수록 처리량이 줄어들고(신호 15는 꺼짐), 다른 모드는 신호가 강해질수록 처리량이 늘어납니다. 어느 모드가 활성화되는지는 GUI에서 설정합니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
+ie.manual.entry.controlBlocks2=§6유체 밸브§r는 그것을 통과하는 유체를 제한할 수 있습니다. GUI에서 일정 시간 동안의 누적 총량 제한, 목적지가 이미 보유한 해당 유체의 양을 넘지 않도록 하는 제한, 단일 전송당 제한을 설정할 수 있으며 이 세 가지는 함께 사용할 수 있습니다. 레드스톤 신호 강도로도 조절할 수 있습니다:
+ie.manual.entry.controlBlocks2a=한 모드는 신호가 강해질수록 처리량이 줄어들고(신호 15는 꺼짐), 다른 모드는 신호가 강해질수록 처리량이 늘어납니다. 어느 모드가 활성화되는지는 GUI에서 설정합니다. 망치로 웅크리며 레드스톤 모드를 활성화하세요.
 
 ie.manual.entry.steamTurbine.name=증기 터빈
 ie.manual.entry.steamTurbine.subtext=끓는 숨결
 ie.manual.entry.steamTurbine0=증기 터빈은 증기를 사용하여 운동 에너지를 생산하는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강철 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.steamTurbine1=증기가 공급되면 터빈은 <config;i;steamTurbine_timeToMax> 초 후 최대 속도에 도달할 때까지 천천히 속도가 올라가며, 지속적으로 공급되는 한 유지됩니다. 끄거나 충분한 증기를 제공하지 못하면 터빈이 느려지고 출력이 감소합니다.<br>작동하려면 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
 ie.manual.entry.steamTurbine2=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>기계 앞의 유체 파이프는 입력입니다. 운동 에너지 출력은 기계 후면(강철 블록)에 있습니다. 선택적으로 유체는 기계적 에너지 출력 바로 아래 출력 파이프를 통해 회수할 수 있습니다.
+ie.manual.entry.steamTurbine3=멀티블록에 비교기를 설치하면 현재 속도에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.highPressureSteamTurbine.name=고압 증기 터빈
 ie.manual.entry.highPressureSteamTurbine.subtext=더블 랭킨
 ie.manual.entry.highPressureSteamTurbine0=고압 증기 터빈은 고압 증기를 사용하여 운동 에너지를 생산하는 멀티블록 구조입니다. 구조물은 위 그림과 같이 건설되며 중앙 블록(짧은 쪽)의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.highPressureSteamTurbine1=증기가 공급되면 터빈은 <config;i;highPressureSteamTurbine_timeToMax> 초 후 최대 속도에 도달할 때까지 천천히 속도가 올라가며, 지속적으로 공급되는 한 유지됩니다. 끄거나 충분한 증기를 제공하지 못하면 터빈이 느려지고 출력이 감소합니다.<br>작동하려면 <link;alternator;§o§n교류 발전기§r>가 필요합니다.
 ie.manual.entry.highPressureSteamTurbine2=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다.<br>기계 앞의 유체 파이프는 입력입니다. 운동 에너지 출력은 기계 후면에 있습니다. 선택적으로 유체는 기계적 에너지 출력 바로 아래 출력 파이프를 통해 회수할 수 있습니다.
+ie.manual.entry.highPressureSteamTurbine3=멀티블록에 비교기를 설치하면 현재 속도에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.gasTurbine.name=가스 터빈
 ie.manual.entry.gasTurbine.subtext=747의 일부가 아님
@@ -236,6 +247,7 @@ ie.manual.entry.gasTurbine0=가스 터빈은 가연성 연료를 사용하여 �
 ie.manual.entry.gasTurbine1=터빈에 충분한 연료가 공급되면 터빈은 스핀업 프로세스 30초 후 최대 속도와 효율에 도달할 때까지 천천히 속도가 올라갑니다. 일부 연료는 압축된 운송을 필요로 할 만큼 큰 양이 필요할 수 있으며, 터빈에 연료가 없으면 느려지기 시작합니다. 속도에서 꺼지면 천천히 속도를 잃습니다. 1/4 속도 아래로 느려지면 다시 사용하기 전에 다시 스핀업해야 합니다.
 ie.manual.entry.gasTurbine2=터빈 앞의 유체 파이프는 입력이며, 터빈 측면의 두 전원 플러그는 다른 입력 목적을 수행합니다. HV 플러그는 터빈을 1/4 속도로 시작하기 위해 4096 IF/t를 소비하며, 그 이상의 플럭스 입력은 터빈을 멈추게 하고 1/4 속도를 초과하지 못하게 합니다. MV 플러그는 터빈이 현재 연료를 연소하지 않을 때 연료를 점화하기 위해 1024 IF를 사용합니다 - 이는 시작 시와 터빈에 3초 이상 연료가 없을 때 발생합니다.
 ie.manual.entry.gasTurbine3=터빈은 후면에서 운동 에너지를 출력하며, 운동 에너지 출력 바로 아래에서 결과 가스를 출력합니다. 이 가스는 터빈의 효율을 높이기 위해 연소될 수 있는 특별한 위치를 가집니다. 보통 디젤 발전기보다 나쁘지만, 더 큰 전력 출력과 복잡성을 위해 이는 가스 터빈이 정말 빛나는 곳입니다. CCGT(또는 해군을 위한 COGAS)는 증기 전력을 위한 보일러에서 사용될 때 가연성 연료에 대한 더 큰 수익을 허용합니다.
+ie.manual.entry.gasTurbine4=멀티블록에 비교기를 설치하면 현재 속도에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.steelBarrel.name=강철 금속 배럴
 ie.manual.entry.steelBarrel.subtext=최대 가득!
@@ -245,41 +257,50 @@ ie.manual.entry.steelTank.name=강철 유체 탱크
 ie.manual.entry.steelTank.subtext=최대 가득!
 ie.manual.entry.steelTank0=강철 유체 탱크는 더 큰 양의 유체를 위한 공간을 제공하는 멀티블록입니다. 모든 유체의 <config;i;steelTank_tankSize> mB를 저장하며, 상단 또는 하단 블록을 통해 파이프 인할 수 있습니다. 유체는 하단 중앙 블록에서만 추출할 수 있습니다.
 ie.manual.entry.steelTank1=하단 중앙 블록에 레드스톤 신호를 적용하면 탱크가 자동으로 출력되며, 거기에 배치된 비교기는 탱크가 얼마나 찼는지 비례한 레드스톤 신호를 방출합니다. 상단 4개 층 중 하나에 비교기를 부착하면 비교기의 높이에 비례한 신호가 결과됩니다. 예를 들어, 탱크의 두 번째 층에 부착된 비교기는 탱크가 1/4 찰 때까지 신호를 방출하지 않고 탱크가 반 이상 차면 신호 강도 15를 가집니다.
+ie.manual.entry.steelTank2=탱크의 일부 연결 지점은 입력과 출력을 동시에 겸합니다. 레드스톤이 탱크를 활성화하여 유체를 능동적으로 밀어낼 때, 그 유체는 가압 상태로 표시되어 이 모드의 파이프를 통해 더 빠른 전송 속도를 얻습니다.
 
 ie.manual.entry.redstone.name=레드스톤 타이머
 ie.manual.entry.redstone.subtext=틱-톡
-ie.manual.entry.redstone0=§6레드스톤 타이머§r는 부과된 지연에 따라 짧은 레드스톤 신호를 출력합니다. 지연 시간은 타이머의 GUI에서 설정할 수 있으며 0.5초의 정밀도를 가지며 0.5에서 10초 사이로 조정할 수 있습니다. 타이머는 레드스톤 신호로 중지할 수 있습니다.
+ie.manual.entry.redstone0=§6레드스톤 타이머§r는 부과된 지연에 따라 짧은 레드스톤 신호를 출력합니다. 지연 시간은 타이머의 GUI에서 설정할 수 있으며 0.5초의 정밀도를 가지며 0.5에서 30초 사이로 조정할 수 있습니다. 타이머는 레드스톤 신호로 중지할 수 있습니다.
+ie.manual.entry.redstone1=웅크리지 않고 타이머를 망치로 치면, 타이밍을 결정하기 위해 로컬 레드스톤 신호를 읽는 모드와 같은 채널에 맞춰진 다른 커넥터로 펄스를 무선 전송하는 모드 사이를 전환합니다.
 
 ie.manual.entry.coolingTower.name=냉각탑
 ie.manual.entry.coolingTower.subtext=차갑게 유지하세요!
 ie.manual.entry.coolingTower0=냉각탑은 배출 증기를 물로 변환하는 멀티블록 구조입니다. 구조물은 위 그림과 같이 건설되며 중형 엔지니어링 블록의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.coolingTower1=따뜻한 유체는 빨간색 표시기가 있는 측면으로 들어가고 차가운 유체는 파란색 표시기가 있는 측면으로 들어갑니다. §lAdvanced Rocketry§r가 존재하면 냉각탑의 처리 시간은 대기로 열을 배출하는 능력에 따라 달라지며, 대기 압력에 의존하며, 유체를 대기로 배출하여 즉시 증발시키거나 인공 대기에서 잃을 경우 냉각탑이 꺼집니다.
+ie.manual.entry.coolingTower2=냉각탑은 두 유체 입력을 순서에 상관없이 받아들입니다 - 어느 입력구에 어느 유체를 넣어도 무방합니다. 또한 한 번에 하나가 아니라 여러 작업을 동시에 처리할 수 있어, 처리량이 단일 작업 시간만으로 예상되는 것보다 클 수 있습니다. 멀티블록에 비교기를 설치하면 단일 작업의 진행도가 아니라 내부 작업 대기열이 얼마나 찼는지에 비례하는 신호를 출력합니다.
 
 ie.manual.entry.heatExchanger.name=열 교환기
 ie.manual.entry.heatExchanger.subtext=엔트로피가 인사합니다
 ie.manual.entry.heatExchanger0=열 교환기는 한 유체에서 다른 유체로 열을 빠르게 이동시키는 멀티블록 구조입니다. <br>구조물은 위 그림과 같이 건설되며 레드스톤 엔지니어링 블록 옆 중앙 철 판금의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.heatExchanger1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 열 교환기는 뜨거운 에너지 운반 유체를 §l물§r이나 §l증류수§r 같은 차가운 유체와 처리하여 더 유용한 형태로 가열합니다. 열 교환기는 역류 열 교환기이므로 뜨거운 유체는 뜨거운 유체가 입력된 측면에서 출력되고 차가운 유체에 대해서도 마찬가지입니다.
+ie.manual.entry.heatExchanger2=멀티블록에 비교기를 설치하면 내부 Flux 저장량에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.electrolyticCrucibleBattery.name=전해 도가니 배터리
 ie.manual.entry.electrolyticCrucibleBattery.subtext=전기의 힘으로 당신을 강제합니다!
 ie.manual.entry.electrolyticCrucibleBattery0=전해 도가니 배터리는 지속적인 전류를 사용하여 유체를 구성 요소로 분리하고 액체에서 금속을 도금하는 멀티블록입니다.
 ie.manual.entry.electrolyticCrucibleBattery1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 단일 파란색 해치는 유체 입력이며, 분리된 두 유체는 후면 상단 포트에서 출력되며 아이템과 소비된 전해질은 하단에서 출력됩니다.
 ie.manual.entry.electrolyticCrucibleBattery2=멀티블록은 가장 일반적으로 용융 소금을 전기분해하여 <link;solarTower;§n§o태양탑§r>을 위한 용융 나트륨을 제공하는 데 사용됩니다. 엔지니어의 망치로 아이템 출력인 블록을 치면 형성할 수 있습니다.
+ie.manual.entry.electrolyticCrucibleBattery3=전해 도가니 배터리는 한 번에 하나가 아니라 여러 작업을 동시에 처리할 수도 있습니다. 멀티블록에 비교기를 설치하면 첫 번째 유체 출력 탱크가 얼마나 찼는지에 비례하는 신호를 출력합니다. OpenComputers로 켜고 끌 수 있으며, 설정된 경우 레드스톤 제어보다 우선합니다.
 
 ie.manual.entry.meltingCrucible.name=용융 도가니
 ie.manual.entry.meltingCrucible.subtext=펄스 제트가 아님. 용광로가 아님.
 ie.manual.entry.meltingCrucible0=용융 도가니는 전기를 사용하여 고체를 액체로 가열하는 멀티블록입니다. 전원 입력과 레드스톤 입력 사이 블록을 엔지니어의 망치로 치면 형성할 수 있습니다.
 ie.manual.entry.meltingCrucible1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 아이템은 후면 파란색 포트로 입력되며 액체는 전면 하단 주황색 포트에서 출력됩니다. 멀티블록은 가장 일반적으로 용융 소금을 <link;electrolyticCrucibleBattery;§n§o전해 도가니 배터리§r>에 제공하여 <link;solarTower;§n§o태양탑§r>을 위한 용융 나트륨으로 전기분해하는 데 사용됩니다.
+ie.manual.entry.meltingCrucible2=제련 도가니의 냉각 속도는 주변 바이옴의 온도에 따라 달라집니다 - 추운 바이옴에서는 더 빨리 식고, 따뜻한 바이옴에서는 더 천천히 식습니다. 멀티블록에 비교기를 설치하면 현재 열 수준에 비례하는 신호를 출력합니다.
 
 ie.manual.entry.solarMelter.name=태양 용융 도가니
 ie.manual.entry.solarMelter.subtext=코르타스 대 맥켄지
 ie.manual.entry.solarMelter0=태양 용융 도가니는 태양 에너지를 사용하여 고체를 액체로 가열하는 멀티블록입니다. 구조물은 위 그림과 같이 건설되며 중앙 은 판금의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.solarMelter1=전면 조작반에 레드스톤 신호를 적용하면 기계의 진행이 중지되며, 엔지니어의 망치를 사용하면 이 동작을 반전시킬 수 있습니다. 아이템은 후면 파란색 포트로 입력되며 액체는 전면 하단 주황색 포트에서 출력됩니다. 멀티블록은 가장 일반적으로 용융 소금을 <link;electrolyticCrucibleBattery;§n§o전해 도가니 배터리§r>에 제공하여 <link;solarTower;§n§o태양탑§r>을 위한 용융 나트륨으로 전기분해하는 데 사용됩니다.
+ie.manual.entry.solarMelter2=태양탑과 마찬가지로, 태양열 제련 도가니도 열을 발생시키려면 범위 내에 태양 반사기가 연결되어 있어야 합니다 - 범위 내에 반사기가 없으면 계속 가열되지 않습니다. 바이옴 습도도 효율에 영향을 미쳐, 건조한 바이옴은 약간의 보너스를, 습한 바이옴은 페널티를 줍니다. 각 태양 반사기는 한 번에 하나의 수집기에만 연결될 수 있으므로, 여러 태양열 수집기를 서로 가깝게 지으면 같은 반사기 풀을 두고 경쟁하게 됩니다.
+ie.manual.entry.solarMelter2a=멀티블록에 비교기를 설치하면 현재 열 수준에 비례하는 신호를 출력합니다.
 
 ie.manual.entry.radiator.name=방열기
 ie.manual.entry.radiator.subtext=방사 위상 이동
 ie.manual.entry.radiator0=방열기는 뜨거운 유체와 가스를 냉각탑과 유사하게 방사 냉각(가능하다면 전도 냉각)하는 멀티블록입니다. 엔지니어의 망치로 가벼운 엔지니어링 블록을 치면 형성할 수 있습니다. 수평으로 만들 수도 있습니다.
-ie.manual.entry.radiator1=냉각량은 뜨거운 유체와 환경 사이의 온도 차이에 따라 달라지며 유체를 가열하지 않습니다. 효율은 가까운 장애물 수에 따라 달라집니다. §lAdvanced Rocketry§r가 존재하면 처리량은 대기 압력과 방열기의 흑체 등가 온도에 따라 달라집니다. 방열기는 냉각탑에 비해 극도로 비효율적이지만 냉각탑과 달리 진공에서 작동할 수 있습니다. 방열기는 인공 대기에서 작동하지 않습니다.
+ie.manual.entry.radiator1=냉각량은 뜨거운 유체와 환경 사이의 온도 차이에 따라 달라지며 유체를 가열하지 않습니다. 효율은 가까운 장애물 수에 따라 달라집니다. §lAdvanced Rocketry§r 설치 시, 대기 압력과 방열기 온도에도 영향을 받습니다. 방열기는 냉각탑에 비해 극도로 비효율적이지만 냉각탑과 달리 진공에서 작동할 수 있습니다. 방열기는 인공 대기에서 작동하지 않습니다.
+ie.manual.entry.radiator2=네더에서는 주변에 아무리 열린 공간이 많아도 방열기가 전혀 냉각하지 못합니다. 멀티블록에 비교기를 설치하면 현재 주기의 진행도에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
 
 ie.manual.entry.computer.steamTurbine.name=증기 터빈 ☎
 ie.manual.entry.computer.steamTurbine.subtext=끓는 숨결

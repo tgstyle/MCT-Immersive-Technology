@@ -182,7 +182,8 @@ ie.manual.entry.advancedCokeOven.name=高級焦爐
 ie.manual.entry.advancedCokeOven.subtext=現在更快了
 ie.manual.entry.advancedCokeOven0=高級焦爐是允許更快生產焦炭和木焦油的多方塊結構。<br>結構如上所示，使用工程師錘擊中央強化焦爐磚塊形成。
 ie.manual.entry.advancedCokeOven1=允許輸入輸出自動化，也可以用基熱器加速過程添加熱空氣。<br>爐子是用強化磚做的，所以建議第一批鋼用於此升級。<br>類似於改進高爐,焦炭輸出在前,木焦油在後.煤從頂部輸入。
-ie.manual.entry.advancedCokeOven2=焦爐基熱器用於加速煤精煉過程。每爐可連接兩個基熱器到兩側端口，每個基熱器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。
+ie.manual.entry.advancedCokeOven2=焦爐基熱器用於加速煤精煉過程。每爐可連接兩個基熱器到兩側端口，每個基熱器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。預設設定下，每個啟用的基熱器可將處理速度提升一倍。
+ie.manual.entry.advancedCokeOven3=在多方塊結構上放置比較器可輸出與當前批次進度成比例的信號，閒置時為0，接近完成時為15。
 
 ie.manual.entry.alternator.name=交流發電機
 ie.manual.entry.alternator.subtext=讓我們交流
@@ -194,41 +195,51 @@ ie.manual.entry.boiler.name=蒸汽鍋爐
 ie.manual.entry.boiler.subtext=柴油的用法
 ie.manual.entry.boiler0=鍋爐是一種使用液體燃料和水來產生蒸汽的多方塊結構.<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊紅石工程塊那一側的正中心的鐵板金屬塊完成搭建.
 ie.manual.entry.boiler1=水的入口位於左側（裝飾有橙邊方形端）帶有藍色標識，而柴油輸入口則在機器右側藍色標識處.蒸汽輸出口位於頂部且帶有橙色標識.<br>鍋爐需要預熱並維持一定的溫度，才可以將水沸騰成蒸汽.如果在運作過程中關閉鍋爐或不能提供足夠的燃料（默認使用沉浸原油的柴油作為燃料），都會導致鍋爐緩慢的冷卻(至少需要<config;d;boiler_cooldownTime>秒才能從工作溫度完全冷卻).
-ie.manual.entry.boiler2=Oops...
+ie.manual.entry.boiler2=鍋爐在能夠煮沸任何水之前，需要先預熱，這需要燃料。如果被停用或燃料供應不足，鍋爐會緩慢冷卻，從工作溫度完全冷卻大約需要 <config;d;boiler_cooldownTime> 秒。預設燃料是柴油。
+ie.manual.entry.boiler3=如果加熱過程中溫度降到工作溫度以下，進度不會完全清零——而是逐漸倒退，因此短暫的燃料中斷只會消耗部分進度，而非全部。在多方塊結構上放置比較器可輸出與當前熱量水準成比例的信號。支援OpenComputers。
 
 ie.manual.entry.distiller.name=蒸餾器
 ie.manual.entry.distiller.subtext=比水更清澈
 ie.manual.entry.distiller0=蒸餾器是一種可以將水蒸餾成蒸餾水和鹽多方塊結構。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊正面中央的鐵板金屬塊完成搭建.
 ie.manual.entry.distiller1=蒸餾器需要能源供應才能將水蒸餾成蒸餾水和鹽。<br>水可以通過機器左側標有藍點的開口輸入到蒸餾器中.另一側帶有橙點的開口則用作蒸餾水輸出，而另一個橙點開口作為鹽的輸出口。<br>可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式.
+ie.manual.entry.distiller2=物品產出是有機率的，並非必定獲得，與流體產出同時進行。在多方塊結構上放置比較器可輸出與內部Flux儲量成比例的信號。支援OpenComputers。
 
 ie.manual.entry.openBarrel.name=無蓋金屬桶
 ie.manual.entry.openBarrel.subtext=向太陽或白雲開放
 ie.manual.entry.openBarrel0=§6無蓋金屬桶§r是類似金屬桶的單方塊儲罐，只不過頂部沒有被蓋住，因此流體可以直接手持倒入，並且也只能通過頂部輸入，於底部輸出. 當放置在露天處下雨時將被慢慢裝滿，在雷雨天可以兩倍速度裝滿.不過，如果將其放在溫熱環境，水可能會被蒸發...
+ie.manual.entry.openBarrel1=無蓋金屬桶不能接受氣體，只能接受液體。
 
 ie.manual.entry.solarTower.name=太陽能集熱塔
 ie.manual.entry.solarTower.subtext=高端烤鳥機
 ie.manual.entry.solarTower0=太陽能集熱塔是一種可以利用陽光，將水轉換成蒸汽的多方塊結構.<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊中間的輕型工程塊完成搭建.
 ie.manual.entry.solarTower1=太陽能集熱塔可將水或<link;distiller;§n§o蒸餾水§r> 轉換成蒸汽.<br>水可以通過標有藍點的開口輸入,蒸汽從背面帶有橙點的開口輸出.<br>太陽能集熱塔附近至少有一個太陽能反射鏡才能工作.集熱塔的工作效率取決發射鏡的數量比例（實際數量/最大效率鏡子數）.在主世界裡，需要230個反射鏡才可以使得集熱塔效率達到最大.
 ie.manual.entry.solarTower2=太陽能反射鏡的具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊中間的銀塊完成搭建.
-ie.manual.entry.solarTower3=反射鏡的距離集熱塔的距離需要介於 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 個方格之間. 而且擺放位置需要與集熱塔的輸入口平齊（集熱塔底部的混凝土充當地基，不算入第一層）反射鏡遇到沙塵暴、夜晚等情況下無法工作.當處於以下的情況時,會降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮濕的環境<br>*反射鏡被遮擋<br>如果安裝了 §lAdvancedRocketry§r模組，光照效率將會受所在星球的光照強度影響.
+ie.manual.entry.solarTower2a=反射鏡必須放置在集熱塔/熔煉塔的混凝土地基層上方，太高或太低都無法連接。
+ie.manual.entry.solarTower3=反射鏡的距離集熱塔的距離需要介於 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 個方格之間. 而且擺放位置需要與集熱塔的輸入口平齊（集熱塔底部的混凝土充當地基，不算入第一層）反射鏡遇到沙塵暴、夜晚等情況下無法工作.當處於以下的情況時,會降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮濕的環境<br>*反射鏡被遮擋<br>安裝§lAdvancedRocketry§r後，效率隨星球光照變化.
+ie.manual.entry.solarTower4=每個太陽能反射鏡一次只能為一個集熱裝置（集熱塔或太陽能熔煉塔）服務。如果在附近建造多個太陽能集熱裝置，它們將爭奪同一批反射鏡，而不是各自都能達到滿效率。在集熱塔上放置比較器可輸出與當前熱量水準成比例的信號。支援OpenComputers。
 
 ie.manual.entry.controlBlocks.name=限制器和控制裝置
 ie.manual.entry.controlBlocks.subtext=有備而來
-ie.manual.entry.controlBlocks0=§6物品限制器§r可以控制通過它的物品，你可以在GUI裡設定參數，或通過紅石信號強度控制（當紅石信號強度是15時被關閉）. 可在潛行時使用工程師錘設置紅石控制模式.
-ie.manual.entry.controlBlocks1=§6載荷控制器§r可以控制通過它的IF，你可以在GUI裡設定參數，或通過紅石信號強度控制（當紅石信號強度是15時被關閉）. 可在潛行時使用工程師錘設置紅石控制模式.
-ie.manual.entry.controlBlocks2=§6流體控制閥§r可以控制通過它的流體，你可以在GUI裡設定參數，或通過紅石信號強度控制（當紅石信號強度是15時被關閉）. 可在潛行時使用工程師錘設置紅石控制模式.
+ie.manual.entry.controlBlocks0=§6物品限制器§r可以控制通過它的物品，你可以在GUI裡設定：一段時間內的總量上限、目標容器已持有該物品數量的上限（超過則停止輸送）、以及單次傳輸量上限——這三者可以同時組合使用。也可通過紅石信號強度控制：
+ie.manual.entry.controlBlocks0a=一種模式下信號越強輸送量越少（信號15時關閉），另一種模式下信號越強輸送量越多。具體使用哪種模式可在GUI中設定。可在潛行時使用工程師錘設置紅石控制模式.
+ie.manual.entry.controlBlocks1=§6載荷控制器§r可以控制通過它的IF，你可以在GUI裡設定：一段時間內的總量上限、目標容器已持有能量數量的上限（超過則停止輸送）、以及單次傳輸量上限——這三者可以同時組合使用。也可通過紅石信號強度控制：
+ie.manual.entry.controlBlocks1a=一種模式下信號越強輸送量越少（信號15時關閉），另一種模式下信號越強輸送量越多。具體使用哪種模式可在GUI中設定。可在潛行時使用工程師錘設置紅石控制模式.
+ie.manual.entry.controlBlocks2=§6流體控制閥§r可以控制通過它的流體，你可以在GUI裡設定：一段時間內的總量上限、目標容器已持有該流體數量的上限（超過則停止輸送）、以及單次傳輸量上限——這三者可以同時組合使用。也可通過紅石信號強度控制：
+ie.manual.entry.controlBlocks2a=一種模式下信號越強輸送量越少（信號15時關閉），另一種模式下信號越強輸送量越多。具體使用哪種模式可在GUI中設定。可在潛行時使用工程師錘設置紅石控制模式.
 
 ie.manual.entry.steamTurbine.name=蒸汽輪機
 ie.manual.entry.steamTurbine.subtext=沸騰的氣息
 ie.manual.entry.steamTurbine0=蒸汽輪機是使用蒸汽來產生動能的多方塊結構機械.<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊靠近紅石工程塊一端的正中心位置的鋼塊完成搭建.
 ie.manual.entry.steamTurbine1=通入足夠的蒸汽，蒸汽輪機將會緩慢加速，並在<config;i;steamTurbine_timeToMax>秒後達到達到最大轉速.<br>需要在動能軸末端一台連接 <link;alternator;§o§n交流發電機§r>，實現動能的轉換.
 ie.manual.entry.steamTurbine2=可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式.<br>機器前方的流體管道口為蒸汽的輸入口.動能通過鋼質傳動軸輸出，傳動軸右下方為餘熱蒸汽的輸出口，若想進一步改善發電系統，可以將其循環利用.
+ie.manual.entry.steamTurbine3=在多方塊結構上放置比較器可輸出與當前轉速成比例的信號。支援OpenComputers。
 
 ie.manual.entry.highPressureSteamTurbine.name=高壓蒸汽輪機
 ie.manual.entry.highPressureSteamTurbine.subtext=二級朗肯循環
 ie.manual.entry.highPressureSteamTurbine0=與蒸汽輪機一樣，高壓蒸汽輪機是使用蒸汽來產生動能的多方塊結構機械.只不過其是為§lNuclearCraft§r而設計的，通入足夠蒸汽後，<config;i;highPressureSteamTurbine_timeToMax>秒後可達到達到最大轉速.
 ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式.<br>機器前方的流體管道口為蒸汽的輸入口.動能通過鎳質傳動軸輸出，傳動軸右下方為蒸汽的輸出口，若想進一步改善發電系統，可以將其循環利用.
-ie.manual.entry.highPressureSteamTurbine2=
+ie.manual.entry.highPressureSteamTurbine2=可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式。機器前方的流體管道口為輸入口。動能輸出位於機器後方。此外，也可通過動能輸出口下方的輸出管道回收流體。
+ie.manual.entry.highPressureSteamTurbine3=在多方塊結構上放置比較器可輸出與當前轉速成比例的信號。支援OpenComputers。
 
 ie.manual.entry.gasTurbine.name=燃氣輪機
 ie.manual.entry.gasTurbine.subtext=並非來自747
@@ -236,6 +247,7 @@ ie.manual.entry.gasTurbine0=燃氣輪機是使用燃料產生動能，以及燃�
 ie.manual.entry.gasTurbine1=機器前方的流體管道口為燃料的輸入口，兩側有用作不同目的的電源插口.<br>高壓插口：提供4096IF/t利用電磁驅動燃氣輪機至1/4轉速.<br>中壓插口（位於控制面板側）：提供1024IF/t用於將蒸汽輪機在1/4轉速時為燃料點火. 點燃後燃氣輪機開始自行提速,不再需要額外的電源（沒有斷開高壓插口，會導致無法提速）.
 ie.manual.entry.gasTurbine2=為燃氣輪機提供足夠的燃料，機器將緩慢加速.在啟動約30秒後便可達到最大轉速和效率.<br>若是對於一些燃燒熱低的燃料可能需要通過加壓輸送來維持足夠的供應量.<br>如果在正常運作狀態將其關閉，或無法提供足夠的燃料，燃氣輪機的轉速會緩慢降低.如果其轉速降至1/4以下，會導致燃氣輪機熄火，此時需要重新通電點火加速.
 ie.manual.entry.gasTurbine3=與蒸汽輪機類似，燃氣輪機從後部傳動軸輸出動能（需要在動能軸末端一台連接<link;alternator;§o§n交流發電機§r>），實現動能的轉換.燃燒廢氣輸出口則剛好位於傳動軸下方.<br>儘管燃氣輪機本身的效率會比柴油發電機要差，但是對於搭建更大的而且更複雜的電能輸出系統而言，這才是燃氣輪機的價值所在.（即搭建聯合循環發電系統 <link;gasTurbine;§n§oCCGT§r>）.<br>在這套系統中，可以將燃氣輪機產出的大量的高溫燃燒廢氣用於熱交換器內產生蒸汽.
+ie.manual.entry.gasTurbine4=在多方塊結構上放置比較器可輸出與當前轉速成比例的信號。支援OpenComputers。
 
 ie.manual.entry.steelBarrel.name=鋼製金屬桶
 ie.manual.entry.steelBarrel.subtext=全力以赴！
@@ -245,41 +257,50 @@ ie.manual.entry.steelTank.name=鋼製流體儲罐
 ie.manual.entry.steelTank.subtext=全力以赴！
 ie.manual.entry.steelTank0=鋼製流體儲罐是提供更大的流體容量的多方塊結構.它可以存儲<config;i;steelTank_tankSize>mB的任意流體，它可用管道從頂部或底部輸入，但是流體只能從底部輸出.
 ie.manual.entry.steelTank1=在底部提供紅石信號可以讓儲罐自動輸出，紅石比較器可以依據內部容量發出信號.
+ie.manual.entry.steelTank2=儲罐的部分連接點同時充當輸入和輸出。當紅石觸發儲罐主動推出流體時，該流體會被標記為加壓狀態，從而在本模組自己的管道中獲得更快的傳輸速度。
 
 ie.manual.entry.redstone.name=紅石計時器
 ie.manual.entry.redstone.subtext=滴答！滴答！
-ie.manual.entry.redstone0=§6紅石計時器§r擁有輸出紅石脈衝的功能，材質中的紅心方形方塊端為脈衝輸出端，上方為連接紅石線纜的控制端.脈衝的頻率取決於設置好的延遲.你可以在GUI中設置脈衝延遲的資料，GUI中設置10秒以下的脈衝精度為0.5秒，10秒以上的脈衝精度為1秒.紅石計時器可以使用紅石信號停止.
+ie.manual.entry.redstone0=§6紅石計時器§r擁有輸出紅石脈衝的功能，材質中的紅心方形方塊端為脈衝輸出端，上方為連接紅石線纜的控制端.脈衝的頻率取決於設置好的延遲.你可以在GUI中設置脈衝延遲的資料，精度為0.5秒，可調節範圍為0.5秒到30秒.紅石計時器可以使用紅石信號停止.
+ie.manual.entry.redstone1=在不潛行的情況下用錘子敲擊計時器，可以在兩種模式間切換：一種是讀取本地紅石信號來控制計時，另一種是改為透過無線頻道向調至相同顏色的其他連接器廣播脈衝。
 
 ie.manual.entry.coolingTower.name=冷卻塔
 ie.manual.entry.coolingTower.subtext=保持冷靜，朋友！
 ie.manual.entry.coolingTower0=冷卻塔是可以將餘熱蒸汽冷卻成水的多方塊結構.<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊重型工程塊完成搭建.
 ie.manual.entry.coolingTower1=位於重型工程塊左邊(靠近紅色標識)的輸入口用於輸入需要冷卻的液體，而冷卻液輸入口位於重型工程塊的右邊（靠近藍色標識）.冷卻後的液體從背面輸出.<br>如果安裝了§lAdvancedRocketry§r模組，冷卻塔的處理時間取決於將熱量排放到大氣中的能力(與大氣壓力有關).<br>顯然,冷卻塔無法在真空工作..？
+ie.manual.entry.coolingTower2=冷卻塔可以按任意順序接受兩個流體輸入——放入哪個輸入口無關緊要。它還可以並行處理多個批次，而不是嚴格地一次一個，因此產量可能超過單個批次時間所暗示的數值。在多方塊結構上放置比較器可輸出與內部處理佇列的飽和度成比例的信號，而非單個批次的進度。
 
 ie.manual.entry.heatExchanger.name=熱交換器
 ie.manual.entry.heatExchanger.subtext=你好，克勞修斯！
 ie.manual.entry.heatExchanger0=熱交換器是一種可以將某種流體的熱量快速轉移到另外一種流體的多方塊結構. <br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊位於紅石工程塊一側的正中央的鐵板金屬塊完成搭建
 ie.manual.entry.heatExchanger1=高溫流體通過底部對流輸入及輸出（分別標有藍色及橙色標識）,類似地，但低溫流體循環則位於上方.<br>可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式.
+ie.manual.entry.heatExchanger2=在多方塊結構上放置比較器可輸出與內部Flux儲量成比例的信號。支援OpenComputers。
 
 ie.manual.entry.electrolyticCrucibleBattery.name=電解池
 ie.manual.entry.electrolyticCrucibleBattery.subtext=電流的力量!
 ie.manual.entry.electrolyticCrucibleBattery0=電解池是一種利用電流可以對電解質溶液或熔融態物質進行電解的多方塊結構.全部搭建完成後，使用工程師錘右擊物品輸出口可完成搭建.
 ie.manual.entry.electrolyticCrucibleBattery1=可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式. 流體輸入口帶有藍色標識，陰極陽極的產物輸出口位於背面的上方，而物品和廢液將從底部輸出.電解池一般用來將熔融鹽（將鹽熔煉後得到)電解成熔融鈉，向提供給<link;solarTower;§n§o太陽能集熱塔§r>.
-ie.manual.entry.electrolyticCrucibleBattery2=這頁是用來湊頁數的(●'◡'●)<br>如果去掉此頁，將會看到多出來的英文內容(╯°□°）╯︵ ┻━┻
+ie.manual.entry.electrolyticCrucibleBattery2=該多方塊結構最常用於電解熔鹽，為 <link;solarTower;§n§o集熱塔§r> 提供熔融鈉。可以透過用工程師錘敲擊物品輸出方塊來組成結構。
+ie.manual.entry.electrolyticCrucibleBattery3=電解池也可以並行處理多個批次，而不是嚴格地一次一個。在多方塊結構上放置比較器可輸出與第一個流體輸出罐的飽和度成比例的信號。可以透過OpenComputers開關，設定後其優先順序高於紅石控制。
 
 ie.manual.entry.meltingCrucible.name=電熔煉埚
 ie.manual.entry.meltingCrucible.subtext=我不是熔爐！
 ie.manual.entry.meltingCrucible0=電熔煉埚是一個通過電流將固態物體熔煉成流體的多方塊結構. 使用工程師錘右擊位於電源插口和紅石工程塊間的方塊完成搭建.可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊紅石控制面板可以反轉紅石信號模式.
 ie.manual.entry.meltingCrucible1=背面帶藍色標識的為物品輸入口，前面底部帶有橙色標識的為流體輸出口.電熔煉鍋一般用來向 <link;electrolyticCrucibleBattery;§n§o電解池§r>提供熔融鹽.
+ie.manual.entry.meltingCrucible2=電熔煉鍋的冷卻速度取決於當地生物群系的溫度——在寒冷的生物群系中冷卻得更快，在溫暖的生物群系中冷卻得更慢。在多方塊結構上放置比較器可輸出與當前熱量水準成比例的信號。
 
 ie.manual.entry.solarMelter.name=太陽能熔煉塔
 ie.manual.entry.solarMelter.subtext=赫利俄斯 與 安培
 ie.manual.entry.solarMelter0=與電熔煉埚類似，但太陽能熔煉塔是一使用太陽能將固態物體熔煉成流體的多方塊結構. 使用工程師錘右擊位於其中的間的銀塊頂面完成搭建.
 ie.manual.entry.solarMelter1=背面帶藍色標識的為物品輸入口，前面底部帶有橙色標識的為流體輸出口.太陽能熔煉塔一般用來向 <link;electrolyticCrucibleBattery;§n§o電解池§r>提供熔融鹽.熔煉塔需要與太陽能集熱塔一樣的方式擺放反射鏡.可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊面板可以反轉紅石信號模式.
+ie.manual.entry.solarMelter2=與集熱塔一樣，太陽能熔煉塔也需要在範圍內連接太陽能反射鏡才能產生熱量——如果範圍內沒有反射鏡，它將一直無法升溫。生物群系的濕度也會影響其效率，乾燥的生物群系會帶來小幅加成，潮濕的生物群系則會帶來懲罰。每個太陽能反射鏡一次只能為一個集熱裝置服務，因此在附近建造多個太陽能集熱裝置會導致它們爭奪同一批反射鏡。在多方塊結構上放置比較器可輸出
+ie.manual.entry.solarMelter2a=與當前熱量水準成比例的信號。
 
 ie.manual.entry.radiator.name=散熱板
 ie.manual.entry.radiator.subtext=熱輻射
 ie.manual.entry.radiator0=散熱板以輻射(或熱傳導，當有介質的時)的方式冷卻流體，功能與冷卻塔一樣.使用工程師錘右擊輕型工程塊可完成搭建，它也可以水平擺放.
-ie.manual.entry.radiator1=冷卻效率取決於流體溫度環境溫度的溫差以及遮擋物的數量，如果安裝了§lAdvancedRocketry§r模組，散熱效率將取決於大氣壓強，及散熱板的黑體等效溫度. 與冷卻塔相比，散熱板效率極低，但是它可以在真空中工作，不過散熱板不會在人造大氣中工作.
+ie.manual.entry.radiator1=冷卻效率取決於流體溫度環境溫度的溫差以及遮擋物的數量，安裝§lAdvancedRocketry§r後，效率還取決於大氣壓強和散熱板溫度. 與冷卻塔相比，散熱板效率極低，但是它可以在真空中工作，不過散熱板不會在人造大氣中工作.
+ie.manual.entry.radiator2=無論周圍有多少開闊空間，散熱板在下界中都完全無法冷卻。在多方塊結構上放置比較器可輸出與當前循環進度成比例的信號。支援OpenComputers。
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽輪機 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸騰的氣息

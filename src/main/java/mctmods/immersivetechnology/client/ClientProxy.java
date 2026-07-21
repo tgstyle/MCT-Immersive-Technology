@@ -254,25 +254,30 @@ public class ClientProxy extends CommonProxy {
             ManualHelper.addEntry("advancedCokeOven", CAT_IT,
                     new ManualPageMultiblock(ManualHelper.getManual(), "advancedCokeOven0", TileEntityITMultiblockPartAdvancedCokeOven.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "advancedCokeOven1"),
-                    new ManualPages.Crafting(ManualHelper.getManual(), "advancedCokeOven2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER.getMeta())));
+                    new ManualPages.Crafting(ManualHelper.getManual(), "advancedCokeOven2", new ItemStack(ITContent.blockMetalDevice, 1, BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER.getMeta())),
+                    new ManualPages.Text(ManualHelper.getManual(), "advancedCokeOven3"));
         }
         if (Multiblocks.enable.enable_boiler) {
             ManualHelper.addEntry("boiler", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", TileEntityITMultiblockPartBoiler.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "boiler1"),
-                    new ManualPages.Text(ManualHelper.getManual(), "boiler2"));
+                    new ManualPages.Text(ManualHelper.getManual(), "boiler2"),
+                    new ManualPages.Text(ManualHelper.getManual(), "boiler3"));
         }
         if (Multiblocks.enable.enable_solarTower) {
             ManualHelper.addEntry("solarTower", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "solarTower0", TileEntityITMultiblockPartSolarTower.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "solarTower1"),
                     new ManualPageMultiblock(ManualHelper.getManual(), "solarTower2", TileEntityITMultiblockPartSolarReflector.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "solarTower3"));
+                    new ManualPages.Text(ManualHelper.getManual(), "solarTower2a"),
+                    new ManualPages.Text(ManualHelper.getManual(), "solarTower3"),
+                    new ManualPages.Text(ManualHelper.getManual(), "solarTower4"));
         }
         if (Multiblocks.enable.enable_heatExchanger) {
             ManualHelper.addEntry("heatExchanger", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "heatExchanger0", TileEntityITMultiblockPartHeatExchanger.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"));
+                    new ManualPages.Text(ManualHelper.getManual(), "heatExchanger1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "heatExchanger2"));
         }
         if (Multiblocks.enable.enable_gasTurbine || Multiblocks.enable.enable_steamTurbine) {
             ManualHelper.addEntry("alternator", CAT_POWER,
@@ -284,64 +289,80 @@ public class ClientProxy extends CommonProxy {
             ManualHelper.addEntry("steamTurbine", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "steamTurbine0", TileEntityITMultiblockPartSteamTurbine.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "steamTurbine1"),
-                    new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"));
+                    new ManualPages.Text(ManualHelper.getManual(), "steamTurbine2"),
+                    new ManualPages.Text(ManualHelper.getManual(), "steamTurbine3"));
         }
         if (Multiblocks.enable.enable_highPressureSteamTurbine) {
             ManualHelper.addEntry("highPressureSteamTurbine", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "highPressureSteamTurbine0", TileEntityITMultiblockPartHighPressureSteamTurbine.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine1"),
-                    new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine2"));
+                    new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine2"),
+                    new ManualPages.Text(ManualHelper.getManual(), "highPressureSteamTurbine3"));
         }
         if (Multiblocks.enable.enable_gasTurbine) {
             ManualHelper.addEntry("gasTurbine", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "gasTurbine0", TileEntityITMultiblockPartGasTurbine.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "gasTurbine1"),
                     new ManualPages.Text(ManualHelper.getManual(), "gasTurbine2"),
-                    new ManualPages.Text(ManualHelper.getManual(), "gasTurbine3"));
+                    new ManualPages.Text(ManualHelper.getManual(), "gasTurbine3"),
+                    new ManualPages.Text(ManualHelper.getManual(), "gasTurbine4"));
         }
         if (Multiblocks.enable.enable_coolingTower) {
             ManualHelper.addEntry("coolingTower", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "coolingTower0", TileEntityITMultiblockPartCoolingTower.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "coolingTower1"));
+                    new ManualPages.Text(ManualHelper.getManual(), "coolingTower1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "coolingTower2"));
         }
         if (Multiblocks.enable.enable_radiator) {
             ManualHelper.addEntry("radiator", CAT_POWER,
                     new ManualPageMultiblock(ManualHelper.getManual(), "radiator0", TileEntityITMultiblockPartRadiator.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "radiator1"));
+                    new ManualPages.Text(ManualHelper.getManual(), "radiator1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "radiator2"));
         }
         ManualHelper.addEntry("controlBlocks", CAT_IT,
                 new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())),
+                new ManualPages.Text(ManualHelper.getManual(), "controlBlocks0a"),
                 new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks1", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.LOAD_CONTROLLER.getMeta())),
-                new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks2", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())));
+                new ManualPages.Text(ManualHelper.getManual(), "controlBlocks1a"),
+                new ManualPages.Crafting(ManualHelper.getManual(), "controlBlocks2", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())),
+                new ManualPages.Text(ManualHelper.getManual(), "controlBlocks2a"));
         ManualHelper.addEntry("redstone", CAT_IT,
-                new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())));
+                new ManualPages.Crafting(ManualHelper.getManual(), "redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())),
+                new ManualPages.Text(ManualHelper.getManual(), "redstone1"));
         ManualHelper.addEntry("openBarrel", CAT_IT,
-                new ManualPages.Crafting(ManualHelper.getManual(), "openBarrel0", new ItemStack(ITContent.blockMetalBarrel, 1, BlockType_MetalBarrel.BARREL_OPEN.getMeta())));
+                new ManualPages.Crafting(ManualHelper.getManual(), "openBarrel0", new ItemStack(ITContent.blockMetalBarrel, 1, BlockType_MetalBarrel.BARREL_OPEN.getMeta())),
+                new ManualPages.Text(ManualHelper.getManual(), "openBarrel1"));
         ManualHelper.addEntry("steelBarrel", CAT_IT,
                 new ManualPages.Crafting(ManualHelper.getManual(), "steelBarrel0", new ItemStack(ITContent.blockMetalBarrel, 2, BlockType_MetalBarrel.BARREL_STEEL.getMeta())));
         ManualHelper.addEntry("steelTank", CAT_IT,
                 new ManualPageMultiblock(ManualHelper.getManual(), "steelTank0", TileEntityITMultiblockPartSteelSheetmetalTank.instance),
-                new ManualPages.Text(ManualHelper.getManual(), "steelTank1"));
+                new ManualPages.Text(ManualHelper.getManual(), "steelTank1"),
+                new ManualPages.Text(ManualHelper.getManual(), "steelTank2"));
         if (Multiblocks.enable.enable_distiller) {
             ManualHelper.addEntry("distiller", CAT_IT,
                     new ManualPageMultiblock(ManualHelper.getManual(), "distiller0", TileEntityITMultiblockPartDistiller.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "distiller1"));
+                    new ManualPages.Text(ManualHelper.getManual(), "distiller1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "distiller2"));
         }
         if (Multiblocks.enable.enable_meltingCrucible) {
             ManualHelper.addEntry("meltingCrucible", CAT_IT,
                     new ManualPageMultiblock(ManualHelper.getManual(), "meltingCrucible0", TileEntityITMultiblockPartMeltingCrucible.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "meltingCrucible1"));
+                    new ManualPages.Text(ManualHelper.getManual(), "meltingCrucible1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "meltingCrucible2"));
         }
         if (Multiblocks.enable.enable_solarMelter) {
             ManualHelper.addEntry("solarMelter", CAT_IT,
                     new ManualPageMultiblock(ManualHelper.getManual(), "solarMelter0", TileEntityITMultiblockPartSolarMelter.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "solarMelter1"));
+                    new ManualPages.Text(ManualHelper.getManual(), "solarMelter1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "solarMelter2"),
+                    new ManualPages.Text(ManualHelper.getManual(), "solarMelter2a"));
         }
         if (Multiblocks.enable.enable_electrolyticCrucibleBattery) {
             ManualHelper.addEntry("electrolyticCrucibleBattery", CAT_IT,
                     new ManualPageMultiblock(ManualHelper.getManual(), "electrolyticCrucibleBattery0", TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance),
                     new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery1"),
-                    new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery2"));
+                    new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery2"),
+                    new ManualPages.Text(ManualHelper.getManual(), "electrolyticCrucibleBattery3"));
         }
     }
 
