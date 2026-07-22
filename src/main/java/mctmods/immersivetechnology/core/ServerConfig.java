@@ -51,6 +51,9 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT;
 
+    public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_PRESSURIZED;
+    public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_UNPRESSURIZED;
+
     public static final ForgeConfigSpec.IntValue GAS_TURBINE_INPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue GAS_TURBINE_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue GAS_TURBINE_ENERGY_CAPACITY_HV;
@@ -152,6 +155,9 @@ public class ServerConfig {
     public static int electrolyticCrucibleBatteryOutputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
     public static int electrolyticCrucibleBatteryEnergyMaxInput = 4096;
+
+    public static int fluidPipeAmountPressurized = 2500;
+    public static int fluidPipeAmountUnpressurized = 100;
 
     public static int gasTurbineInputTankCapacity = 12000;
     public static int gasTurbineOutputTankCapacity = 12000;
@@ -357,6 +363,11 @@ public class ServerConfig {
         BUILDER.pop();
 
         BUILDER.pop();
+
+        BUILDER.push("fluid_pipe");
+        FLUID_PIPE_AMOUNT_PRESSURIZED = BUILDER.defineInRange("amount_pressurized", 2500, 1, Integer.MAX_VALUE);
+        FLUID_PIPE_AMOUNT_UNPRESSURIZED = BUILDER.defineInRange("amount_unpressurized", 100, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
     }
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -403,6 +414,9 @@ public class ServerConfig {
             electrolyticCrucibleBatteryOutputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyMaxInput = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT.get();
+
+            fluidPipeAmountPressurized = FLUID_PIPE_AMOUNT_PRESSURIZED.get();
+            fluidPipeAmountUnpressurized = FLUID_PIPE_AMOUNT_UNPRESSURIZED.get();
 
             gasTurbineInputTankCapacity = GAS_TURBINE_INPUT_TANK_CAPACITY.get();
             gasTurbineOutputTankCapacity = GAS_TURBINE_OUTPUT_TANK_CAPACITY.get();

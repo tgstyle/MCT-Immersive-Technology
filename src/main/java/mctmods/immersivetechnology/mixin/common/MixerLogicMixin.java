@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.lang.reflect.Field;
 
 @Mixin(MixerLogic.class)
-public abstract class MixerLogicDebounceMixin {
+public abstract class MixerLogicMixin {
 
     @Unique private static final Object it$NOP;
 

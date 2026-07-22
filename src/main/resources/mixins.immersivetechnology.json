@@ -8,10 +8,11 @@
     "common.CapacitorBlockEntityMixin",
     "common.FluidPipeBlockEntityMixin",
     "common.InitializationTrackerMixin",
-    "common.MixerLogicDebounceMixin",
-    "common.MixerRecipePriorityMixin",
-    "common.MixerStateExtensionMixin",
-    "common.MultiblockBEHelperMixin"
+    "common.MixerLogicMixin",
+    "common.MixerLogicStateMixin",
+    "common.MixerRecipeMixin",
+    "common.MultiblockBEHelperCommonMixin",
+    "common.PipeFluidHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

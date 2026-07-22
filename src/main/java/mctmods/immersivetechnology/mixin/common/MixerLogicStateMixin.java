@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(MixerLogic.State.class)
-public abstract class MixerStateExtensionMixin implements IMixerStateDebounceAccessor {
+public abstract class MixerLogicStateMixin implements IMixerStateDebounceAccessor {
 
     @Unique private final NonNullList<ItemStack> it$lastComponents = NonNullList.withSize(MixerLogic.NUM_SLOTS, ItemStack.EMPTY);
 
