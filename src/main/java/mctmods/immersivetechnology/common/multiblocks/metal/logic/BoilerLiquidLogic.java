@@ -204,7 +204,10 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         boolean activeChanged = wasActive != state.active;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
-        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged;
+        int newBurnPercent = (state.lastFuel != null && state.burnRemaining > 0) ? (state.lastFuel.getTotalProcessTime() - state.burnRemaining) * 100 / state.lastFuel.getTotalProcessTime() : 0;
+        boolean burnPercentChanged = newBurnPercent != state.burnPercent;
+        if (burnPercentChanged) { state.burnPercent = newBurnPercent; }
+        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged || burnPercentChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -255,6 +258,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public SlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public int burnRemaining = 0;
+        public int burnPercent = 0;
         public BoilerLiquidRecipe lastFuel;
         public double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
         public double workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
@@ -330,6 +334,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             nbt.put("tanks", tanks.toNBT(provider));
             nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putDouble("workingHeatLevel", workingHeatLevel);
+            nbt.putInt("burnPercent", burnPercent);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -339,6 +344,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             tanks.readNBT(nbt.getCompound("tanks"), provider);
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             workingHeatLevel = nbt.getDouble("workingHeatLevel");
+            burnPercent = nbt.getInt("burnPercent");
             tanksDirty = false;
             inventoryDirty = false;
         }

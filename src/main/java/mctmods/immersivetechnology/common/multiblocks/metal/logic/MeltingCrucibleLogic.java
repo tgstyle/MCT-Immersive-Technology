@@ -146,7 +146,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        boolean update = activeChanged || energyChanged || tanksChanged;
+        int newQueueSize = state.processor.getQueueSize();
+        boolean queueSizeChanged = newQueueSize != state.queueSize;
+        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        boolean update = activeChanged || energyChanged || tanksChanged || queueSizeChanged;
 
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
@@ -246,6 +249,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         public MeltingRecipe activeRecipe = null;
         private ResourceLocation activeRecipeId;
         public boolean tanksDirty = false;
+        public int queueSize = 0;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -321,6 +325,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putDouble("heatLevel", heatLevel);
             if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
+            nbt.putInt("queueSize", queueSize);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -334,6 +339,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
+            queueSize = nbt.getInt("queueSize");
             tanksDirty = false;
         }
     }

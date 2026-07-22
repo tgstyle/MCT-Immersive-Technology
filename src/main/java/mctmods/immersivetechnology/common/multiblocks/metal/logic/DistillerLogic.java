@@ -145,7 +145,10 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         boolean energyChanged = prevEnergy != currentEnergy;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
-        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged;
+        int newQueueSize = state.processor.getQueueSize();
+        boolean queueSizeChanged = newQueueSize != state.queueSize;
+        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || queueSizeChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -233,6 +236,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
+        public int queueSize = 0;
         public RecipeHolder<DistillerRecipe> lastRecipeCache;
 
         public State(IInitialMultiblockContext<State> ctx) {
@@ -321,6 +325,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             nbt.put("tanks", tanks.toNBT(provider));
             nbt.put("energy", energy.serializeNBT(provider));
             nbt.put("inventory", inventory.serializeNBT(provider));
+            nbt.putInt("queueSize", queueSize);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -332,6 +337,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
                 energy.deserializeNBT(provider, energyTag);
             }
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
+            queueSize = nbt.getInt("queueSize");
             tanksDirty = false;
             inventoryDirty = false;
         }

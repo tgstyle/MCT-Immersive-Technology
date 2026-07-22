@@ -140,7 +140,10 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         boolean energyChanged = prevEnergy != currentEnergy;
         CompoundTag currentTanksNBT = state.tanks.toNBT(provider);
         boolean tanksChanged = !prevTanksNBT.equals(currentTanksNBT);
-        boolean update = activeChanged || energyChanged || tanksChanged || progressChanged;
+        int newQueueSize = state.processor.getQueueSize();
+        boolean queueSizeChanged = newQueueSize != state.queueSize;
+        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        boolean update = activeChanged || energyChanged || tanksChanged || progressChanged || queueSizeChanged;
         if (update) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
@@ -207,6 +210,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;
         public int totalProcessTime = 0;
+        public int queueSize = 0;
 
         private static final IItemHandlerModifiable EMPTY_INVENTORY = new IItemHandlerModifiable() {
             @Override public int getSlots() { return 0; }
@@ -272,6 +276,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             nbt.put("energy", energy.serializeNBT(provider));
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
+            nbt.putInt("queueSize", queueSize);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -282,6 +287,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
+            queueSize = nbt.getInt("queueSize");
         }
 
         @Override public AveragingEnergyStorage getEnergy() { return energy; }
