@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Mixin(MixerRecipe.class)
-public abstract class MixerRecipePriorityMixin {
+public abstract class MixerRecipeMixin {
 
     @Inject(
             method = "findRecipe(Lnet/minecraft/world/level/Level;Lnet/neoforged/neoforge/fluids/FluidStack;Lnet/minecraft/core/NonNullList;)Lnet/minecraft/world/item/crafting/RecipeHolder;",

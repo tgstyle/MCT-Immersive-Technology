@@ -6,11 +6,12 @@
   "refmap": "immersivetechnology.refmap.json",
   "mixins": [
     "common.CapacitorBlockEntityMixin",
+    "common.IFluidPipeMixin",
     "common.InitializationTrackerMixin",
-    "common.MixerLogicDebounceMixin",
-    "common.MixerRecipePriorityMixin",
-    "common.MixerStateExtensionMixin",
-    "common.MultiblockBEHelperMixin"
+    "common.MixerLogicMixin",
+    "common.MixerRecipeMixin",
+    "common.MixerLogicStateMixin",
+    "common.MultiblockBEHelperCommonMixin"
   ],
   "injectors": {
     "defaultRequire": 1
