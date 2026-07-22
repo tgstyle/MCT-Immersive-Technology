@@ -199,7 +199,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.invCap = new StoredCapability<>(inventory);
             this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
-            this.processor = new MultiblockProcessor.InMachineProcessor<>(3, 0f, 1, markDirty, ElectrolyticCrucibleBatteryRecipe.RECIPES::getById);
+            this.processor = new MultiblockProcessor.InMachineProcessor<>(3, 0f, 3, markDirty, ElectrolyticCrucibleBatteryRecipe.RECIPES::getById);
             this.itemOutputCap = new StoredCapability<>(inventory);
             this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
         }
