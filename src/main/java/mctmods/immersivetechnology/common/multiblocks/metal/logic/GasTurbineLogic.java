@@ -62,6 +62,13 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(GasTurbineShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,1,0,0,2,0,0,3,0,0,4,0,0,5,0,0,6,0,0,7,0,1,1,0,1,2,0,1,3,0,1,4,0,1,5,0,1,6,0,1,7,0,2,1,0,2,2,0,2,3,0,2,4,0,2,5,0,2,7,1,0,1,1,0,2,1,0,3,1,0,4,1,0,5,1,0,6,1,0,7,1,1,0,1,1,1,1,1,2,1,1,3,1,1,4,1,1,5,1,1,6,1,1,7,1,2,1,1,2,2,1,2,3,1,2,4,1,2,5,1,2,7,2,0,1,2,0,2,2,0,3,2,0,4,2,0,5,2,0,6,2,0,7,2,1,1,2,1,2,2,1,3,2,1,4,2,1,5,2,1,6,2,1,7,2,2,1,2,2,2,2,2,3,2,2,4,2,2,5,2,2,7};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     public static final BlockPos SMOKE_POI0 = MultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
     public static final BlockPos SMOKE_POI1 = MultiblockPOIHelper.getPosList(RAW_POIS, "smoke1").get(0);
     public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").get(0);
@@ -348,7 +355,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 }
             }
         }
-        if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0) {
+        int newComparatorValue = state.effectiveMaxSpeed > 0 ? (15 * state.speed) / state.effectiveMaxSpeed : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0 || comparatorChanged) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -439,6 +449,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         private RotationInertiaProcess inertia;
         private transient int soundGrace = 0;
         public boolean tanksDirty = false;
+        public int lastComparatorValue = -1;
         private final MechanicalEnergyProvider mechanicalProvider;
 
         public State(IInitialMultiblockContext<State> ctx) {

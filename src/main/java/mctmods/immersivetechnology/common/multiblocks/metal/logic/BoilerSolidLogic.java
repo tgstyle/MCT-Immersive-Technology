@@ -72,6 +72,13 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     private static final int HEIGHT = BoilerSolidShape.HEIGHT;
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     public static final List<BlockPos> IGNITION_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "ignition0");
     public static final List<BlockPos> ITEM_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "item_input0");
     public static final List<BlockPos> HEAT_OUTPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "heat_output0");
@@ -196,6 +203,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             }
         }
         if (previousHeatLevel != state.heatLevel || prevPilotLit != state.pilotLit) { update = true; }
+        int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;
+        if (newComparatorValue != state.lastComparatorValue) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; update = true; }
         if (update) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
@@ -276,6 +285,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean inventoryDirty = false;
+        public int lastComparatorValue = -1;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();

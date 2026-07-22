@@ -59,6 +59,13 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ElectrolyticCrucibleBatteryShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,0,3,0,0,4,0,0,5,0,0,6,0,0,7,0,0,8,0,1,0,0,1,1,0,1,2,0,1,3,0,1,4,0,1,5,0,1,6,0,1,7,0,1,8,0,2,0,0,2,1,0,2,2,0,2,3,0,2,4,0,2,5,0,2,6,0,2,7,0,2,8,0,3,0,0,3,1,0,3,2,0,3,3,0,3,4,0,3,5,0,3,6,0,3,7,0,3,8,1,0,0,1,0,1,1,0,2,1,0,3,1,0,4,1,0,5,1,0,6,1,0,7,1,0,8,1,1,0,1,1,1,1,1,2,1,1,3,1,1,4,1,1,5,1,1,6,1,1,7,1,1,8,1,2,1,1,2,2,1,2,3,1,2,4,1,2,5,1,2,6,1,2,7,1,2,8,1,3,0,1,3,1,1,3,2,1,3,3,1,3,4,1,3,5,1,3,6,1,3,7,1,3,8,2,0,0,2,0,1,2,0,2,2,0,3,2,0,4,2,0,5,2,0,6,2,0,7,2,0,8,2,1,0,2,1,1,2,1,2,2,1,3,2,1,4,2,1,5,2,1,6,2,1,7,2,1,8,2,2,0,2,2,1,2,2,2,2,2,3,2,2,4,2,2,5,2,2,6,2,2,7,2,2,8,2,3,0,2,3,1,2,3,2,2,3,3,2,3,4,2,3,5,2,3,6,2,3,7,2,3,8};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS_0 = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS_1 = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1");
@@ -124,7 +131,11 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
         boolean percentsChanged = updateProcessPercents(state, ctx.getLevel().getRawLevel());
-        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || percentsChanged;
+        int outputCapacity = state.tanks.output0.getCapacity();
+        int newComparatorValue = outputCapacity > 0 ? (15 * state.tanks.output0.getFluidAmount()) / outputCapacity : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || percentsChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -200,6 +211,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
         public int[] processPercents = new int[]{-1, -1, -1};
+        public int lastComparatorValue = -1;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();

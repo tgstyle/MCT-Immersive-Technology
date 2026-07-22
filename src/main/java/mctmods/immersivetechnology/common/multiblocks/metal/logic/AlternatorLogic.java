@@ -53,6 +53,13 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
 
     public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,0,3,0,1,0,0,1,1,0,1,2,0,1,3,0,2,0,0,2,1,0,2,3,1,0,0,1,0,1,1,0,2,1,0,3,1,1,0,1,1,1,1,1,2,1,1,3,1,2,0,1,2,1,1,2,3,2,0,0,2,0,1,2,0,2,2,0,3,2,1,0,2,1,1,2,1,2,2,1,3,2,2,0,2,2,1,2,2,3};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     public static final CapabilityPosition MECHANICAL_INPUT_POI = MultiblockPOIHelper.getCapabilityPosition(RAW_POIS, "mechanical_input0");
     private static final List<BlockPos> ENERGY_LEFT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_left0");
     private static final List<BlockPos> ENERGY_RIGHT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_right0");
@@ -132,7 +139,11 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         boolean torqueChanged = prevTorque != state.torqueMultiplier;
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
-        boolean update = activeChanged || speedChanged || torqueChanged || energyChanged;
+        int maxEnergy = state.energy.getMaxEnergyStored();
+        int newComparatorValue = maxEnergy > 0 ? (15 * currentEnergy) / maxEnergy : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || speedChanged || torqueChanged || energyChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -229,6 +240,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public AveragingEnergyStorage energy;
         public boolean active = false;
         public int speed = 0;
+        public int lastComparatorValue = -1;
         public float torqueMultiplier = 1f;
         public int effectiveMaxSpeed = MAX_SPEED;
         public BooleanSupplier isSoundPlaying = () -> false;

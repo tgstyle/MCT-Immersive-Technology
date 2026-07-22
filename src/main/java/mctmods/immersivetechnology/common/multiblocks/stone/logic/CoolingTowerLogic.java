@@ -58,6 +58,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     public static final BlockPos PARTICLE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "particle0").get(0);
     public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    public static final BlockPos COMPARATOR_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "master").get(0);
 
     private static final RelativeBlockFace INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
     private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
@@ -167,7 +168,10 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             if (newPercent != state.processPercents[i]) { state.processPercents[i] = newPercent; percentsChanged = true; }
         }
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        boolean update = activeChanged || percentsChanged || tanksChanged;
+        int newComparatorValue = (15 * state.processQueue.size()) / getProcessQueueMaxLength();
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { ctx.setComparatorOutputFor(COMPARATOR_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || percentsChanged || tanksChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -211,6 +215,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
         public int[] processPercents = new int[]{-1, -1, -1};
+        public int lastComparatorValue = -1;
         public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {

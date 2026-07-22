@@ -64,6 +64,13 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
     public static final List<BlockPos> HEAT_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "heat_input0");
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1,0,2,2,1,0,0,1,0,1,1,0,2,1,1,0,1,1,1,1,1,2,1,2,0,1,2,1,1,2,2,2,0,0,2,0,1,2,0,2,2,1,0,2,1,1,2,1,2,2,2,0,2,2,1,2,2,2,3,0,0,3,0,1,3,0,2,3,1,0,3,1,1,3,1,2,3,2,0,3,2,1,3,2,2};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
     private static final RelativeBlockFace OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
     private static final RelativeBlockFace HEAT_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_input0");
@@ -138,6 +145,8 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         }
         pumpOutputs(ctx);
         if (tryEmptyContainer(state.tanks.input, state.inventory)) { update = true; }
+        int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;
+        if (newComparatorValue != state.lastComparatorValue) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; update = true; }
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -189,6 +198,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public BoilerTankRecipe lastRecipe;
         public double heatLevel = 0;
         public double workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+        public int lastComparatorValue = -1;
         public boolean active = false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;

@@ -90,6 +90,13 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static final MultiblockFace ITEM_INPUT_POI = new MultiblockFace(MultiblockPOIHelper.getFacing(RAW_POIS, "item_input0"), MultiblockPOIHelper.getPosList(RAW_POIS, "item_input0").get(0));
     public static final BlockPos SMOKE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "smoke0").get(0);
     public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1,0,2,2,1,0,0,1,0,1,1,0,2,1,1,0,1,1,1,1,1,2,1,2,0,1,2,1,1,2,2,1,3,1,2,0,0,2,0,1,2,0,2,2,1,0,2,1,1,2,1,2,2,2,0,2,2,1,2,2,2};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     public static final BlockPos BASEHEATER0_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "baseheater0").get(0);
     public static final BlockPos BASEHEATER1_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "baseheater1").get(0);
 
@@ -176,7 +183,15 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         }
         boolean activeChanged = wasActive != state.active;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        if (activeChanged || tanksChanged) {
+        var queue = state.processor.getQueue();
+        int newComparatorValue = 0;
+        if (!queue.isEmpty()) {
+            int maxTicks = queue.get(0).getMaxTicks(level);
+            newComparatorValue = maxTicks > 0 ? (15 * queue.get(0).processTick) / maxTicks : 0;
+        }
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        if (activeChanged || tanksChanged || comparatorChanged) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -237,6 +252,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         public BooleanSupplier isSoundPlaying = () -> false;
         private final AveragingEnergyStorage energy = new AveragingEnergyStorage(0);
         public boolean tanksDirty = false;
+        public int lastComparatorValue = -1;
 
         public State(IInitialMultiblockContext<State> ctx) {
             final Runnable markDirty = ctx.getMarkDirtyRunnable();

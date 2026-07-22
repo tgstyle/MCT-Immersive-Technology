@@ -237,6 +237,9 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             }
         }
         pumpOutputs(ctx);
+        double workingLevel = state.activeRecipe != null ? state.activeRecipe.requiredTemp : WORKING_HEAT_LEVEL;
+        int newComparatorValue = workingLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / workingLevel) : 0;
+        if (newComparatorValue != state.lastComparatorValue) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; update = true; }
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -400,6 +403,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         public boolean failVertical = false;
         public int requiredMove = 0;
         public boolean active;
+        public int lastComparatorValue = -1;
         public BooleanSupplier isSoundPlaying = () -> false;
         private int soundId = 0;
         public boolean sunVisible = true;
