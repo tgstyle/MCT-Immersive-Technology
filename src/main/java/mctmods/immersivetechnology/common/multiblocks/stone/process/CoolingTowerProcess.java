@@ -8,6 +8,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 public class CoolingTowerProcess {
     private final CoolingTowerRecipe recipe;
     private int ticksProcessed = 0;
+    private double progressAccumulator = 0.0D;
 
     public CoolingTowerProcess(CoolingTowerRecipe recipe) { this.recipe = recipe; }
 
@@ -27,7 +28,9 @@ public class CoolingTowerProcess {
             }
         }
 
-        int advance = (int) Math.max(1, speedMult);
+        progressAccumulator += Math.max(speedMult, 0.0D);
+        int advance = (int) progressAccumulator;
+        progressAccumulator -= advance;
         for (int i = 0; i < advance && ticksProcessed < recipe.getTotalProcessTime(); i++) {
             FluidStack out0 = recipe.fluidOutput0();
             FluidStack out1 = recipe.fluidOutput1();

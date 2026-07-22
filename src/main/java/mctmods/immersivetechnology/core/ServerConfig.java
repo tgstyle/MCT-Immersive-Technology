@@ -39,6 +39,7 @@ public class ServerConfig {
     public static final ModConfigSpec.IntValue BOILER_TANK_PROGRESS_LOSS_PER_TICK;
 
     public static final ModConfigSpec.DoubleValue COOLING_TOWER_BIOME_TEMP_FACTOR;
+    public static final ModConfigSpec.DoubleValue COOLING_TOWER_BIOME_HUMIDITY_FACTOR;
     public static final ModConfigSpec.IntValue COOLING_TOWER_INPUT_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue COOLING_TOWER_OUTPUT_TANK_CAPACITY;
 
@@ -80,6 +81,8 @@ public class ServerConfig {
     public static final ModConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN;
 
     public static final ModConfigSpec.DoubleValue RADIATOR_BIOME_TEMP_FACTOR;
+    public static final ModConfigSpec.DoubleValue RADIATOR_BIOME_HUMIDITY_FACTOR;
+    public static final ModConfigSpec.DoubleValue RADIATOR_REFLECTOR_FACTOR;
     public static final ModConfigSpec.IntValue RADIATOR_INPUT_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue RADIATOR_OUTPUT_TANK_CAPACITY;
     public static final ModConfigSpec.DoubleValue RADIATOR_SPEED_MULTIPLIER;
@@ -144,6 +147,7 @@ public class ServerConfig {
     public static int boilerTankProgressLossPerTick = 1;
 
     public static double coolingTowerBiomeTempFactor = 0.5D;
+    public static double coolingTowerBiomeHumidityFactor = 3.0D;
     public static int coolingTowerInputTankCapacity = 24000;
     public static int coolingTowerOutputTankCapacity = 24000;
 
@@ -188,6 +192,8 @@ public class ServerConfig {
     public static int radiatorOutputTankCapacity = 8000;
     public static double radiatorSpeedMultiplier = 1.0D;
     public static double radiatorBiomeTempFactor = 0.5D;
+    public static double radiatorBiomeHumidityFactor = 3.0D;
+    public static double radiatorReflectorFactor = 1.0D;
 
     public static double solarMelterDayMinHeatLoss = 0.0D;
     public static double solarMelterLossPerSectionDrop = 0.035D;
@@ -267,6 +273,9 @@ public class ServerConfig {
         COOLING_TOWER_BIOME_TEMP_FACTOR = BUILDER
                 .comment("Biome temperature effect strength on cooling tower speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8.")
                 .defineInRange("biome_temp_factor", 0.5D, 0.0D, 2.0D);
+        COOLING_TOWER_BIOME_HUMIDITY_FACTOR = BUILDER
+                .comment("Biome humidity effect strength on cooling tower speed (0 = disabled). Drier biomes speed it up, wetter biomes slow it down.")
+                .defineInRange("biome_humidity_factor", 3.0D, 0.0D, 10.0D);
         BUILDER.pop();
 
         BUILDER.push("distiller");
@@ -320,6 +329,12 @@ public class ServerConfig {
         RADIATOR_BIOME_TEMP_FACTOR = BUILDER
                 .comment("Biome temperature effect strength on radiator speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8.")
                 .defineInRange("biome_temp_factor", 0.5D, 0.0D, 2.0D);
+        RADIATOR_BIOME_HUMIDITY_FACTOR = BUILDER
+                .comment("Biome humidity effect strength on radiator speed (0 = disabled). Drier biomes give a bonus, wetter biomes a penalty.")
+                .defineInRange("biome_humidity_factor", 3.0D, 0.0D, 10.0D);
+        RADIATOR_REFLECTOR_FACTOR = BUILDER
+                .comment("Strength of the open-space check around the radiator (0 = disabled). Open air on both sides gives full efficiency; nearby blocks reduce it, worst when something sits right next to it.")
+                .defineInRange("reflector_factor", 1.0D, 0.0D, 2.0D);
         BUILDER.pop();
 
         BUILDER.push("solar_melter");
@@ -405,6 +420,7 @@ public class ServerConfig {
             coolingTowerInputTankCapacity = COOLING_TOWER_INPUT_TANK_CAPACITY.get();
             coolingTowerOutputTankCapacity = COOLING_TOWER_OUTPUT_TANK_CAPACITY.get();
             coolingTowerBiomeTempFactor = COOLING_TOWER_BIOME_TEMP_FACTOR.get();
+            coolingTowerBiomeHumidityFactor = COOLING_TOWER_BIOME_HUMIDITY_FACTOR.get();
 
             distillerInputTankCapacity = DISTILLER_INPUT_TANK_CAPACITY.get();
             distillerOutputTankCapacity = DISTILLER_OUTPUT_TANK_CAPACITY.get();
@@ -447,6 +463,8 @@ public class ServerConfig {
             radiatorOutputTankCapacity = RADIATOR_OUTPUT_TANK_CAPACITY.get();
             radiatorSpeedMultiplier = RADIATOR_SPEED_MULTIPLIER.get();
             radiatorBiomeTempFactor = RADIATOR_BIOME_TEMP_FACTOR.get();
+            radiatorBiomeHumidityFactor = RADIATOR_BIOME_HUMIDITY_FACTOR.get();
+            radiatorReflectorFactor = RADIATOR_REFLECTOR_FACTOR.get();
 
             solarMelterDayMinHeatLoss = SOLAR_MELTER_DAY_MIN_HEAT_LOSS.get();
             solarMelterLossPerSectionDrop = SOLAR_MELTER_LOSS_PER_SECTION_DROP.get();

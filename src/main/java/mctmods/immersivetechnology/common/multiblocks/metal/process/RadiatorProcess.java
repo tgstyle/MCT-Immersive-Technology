@@ -8,6 +8,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 public class RadiatorProcess {
     private final RadiatorRecipe recipe;
     private int ticksProcessed = 0;
+    private double progressAccumulator = 0.0D;
 
     public RadiatorProcess(RadiatorRecipe recipe) {
         this.recipe = recipe;
@@ -20,7 +21,9 @@ public class RadiatorProcess {
     public void tick(MarkableFluidTank output, double speedMult) {
         if (ticksProcessed >= recipe.getTotalProcessTime()) return;
 
-        int advance = (int) Math.max(1, speedMult);
+        progressAccumulator += Math.max(speedMult, 0.0D);
+        int advance = (int) progressAccumulator;
+        progressAccumulator -= advance;
         for (int i = 0; i < advance && ticksProcessed < recipe.getTotalProcessTime(); i++) {
             FluidStack outFluid = recipe.fluidOutput();
             if (outFluid != null && !outFluid.isEmpty()) {
