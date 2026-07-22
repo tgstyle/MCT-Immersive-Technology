@@ -63,6 +63,9 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private boolean isRunning = false;
     private int tickCountdown = 5;
     private int oldComparatorOutput = 0;
+    private boolean active = false;
+    private boolean wasEnabled = false;
+    private int pressureReleaseCooldown = 0;
 
     public HighPressureSteamTurbineRecipe cachedTurbineRecipe;
     private IMechanicalEnergy alternator;
@@ -173,12 +176,16 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
         boolean changed = false;
         int prevSpeed = speed;
+        boolean wasActive = active;
+        active = false;
+        boolean currentlyEnabled = !isRSDisabled();
 
         if (fuelBurnRemaining > 0) {
             fuelBurnRemaining--;
             speed = Math.min(maxSpeed, speed + speedGainPerTick);
             changed = true;
-        } else if (!isRSDisabled() && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
+            active = true;
+        } else if (currentlyEnabled && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
             FluidStack fluid = tanks[0].getFluid();
 
             HighPressureSteamTurbineRecipe recipe;
@@ -195,12 +202,21 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
                 if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
                 speed = Math.min(maxSpeed, speed + speedGainPerTick);
                 changed = true;
+                active = true;
             } else {
                 speed = Math.max(0, speed - speedLossPerTick);
             }
         } else {
             speed = Math.max(0, speed - speedLossPerTick);
         }
+
+        if (pressureReleaseCooldown > 0) { pressureReleaseCooldown--; }
+        boolean triggerRelease = (!wasActive && active) || (!wasEnabled && currentlyEnabled);
+        if (triggerRelease && pressureReleaseCooldown <= 0) {
+            BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1));
+            pressureReleaseCooldown = 200;
+        }
+        wasEnabled = currentlyEnabled;
 
         if (speed != prevSpeed) changed = true;
         if (pumpOutputOut()) changed = true;
