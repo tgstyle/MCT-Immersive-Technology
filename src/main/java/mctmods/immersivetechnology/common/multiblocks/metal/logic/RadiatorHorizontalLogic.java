@@ -69,14 +69,42 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
     @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
 
     private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
-        if (ServerConfig.radiatorBiomeTempFactor <= 0.0D) { return 1.0D; }
+        double tempFactor = ServerConfig.radiatorBiomeTempFactor;
+        double humidityFactor = ServerConfig.radiatorBiomeHumidityFactor;
+        if (tempFactor <= 0.0D && humidityFactor <= 0.0D) { return 1.0D; }
         Level level = ctx.getLevel().getRawLevel();
-        if (level.dimension() == Level.NETHER) { return 0.0D; }
+        if (tempFactor > 0.0D && level.dimension() == Level.NETHER) { return 0.0D; }
         BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         Biome biome = level.getBiome(worldPos).value();
-        double temp = biome.getBaseTemperature();
-        double deviation = temp - 0.8D;
-        return 1.0D + (deviation * ServerConfig.radiatorBiomeTempFactor);
+        double multiplier = 1.0D;
+        if (tempFactor > 0.0D) { multiplier -= (biome.getBaseTemperature() - 0.8D) * tempFactor; }
+        if (humidityFactor > 0.0D) { multiplier += 0.075D * humidityFactor * -((biome.getModifiedClimateSettings().downfall() - 0.5D) / 0.5D); }
+        return Math.max(multiplier, 0.01D);
+    }
+
+    private static final int[] REFLECTOR_DEPTHS = {1, 4, 7};
+    private static final int[] REFLECTOR_WIDTHS = {1, 5};
+
+    private double getReflectorEfficiency(IMultiblockContext<State> ctx) {
+        double reflectorFactor = ServerConfig.radiatorReflectorFactor;
+        if (reflectorFactor <= 0.0D) { return 1.0D; }
+        double rawEfficiency = 0.0D;
+        for (int z : REFLECTOR_DEPTHS) {
+            for (int x : REFLECTOR_WIDTHS) {
+                rawEfficiency += checkColumnEfficiency(ctx, x, z, -1) / 12.0D;
+                rawEfficiency += checkColumnEfficiency(ctx, x, z, 1) / 12.0D;
+            }
+        }
+        return Math.max(1.0D - (1.0D - rawEfficiency) * reflectorFactor, 0.0D);
+    }
+
+    private double checkColumnEfficiency(IMultiblockContext<State> ctx, int x, int z, int sideSign) {
+        Level level = ctx.getLevel().getRawLevel();
+        for (int i = 1; i <= 24; i++) {
+            BlockPos worldPos = ctx.getLevel().toAbsolute(new BlockPos(x, sideSign * i, z));
+            if (!level.isLoaded(worldPos) || !level.getBlockState(worldPos).isAir()) { return 1.0D / ((25 - i) * (25 - i)); }
+        }
+        return 1.0D;
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
@@ -89,14 +117,19 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         boolean progressChanged = false;
 
         double biomeMult = getBiomeSpeedMultiplier(ctx);
+        BlockPos masterPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
+        if (state.radiationEfficiency <= 0.0D || level.getGameTime() % 600L == Math.abs(masterPos.hashCode()) % 600L) {
+            state.radiationEfficiency = getReflectorEfficiency(ctx);
+        }
+        double speedMult = biomeMult * state.radiationEfficiency;
 
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             RadiatorProcess process = state.processQueue.get(i);
-            process.tick(state.tanks.input(), state.tanks.output(), biomeMult);
+            process.tick(state.tanks.input(), state.tanks.output(), speedMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
 
-        if (enabled && state.processQueue.size() < 2) {
+        if (enabled && speedMult > 0.0D && state.processQueue.size() < 2) {
             FluidStack input = state.tanks.input().getFluid();
             RadiatorRecipe recipe = state.recipeGetter.apply(level, input);
             if (recipe != null) {
@@ -176,6 +209,7 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
         public int processProgress = 0;
         public int totalProcessTime = 0;
         public boolean tanksDirty = false;
+        public double radiationEfficiency = 0.0D;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();

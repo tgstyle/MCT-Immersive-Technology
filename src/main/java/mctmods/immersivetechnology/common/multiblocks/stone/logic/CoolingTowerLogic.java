@@ -69,14 +69,17 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
 
     private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
-        if (ServerConfig.coolingTowerBiomeTempFactor <= 0.0D) return 1.0D;
+        double tempFactor = ServerConfig.coolingTowerBiomeTempFactor;
+        double humidityFactor = ServerConfig.coolingTowerBiomeHumidityFactor;
+        if (tempFactor <= 0.0D && humidityFactor <= 0.0D) { return 1.0D; }
         Level level = ctx.getLevel().getRawLevel();
-        if (level.dimension() == Level.NETHER) return 0.0D;
+        if (tempFactor > 0.0D && level.dimension() == Level.NETHER) { return 0.0D; }
         BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         Biome biome = level.getBiome(worldPos).value();
-        double temp = biome.getBaseTemperature();
-        double deviation = temp - 0.8D;
-        return 1.0D + (deviation * ServerConfig.coolingTowerBiomeTempFactor);
+        double multiplier = 1.0D;
+        if (tempFactor > 0.0D) { multiplier -= (biome.getBaseTemperature() - 0.8D) * tempFactor; }
+        if (humidityFactor > 0.0D) { multiplier += 0.075D * humidityFactor * -((biome.getModifiedClimateSettings().downfall() - 0.5D) / 0.5D); }
+        return Math.max(multiplier, 0.01D);
     }
 
     @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
@@ -127,7 +130,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             process.tick(state, biomeMult);
             if (process.isComplete()) { state.processQueue.remove(i); }
         }
-        if (state.processQueue.size() < getProcessQueueMaxLength()) {
+        if (biomeMult > 0.0D && state.processQueue.size() < getProcessQueueMaxLength()) {
             FluidStack in0 = state.tanks.input0.getFluid();
             FluidStack in1 = state.tanks.input1.getFluid();
             CoolingTowerRecipe recipe = state.recipeGetter.apply(level, in0, in1);
