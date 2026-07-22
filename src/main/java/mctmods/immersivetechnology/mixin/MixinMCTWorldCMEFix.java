@@ -58,11 +58,11 @@ public abstract class MixinMCTWorldCMEFix {
                 int sizeBefore = loadedTileEntityList.size();
                 loadedTileEntityList.add(tile);
                 if (tile instanceof ITickable) { tickableTileEntities.add(tile); }
+                tile.onLoad();
                 if (isRemote) {
                     IBlockState state = world.getBlockState(tile.getPos());
                     world.notifyBlockUpdate(tile.getPos(), state, state, 2);
                 }
-                tile.onLoad();
                 int sizeAfter = loadedTileEntityList.size();
                 if (MCTMixinConfig.mixinSettings.enablePotentialsLogging && sizeAfter > sizeBefore + 1) { MCTMixin.LOGGER.warn("Potential CME detected: {} at {}", tile.getClass().getName(), tile.getPos()); }
             }

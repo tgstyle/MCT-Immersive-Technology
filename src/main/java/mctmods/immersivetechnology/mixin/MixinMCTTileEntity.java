@@ -56,8 +56,7 @@ public abstract class MixinMCTTileEntity {
                 System.err.printf("A TileEntity %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author\n", s, oclass == null ? null : oclass.getName());
                 throwable1.printStackTrace(System.err);
             } else {
-                assert LOGGER != null;
-                LOGGER.error("Failed to create block entity {}", s, throwable1);
+                if (LOGGER != null) { LOGGER.error("Failed to create block entity {}", s, throwable1); }
                 FMLLog.log.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author", s, oclass == null ? null : oclass.getName(), throwable1);
             }
         }
