@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.mixin;
 
+import mctmods.immersivetechnology.core.MCTMixinConfig;
+
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
 import blusunrize.immersiveengineering.client.ClientUtils;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,14 +38,17 @@ public abstract class MixinIEClientUtils {
         ret[1] = new ArrayList<>();
 
         Set<Connection> conns = s.getValue(IEProperties.CONNECTIONS);
-        if (conns == null || conns.isEmpty()) { cir.setReturnValue(ret); return; }
+        if (conns == null || conns.isEmpty()) {
+            cir.setReturnValue(ret);
+            return;
+        }
 
         Vector3f dir = new Vector3f();
         Vector3f cross = new Vector3f();
 
         for (Connection conn : conns) {
             Vec3d[] vertices = conn.catenaryVertices;
-            if (vertices == null || vertices.length < 2) continue;
+            if (vertices == null || vertices.length < 2) { continue; }
 
             int color = conn.cableType.getColour(conn);
             float[] rgb = new float[]{(color >> 16 & 255) / 255f,(color >> 8 & 255) / 255f,(color & 255) / 255f,1f};
@@ -53,8 +56,18 @@ public abstract class MixinIEClientUtils {
 
             BlockPos basePos = conn.start;
 
-            for (int i = 1; i < vertices.length; i++) {
-                boolean isFading = (i == vertices.length - 1);
+            List<Integer> crossings = new ArrayList<>();
+            for (int i = 1; i < vertices.length; i++) { if (ClientUtils.crossesChunkBoundary(vertices[i], vertices[i - 1], basePos)) { crossings.add(i); } }
+
+            int max;
+            if (crossings.size() <= 1) {
+                boolean greater = conn.start.compareTo(conn.end) > 0;
+                max = !crossings.isEmpty() ? crossings.get(0) + (greater ? 1 : 2) : (greater ? vertices.length + 1 : 0);
+            }
+            else { max = vertices.length; }
+
+            for (int i = 1; i < max && i < vertices.length; i++) {
+                boolean isFading = (i == max - 1);
                 List<BakedQuad> targetList = ret[isFading ? 1 : 0];
 
                 Vec3d v0 = vertices[i - 1];
