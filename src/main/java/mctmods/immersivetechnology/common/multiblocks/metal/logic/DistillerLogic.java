@@ -145,7 +145,10 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         boolean energyChanged = prevEnergy != currentEnergy;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
-        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged;
+        int newQueueSize = state.processor.getQueueSize();
+        boolean queueSizeChanged = newQueueSize != state.queueSize;
+        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || queueSizeChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -224,6 +227,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
+        public int queueSize = 0;
         public DistillerRecipe lastRecipeCache;
 
         public State(IInitialMultiblockContext<State> ctx) {
@@ -310,6 +314,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             nbt.put("tanks", tanks.toNBT());
             nbt.put("energy", energy.serializeNBT());
             nbt.put("inventory", inventory.serializeNBT());
+            nbt.putInt("queueSize", queueSize);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -318,6 +323,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
             inventory.deserializeNBT(nbt.getCompound("inventory"));
+            queueSize = nbt.getInt("queueSize");
             tanksDirty = false;
             inventoryDirty = false;
         }

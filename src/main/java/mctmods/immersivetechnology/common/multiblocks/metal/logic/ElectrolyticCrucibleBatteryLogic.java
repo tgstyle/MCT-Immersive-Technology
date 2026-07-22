@@ -123,8 +123,23 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         boolean energyChanged = prevEnergy != currentEnergy;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
-        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged;
+        boolean percentsChanged = updateProcessPercents(state, ctx.getLevel().getRawLevel());
+        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || percentsChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+    }
+
+    private boolean updateProcessPercents(State state, Level level) {
+        var queue = state.processor.getQueue();
+        boolean changed = false;
+        for (int i = 0; i < state.processPercents.length; i++) {
+            int newPercent = -1;
+            if (i < queue.size()) {
+                int maxTicks = queue.get(i).getMaxTicks(level);
+                newPercent = maxTicks > 0 ? queue.get(i).processTick * 100 / maxTicks : 0;
+            }
+            if (newPercent != state.processPercents[i]) { state.processPercents[i] = newPercent; changed = true; }
+        }
+        return changed;
     }
 
     private void tryEnqueueProcess(State state, Level level, ElectrolyticCrucibleBatteryRecipe recipe) {
@@ -184,6 +199,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
+        public int[] processPercents = new int[]{-1, -1, -1};
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -221,9 +237,9 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public int[] getOutputSlots() { return new int[0]; }
         @Override public boolean isActive() { return active; }
 
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) { nbt.putBoolean("active", active); nbt.put("tanks", tanks.toNBT()); nbt.put("energy", energy.serializeNBT()); nbt.put("inventory", inventory.serializeNBT()); }
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt) { nbt.putBoolean("active", active); nbt.put("tanks", tanks.toNBT()); nbt.put("energy", energy.serializeNBT()); nbt.put("inventory", inventory.serializeNBT()); nbt.putIntArray("processPercents", processPercents); }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); tanksDirty = false; inventoryDirty = false; }
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); int[] percents = nbt.getIntArray("processPercents"); processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1}; tanksDirty = false; inventoryDirty = false; }
     }
 
     public record ElectrolyticCrucibleBatteryTanks(MarkableFluidTank input, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {

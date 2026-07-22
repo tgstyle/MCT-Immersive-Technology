@@ -150,8 +150,12 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
             if (newProg != state.processProgress || newTotal != state.totalProcessTime) { state.processProgress = newProg; state.totalProcessTime = newTotal; progressChanged = true; }
         } else if (state.processProgress > 0 || state.totalProcessTime > 0) { state.processProgress = 0; state.totalProcessTime = 0; progressChanged = true; }
 
+        int newQueueSize = state.processQueue.size();
+        boolean queueSizeChanged = newQueueSize != state.queueSize;
+        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+
         boolean activeChanged = wasActive != state.active;
-        boolean update = activeChanged || progressChanged;
+        boolean update = activeChanged || progressChanged || queueSizeChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -208,6 +212,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;
         public int totalProcessTime = 0;
+        public int queueSize = 0;
         public boolean tanksDirty = false;
         public double radiationEfficiency = 0.0D;
 
@@ -251,6 +256,8 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
+            nbt.putInt("queueSize", queueSize);
+            nbt.putDouble("radiationEfficiency", radiationEfficiency);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -258,6 +265,8 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
             tanks.readNBT(nbt.getCompound("tanks"));
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
+            queueSize = nbt.getInt("queueSize");
+            radiationEfficiency = nbt.getDouble("radiationEfficiency");
             tanksDirty = false;
         }
     }

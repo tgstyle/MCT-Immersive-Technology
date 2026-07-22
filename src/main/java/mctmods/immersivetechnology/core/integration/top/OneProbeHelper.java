@@ -116,8 +116,7 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof BoilerLiquidLogic.State state) {
                 addFluidTankDisplay(probeInfo, state.tanks.input1());
                 addTemperature(probeInfo, state.heatLevel, state.getWorkingHeatLevel());
-                int currentProg = (state.lastFuel != null && state.burnRemaining > 0) ? (state.lastFuel.getTotalProcessTime() - state.burnRemaining) * 100 / state.lastFuel.getTotalProcessTime() : 0;
-                addProcessPercent(probeInfo, currentProg);
+                addProcessPercent(probeInfo, state.burnPercent);
             }
         }
     }
@@ -160,11 +159,9 @@ public class OneProbeHelper {
             if (ctx == null) { return; }
             if (ctx.getState() instanceof CoolingTowerLogic.State state) {
                 addFluidTanks(probeInfo, state.tanks.input0(), state.tanks.input1(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2());
-                if (state.active) {
-                    int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
-                    addProcessPercent(probeInfo, percent);
+                for (int percent : state.processPercents) {
+                    if (percent >= 0) { addProcessPercent(probeInfo, percent); }
                 }
-                probeInfo.text("Active processes: " + state.processQueue.size());
             }
         }
     }
@@ -179,9 +176,8 @@ public class OneProbeHelper {
                 addFluidTankDisplay(probeInfo, state.tanks.input());
                 addFluidTankDisplay(probeInfo, state.tanks.output());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
-                var queue = state.processor.getQueue();
-                if (!queue.isEmpty()) {
-                    probeInfo.text("Processing (" + queue.size() + " queued)");
+                if (state.queueSize > 0) {
+                    probeInfo.text("Processing (" + state.queueSize + " queued)");
                 }
             }
         }
@@ -196,9 +192,8 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof ElectrolyticCrucibleBatteryLogic.State state) {
                 addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output0(), state.tanks.output1(), state.tanks.output2());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
-                var queue = state.processor.getQueue();
-                if (!queue.isEmpty()) {
-                    probeInfo.text("Processing (" + queue.size() + " queued)");
+                for (int percent : state.processPercents) {
+                    if (percent >= 0) { addProcessPercent(probeInfo, percent); }
                 }
             }
         }
@@ -229,12 +224,11 @@ public class OneProbeHelper {
             if (ctx.getState() instanceof HeatExchangerLogic.State state) {
                 addFluidTanks(probeInfo, state.tanks.input0(), state.tanks.input1(), state.tanks.output0(), state.tanks.output1());
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
-                var queue = state.processor.getQueue();
-                if (!queue.isEmpty()) {
+                if (state.queueSize > 0) {
                     int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
                     addProcessPercent(probeInfo, percent);
-                    if (queue.size() > 1) {
-                        probeInfo.text((queue.size() - 1) + " queued");
+                    if (state.queueSize > 1) {
+                        probeInfo.text((state.queueSize - 1) + " queued");
                     }
                 }
             }
@@ -256,9 +250,8 @@ public class OneProbeHelper {
                 double workingLevel = recipe != null ? recipe.requiredTemp : MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
                 addTemperature(probeInfo, state.heatLevel, workingLevel);
 
-                var queue = state.processor.getQueue();
-                if (!queue.isEmpty()) {
-                    probeInfo.text("Processing (" + queue.size() + " queued)");
+                if (state.queueSize > 0) {
+                    probeInfo.text("Processing (" + state.queueSize + " queued)");
                 }
             }
         }
@@ -276,14 +269,18 @@ public class OneProbeHelper {
                     int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
                     addProcessPercent(probeInfo, percent);
                 }
-                probeInfo.text("Active processes: " + state.processQueue.size());
+                probeInfo.text("Active processes: " + state.queueSize);
+                probeInfo.text("Reflector efficiency");
+                addProcessPercent(probeInfo, (int) Math.round(state.radiationEfficiency * 100.0D));
             } else if (ctx.getState() instanceof RadiatorHorizontalLogic.State state) {
                 addFluidTanks(probeInfo, state.tanks.input(), state.tanks.output());
                 if (state.active) {
                     int percent = state.totalProcessTime > 0 ? state.processProgress * 100 / state.totalProcessTime : 0;
                     addProcessPercent(probeInfo, percent);
                 }
-                probeInfo.text("Active processes: " + state.processQueue.size());
+                probeInfo.text("Active processes: " + state.queueSize);
+                probeInfo.text("Reflector efficiency");
+                addProcessPercent(probeInfo, (int) Math.round(state.radiationEfficiency * 100.0D));
             }
         }
     }
@@ -352,7 +349,6 @@ public class OneProbeHelper {
         }
     }
 
-    @SuppressWarnings("resource")
     private static int getFluidColor(@Nullable FluidStack fluid) {
         if (fluid == null || fluid.isEmpty()) { return 0xff555555; }
         IClientFluidTypeExtensions ext = IClientFluidTypeExtensions.of(fluid.getFluid());

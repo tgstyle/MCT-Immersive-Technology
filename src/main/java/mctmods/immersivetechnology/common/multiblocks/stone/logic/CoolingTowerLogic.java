@@ -156,23 +156,18 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         }
         state.active = !state.processQueue.isEmpty();
         boolean activeChanged = wasActive != state.active;
-        boolean progressChanged = false;
-        if (!state.processQueue.isEmpty()) {
-            CoolingTowerProcess current = state.processQueue.get(0);
-            int newProg = current.getTicksProcessed();
-            int newTotal = current.getRecipe().totalProcessTime;
-            if (newProg != state.processProgress || newTotal != state.totalProcessTime) {
-                state.processProgress = newProg;
-                state.totalProcessTime = newTotal;
-                progressChanged = true;
+        boolean percentsChanged = false;
+        for (int i = 0; i < state.processPercents.length; i++) {
+            int newPercent = -1;
+            if (i < state.processQueue.size()) {
+                CoolingTowerProcess process = state.processQueue.get(i);
+                int total = process.getRecipe().totalProcessTime;
+                newPercent = total > 0 ? process.getTicksProcessed() * 100 / total : 0;
             }
-        } else if (state.processProgress > 0 || state.totalProcessTime > 0) {
-            state.processProgress = 0;
-            state.totalProcessTime = 0;
-            progressChanged = true;
+            if (newPercent != state.processPercents[i]) { state.processPercents[i] = newPercent; percentsChanged = true; }
         }
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        boolean update = activeChanged || progressChanged || tanksChanged;
+        boolean update = activeChanged || percentsChanged || tanksChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -215,8 +210,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public int soundCooldown = 0;
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
-        public int processProgress = 0;
-        public int totalProcessTime = 0;
+        public int[] processPercents = new int[]{-1, -1, -1};
         public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {
@@ -259,15 +253,14 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
-            nbt.putInt("processProgress", processProgress);
-            nbt.putInt("totalProcessTime", totalProcessTime);
+            nbt.putIntArray("processPercents", processPercents);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            processProgress = nbt.getInt("processProgress");
-            totalProcessTime = nbt.getInt("totalProcessTime");
+            int[] percents = nbt.getIntArray("processPercents");
+            processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1};
             tanksDirty = false;
         }
     }
