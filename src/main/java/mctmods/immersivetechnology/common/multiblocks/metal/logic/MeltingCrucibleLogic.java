@@ -149,7 +149,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         int newQueueSize = state.processor.getQueueSize();
         boolean queueSizeChanged = newQueueSize != state.queueSize;
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
-        boolean update = activeChanged || energyChanged || tanksChanged || queueSizeChanged;
+        int newComparatorValue = (int) Math.min(15, (15 * state.heatLevel) / WORKING_HEAT_LEVEL);
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || energyChanged || tanksChanged || queueSizeChanged || comparatorChanged;
 
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
@@ -250,6 +253,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         private ResourceLocation activeRecipeId;
         public boolean tanksDirty = false;
         public int queueSize = 0;
+        public int lastComparatorValue = -1;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();

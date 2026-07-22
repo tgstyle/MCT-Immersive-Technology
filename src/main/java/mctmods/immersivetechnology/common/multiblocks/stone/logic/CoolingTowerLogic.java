@@ -60,6 +60,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     public static final List<BlockPos> INPUT_FLUID_POIS = INPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList());
     public static final BlockPos PARTICLE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "particle0").getFirst();
     public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
+    public static final BlockPos COMPARATOR_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "master").getFirst();
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
 
@@ -175,7 +176,10 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             if (newPercent != state.processPercents[i]) { state.processPercents[i] = newPercent; percentsChanged = true; }
         }
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        boolean update = activeChanged || percentsChanged || tanksChanged;
+        int newComparatorValue = (15 * state.processQueue.size()) / getProcessQueueMaxLength();
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { ctx.setComparatorOutputFor(COMPARATOR_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || percentsChanged || tanksChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -245,6 +249,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public List<CoolingTowerProcess> processQueue = new ArrayList<>();
         public BooleanSupplier isSoundPlaying = () -> false;
         public int[] processPercents = new int[]{-1, -1, -1};
+        public int lastComparatorValue = -1;
         public boolean tanksDirty = false;
 
         public State(IInitialMultiblockContext<State> ctx) {

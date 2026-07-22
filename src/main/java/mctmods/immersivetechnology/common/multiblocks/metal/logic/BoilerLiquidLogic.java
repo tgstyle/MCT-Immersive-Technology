@@ -70,6 +70,13 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
     public static final List<BlockPos> IGNITION_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "ignition0");
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> HEAT_OUTPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "heat_output0");
@@ -207,7 +214,10 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         int newBurnPercent = (state.lastFuel != null && state.burnRemaining > 0) ? (state.lastFuel.getTotalProcessTime() - state.burnRemaining) * 100 / state.lastFuel.getTotalProcessTime() : 0;
         boolean burnPercentChanged = newBurnPercent != state.burnPercent;
         if (burnPercentChanged) { state.burnPercent = newBurnPercent; }
-        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged || burnPercentChanged;
+        int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged || burnPercentChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -258,6 +268,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public SlotwiseItemHandler inventory;
         public double heatLevel = 0;
         public int burnRemaining = 0;
+        public int lastComparatorValue = -1;
         public int burnPercent = 0;
         public BoilerLiquidRecipe lastFuel;
         public double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;

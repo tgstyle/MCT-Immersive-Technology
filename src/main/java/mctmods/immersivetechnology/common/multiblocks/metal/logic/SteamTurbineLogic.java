@@ -245,7 +245,10 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             state.pressureReleaseCooldown = 200;
         }
         state.wasEnabled = currentlyEnabled;
-        if (previouslyActive != state.active || state.speed % 5 == 0 || previousSpeed != state.speed) {
+        int newComparatorValue = state.effectiveMaxSpeed > 0 ? (15 * state.speed) / state.effectiveMaxSpeed : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
+        if (previouslyActive != state.active || state.speed % 5 == 0 || previousSpeed != state.speed || comparatorChanged) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -293,6 +296,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private int pressureReleaseCooldown = 0;
         private boolean wasEnabled = false;
         public int effectiveMaxSpeed = MAX_SPEED;
+        public int lastComparatorValue = -1;
         private float accumConsume;
         private float outAccum;
         private double accumDelta;

@@ -148,7 +148,11 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         int newQueueSize = state.processor.getQueueSize();
         boolean queueSizeChanged = newQueueSize != state.queueSize;
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
-        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || queueSizeChanged;
+        int maxEnergy = state.energy.getMaxEnergyStored();
+        int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || queueSizeChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -237,6 +241,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
         public int queueSize = 0;
+        public int lastComparatorValue = -1;
         public RecipeHolder<DistillerRecipe> lastRecipeCache;
 
         public State(IInitialMultiblockContext<State> ctx) {

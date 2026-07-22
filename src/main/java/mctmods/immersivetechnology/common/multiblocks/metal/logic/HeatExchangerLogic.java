@@ -54,6 +54,13 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(HeatExchangerShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
+    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1,0,2,2,1,0,0,1,0,1,1,0,2,1,1,0,1,1,1,1,1,2,1,2,0,1,2,1,1,2,2,2,0,0,2,0,1,2,0,2,2,1,0,2,1,1,2,1,2,2,2,0,2,2,1,2,2,2,3,0,0,3,0,1,3,0,2,3,1,0,3,1,1,3,1,2,3,2,0,3,2,1,3,2,2,4,0,0,4,0,1,4,0,2,4,1,0,4,1,1,4,1,2,4,2,0,4,2,1,4,2,2};
+    public static final List<BlockPos> COMPARATOR_POSITIONS;
+    static {
+        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
+        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
+        COMPARATOR_POSITIONS = builder.build();
+    }
 
     public static final List<BlockPos> INPUT_FLUID_0_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> INPUT_FLUID_1_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input1");
@@ -143,7 +150,11 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         int newQueueSize = state.processor.getQueueSize();
         boolean queueSizeChanged = newQueueSize != state.queueSize;
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
-        boolean update = activeChanged || energyChanged || tanksChanged || progressChanged || queueSizeChanged;
+        int maxEnergy = state.energy.getMaxEnergyStored();
+        int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
+        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
+        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        boolean update = activeChanged || energyChanged || tanksChanged || progressChanged || queueSizeChanged || comparatorChanged;
         if (update) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
@@ -211,6 +222,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         public int processProgress = 0;
         public int totalProcessTime = 0;
         public int queueSize = 0;
+        public int lastComparatorValue = -1;
 
         private static final IItemHandlerModifiable EMPTY_INVENTORY = new IItemHandlerModifiable() {
             @Override public int getSlots() { return 0; }
