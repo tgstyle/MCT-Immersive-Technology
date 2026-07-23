@@ -1,6 +1,7 @@
 Scambiatore di calore
 È caldo o freddo?
-<&multiblock>Lo Scambiatore di calore è una macchina multiblocco usata per trasferire calore da fluidi caldi.
+<&multiblock>Lo Scambiatore di calore è uno scambiatore in controcorrente — il fluido caldo entra da un lato ed esce raffreddato dall'altro, mentre il fluido da riscaldare scorre in direzione opposta nel secondo circuito.
 
 §lFunzionamento§r
     - Lo §lScambiatore di calore§r necessita di fluidi caldi per produrre altri fluidi.
+    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale a quanto è pieno il suo buffer Flux interno (<config;i;heat_exchanger.energy_capacity> Flux).

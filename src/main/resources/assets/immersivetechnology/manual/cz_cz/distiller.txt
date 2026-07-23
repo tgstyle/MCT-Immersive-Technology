@@ -3,7 +3,10 @@ Vypařování!
 <&multiblock>Destilátor vypařuje vodu na §ldestilovanou vodu§r se solí jako vedlejším produktem.
 
 
+
+
 §lProvoz§r
     - §lVoda§r se vkládá zleva.
     - §lDestilovaná voda§r vychází zprava.
     - Sůl vychází zezadu.
+    - Komparátor u ovládacího panelu vydává signál úměrný zaplněnosti vnitřního zásobníku Flux (<config;i;distiller.energy_capacity> Flux).

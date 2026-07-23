@@ -1,9 +1,10 @@
 Crisol de Fusão
 Fundindo!
-<&multiblock>O Crisol de Fusão utiliza eletricidade para fundir materiais em sua forma fluida fundida.
+<&multiblock>O Crisol de Fusão utiliza eletricidade para fundir materiais em sua forma fluida fundida. Sua taxa de resfriamento em repouso depende da temperatura ambiente do bioma — resfria mais devagar em biomas quentes.
 
 
 §lOperação§r
     - §lFluidos§r são inseridos na parte traseira.
     - §lFluidos Fundidos§r são extraídos na parte frontal inferior.
-    - Energia é fornecida no lado.
+    - Energia é fornecida no lado. O buffer interno comporta <config;i;melting_crucible.energy_capacity> Flux.
+    - Um comparador contra o painel de controle emite um sinal proporcional ao nível de calor atual.

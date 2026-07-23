@@ -1,8 +1,9 @@
 Forno a Coke Avanzato
 Miglior Coke
-<&multiblock>Il Forno a coke avanzato è una macchina multiblocco utilizzata per §lprocessare il carbone in coke§r, aiutando nella §lproduzione di coke§r e migliorando l'efficienza della lavorazione.
+<&multiblock>Il Forno a coke avanzato è una macchina multiblocco che trasforma il carbone in §lcoke§r e §lolio di creosoto§r più velocemente di un forno a coke standard.
+
 
 §lFunzionamento§r
-    - Gli §loggetti§r vengono inseriti nella macchina dal §llato superiore§r.
-    - Le §luscite§r vengono raccolte dalla §lparte anteriore§r del multiblocco.
-    - Usa i Riscaldatori base avanzati del forno a coke per accelerare la lavorazione.
+    - Gli §loggetti§r combustibili vengono inseriti dall'§lalto§r; l'uscita fluida (olio di creosoto) viene prelevata dalla §lparte anteriore§r.
+    - Fino a due Riscaldatori base possono essere collegati alle porte laterali; ogni Riscaldatore attivo consuma <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t e aumenta la velocità di lavorazione, con beneficio decrescente combinando entrambi.
+    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale all'avanzamento del lotto corrente.

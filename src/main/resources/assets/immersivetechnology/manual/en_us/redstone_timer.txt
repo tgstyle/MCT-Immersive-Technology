@@ -1,0 +1,8 @@
+Redstone Timer
+Tick-Tock
+A redstone connector that relays a short pulse on a repeating timer, from 0.5 to 30 seconds, adjustable in the GUI. Connects to Immersive Engineering's redstone wire network rather than plain redstone dust.
+
+§lOperation§r
+    - Only pulses if there's an active redstone input right as each cycle resets — a continuously-high input pulses once per cycle; no input that tick means no pulse that cycle.
+    - The GUI sets the delay with +/- buttons, toggles between input and output mode, and picks one of 16 wire colors to relay on.
+    - Right-click with a Screwdriver for the same controls without opening the GUI: sneaking cycles the wire color, not sneaking toggles input/output mode.

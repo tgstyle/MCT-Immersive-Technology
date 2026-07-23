@@ -1,0 +1,9 @@
+Barril Metálico de Aço
+Cheio até a Boca
+Um tanque de fluido de bloco único com capacidade de 24.000 mB — o dobro do Barril aberto.
+
+§lOperação§r
+    - Tanto o topo quanto a parte inferior podem ser alternados entre entrada, saída e desligado com um Martelo.
+    - Aceita qualquer fluido, incluindo gases.
+    - Um sinal de Redstone desativa completamente a transferência de fluido enquanto estiver ativo.
+    - Um comparador emite um sinal proporcional a quão cheio está.

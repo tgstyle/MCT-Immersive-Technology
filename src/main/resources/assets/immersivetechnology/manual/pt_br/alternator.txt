@@ -1,7 +1,10 @@
 Alternador
 Grande e poderoso!
-<&multiblock>O Alternador é uma máquina multibloc que gera uma enorme quantidade de energia, podendo alimentar muito mais máquinas que o §lGerador a diesel§r!
+<&multiblock>O Alternador converte energia mecânica em Flux, e pode alimentar muito mais máquinas que um único Gerador a diesel.
 
 
-§lFuncionamento§r
-    - O §lAlternador§r precisa de entrada rotacional de uma fonte de energia mecânica, como a §lTurbina a vapor§r ou a §lTurbina a gás§r.
+
+§lOperação§r
+    - Precisa de entrada rotacional de uma fonte de energia mecânica — uma §lTurbina a vapor§r ou §lTurbina a gás§r — conectada na parte traseira.
+    - A saída fica na frente-esquerda e frente-direita; produz até <config;i;alternator.alternator_max_output> Flux/t dependendo da velocidade do rotor.
+    - O buffer interno comporta <config;i;alternator.alternator_energy_capacity> Flux. Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de energia atual.

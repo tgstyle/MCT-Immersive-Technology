@@ -1,6 +1,6 @@
 Tour de refroidissement
 Rafraîchis !
-<&multiblock>La Tour de refroidissement refroidit la §lvapeur d'échappement§r pour la retransformer en eau.
+<&multiblock>La Tour de refroidissement refroidit la §lvapeur d'échappement§r pour la retransformer en eau, et peut traiter jusqu'à 3 lots à la fois.
 
 
 
@@ -8,7 +8,8 @@ Rafraîchis !
 
 
 §lFonctionnement§r
-    - L'§lEau§r est introduite dans une des entrées.
-    - La §lVapeur d'échappement§r est introduite dans l'autre entrée.
+    - L'§lEau§r et la §lVapeur d'échappement§r peuvent entrer dans n'importe quelle entrée — l'ordre n'a pas d'importance.
     - L'§lEau§r sort par toutes les sorties.
-    - L'Efficacité dépend du différentiel de température avec l'environnement et les obstructions proches.
+    - Jusqu'à 3 lots sont traités en parallèle, donc le débit peut dépasser ce que suggère le temps d'un seul lot.
+    - L'efficacité dépend du différentiel de température avec l'environnement et des obstructions proches.
+    - Un comparateur contre le bloc utilisé pour former la structure (celui frappé au Marteau) émet un signal proportionnel au remplissage de la file d'attente à 3 lots. La Tour de refroidissement n'a pas de panneau de contrôle Redstone, c'est donc le seul point fixe où elle répond.

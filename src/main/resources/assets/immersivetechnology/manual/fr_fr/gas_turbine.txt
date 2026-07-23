@@ -6,6 +6,7 @@ GAZ GAZ GAZ !
 §lFonctionnement§r
     - Le §lCombustible liquide§r est introduit par tuyau.
     - Les §lgaz d'échappement§r sortent sous le rotor.
-    - Le côté avec entrée MV est la bougie d'allumage – peut rester alimenté en permanence.
-    - Le côté avec entrée HV est le démarreur – nécessite de l'énergie jusqu'à ce que la bougie allume le combustible. Une fois allumé, retirez l'alimentation du démarreur.
-    - Vous devez connecter un multibloc utilisant l'énergie mécanique au rotor pour que la turbine fonctionne.
+    - Le côté avec entrée MV est la bougie d'allumage, qui peut rester alimentée en permanence.
+    - Le côté avec entrée HV est le démarreur, qui nécessite de l'énergie jusqu'à ce que la bougie allume le combustible. Une fois allumé, retirez l'alimentation du démarreur.
+    - Un multibloc utilisant l'énergie mécanique doit être connecté au rotor pour que la turbine fonctionne.
+    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à la vitesse actuelle du rotor.

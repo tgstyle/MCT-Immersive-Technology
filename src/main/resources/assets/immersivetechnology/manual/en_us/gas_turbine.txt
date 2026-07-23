@@ -9,3 +9,4 @@ GAS GAS GAS!
     - The side with MV energy input is the spark plug, which can be powered at all times.
     - The side with HV energy input is the starter, which needs power until the spark plug ignites the fuel. Once ignited, you must remove power from the starter.
     - You need to attach a multiblock to the rotor that uses mechanical power for the turbine to work.
+    - A comparator against any exterior block outputs a signal proportional to current rotor speed.

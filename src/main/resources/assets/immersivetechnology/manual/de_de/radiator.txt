@@ -5,6 +5,7 @@ Kühlung!
 §lBetrieb§r
     - §lHeiße Flüssigkeiten/Gase§r werden an einem Ende eingespeist.
     - §lGekühlte Flüssigkeiten/Gase§r verlassen das andere Ende.
-    - Kann vertikal (1×7×9) oder horizontal (9×1×7) durch Drehen der Struktur gebaut werden.
-    - Die Effizienz hängt von der Temperaturdifferenz zur Umgebung und nahen Hindernissen ab.
+    - Kann vertikal (1→7→9) oder horizontal (9→1→7) durch Drehen der Struktur gebaut werden.
+    - Die Effizienz hängt vom Temperaturunterschied zur Umgebung und nahen Hindernissen ab.
     - Funktioniert im Vakuum (im Gegensatz zum Kühlturm), ist aber deutlich weniger effizient.
+    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum Fortschritt des aktuellen Zyklus aus.

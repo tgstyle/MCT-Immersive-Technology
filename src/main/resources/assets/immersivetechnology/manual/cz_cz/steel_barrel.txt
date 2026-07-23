@@ -1,0 +1,9 @@
+Ocelový kovový sud
+Plný až po okraj
+Jednoblokový zásobník kapaliny s kapacitou 24 000 mB – dvojnásobek Otevřeného sudu.
+
+§lProvoz§r
+    - Horní i spodní stranu lze přepínat mezi vstupem, výstupem a vypnutím Kladivem.
+    - Přijímá jakoukoli kapalinu, včetně plynů.
+    - Redstonový signál zcela vypne přenos kapaliny, dokud je aktivní.
+    - Komparátor vydává signál úměrný zaplněnosti.

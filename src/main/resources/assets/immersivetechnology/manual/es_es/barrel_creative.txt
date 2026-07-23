@@ -1,0 +1,8 @@
+Barril de fluido creativo
+Suministro infinito
+Un bloque solo para modo creativo/pruebas que suministra una cantidad ilimitada de un fluido elegido. No acepta entrada de fluido.
+
+§lFuncionamiento§r
+    - Clic derecho con un cubo o contenedor de un fluido para fijarlo como fluido de salida.
+    - Clic derecho agachado con la mano vacía para borrar el fluido seleccionado.
+    - Una vez fijado, empuja activamente fluido a los 6 bloques vecinos cada tick, hasta <config;i;barrel_creative.output_amount> mB/t — prácticamente ilimitado con la configuración predeterminada.

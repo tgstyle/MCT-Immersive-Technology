@@ -1,8 +1,9 @@
 Bateria de Crisol Eletrolítico
-Eletrolise Avançada
-<&multiblock>A Bateria de Crisol Eletrolítico é uma máquina multiblocos usada para §lrealizar eletrólise em sais fundidos e outros fluidos§r, produzindo múltiplas saídas com alta eficiência.
+Eletrólise Avançada
+<&multiblock>A Bateria de Crisol Eletrolítico realiza eletrólise em sais fundidos e outros fluidos, produzindo múltiplas saídas ao mesmo tempo. Pode processar até 3 lotes em paralelo.
 
 §lOperação§r
-    - §lFluido§r é fornecido pelo lado.
-    - §lEnergia§r é fornecida pelo lado.
-    - §lSaídas§r (fluidos e itens) são coletadas de múltiplos lados.
+    - §lFluido§r e §lEnergia§r são fornecidos pelo lado. O buffer interno comporta <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
+    - As saídas (fluidos e itens) são coletadas de múltiplos lados.
+    - Até 3 lotes são processados em paralelo, então a produção pode superar o que o tempo de um único lote sugeriria.
+    - Um comparador contra qualquer bloco externo emite um sinal proporcional a quão cheio está o primeiro tanque de saída de fluido.

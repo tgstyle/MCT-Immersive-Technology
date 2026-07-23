@@ -8,3 +8,4 @@ Fusione!
     - I §lFluidi caldi§r vengono inseriti davanti.
     - I §lFluidi fusi§r escono dietro.
     - Deve trovarsi a 44 blocchi di distanza dalle altre torri.
+    - Un comparatore contro il pannello di controllo emette un segnale proporzionale al livello di calore attuale.

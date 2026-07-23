@@ -4,7 +4,8 @@ Derretendo!
 
 
 
-§lFuncionamento§r
+§lOperação§r
     - Os §lFluidos aquecidos§r são inseridos na frente.
     - Os §lFluidos derretidos§r saem atrás.
     - Deve estar a 44 blocos de distância de outras torres.
+    - Um comparador contra o painel de controle emite um sinal proporcional ao nível de calor atual.

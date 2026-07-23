@@ -8,3 +8,4 @@ Melting!
     - §lHeated Fluids§r are input in the front.
     - §lMolten Fluids§r are output in the back.
     - Must be 44 blocks away from other towers.
+    - A comparator against the front control panel outputs a signal proportional to current heat level.

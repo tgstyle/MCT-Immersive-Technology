@@ -3,7 +3,10 @@ Verdampfung!
 <&multiblock>Der Destillierer verdampft Wasser zu §ldestilliertem Wasser§r, wobei Salz als Nebenprodukt entsteht.
 
 
+
+
 §lBetrieb§r
     - §lWasser§r wird links eingefüllt.
     - §lDestilliertes Wasser§r wird rechts ausgegeben.
     - Salz wird hinten ausgegeben.
+    - Ein Komparator am Bedienfeld gibt ein Signal proportional zur Füllung des internen Flux-Puffers (<config;i;distiller.energy_capacity> Flux) aus.

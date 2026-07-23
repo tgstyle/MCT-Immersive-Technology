@@ -3,7 +3,10 @@ Destilador
 <&multiblock>El Destilador evapora agua en §lagua destilada§r con sal como subproducto.
 
 
+
+
 §lFuncionamiento§r
     - El §lAgua§r se introduce por la izquierda.
     - El §lAgua destilada§r sale por la derecha.
     - La sal sale por la parte trasera.
+    - Un comparador contra el panel de control emite una señal proporcional a cuán lleno está su búfer interno de Flux (<config;i;distiller.energy_capacity> Flux).

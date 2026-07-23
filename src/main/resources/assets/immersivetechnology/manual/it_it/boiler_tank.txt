@@ -1,13 +1,13 @@
 Serbatoio caldaia
 Sta diventando molto vaporoso qui dentro!
-<&multiblock>La Caldaia è una macchina multiblocco usata per §lbollire l'acqua§r trasformandola in vapore.
+<&multiblock>Il Serbatoio caldaia è il nucleo del sistema caldaia — contiene acqua e la trasforma in vapore, ma non può produrre calore da solo. Collega un §lBruciatore a combustibile liquido§r o §lBruciatore a combustibile solido§r per alimentarlo.
 
 
 
 
 §lFunzionamento§r
-    - L'§lAcqua§r viene inserita vicino al serbatoio sul §llato sinistro§r.
-    - Il §lVapore§r esce dalla §lparte superiore§r del multiblocco.
-    - L'§lAcqua§r deve essere presente nel serbatoio affinché il §lBruciatore caldaia§r collegato funzioni.
-
-§lSuggerimento:§r La Caldaia può processare una discreta quantità di acqua.
+    - L'§lAcqua§r viene inserita vicino al serbatoio sul §llato sinistro§r; il §lVapore§r esce dall'alto.
+    - Contiene fino a <config;i;boiler_tank.tank_capacity> mB di acqua.
+    - Avvia un lotto quando il calore del bruciatore collegato raggiunge la temperatura di lavoro.
+    - Se il calore scende a metà lotto, il progresso regredisce gradualmente invece di azzerarsi — un'interruzione breve costa un po' di progresso, non tutto.
+    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di calore attuale.

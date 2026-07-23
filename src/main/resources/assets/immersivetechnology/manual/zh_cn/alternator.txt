@@ -1,7 +1,10 @@
 交流发电机
 又大又强！
-<&multiblock>交流发电机是一种多方块机器，能够产生大量能量，比§l柴油发电机§r能驱动更多机器！
+<&multiblock>交流发电机将机械能转化为Flux，能驱动的机器远多于单台柴油发电机。
+
 
 
 §l运行§r
-    - 交流发电机需要来自机械能源的旋转输入，例如§l蒸汽涡轮§r或§l燃气涡轮§r。
+    - 需要来自机械能源的旋转输入——连接在后方的§l蒸汽涡轮§r或§l燃气涡轮§r。
+    - 输出位于前左和前右；根据转子速度最多产生<config;i;alternator.alternator_max_output> Flux/t。
+    - 内部缓冲区容纳<config;i;alternator.alternator_energy_capacity> Flux。靠在任意外部方块上的比较器会输出与当前能量水平成比例的信号。

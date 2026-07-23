@@ -1,7 +1,10 @@
 交流發電機
 又大又強！
-<&multiblock>交流發電機是一種多方塊機器，能夠產生大量能量，比§l柴油發電機§r能驅動更多機器！
+<&multiblock>交流發電機將機械能轉化為Flux，能驅動的機器遠多於單台柴油發電機。
+
 
 
 §l運行§r
-    - 交流發電機需要來自機械能源的旋轉輸入，例如§l蒸汽渦輪§r或§l燃氣渦輪§r。
+    - 需要來自機械能源的旋轉輸入——連接在後方的§l蒸汽渦輪§r或§l燃氣渦輪§r。
+    - 輸出位於前左和前右；根據轉子速度最多產生<config;i;alternator.alternator_max_output> Flux/t。
+    - 內部緩衝區容納<config;i;alternator.alternator_energy_capacity> Flux。靠在任意外部方塊上的比較器會輸出與目前能量水準成比例的訊號。

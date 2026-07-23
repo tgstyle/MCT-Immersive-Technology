@@ -10,5 +10,6 @@ Tanque de acero
 §lFuncionamiento§r
     - Los §lFluidos§r se introducen por arriba o por abajo.
     - Los §lFluidos§r se expulsan por abajo o por los lados.
-    - La salida del comparador está en la esquina izquierda del modelo, como se muestra en el manual (opuesta al lado de las tuberías). Un bloque por encima de la base donde comienza el tanque hasta la parte superior del tanque (6 bloques de altura).
+    - Contiene hasta <config;i;steel_sheetmetal_tank.capacity> mB de fluido.
+    - La salida del comparador está en la esquina izquierda del modelo (opuesta al lado de las tuberías), de un bloque por encima de la base hasta la parte superior del tanque (6 bloques de altura).
     - Usa válvulas para controlar la salida.

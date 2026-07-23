@@ -4,7 +4,8 @@ Gira gira!
 
 
 
-§lFuncionamento§r
+§lOperação§r
     - O §lVapor§r é inserido por tubo.
     - O §lVapor de escape§r sai abaixo do rotor.
-    - É necessário ligar um multibloc que use energia mecânica ao rotor para que funcione.
+    - É necessário ligar um multibloco que use energia mecânica ao rotor para que funcione.
+    - Um comparador contra o painel de controlo emite um sinal proporcional à velocidade atual do rotor.

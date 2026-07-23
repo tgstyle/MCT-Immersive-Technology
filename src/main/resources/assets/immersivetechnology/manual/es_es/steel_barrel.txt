@@ -1,0 +1,9 @@
+Barril metálico de acero
+Lleno hasta el tope
+Un tanque de fluido de un solo bloque con capacidad de 24.000 mB — el doble que el Barril abierto.
+
+§lFuncionamiento§r
+    - Tanto la parte superior como la inferior pueden alternarse entre entrada, salida y apagado con un Martillo.
+    - Acepta cualquier fluido, incluidos gases.
+    - Una señal de redstone desactiva por completo la transferencia de fluido mientras esté activa.
+    - Un comparador emite una señal proporcional a cuán lleno está.

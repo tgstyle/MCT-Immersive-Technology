@@ -1,0 +1,8 @@
+Baril fluide créatif
+Réserve infinie
+Un bloc réservé au mode créatif/aux tests qui fournit une quantité illimitée d'un fluide choisi. Il n'accepte aucune entrée de fluide.
+
+§lFonctionnement§r
+    - Clic droit avec un seau ou un conteneur d'un fluide pour le définir comme fluide de sortie.
+    - Clic droit furtif à mains nues pour effacer le fluide sélectionné.
+    - Une fois défini, il pousse activement le fluide vers les 6 blocs voisins à chaque tick, jusqu'à <config;i;barrel_creative.output_amount> mB/t — pratiquement illimité aux réglages par défaut.

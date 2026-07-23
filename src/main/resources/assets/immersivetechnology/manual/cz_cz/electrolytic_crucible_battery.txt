@@ -1,8 +1,9 @@
 Elektrolytická kelímková baterie
 Pokročilá elektrolýza
-<&multiblock>Elektrolytická kelímková baterie je multiblockový stroj používaný k §lprovádění elektrolýzy roztavených solí a dalších kapalin§r, který produkuje více výstupů s vysokou účinností.
+<&multiblock>Elektrolytická kelímková baterie provádí elektrolýzu roztavených solí a dalších kapalin a produkuje více výstupů najednou. Dokáže zpracovat až 3 dávky paralelně.
 
 §lProvoz§r
-    - §lKapalina§r se přivádí ze strany.
-    - §lEnergie§r se přivádí ze strany.
-    - §lVýstupy§r (kapaliny a předměty) se odebírají z více stran.
+    - §lKapalina§r a §lEnergie§r se přivádí ze strany. Vnitřní zásobník pojme <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
+    - Výstupy (kapaliny a předměty) se odebírají z více stran.
+    - Až 3 dávky se zpracovávají paralelně, takže propustnost může překročit to, co by naznačoval čas jedné dávky.
+    - Komparátor u libovolného vnějšího bloku vydává signál úměrný zaplněnosti první výstupní nádrže kapaliny.

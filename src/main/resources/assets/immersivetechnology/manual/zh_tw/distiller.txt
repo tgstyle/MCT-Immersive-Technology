@@ -3,7 +3,10 @@
 <&multiblock>蒸餾器將水蒸發成§l蒸餾水§r，副產物為鹽。
 
 
+
+
 §l運行§r
     - §l水§r從左側輸入。
     - §l蒸餾水§r從右側輸出。
     - 鹽從後方輸出。
+    - 靠在控制面板上的比較器會輸出與內部Flux緩衝區（<config;i;distiller.energy_capacity> Flux）充滿度成比例的訊號。

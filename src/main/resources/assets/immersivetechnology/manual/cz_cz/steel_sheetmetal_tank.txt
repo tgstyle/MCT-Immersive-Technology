@@ -10,5 +10,6 @@ Naplň ji!
 §lProvoz§r
     - §lTekutiny§r se vkládají nahoře nebo dole.
     - §lTekutiny§r se vypouštějí dole nebo po stranách.
-    - Výstup komparátoru je v levém rohu modelu, jak je znázorněno v manuálu (naproti straně s trubkami). Jeden blok nad základnou, kde nádrž začíná, až po vrchol nádrže (6 bloků vysoko).
+    - Pojme až <config;i;steel_sheetmetal_tank.capacity> mB tekutiny.
+    - Výstup komparátoru je v levém rohu modelu (naproti straně s trubkami), od jednoho bloku nad základnou až po vrchol nádrže (6 bloků vysoko).
     - Použij ventily k ovládání výstupu.

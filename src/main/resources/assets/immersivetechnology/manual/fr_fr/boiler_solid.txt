@@ -1,6 +1,6 @@
 Chaudière à combustible solide
 Ça devient très vapeur ici !
-<&multiblock>La Chaudière est une machine multibloc utilisée pour §lfaire bouillir l'eau§r en vapeur.
+<&multiblock>La Chaudière à combustible solide brûle des combustibles solides (charbon, coke, etc.) pour fournir de la chaleur à un §lRéservoir de chaudière§r connecté — elle ne contient pas d'eau et ne produit pas de vapeur elle-même.
 
 
 
@@ -8,8 +8,6 @@ Chaudière à combustible solide
 
 §lFonctionnement§r
     - Le §lCombustible solide§r est introduit en dessous de la chambre de combustion.
-    - Allumez la §lChaudière§r avec une torche ou un briquet sur l'échappement grillagé supérieur.
-    - La chaudière fonctionne en mode pilote quand elle n'est pas active et consomme une petite quantité de combustible.
-    - L'§lEau§r doit être présente dans un §lRéservoir de chaudière§r connecté.
-
-§lAstuce :§r La Chaudière peut traiter une quantité respectable d'eau.
+    - Allumez-la avec une torche ou un briquet sur l'échappement grillagé supérieur.
+    - Fonctionne en mode pilote au repos, consommant un léger filet de combustible pour rester allumée.
+    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau de chaleur actuel.

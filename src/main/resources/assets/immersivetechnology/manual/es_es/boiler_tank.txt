@@ -1,13 +1,13 @@
 Tanque de caldera
 ¡Aquí dentro se pone muy vaporoso!
-<&multiblock>La Caldera es una máquina multibloque usada para §lhervir agua§r y convertirla en vapor.
+<&multiblock>El Tanque de caldera es el núcleo del sistema de caldera — contiene agua y la convierte en vapor, pero no puede producir calor por sí solo. Conecta una §lCaldera (combustible líquido)§r o §lCaldera (combustible sólido)§r para alimentarlo.
 
 
 
 
 §lFuncionamiento§r
-    - El §lAgua§r se introduce cerca del tanque en el §llado izquierdo§r.
-    - El §lVapor§r sale por la §lparte superior§r del multibloque.
-    - El §lAgua§r debe estar en el tanque para que el §lQuemador de caldera§r conectado funcione.
-
-§lConsejo:§r La Caldera puede procesar una cantidad decente de agua.
+    - El §lAgua§r se introduce cerca del tanque en el §llado izquierdo§r; el §lVapor§r sale por arriba.
+    - Contiene hasta <config;i;boiler_tank.tank_capacity> mB de agua.
+    - Inicia un lote cuando el calor del quemador conectado alcanza la temperatura de trabajo.
+    - Si el calor baja a mitad de lote, el progreso retrocede gradualmente en vez de reiniciarse por completo — una interrupción breve cuesta algo de progreso, no todo.
+    - Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de calor actual.

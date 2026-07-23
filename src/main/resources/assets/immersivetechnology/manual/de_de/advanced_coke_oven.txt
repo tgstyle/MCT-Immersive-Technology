@@ -1,8 +1,9 @@
 Verbesserter Koksofen
 Besserer Koks
-<&multiblock>Der Verbesserte Koksofen ist eine Multiblock-Maschine, die zum §lVerarbeiten von Kohle zu Koks§r dient, die §lProduktion von Koks§r unterstützt und die Verarbeitungseffizienz verbessert.
+<&multiblock>Der Verbesserte Koksofen ist eine Multiblock-Maschine, die Kohle schneller als ein Standard-Koksofen zu §lKoks§r und §lKreosotöl§r verarbeitet.
+
 
 §lBetrieb§r
-    - §lGegenstände§r werden von der §lOberseite§r in die Maschine eingelegt.
-    - §lAusgaben§r werden von der §lVorderseite§r des Multiblocks entnommen.
-    - Verwenden Sie Verbesserte Koksofen-Unterheizer, um die Verarbeitung zu beschleunigen.
+    - §lGegenstände§r werden von der §lOberseite§r eingelegt; die Flüssigkeitsausgabe (Kreosotöl) erfolgt an der §lVorderseite§r.
+    - Bis zu zwei Unterheizer können an den Seitenanschlüssen angebracht werden; jeder aktive Unterheizer verbraucht <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t und erhöht die Verarbeitungsgeschwindigkeit, mit abnehmendem Nutzen bei Kombination beider.
+    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum Fortschritt der aktuellen Charge aus.

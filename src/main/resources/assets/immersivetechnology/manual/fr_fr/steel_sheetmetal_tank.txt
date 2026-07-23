@@ -10,5 +10,6 @@ Remplis-le !
 §lFonctionnement§r
     - Les §lFluides§r sont introduits par le haut ou par le bas.
     - Les §lFluides§r sont évacués par le bas ou par les côtés.
-    - La sortie du comparateur se trouve dans le coin gauche du modèle, comme indiqué dans le manuel (à l'opposé du côté des tuyaux). Un bloc au-dessus de la base où le réservoir commence, jusqu'au sommet du réservoir (6 blocs de haut).
+    - Contient jusqu'à <config;i;steel_sheetmetal_tank.capacity> mB de fluide.
+    - La sortie du comparateur se trouve dans le coin gauche du modèle (à l'opposé du côté des tuyaux), d'un bloc au-dessus de la base jusqu'au sommet du réservoir (6 blocs de haut).
     - Utilise des vannes pour contrôler la sortie.

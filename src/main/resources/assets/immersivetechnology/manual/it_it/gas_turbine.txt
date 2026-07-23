@@ -6,6 +6,7 @@ GAS GAS GAS!
 §lFunzionamento§r
     - Il §lCombustibile liquido§r viene inserito tramite tubo.
     - I §lgas di scarico§r escono sotto il rotore.
-    - Il lato con ingresso energia MV è la candela – può rimanere alimentato continuamente.
-    - Il lato con ingresso energia HV è l'avviatore – richiede energia finché la candela non accende il combustibile. Una volta acceso, rimuovi l'alimentazione dall'avviatore.
-    - Devi collegare un multiblocco che utilizza energia meccanica al rotore affinché funzioni.
+    - Il lato con ingresso energia MV è la candela, che può rimanere alimentata continuamente.
+    - Il lato con ingresso energia HV è l'avviatore, che richiede energia finché la candela non accende il combustibile. Una volta acceso, rimuovi l'alimentazione dall'avviatore.
+    - Un multiblocco che utilizza energia meccanica deve essere collegato al rotore affinché funzioni.
+    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale alla velocità attuale del rotore.

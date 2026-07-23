@@ -1,6 +1,6 @@
 Boiler Solid Fuel Burner
 Getting steamy in here!
-<&multiblock>The Boiler is a multiblock machine used to §lboil water§r into steam.
+<&multiblock>The Solid Fuel Boiler burns item fuel (coal, coke, etc.) to supply heat to an attached §lBoiler Tank§r — it does not hold water or produce steam itself.
 
 
 
@@ -8,8 +8,6 @@ Getting steamy in here!
 
 §lOperation§r
     - §lSolid Fuel§r is input below the combustion chamber.
-    - Ignite the §lBoiler§r with a torch or flint and steel on the top meshed exhaust.
-    - Boiler will run in pilot mode when not active and consume a small amount of fuel.
-    - §lWater§r must be in an attached §lBoiler Tank§r.
-
-§lTip:§r The Boiler can process a decent amount of water.
+    - Light it with a torch or flint and steel on the top exhaust vent.
+    - Runs in pilot mode when idle, consuming a small trickle of fuel to stay lit rather than going cold.
+    - A comparator against any exterior block outputs a signal proportional to current heat level.

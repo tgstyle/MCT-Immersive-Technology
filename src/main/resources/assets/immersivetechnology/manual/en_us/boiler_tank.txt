@@ -1,13 +1,13 @@
 Boiler Tank
 Getting steamy in here!
-<&multiblock>The Boiler is a multiblock machine used to §lboil water§r into steam.
+<&multiblock>The Boiler Tank is the core of the Boiler system — it holds water and turns it into steam, but it can't produce heat on its own. Attach one §lBoiler (Liquid Fuel)§r or §lBoiler (Solid Fuel)§r burner to supply it.
 
 
 
 
 §lOperation§r
-    - §lWater§r is input near the tank on the §lleft side§r.
-    - §lSteam§r is output from the §ltop§r of the multiblock.
-    - §lWater§r must be in the tank for an attached §lBoiler Burner§r to work.
-
-§lTip:§r The Boiler can process a decent amount of water.
+    - §lWater§r is input near the tank on the left side; §lSteam§r is output from the top.
+    - Holds up to <config;i;boiler_tank.tank_capacity> mB of water.
+    - Runs a batch once the attached burner's heat reaches working temperature.
+    - If heat drops mid-batch, progress drains back gradually rather than resetting outright — a brief interruption costs some progress, not all of it.
+    - A comparator against any exterior block outputs a signal proportional to current heat level.

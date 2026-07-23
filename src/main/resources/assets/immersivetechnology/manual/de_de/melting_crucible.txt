@@ -1,9 +1,10 @@
 Schmelztiegel
 Schmelzen!
-<&multiblock>Der Schmelztiegel nutzt Elektrizität, um Materialien in ihre geschmolzene flüssige Form zu schmelzen.
+<&multiblock>Der Schmelztiegel nutzt Elektrizität, um Materialien in ihre geschmolzene flüssige Form zu schmelzen. Die Abkühlrate im Leerlauf hängt von der Umgebungstemperatur des Bioms ab – in heißen Biomen kühlt er langsamer ab.
 
 
 §lBetrieb§r
     - §lFlüssigkeiten§r werden hinten eingefüllt.
     - §lGeschmolzene Flüssigkeiten§r werden vorne unten ausgegeben.
-    - Energie wird seitlich zugeführt.
+    - Energie wird seitlich zugeführt. Interner Puffer fasst <config;i;melting_crucible.energy_capacity> Flux.
+    - Ein Komparator am Bedienfeld gibt ein Signal proportional zum aktuellen Wärmestand aus.

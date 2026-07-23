@@ -1,8 +1,9 @@
 Fornalha de Coque Avançada
 Melhor Coque
-<&multiblock>A Fornalha de Coque Avançada é uma máquina multibloque utilizada para §lprocessar carvão em coque§r, auxiliando na §lprodução de coque§r e melhorando a eficiência do processamento.
+<&multiblock>A Fornalha de Coque Avançada é uma máquina multibloco que transforma carvão em §lCoque§r e §lÓleo de Creosoto§r mais rápido que uma fornalha padrão.
+
 
 §lOperação§r
-    - Os §lItens§r são inseridos na máquina a partir do §llado superior§r.
-    - As §lSaídas§r são coletadas da §lfrente§r do multibloque.
-    - Use os Aquecedores base avançados da fornalha de coque para acelerar o processamento.
+    - Os §litens§r combustíveis são inseridos pelo §ltopo§r; a saída de fluido (Óleo de Creosoto) é retirada pela §lfrente§r.
+    - Até dois Aquecedores base podem ser conectados nas portas laterais; cada Aquecedor ativo consome <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t e aumenta a velocidade de processamento, com benefício decrescente ao combinar os dois.
+    - Um comparador contra qualquer bloco externo emite um sinal proporcional ao progresso do lote atual.

@@ -1,13 +1,13 @@
 Kesseltank
 Es wird hier richtig dampfig!
-<&multiblock>Der Kessel ist eine Multiblock-Maschine, die §lWasser§r zu Dampf §lkocht§r.
+<&multiblock>Der Kesseltank ist der Kern des Kesselsystems – er hält Wasser und verwandelt es in Dampf, kann aber selbst keine Wärme erzeugen. Schließe einen §lKessel (Flüssigbrennstoff)§r oder §lKessel (Festbrennstoff)§r an, um ihn zu versorgen.
 
 
 
 
 §lBetrieb§r
-    - §lWasser§r wird in der Nähe des Tanks an der §lLinken Seite§r eingefüllt.
-    - §lDampf§r wird aus dem §lOberen Teil§r des Multiblocks ausgegeben.
-    - §lWasser§r muss im Tank vorhanden sein, damit der angeschlossene §lKesselbrenner§r funktioniert.
-
-§lTipp:§r Der Kessel kann eine ordentliche Menge Wasser verarbeiten.
+    - §lWasser§r wird in der Nähe des Tanks an der §llinken Seite§r eingefüllt; §lDampf§r wird oben ausgegeben.
+    - Fasst bis zu <config;i;boiler_tank.tank_capacity> mB Wasser.
+    - Startet eine Charge, sobald die Wärme des angeschlossenen Brenners die Arbeitstemperatur erreicht.
+    - Fällt die Wärme während einer Charge ab, geht der Fortschritt allmählich zurück statt komplett zu verfallen – eine kurze Unterbrechung kostet etwas Fortschritt, nicht alles.
+    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Wärmestand aus.

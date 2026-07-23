@@ -1,9 +1,10 @@
 Creuset de Fusion
 Fusion !
-<&multiblock>Le Creuset de Fusion utilise de l'électricité pour fondre les matériaux dans leur forme fluide en fusion.
+<&multiblock>Le Creuset de Fusion utilise de l'électricité pour fondre les matériaux dans leur forme fluide en fusion. Sa vitesse de refroidissement au repos dépend de la température du biome — il refroidit plus lentement dans les biomes chauds.
 
 
 §lFonctionnement§r
-    - §lFluides§r sont insérés à l'arrière.
-    - §lFluides en Fusion§r sont extraits à l'avant en bas.
-    - Énergie est fournie sur le côté.
+    - Les §lFluides§r sont insérés à l'arrière.
+    - Les §lFluides en Fusion§r sont extraits à l'avant en bas.
+    - L'énergie est fournie sur le côté. Le tampon interne contient <config;i;melting_crucible.energy_capacity> Flux.
+    - Un comparateur contre le panneau de contrôle émet un signal proportionnel au niveau de chaleur actuel.

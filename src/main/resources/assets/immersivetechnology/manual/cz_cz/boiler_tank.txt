@@ -1,13 +1,13 @@
 Nádrž kotle
 Uvnitř se vaří pára!
-<&multiblock>Kotel je multiblockový stroj, který slouží k §lvaření vody§r na páru.
+<&multiblock>Nádrž kotle je jádrem systému kotle – obsahuje vodu a mění ji na páru, ale sama nemůže vyrábět teplo. Připoj §lKotel (kapalné palivo)§r nebo §lKotel (pevné palivo)§r, aby ji zásoboval.
 
 
 
 
 §lProvoz§r
-    - §lVoda§r se vkládá poblíž nádrže na §llevé straně§r.
-    - §lPára§r vychází z §lvrcholu§r multiblocku.
-    - §lVoda§r musí být v nádrži, aby připojený §lHořák kotle§r fungoval.
-
-§lTip:§r Kotel zvládne zpracovat slušné množství vody.
+    - §lVoda§r se vkládá poblíž nádrže na §llevé straně§r; §lPára§r vychází nahoře.
+    - Pojme až <config;i;boiler_tank.tank_capacity> mB vody.
+    - Spustí dávku, jakmile teplo připojeného hořáku dosáhne pracovní teploty.
+    - Pokud teplo uprostřed dávky klesne, postup se postupně vrací zpět místo úplného resetu – krátké přerušení stojí část postupu, ne všechno.
+    - Komparátor u libovolného vnějšího bloku vydává signál úměrný aktuální úrovni tepla.

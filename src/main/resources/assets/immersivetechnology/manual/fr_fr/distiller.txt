@@ -3,7 +3,10 @@ Distillateur
 <&multiblock>Le Distillateur évapore l'eau en §leau distillée§r avec du sel comme sous-produit.
 
 
+
+
 §lFonctionnement§r
     - L'§lEau§r est introduite à gauche.
     - L'§lEau distillée§r sort à droite.
     - Le sel sort à l'arrière.
+    - Un comparateur contre le panneau de contrôle émet un signal proportionnel au remplissage de son tampon Flux interne (<config;i;distiller.energy_capacity> Flux).

@@ -1,0 +1,9 @@
+Stahl-Metallfass
+Bis obenhin voll
+Ein einzelner Flüssigkeitstank mit 24.000 mB Fassungsvermögen – doppelt so viel wie das offene Fass.
+
+§lBetrieb§r
+    - Sowohl Ober- als auch Unterseite können mit einem Hammer zwischen Eingang, Ausgang und Aus umgeschaltet werden.
+    - Akzeptiert jede Flüssigkeit, auch Gase.
+    - Ein Redstone-Signal deaktiviert den Flüssigkeitstransfer vollständig, solange es aktiv ist.
+    - Ein Komparator gibt ein Signal proportional zum Füllstand aus.

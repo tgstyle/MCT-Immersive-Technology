@@ -10,5 +10,6 @@ Fill it up!
 §lOperation§r
     - §lFluids§r are input on the top or bottom.
     - §lFluids§r are output on the bottom or sides.
-    - Comparator output is on the left corner of the model as shown in the manual (opposite the pipe side). One block up from the base where the tank starts up to the top of the tank (6 blocks high).
+    - Holds up to <config;i;steel_sheetmetal_tank.capacity> mB of fluid.
+    - Comparator output is on the left corner of the model (opposite the pipe side), from one block above the base up to the top of the tank (6 blocks high).
     - Use valves to control output.

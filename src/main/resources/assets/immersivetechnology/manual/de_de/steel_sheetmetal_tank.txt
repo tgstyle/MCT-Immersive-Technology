@@ -10,5 +10,6 @@ Füll ihn auf!
 §lBetrieb§r
     - §lFlüssigkeiten§r werden oben oder unten eingefüllt.
     - §lFlüssigkeiten§r werden unten oder seitlich ausgegeben.
-    - Der Komparator-Ausgang befindet sich in der linken Ecke des Modells, wie im Handbuch dargestellt (gegenüber der Rohrseite). Einen Block über der Basis, wo der Tank beginnt, bis zur Spitze des Tanks (6 Blöcke hoch).
+    - Fasst bis zu <config;i;steel_sheetmetal_tank.capacity> mB Flüssigkeit.
+    - Der Komparator-Ausgang befindet sich in der linken Ecke des Modells (gegenüber der Rohrseite), von einem Block über der Basis bis zur Spitze des Tanks (6 Blöcke hoch).
     - Verwende Ventile, um die Ausgabe zu steuern.
