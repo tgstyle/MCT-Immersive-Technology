@@ -516,6 +516,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override public TileEntityRadiatorMaster master() { return this; }
 
+    public double getRadiationEfficiency() { return radiationEfficiency; }
+
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (redstonePos0 == null) InitializePoIs();
