@@ -19,7 +19,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerT
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl.RSState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
@@ -33,7 +32,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -46,10 +44,11 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.Comparator;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 
@@ -59,12 +58,13 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     private static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
     private static final List<CapabilityPosition> IO_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
-    private static final BlockPos COMPARATOR_BASE = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator_base0").get(0);
-    private static final List<BlockPos> COMPARATOR_LAYERS;
+    private static final List<BlockPos> COMPARATOR_BASE = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator_base0");
+    private static final List<List<BlockPos>> COMPARATOR_LAYERS;
 
     static {
-        COMPARATOR_LAYERS = RAW_POIS.stream().filter(poi -> poi.name.equals("comparator_layer0")).map(poi -> new BlockPos(poi.pos[0], poi.pos[1], poi.pos[2])).sorted(Comparator.comparingInt(BlockPos::getY)).collect(ImmutableList.toImmutableList());
+        COMPARATOR_LAYERS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator_layer0").stream().collect(Collectors.groupingBy(BlockPos::getY, TreeMap::new, ImmutableList.toImmutableList())).values().stream().collect(ImmutableList.toImmutableList());
     }
+    public static final int COMPARATOR_LAYER_COUNT = COMPARATOR_LAYERS.size();
 
     @Override public List<BlockPos> getOutputPositions() { return IO_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList()); }
 
@@ -134,22 +134,8 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
                 throw new RuntimeException("Failed to set RSState positions", e);
             }
             this.comparatorHelper = new LayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
-                    (ctx, value) -> {
-                        BlockPos pos = COMPARATOR_BASE;
-                        IMultiblockLevel level = ctx.getLevel();
-                        ctx.setComparatorOutputFor(pos, value);
-                        BlockPos absPos = level.toAbsolute(pos);
-                        BlockState stateAt = level.getBlockState(pos);
-                        level.getRawLevel().updateNeighborsAt(absPos, stateAt.getBlock());
-                    },
-                    (ctx, layer, value) -> {
-                        BlockPos pos = COMPARATOR_LAYERS.get(layer);
-                        IMultiblockLevel level = ctx.getLevel();
-                        ctx.setComparatorOutputFor(pos, value);
-                        BlockPos absPos = level.toAbsolute(pos);
-                        BlockState stateAt = level.getBlockState(pos);
-                        level.getRawLevel().updateNeighborsAt(absPos, stateAt.getBlock());
-                    }
+                    (ctx, value) -> { for (BlockPos pos : COMPARATOR_BASE) { ctx.setComparatorOutputFor(pos, value); } },
+                    (ctx, layer, value) -> { for (BlockPos pos : COMPARATOR_LAYERS.get(layer)) { ctx.setComparatorOutputFor(pos, value); } }
             );
         }
 

@@ -10,4 +10,4 @@ Encha ele!
     - Os §lFluidos§r são inseridos na parte superior e inferior.
     - Os §lFluidos§r são liberados na parte inferior. Use um sinal de Redstone para liberar o fluido na parte inferior.
     - Comporta até <config;i;steel_sheetmetal_tank.capacity> mB de fluido.
-    - Um comparador contra uma das 4 camadas verticais do tanque emite um sinal proporcional ao nível de fluido naquela camada específica — camadas inferiores marcam "cheio" mais cedo conforme o tanque enche, similar a um tanque vanilla alimentado por um funil.
+    - Um comparador contra uma das <config;i;steel_sheetmetal_tank.comparator_layers> camadas verticais do tanque emite um sinal proporcional ao nível de fluido naquela camada específica — camadas inferiores marcam "cheio" mais cedo conforme o tanque enche, similar a um tanque vanilla alimentado por um funil.

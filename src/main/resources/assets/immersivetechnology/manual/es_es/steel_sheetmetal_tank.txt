@@ -10,4 +10,4 @@ Tanque de acero
     - Los §lFluidos§r se introducen por arriba y por abajo.
     - Los §lFluidos§r se expulsan por abajo. Usa una señal de redstone para expulsar el fluido por abajo.
     - Contiene hasta <config;i;steel_sheetmetal_tank.capacity> mB de fluido.
-    - Un comparador contra una de las 4 capas verticales del tanque emite una señal proporcional al nivel de fluido en esa capa específica — las capas inferiores marcan «lleno» antes conforme el tanque se llena, similar a un tanque vanilla alimentado por una tolva.
+    - Un comparador contra una de las <config;i;steel_sheetmetal_tank.comparator_layers> capas verticales del tanque emite una señal proporcional al nivel de fluido en esa capa específica — las capas inferiores marcan «lleno» antes conforme el tanque se llena, similar a un tanque vanilla alimentado por una tolva.

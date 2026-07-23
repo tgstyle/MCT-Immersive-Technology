@@ -10,4 +10,4 @@ Riempilo!
     - I §lFluidi§r vengono inseriti dall'alto e dal basso.
     - I §lFluidi§r vengono espulsi dal basso. Usa un segnale di redstone per espellere il fluido dal basso.
     - Contiene fino a <config;i;steel_sheetmetal_tank.capacity> mB di fluido.
-    - Un comparatore contro uno dei 4 strati verticali del serbatoio emette un segnale proporzionale al livello di fluido a quello strato specifico — gli strati inferiori segnalano "pieno" prima man mano che il serbatoio si riempie, come un serbatoio vanilla alimentato da una tramoggia.
+    - Un comparatore contro uno dei <config;i;steel_sheetmetal_tank.comparator_layers> strati verticali del serbatoio emette un segnale proporzionale al livello di fluido a quello strato specifico — gli strati inferiori segnalano "pieno" prima man mano che il serbatoio si riempie, come un serbatoio vanilla alimentato da una tramoggia.
