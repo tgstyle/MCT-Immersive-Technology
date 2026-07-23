@@ -336,6 +336,8 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             int currentProg = (master.processTimeRemaining > 0 && master.processTimeTotal > 0) ? (master.processTimeTotal - master.processTimeRemaining) * 100 / master.processTimeTotal : 0;
             addProcessPercent(probeInfo, currentProg);
+            probeInfo.text("Reflector efficiency");
+            addProcessPercent(probeInfo, (int)Math.round(master.getRadiationEfficiency() * 100.0));
         }
     }
 
