@@ -86,8 +86,8 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         if (ioMode == 0) {
             BlockPos neighborPos = worldPosition.relative(inputSideForRead);
             BlockState neighborState = level.getBlockState(neighborPos);
-            int power1 = neighborState.getSignal(level, neighborPos, inputSideForRead.getOpposite());
-            int power2 = neighborState.getDirectSignal(level, neighborPos, inputSideForRead.getOpposite());
+            int power1 = neighborState.getSignal(level, neighborPos, inputSideForRead);
+            int power2 = neighborState.getDirectSignal(level, neighborPos, inputSideForRead);
             currentInput = Math.max(power1, power2);
             if (neighborState.hasProperty(RedStoneWireBlock.POWER)) { currentInput = Math.max(currentInput, neighborState.getValue(RedStoneWireBlock.POWER)); }
         } else {
@@ -131,9 +131,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     public Direction getInputSide() { return computeInputSide(); }
 
     private Direction getInputSideForRead() {
-        Direction facing = getFacing();
-        if (facing.getAxis().isVertical()) { return getInputSide(); }
-        return Direction.DOWN;
+        return getInputSide();
     }
 
     private Direction getRSOutputFace() {
