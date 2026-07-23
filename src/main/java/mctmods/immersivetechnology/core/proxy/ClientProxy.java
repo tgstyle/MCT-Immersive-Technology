@@ -17,6 +17,7 @@ import mctmods.immersivetechnology.client.particles.helper.ColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
 import mctmods.immersivetechnology.common.items.helper.IFlagItem;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
@@ -72,6 +73,7 @@ public class ClientProxy extends CommonProxy {
                 case "heat_exchanger.energy_capacity" -> ServerConfig.heatExchangerEnergyCapacity;
                 case "melting_crucible.energy_capacity" -> ServerConfig.meltingCrucibleEnergyCapacity;
                 case "steel_sheetmetal_tank.capacity" -> ServerConfig.steelSheetmetalTankCapacity;
+                case "steel_sheetmetal_tank.comparator_height" -> SteelSheetmetalTankLogic.COMPARATOR_HEIGHT;
                 case "barrel_creative.output_amount" -> CommonConfig.creativeBarrelOutputAmount;
                 default -> null;
             });

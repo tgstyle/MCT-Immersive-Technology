@@ -70,13 +70,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
-    private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1};
-    public static final List<BlockPos> COMPARATOR_POSITIONS;
-    static {
-        ImmutableList.Builder<BlockPos> builder = ImmutableList.builder();
-        for (int i = 0; i < COMPARATOR_POSITIONS_RAW.length; i += 3) { builder.add(new BlockPos(COMPARATOR_POSITIONS_RAW[i], COMPARATOR_POSITIONS_RAW[i + 1], COMPARATOR_POSITIONS_RAW[i + 2])); }
-        COMPARATOR_POSITIONS = builder.build();
-    }
+    public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
     public static final List<BlockPos> IGNITION_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "ignition0");
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> HEAT_OUTPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "heat_output0");

@@ -11,5 +11,5 @@ Riempilo!
     - I §lFluidi§r vengono inseriti dall'alto o dal basso.
     - I §lFluidi§r vengono espulsi dal basso o dai lati.
     - Contiene fino a <config;i;steel_sheetmetal_tank.capacity> mB di fluido.
-    - L'uscita del comparatore si trova nell'angolo sinistro del modello (opposto al lato dei tubi), da un blocco sopra la base fino alla cima del serbatoio (6 blocchi di altezza).
+    - L'uscita del comparatore si trova nell'angolo sinistro del modello (opposto al lato dei tubi), da un blocco sopra la base fino alla cima del serbatoio (<config;i;steel_sheetmetal_tank.comparator_height> blocchi di altezza).
     - Usa le valvole per controllare l'uscita.

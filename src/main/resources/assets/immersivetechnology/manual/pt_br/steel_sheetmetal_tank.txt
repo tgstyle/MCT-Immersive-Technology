@@ -11,5 +11,5 @@ Encha ele!
     - Os §lFluidos§r são inseridos na parte superior ou inferior.
     - Os §lFluidos§r são liberados na parte inferior ou nas laterais.
     - Comporta até <config;i;steel_sheetmetal_tank.capacity> mB de fluido.
-    - A saída do comparador fica no canto esquerdo do modelo (oposto ao lado dos canos), de um bloco acima da base até o topo do tanque (6 blocos de altura).
+    - A saída do comparador fica no canto esquerdo do modelo (oposto ao lado dos canos), de um bloco acima da base até o topo do tanque (<config;i;steel_sheetmetal_tank.comparator_height> blocos de altura).
     - Use válvulas para controlar a saída.

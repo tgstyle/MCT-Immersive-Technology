@@ -11,5 +11,5 @@
     - §l流体§r从顶部或底部输入。
     - §l流体§r从底部或侧面输出。
     - 最多可容纳 <config;i;steel_sheetmetal_tank.capacity> mB 流体。
-    - 比较器输出位于模型的左角（与管道侧相对），从储罐底座向上一格开始，直到储罐顶部（高6格）。
+    - 比较器输出位于模型的左角（与管道侧相对），从储罐底座向上一格开始，直到储罐顶部（高<config;i;steel_sheetmetal_tank.comparator_height>格）。
     - 使用阀门来控制输出。
