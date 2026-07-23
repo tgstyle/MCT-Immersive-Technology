@@ -8,7 +8,6 @@
     "MixinIEBlockConveyor",
     "MixinIEBlockMetalDevice0",
     "MixinIEBlockMetalDevice1",
-    "MixinIEClientUtils",
     "MixinIEContentConveyors",
     "MixinIEConveyorHandler",
     "MixinIEIEContent",
