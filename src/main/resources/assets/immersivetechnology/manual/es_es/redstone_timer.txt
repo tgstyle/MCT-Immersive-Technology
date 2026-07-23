@@ -1,0 +1,8 @@
+Temporizador de redstone
+Tic-Tac
+Un conector de redstone que emite un pulso de redstone repetido, de 0,5 a 30 segundos, ajustable en la interfaz. Se conecta a la red de cables de redstone de Immersive Engineering en lugar del polvo de redstone normal.
+
+§lFuncionamiento§r
+    - Necesita una entrada de redstone activa para seguir pulsando.
+    - La interfaz ajusta el retardo, alterna entre modo entrada y salida, y elige uno de 16 colores de cable.
+    - Clic derecho con un Destornillador da acceso a los mismos controles sin abrir la interfaz: agacharse cambia el color del cable, sin agacharse alterna entre entrada y salida.

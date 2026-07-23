@@ -1,6 +1,7 @@
 Intercambiador de calor
 ¿Está caliente o frío?
-<&multiblock>El Intercambiador de calor es una máquina multibloque usada para transferir calor de fluidos calientes.
+<&multiblock>El Intercambiador de calor es un intercambiador a contracorriente — el fluido caliente entra por un lado y sale enfriado por el otro, mientras que el fluido a calentar fluye en dirección opuesta por el segundo circuito.
 
 §lFuncionamiento§r
     - El §lIntercambiador de calor§r necesita fluidos calientes para producir otros fluidos.
+    - Un comparador contra cualquier bloque exterior emite una señal proporcional a cuán lleno está su búfer interno de Flux (<config;i;heat_exchanger.energy_capacity> Flux).

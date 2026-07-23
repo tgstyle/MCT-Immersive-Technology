@@ -6,6 +6,7 @@ PLYN PLYN PLYN!
 §lProvoz§r
     - §lKapalné palivo§r se vkládá trubkou.
     - §lSpaliny§r vycházejí pod rotorem.
-    - Strana s MV vstupem energie je zapalovač – může být napájen neustále.
-    - Strana s HV vstupem je startér – potřebuje energii, dokud zapalovač nezapálí palivo. Po zapálení odpojte startér.
-    - K rotoru musíte připojit multiblock, který využívá mechanickou energii.
+    - Strana s MV vstupem energie je zapalovač, který může být napájen neustále.
+    - Strana s HV vstupem je startér, který potřebuje energii, dokud zapalovač nezapálí palivo. Po zapálení odpojte startér.
+    - K rotoru musí být připojen multiblock, který využívá mechanickou energii.
+    - Komparátor u libovolného vnějšího bloku vydává signál úměrný aktuální rychlosti rotoru.

@@ -1,9 +1,10 @@
 Tavicí kelímek
 Tavící!
-<&multiblock>Tavicí kelímek využívá elektřinu k roztavení materiálů do jejich roztavené tekuté formy.
+<&multiblock>Tavicí kelímek využívá elektřinu k roztavení materiálů do jejich roztavené tekuté formy. Rychlost chladnutí v klidu závisí na okolní teplotě biomu – v horkých biomech chladne pomaleji.
 
 
 §lProvoz§r
     - §lTekutiny§r se vstřikují zezadu.
     - §lRoztavené tekutiny§r se vypouštějí vepředu dole.
-    - Energie se přivádí ze strany.
+    - Energie se přivádí ze strany. Vnitřní zásobník pojme <config;i;melting_crucible.energy_capacity> Flux.
+    - Komparátor u ovládacího panelu vydává signál úměrný aktuální úrovni tepla.

@@ -9,3 +9,5 @@ Naplň ji!
 §lProvoz§r
     - §lTekutiny§r se vkládají nahoře i dole.
     - §lTekutiny§r se vypouštějí dole. Pro vypuštění tekutiny dole použij redstonový signál.
+    - Pojme až <config;i;steel_sheetmetal_tank.capacity> mB tekutiny.
+    - Komparátor u jedné ze 4 vertikálních vrstev nádrže vydává signál úměrný úrovni tekutiny právě v této vrstvě – nižší vrstvy signalizují „plno" dříve, jak se nádrž plní, podobně jako vanilla nádrž napájená trychtýřem.

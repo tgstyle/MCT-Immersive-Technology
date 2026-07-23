@@ -1,15 +1,13 @@
 Caldeira a Combustível Sólido
 Está ficando bem vaporoso aqui!
-<&multiblock>A Caldeira é uma máquina multibloc usada para §lfervurar água§r em vapor.
+<&multiblock>A Caldeira a Combustível Sólido queima combustível sólido (carvão, coque etc.) para fornecer calor a um §lTanque de Caldeira§r conectado — ela não contém água nem produz vapor sozinha.
 
 
 
 
 
-§lFuncionamento§r
+§lOperação§r
     - O §lCombustível sólido§r é inserido abaixo da câmara de combustão.
-    - Acenda a §lCaldeira§r com uma tocha ou pederneira e aço na saída gradeada superior.
-    - A caldeira opera em modo piloto quando não está ativa, consumindo uma pequena quantidade de combustível.
-    - A §lÁgua§r deve estar em um §lTanque de caldeira§r conectado.
-
-§lDica:§r A Caldeira consegue processar uma quantidade decente de água.
+    - Acenda com uma tocha ou pederneira e aço na saída gradeada superior.
+    - Opera em modo piloto quando inativa, consumindo um fio pequeno de combustível para não apagar.
+    - Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de calor atual.

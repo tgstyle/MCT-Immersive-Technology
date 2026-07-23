@@ -22,6 +22,8 @@ import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.common.items.helper.IFlagItem;
 import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.CommonConfig;
+import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.ModItems;
@@ -82,6 +84,20 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
 
             ManualInstance instance = ManualHelper.getManual();
+
+            ManualHelper.addConfigGetter(key -> switch (key) {
+                case "advanced_coke_oven.baseheater_energy_consumption" -> ServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;
+                case "alternator.alternator_energy_capacity" -> ServerConfig.alternatorEnergyCapacity;
+                case "alternator.alternator_max_output" -> ServerConfig.alternatorMaxOutput;
+                case "boiler_tank.tank_capacity" -> ServerConfig.boilerTankCapacity;
+                case "distiller.energy_capacity" -> ServerConfig.distillerEnergyCapacity;
+                case "electrolytic_crucible_battery.energy_capacity" -> ServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
+                case "heat_exchanger.energy_capacity" -> ServerConfig.heatExchangerEnergyCapacity;
+                case "melting_crucible.energy_capacity" -> ServerConfig.meltingCrucibleEnergyCapacity;
+                case "steel_sheetmetal_tank.capacity" -> ServerConfig.steelSheetmetalTankCapacity;
+                case "barrel_creative.output_amount" -> CommonConfig.creativeBarrelOutputAmount;
+                default -> null;
+            });
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(Reference.rl("main"), 99);
 
             ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
@@ -157,6 +173,22 @@ public class ClientProxy extends CommonProxy {
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("steel_sheetmetal_tank"));
             instance.addEntry(multiblock_category, multiblock.create());
+
+            ManualEntry.ManualEntryBuilder normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("open_barrel"));
+            instance.addEntry(parent_category, normalBlock.create());
+
+            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("steel_barrel"));
+            instance.addEntry(parent_category, normalBlock.create());
+
+            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("barrel_creative"));
+            instance.addEntry(parent_category, normalBlock.create());
+
+            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("redstone_timer"));
+            instance.addEntry(parent_category, normalBlock.create());
         });
     }
 

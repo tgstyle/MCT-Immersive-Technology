@@ -1,0 +1,9 @@
+Baril métallique en acier
+Plein à craquer
+Un réservoir fluide à bloc unique d'une capacité de 24 000 mB — le double de celle du Baril ouvert.
+
+§lFonctionnement§r
+    - Le haut et le bas peuvent tous deux être basculés entre entrée, sortie et désactivé avec un Marteau.
+    - Accepte n'importe quel fluide, y compris les gaz.
+    - Un signal Redstone désactive entièrement le transfert de fluide tant qu'il est actif.
+    - Un comparateur émet un signal proportionnel à son niveau de remplissage.

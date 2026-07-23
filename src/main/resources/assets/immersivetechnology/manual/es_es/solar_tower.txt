@@ -8,3 +8,4 @@ Torre solar
     - Los §lFluidos§r a calentar se introducen por delante.
     - Los §lFluidos calientes§r salen por detrás.
     - Debe estar a 44 bloques de distancia de otras torres.
+    - Un comparador contra el panel de control emite una señal proporcional al nivel de calor actual.

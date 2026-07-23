@@ -1,6 +1,7 @@
 Trocador de Calor
 Está quente ou frio?
-<&multiblock>O Trocador de calor é uma máquina multibloc usada para transferir calor de fluidos quentes.
+<&multiblock>O Trocador de calor é um trocador de contracorrente — o fluido quente entra de um lado e sai arrefecido do outro, enquanto o fluido a aquecer flui em sentido oposto no segundo circuito.
 
-§lFuncionamento§r
+§lOperação§r
     - O §lTrocador de calor§r precisa de fluidos quentes para produzir outros fluidos.
+    - Um comparador contra qualquer bloco exterior emite um sinal proporcional a quão cheio está o seu buffer interno de Flux (<config;i;heat_exchanger.energy_capacity> Flux).

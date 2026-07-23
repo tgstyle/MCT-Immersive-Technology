@@ -7,4 +7,5 @@ Tourne tourne !
 §lFonctionnement§r
     - La §lVapeur§r est introduite par tuyau.
     - La §lVapeur d'échappement§r sort sous le rotor.
-    - Vous devez connecter un multibloc utilisant l'énergie mécanique au rotor pour que la turbine fonctionne.
+    - Un multibloc utilisant l'énergie mécanique doit être connecté au rotor pour que la turbine fonctionne.
+    - Un comparateur contre le panneau de contrôle émet un signal proportionnel à la vitesse actuelle du rotor.

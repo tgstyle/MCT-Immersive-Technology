@@ -9,3 +9,5 @@ Remplis-le !
 §lFonctionnement§r
     - Les §lFluides§r sont introduits par le haut et par le bas.
     - Les §lFluides§r sont évacués par le bas. Utilise un signal de Redstone pour évacuer le fluide par le bas.
+    - Contient jusqu'à <config;i;steel_sheetmetal_tank.capacity> mB de fluide.
+    - Un comparateur contre l'une des 4 couches verticales du réservoir émet un signal proportionnel au niveau de fluide à cette couche précise — les couches inférieures indiquent « plein » plus tôt à mesure que le réservoir se remplit, comme un réservoir vanilla alimenté par une trémie.

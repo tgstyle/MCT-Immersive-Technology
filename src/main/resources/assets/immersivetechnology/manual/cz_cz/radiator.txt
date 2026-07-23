@@ -4,7 +4,8 @@ Chlazení!
 
 §lProvoz§r
     - §lHorké tekutiny/plyny§r vstupují na jednom konci.
-    - §lOchlažené tekutiny/plyny§r vystupují na opačném konci.
-    - Lze sestavit vertikálně (1×7×9) nebo horizontálně (9×1×7) otočením struktury.
+    - §lOchlazené tekutiny/plyny§r vystupují na opačném konci.
+    - Lze sestavit vertikálně (1→7→9) nebo horizontálně (9→1→7) otočením struktury.
     - Účinnost závisí na teplotním rozdílu s okolím a blízkých překážkách.
     - Funguje ve vakuu (na rozdíl od Chladicí věže), ale je výrazně méně účinný.
+    - Komparátor u libovolného vnějšího bloku vydává signál úměrný postupu aktuálního cyklu.

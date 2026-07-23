@@ -7,4 +7,5 @@ Gira gira!
 §lFunzionamento§r
     - Il §lVapore§r viene inserito tramite tubo.
     - Il §lVapore di scarico§r esce sotto il rotore.
-    - Devi collegare un multiblocco che utilizza energia meccanica al rotore affinché funzioni.
+    - Un multiblocco che utilizza energia meccanica deve essere collegato al rotore affinché funzioni.
+    - Un comparatore contro il pannello di controllo emette un segnale proporzionale alla velocità attuale del rotore.

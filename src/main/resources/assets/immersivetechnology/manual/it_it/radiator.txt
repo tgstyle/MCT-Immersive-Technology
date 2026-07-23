@@ -1,10 +1,11 @@
 Radiatore
 Raffreddamento!
-<&multiblock>Il Radiatore esegue il raffreddamento radiativo di fluidi e gas caldi, simile alla Torre di Raffreddamento ma molto più compatto. Può essere costruito sia verticalmente che orizzontalmente.
+<&multiblock>Il Radiatore esegue il raffreddamento radiativo di fluidi e gas caldi, simile alla Torre di raffreddamento ma molto più compatto. Può essere costruito sia verticalmente che orizzontalmente.
 
 §lFunzionamento§r
-    - I §lFluide/Gas Caldi§r entrano da un’estremità.
-    - I §lFluide/Gas Raffreddati§r escono dall’estremità opposta.
-    - Può essere formato verticalmente (1×7×9) o orizzontalmente (9×1×7) ruotando la struttura.
-    - L’efficienza dipende dalla differenza di temperatura con l’ambiente e dagli ostacoli vicini.
-    - Funziona nel vuoto (a differenza della Torre di Raffreddamento) ma è significativamente meno efficiente.
+    - I §lFluidi/Gas caldi§r entrano da un'estremità.
+    - I §lFluidi/Gas raffreddati§r escono dall'estremità opposta.
+    - Può essere formato verticalmente (1→7→9) o orizzontalmente (9→1→7) ruotando la struttura.
+    - L'efficienza dipende dalla differenza di temperatura con l'ambiente e dagli ostacoli vicini.
+    - Funziona nel vuoto (a differenza della Torre di raffreddamento) ma è nettamente meno efficiente.
+    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale all'avanzamento del ciclo corrente.

@@ -8,3 +8,4 @@ Tavící!
     - §lOhřáté kapaliny§r se vkládají zepředu.
     - §lRoztavené kapaliny§r vycházejí zezadu.
     - Musí být minimálně 44 bloků od jiných věží.
+    - Komparátor u ovládacího panelu vydává signál úměrný aktuální úrovni tepla.

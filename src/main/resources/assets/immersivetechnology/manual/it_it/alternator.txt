@@ -1,7 +1,10 @@
 Alternatore
 Grande e potente!
-<&multiblock>L'Alternatore è una macchina multiblocco che genera una grande quantità di energia, in grado di alimentare molte più macchine rispetto al §lGeneratore diesel§r!
+<&multiblock>L'Alternatore converte energia meccanica in Flux, e può alimentare molte più macchine di un singolo Generatore diesel.
+
 
 
 §lFunzionamento§r
-    - L'§lAlternatore§r richiede un input rotazionale da un fornitore di energia meccanica come la §lTurbina a vapore§r o la §lTurbina a gas§r.
+    - Richiede un input rotazionale da una fonte di energia meccanica — una §lTurbina a vapore§r o §lTurbina a gas§r — collegata sul retro.
+    - L'uscita è sul lato anteriore-sinistro e anteriore-destro; produce fino a <config;i;alternator.alternator_max_output> Flux/t in base alla velocità del rotore.
+    - Il buffer interno contiene <config;i;alternator.alternator_energy_capacity> Flux. Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di energia attuale.

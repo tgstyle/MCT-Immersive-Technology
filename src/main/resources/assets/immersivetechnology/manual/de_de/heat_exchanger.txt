@@ -1,6 +1,7 @@
 Wärmetauscher
 Ist es heiß oder kühl?
-<&multiblock>Der Wärmetauscher ist eine Multiblock-Maschine, die Wärme von heißen Flüssigkeiten überträgt.
+<&multiblock>Der Wärmetauscher ist ein Gegenstromtauscher – heiße Flüssigkeit tritt auf einer Seite ein und kühlt beim Austritt auf der anderen ab, während die zu erwärmende Flüssigkeit im zweiten Kreislauf in die Gegenrichtung fließt.
 
 §lBetrieb§r
     - Der §lWärmetauscher§r benötigt heiße Flüssigkeiten, um andere Flüssigkeiten zu erzeugen.
+    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zur Füllung des internen Flux-Puffers (<config;i;heat_exchanger.energy_capacity> Flux) aus.

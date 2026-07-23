@@ -7,4 +7,5 @@ Točí to!
 §lProvoz§r
     - §lPára§r se vkládá trubkou.
     - §lVýfuková pára§r vychází pod rotorem.
-    - K rotoru musíte připojit multiblock, který využívá mechanickou energii.
+    - K rotoru musí být připojen multiblock, který využívá mechanickou energii.
+    - Komparátor u ovládacího panelu vydává signál úměrný aktuální rychlosti rotoru.

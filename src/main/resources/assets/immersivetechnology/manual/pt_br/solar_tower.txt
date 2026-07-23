@@ -1,10 +1,11 @@
 Torre Solar
 Caldeira solar!
-<&multiblock>A Torre solar é uma máquina multibloc que transforma água em vapor durante o dia.
+<&multiblock>A Torre solar é uma máquina multibloco que transforma água em vapor durante o dia.
 
 
 
-§lFuncionamento§r
+§lOperação§r
     - Os §lFluidos§r a serem aquecidos são inseridos na frente.
     - Os §lFluidos aquecidos§r saem atrás.
     - Deve estar a 44 blocos de distância de outras torres.
+    - Um comparador contra o painel de controle emite um sinal proporcional ao nível de calor atual.

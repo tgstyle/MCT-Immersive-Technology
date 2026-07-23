@@ -1,0 +1,9 @@
+Open Metal Barrel
+Open to the Sky
+A single-block fluid tank open on top, holding 12,000 mB. Fluid can be poured in by hand, and it slowly fills with rainwater when exposed to open sky.
+
+§lOperation§r
+    - The top is fixed as input-only; the bottom can be cycled between input, output, and off with a Hammer.
+    - Only accepts liquids, not gasses.
+    - Fills with rainwater when it's raining directly above and the tank is empty or already holds water — faster during a thunderstorm. In hot biomes it evaporates instead.
+    - A comparator against it outputs a signal proportional to how full it is.

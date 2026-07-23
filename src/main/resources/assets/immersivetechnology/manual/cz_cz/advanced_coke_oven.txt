@@ -1,8 +1,9 @@
 Pokročilá koksárna
 Lepší koks
-<&multiblock>Pokročilá koksárna je multiblokový stroj používaný ke §lzpracování uhlí na koks§r, pomáhající při §lvýrobě koksu§r a zlepšující efektivitu zpracování.
+<&multiblock>Pokročilá koksárna je multiblokový stroj, který přeměňuje uhlí na §lkoks§r a §lkreosotový olej§r rychleji než standardní koksárna.
+
 
 §lProvoz§r
-    - §lPředměty§r se vkládají do stroje z horní §lstrany§r.
-    - §lVýstupy§r se sbírají z §lpřední strany§r multibloku.
-    - Používejte základní ohřívače koksárny k urychlení zpracování.
+    - §lPředměty§r-palivo se vkládají §lshora§r; kapalinový výstup (kreosotový olej) se odebírá z §lpřední strany§r.
+    - K bočním portům lze připojit až dva základní ohřívače; každý aktivní ohřívač spotřebuje <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t a zvyšuje rychlost zpracování, s klesajícím přínosem při kombinaci obou.
+    - Komparátor u libovolného vnějšího bloku vydává signál úměrný postupu aktuální dávky.

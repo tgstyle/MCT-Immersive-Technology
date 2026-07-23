@@ -5,6 +5,7 @@ Resfriamento!
 §lOperação§r
     - §lFluidos/Gases Quentes§r entram em uma extremidade.
     - §lFluidos/Gases Resfriados§r saem na extremidade oposta.
-    - Pode ser formado verticalmente (1×7×9) ou horizontalmente (9×1×7) rotacionando a estrutura.
+    - Pode ser formado verticalmente (1→7→9) ou horizontalmente (9→1→7) rotacionando a estrutura.
     - A eficiência depende da diferença de temperatura com o ambiente e obstruções próximas.
     - Funciona no vácuo (ao contrário da Torre de Resfriamento), mas é significativamente menos eficiente.
+    - Um comparador contra qualquer bloco externo emite um sinal proporcional ao progresso do ciclo atual.

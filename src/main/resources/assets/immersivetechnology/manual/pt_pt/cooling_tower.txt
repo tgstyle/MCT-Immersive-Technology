@@ -1,14 +1,15 @@
 Torre de Arrefecimento
 Arrefece!
-<&multiblock>A Torre de arrefecimento arrefece o §lvapor de escape§r de volta para água.
+<&multiblock>A Torre de arrefecimento arrefece o §lvapor de escape§r de volta a água, e consegue processar até 3 lotes em simultâneo.
 
 
 
 
 
 
-§lFuncionamento§r
-    - A §lÁgua§r é inserida numa das entradas.
-    - O §lVapor de escape§r é inserido na outra entrada.
+§lOperação§r
+    - A §lÁgua§r e o §lVapor de escape§r podem entrar em qualquer uma das entradas — a ordem não importa.
     - A §lÁgua§r sai por todas as saídas.
-    - A Eficiência depende do diferencial de temperatura com o ambiente e obstruções próximas.
+    - Até 3 lotes são processados em paralelo, pelo que o rendimento pode superar o que o tempo de um único lote sugeriria.
+    - A eficiência depende do diferencial de temperatura com o ambiente e obstruções próximas.
+    - Um comparador contra o bloco usado para formar a estrutura (aquele atingido com o Martelo) emite um sinal proporcional ao quão cheia está a fila de 3 lotes. A Torre de arrefecimento não tem painel de controlo de redstone, pelo que este é o único ponto fixo onde responde.

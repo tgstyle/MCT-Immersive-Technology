@@ -1,0 +1,8 @@
+Kreativ-Flüssigkeitsfass
+Unbegrenzter Vorrat
+Ein nur für Kreativmodus/Tests gedachter Block, der eine unbegrenzte Menge einer gewählten Flüssigkeit liefert. Er nimmt keine Flüssigkeit auf.
+
+§lBetrieb§r
+    - Rechtsklick mit einem Eimer oder Behälter einer Flüssigkeit legt diese als Ausgabeflüssigkeit fest.
+    - Schleich-Rechtsklick mit leerer Hand löscht die gewählte Flüssigkeit.
+    - Sobald festgelegt, drückt er die Flüssigkeit aktiv jeden Tick in alle 6 benachbarten Blöcke, bis zu <config;i;barrel_creative.output_amount> mB/t – bei Standardeinstellungen praktisch unbegrenzt.

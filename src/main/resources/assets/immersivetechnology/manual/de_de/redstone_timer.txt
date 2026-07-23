@@ -1,0 +1,8 @@
+Redstone-Timer
+Tick-Tack
+Ein Redstone-Verbinder, der einen sich wiederholenden Redstone-Impuls ausgibt, von 0,5 bis 30 Sekunden, einstellbar in der Oberfläche. Verbindet sich mit dem Redstone-Kabelnetz von Immersive Engineering statt mit normalem Redstone-Staub.
+
+§lBetrieb§r
+    - Benötigt ein aktives Redstone-Eingangssignal, um weiter zu pulsieren.
+    - Die Oberfläche stellt die Verzögerung ein, schaltet zwischen Eingangs- und Ausgangsmodus um und wählt eine von 16 Kabelfarben.
+    - Rechtsklick mit einem Schraubendreher bietet dieselben Einstellungen ohne die Oberfläche zu öffnen: Schleichen wechselt die Kabelfarbe, ohne Schleichen schaltet zwischen Eingang und Ausgang um.

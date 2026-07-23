@@ -8,3 +8,4 @@ Chaudière solaire !
     - Les §lFluides§r à chauffer sont introduits par l'avant.
     - Les §lFluides chauffés§r sortent par l'arrière.
     - Doit être à 44 blocs de distance des autres tours.
+    - Un comparateur contre le panneau de contrôle émet un signal proportionnel au niveau de chaleur actuel.

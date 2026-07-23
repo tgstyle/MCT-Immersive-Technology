@@ -6,6 +6,8 @@ Enche-o!
 
 
 
-§lFuncionamento§r
+§lOperação§r
     - Os §lFluidos§r são inseridos na parte superior e inferior.
     - Os §lFluidos§r são libertados na parte inferior. Usa um sinal de Redstone para libertar o fluido na parte inferior.
+    - Comporta até <config;i;steel_sheetmetal_tank.capacity> mB de fluido.
+    - Um comparador contra uma das 4 camadas verticais do tanque emite um sinal proporcional ao nível de fluido nessa camada específica — camadas inferiores assinalam "cheio" mais cedo à medida que o tanque enche, tal como um tanque vanilla alimentado por um funil.

@@ -8,3 +8,4 @@ Sonnenkessel!
     - §lFlüssigkeiten§r zum Erhitzen werden vorne eingefüllt.
     - §lErhitzte Flüssigkeiten§r werden hinten ausgegeben.
     - Muss mindestens 44 Blöcke von anderen Türmen entfernt stehen.
+    - Ein Komparator am Bedienfeld gibt ein Signal proportional zum aktuellen Wärmestand aus.

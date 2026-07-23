@@ -1,13 +1,13 @@
 Tanque de Caldeira
 Está ficando bem vaporoso aqui!
-<&multiblock>A Caldeira é uma máquina multibloc usada para §lfervurar água§r em vapor.
+<&multiblock>O Tanque de Caldeira é o núcleo do sistema de caldeira — ele contém água e a transforma em vapor, mas não pode produzir calor sozinho. Conecte uma §lCaldeira (Combustível Líquido)§r ou §lCaldeira (Combustível Sólido)§r para alimentá-lo.
 
 
 
 
-§lFuncionamento§r
-    - A §lÁgua§r é inserida próximo ao tanque no §llado esquerdo§r.
-    - O §lVapor§r sai pela §lparte superior§r do multibloc.
-    - A §lÁgua§r deve estar no tanque para que o §lQueimador de caldeira§r conectado funcione.
-
-§lDica:§r A Caldeira consegue processar uma quantidade decente de água.
+§lOperação§r
+    - A §lÁgua§r é inserida perto do tanque no §llado esquerdo§r; o §lVapor§r sai pelo topo.
+    - Comporta até <config;i;boiler_tank.tank_capacity> mB de água.
+    - Inicia um lote quando o calor do queimador conectado atinge a temperatura de trabalho.
+    - Se o calor cair no meio do lote, o progresso recua gradualmente em vez de zerar totalmente — uma interrupção breve custa algum progresso, não tudo.
+    - Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de calor atual.
