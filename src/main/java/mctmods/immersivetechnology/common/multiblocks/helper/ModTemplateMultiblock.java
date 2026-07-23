@@ -301,10 +301,19 @@ public abstract class ModTemplateMultiblock extends TemplateMultiblock {
         StructureTemplate template = getTemplate(world).template();
         StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rot).setMirror(mirrorForSettings);
         boolean mirrored = mirrorForSettings != Mirror.NONE;
+        Set<BlockPos> placedPositions = new HashSet<>();
         for (StructureBlockInfo info : template.palettes.get(0).blocks()) {
             BlockPos actualPos = origin.offset(StructureTemplate.calculateRelativePosition(settings, info.pos()));
             Vec3i offsetFromMaster = info.pos().subtract(masterFromOrigin);
             replaceStructureBlock(info, world, actualPos, mirrored, side, offsetFromMaster);
+            placedPositions.add(actualPos);
+        }
+        Block block = getBlock();
+        for (BlockPos placedPos : placedPositions) {
+            for (Direction dir : Direction.values()) {
+                BlockPos neighborPos = placedPos.relative(dir);
+                if (!placedPositions.contains(neighborPos)) { world.neighborChanged(neighborPos, block, placedPos); }
+            }
         }
     }
 
