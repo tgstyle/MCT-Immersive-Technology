@@ -161,26 +161,16 @@ public class ITContent {
         blockWoodenCrate = new BlockWoodenCrate();
 
         /*FLUIDS*/
-        fluidSteam = new FluidColored("steam", 0x3E444F, 1000, -100, 500, true);
-        FluidRegistry.registerFluid(fluidSteam);
-        fluidExhaustSteam = new FluidColored("exhauststeam", 0xC1C1C5, 500, -100, 500, true);
-        FluidRegistry.registerFluid(fluidExhaustSteam);
-        fluidDistWater = new FluidColored("distwater", 0x7079E0, 1000, 1000, false);
-        FluidRegistry.registerFluid(fluidDistWater);
-        fluidFlueGas = new FluidColored("fluegas", 0xFFFFFF, -100, 500, true);
-        FluidRegistry.registerFluid(fluidFlueGas);
-        fluidHighPressureSteam = new FluidColored("highpressuresteam", 0x606978, 1500, -300, 500, true);
-        FluidRegistry.registerFluid(fluidHighPressureSteam);
-        fluidHotWater = new FluidColored("hotwater", 0x0dffff, 350, 1000, 1000, false);
-        FluidRegistry.registerFluid(fluidHotWater);
-        fluidMoltenSalt = new FluidColored("moltensalt", 0xc4c6c7, 1100, 2170, 10000);
-        FluidRegistry.registerFluid(fluidMoltenSalt);
-        fluidMoltenSodium = new FluidColored("moltensodium", 0xc2c2c2, 400, 927, 10000);
-        FluidRegistry.registerFluid(fluidMoltenSodium);
-        fluidSuperheatedMoltenSodium = new FluidColored("superheatedmoltensodium", 0xaea0a2, 927, 1000, 10000);
-        FluidRegistry.registerFluid(fluidSuperheatedMoltenSodium);
-        fluidChlorine = new FluidColored("chlorine", 0xc0e67b, 300, -100, 1000, false);
-        FluidRegistry.registerFluid(fluidChlorine);
+        fluidSteam = FluidColored.register(new FluidColored("steam", 0x3E444F, 1000, -100, 500, true));
+        fluidExhaustSteam = FluidColored.register(new FluidColored("exhauststeam", 0xC1C1C5, 500, -100, 500, true));
+        fluidDistWater = FluidColored.register(new FluidColored("distwater", 0x7079E0, 1000, 1000, false));
+        fluidFlueGas = FluidColored.register(new FluidColored("fluegas", 0xFFFFFF, -100, 500, true));
+        fluidHighPressureSteam = FluidColored.register(new FluidColored("highpressuresteam", 0x606978, 1500, -300, 500, true));
+        fluidHotWater = FluidColored.register(new FluidColored("hotwater", 0x0dffff, 350, 1000, 1000, false));
+        fluidMoltenSalt = FluidColored.register(new FluidColored("moltensalt", 0xc4c6c7, 1100, 2170, 10000));
+        fluidMoltenSodium = FluidColored.register(new FluidColored("moltensodium", 0xc2c2c2, 400, 927, 10000));
+        fluidSuperheatedMoltenSodium = FluidColored.register(new FluidColored("superheatedmoltensodium", 0xaea0a2, 927, 1000, 10000));
+        fluidChlorine = FluidColored.register(new FluidColored("chlorine", 0xc0e67b, 300, -100, 1000, false));
 
         /*FLUID BLOCKS*/
         blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);

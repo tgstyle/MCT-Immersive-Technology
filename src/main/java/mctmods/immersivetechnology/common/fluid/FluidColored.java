@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.fluid;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.util.ITLogger;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -15,39 +16,36 @@ public class FluidColored extends Fluid {
 
 	public FluidColored(String name, int color, int temp, int density, int viscosity) {
 		super(name, ICON_MetalStill, ICON_MetalFlowing);
-		if (!FluidRegistry.isFluidRegistered(name)) {
-			this.color = color;
-			this.setTemperature(temp);
-			this.setDensity(density);
-			this.setViscosity(viscosity);
-			FluidRegistry.registerFluid(this);
-			FluidRegistry.addBucketForFluid(this);
-		}
+		this.color = color;
+		setTemperature(temp);
+		setDensity(density);
+		setViscosity(viscosity);
 	}
 
 	public FluidColored(String name, int color, int density, int viscosity, boolean gaseous) {
 		super(name, ICON_Still, ICON_Flowing);
-		if (!FluidRegistry.isFluidRegistered(name)) {
-			this.color = color;
-			this.setDensity(density);
-			this.setViscosity(viscosity);
-			this.setGaseous(gaseous);
-			FluidRegistry.registerFluid(this);
-			FluidRegistry.addBucketForFluid(this);
-		}
+		this.color = color;
+		setDensity(density);
+		setViscosity(viscosity);
+		setGaseous(gaseous);
 	}
 
 	public FluidColored(String name, int color, int temp, int density, int viscosity, boolean gaseous) {
 		super(name, ICON_Still, ICON_Flowing);
-		if (!FluidRegistry.isFluidRegistered(name)) {
-			this.color = color;
-			this.setTemperature(temp);
-			this.setDensity(density);
-			this.setViscosity(viscosity);
-			this.setGaseous(gaseous);
-			FluidRegistry.registerFluid(this);
-			FluidRegistry.addBucketForFluid(this);
+		this.color = color;
+		setTemperature(temp);
+		setDensity(density);
+		setViscosity(viscosity);
+		setGaseous(gaseous);
+	}
+
+	public static Fluid register(FluidColored fluid) {
+		if (FluidRegistry.registerFluid(fluid)) {
+			FluidRegistry.addBucketForFluid(fluid);
+			return fluid;
 		}
+		ITLogger.logger.info("A fluid named {} is already registered, using the existing one", fluid.getName());
+		return FluidRegistry.getFluid(fluid.getName());
 	}
 
 	@Override public int getColor() {
