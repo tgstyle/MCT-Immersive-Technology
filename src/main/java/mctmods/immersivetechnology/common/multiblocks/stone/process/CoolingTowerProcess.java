@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.stone.process;
 
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
@@ -9,19 +10,19 @@ public class CoolingTowerProcess {
     private final CoolingTowerRecipe recipe;
     private int ticksProcessed = 0;
     private double progressAccumulator = 0.0D;
+    private boolean inputsDrained = false;
 
     public CoolingTowerProcess(CoolingTowerRecipe recipe) { this.recipe = recipe; }
 
-    public void tick(CoolingTowerLogic.State state) {
-        tick(state, 1.0D);
-    }
+    public void tick(CoolingTowerLogic.State state) { tick(state, 1.0D); }
 
     public void tick(CoolingTowerLogic.State state, double speedMult) {
-        if (ticksProcessed >= recipe.getTotalProcessTime()) return;
+        if (ticksProcessed >= recipe.getTotalProcessTime()) { return; }
 
-        if (ticksProcessed == 0) {
+        if (!inputsDrained) {
             FluidStack drained0 = state.tanks.input0().drain(recipe.getInput0Amount(), FluidAction.EXECUTE);
             FluidStack drained1 = state.tanks.input1().drain(recipe.getInput1Amount(), FluidAction.EXECUTE);
+            inputsDrained = true;
             if (drained0.getAmount() < recipe.getInput0Amount() || !drained0.is(recipe.inputTag0()) || drained1.getAmount() < recipe.getInput1Amount() || !drained1.is(recipe.inputTag1())) {
                 ticksProcessed = recipe.getTotalProcessTime();
                 return;
