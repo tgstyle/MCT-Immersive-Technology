@@ -72,12 +72,12 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
-    private static final int INPUT_TANK_CAPACITY = ServerConfig.steamTurbineInputTankCapacity;
-    private static final int OUTPUT_TANK_CAPACITY = ServerConfig.steamTurbineOutputTankCapacity;
-    private static final double BASE_MASS = ServerConfig.steamTurbineBaseMass;
-    private static final double DRIVE_TORQUE = ServerConfig.steamTurbineDriveTorque;
-    private static final double FRICTION = ServerConfig.steamTurbineFriction;
-    private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ServerConfig.steamTurbineMaxSpeedFactor);
+    private static int inputTankCapacity() { return ServerConfig.steamTurbineInputTankCapacity; }
+    private static int outputTankCapacity() { return ServerConfig.steamTurbineOutputTankCapacity; }
+    private static double baseMass() { return ServerConfig.steamTurbineBaseMass; }
+    private static double driveTorque() { return ServerConfig.steamTurbineDriveTorque; }
+    private static double friction() { return ServerConfig.steamTurbineFriction; }
+    private static int maxSpeed() { return (int) (MechanicalCapabilities.MAX_RPM * ServerConfig.steamTurbineMaxSpeedFactor); }
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
@@ -188,12 +188,12 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                 consumerMaxSpeed = consumer.getMaxSpeed();
             }
         }
-        int effectiveMax = hasConsumer ? Math.min(MAX_SPEED, consumerMaxSpeed) : MAX_SPEED;
+        int effectiveMax = hasConsumer ? Math.min(maxSpeed(), consumerMaxSpeed) : maxSpeed();
         state.effectiveMaxSpeed = effectiveMax;
         if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
             state.connectedFriction = additionalFriction;
-            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction, effectiveMax);
+            state.inertia = new RotationInertiaProcess(baseMass() + state.connectedMass, driveTorque(), friction() + state.connectedFriction, effectiveMax);
         }
         boolean canRun = currentlyEnabled && hasConsumer;
         float ratio = 0f;
@@ -269,10 +269,10 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override public int getSpeed() { return state.speed; }
         @Override public float getTorque() { return state.currentTorque; }
-        @Override public int getMaxSpeed() { return MAX_SPEED; }
-        @Override public double getBaseMass() { return BASE_MASS; }
-        @Override public double getDriveTorque() { return DRIVE_TORQUE; }
-        @Override public double getFriction() { return FRICTION; }
+        @Override public int getMaxSpeed() { return maxSpeed(); }
+        @Override public double getBaseMass() { return baseMass(); }
+        @Override public double getDriveTorque() { return driveTorque(); }
+        @Override public double getFriction() { return friction(); }
     }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
@@ -299,7 +299,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         private RotationInertiaProcess inertia;
         private int pressureReleaseCooldown = 0;
         private boolean wasEnabled = false;
-        public int effectiveMaxSpeed = MAX_SPEED;
+        public int effectiveMaxSpeed = maxSpeed();
         public int lastComparatorValue = -1;
         private float accumConsume;
         private float outAccum;
@@ -311,11 +311,11 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            this.tanks = new SteamTurbineTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
+            this.tanks = new SteamTurbineTank(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
             this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, onChanged));
             this.fluidCapExhaust = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, onChanged));
             this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
-            this.inertia = new RotationInertiaProcess(BASE_MASS + connectedMass, DRIVE_TORQUE, FRICTION + connectedFriction, effectiveMaxSpeed);
+            this.inertia = new RotationInertiaProcess(baseMass() + connectedMass, driveTorque(), friction() + connectedFriction, effectiveMaxSpeed);
             this.accumConsume = 0f;
             this.outAccum = 0f;
             this.accumDelta = 0.0;

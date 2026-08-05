@@ -49,8 +49,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, IPressurizedFluidOutput<CoolingTowerLogic.State> {
-    public static final int INPUT_TANK_CAPACITY = ServerConfig.coolingTowerInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.coolingTowerOutputTankCapacity;
+    public static int inputTankCapacity() { return ServerConfig.coolingTowerInputTankCapacity; }
+    public static int outputTankCapacity() { return ServerConfig.coolingTowerOutputTankCapacity; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(CoolingTowerShape.DATA.pointsOfInterest);
 
@@ -273,7 +273,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     public record CoolingTowerTanks(MarkableFluidTank input0, MarkableFluidTank input1, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
 
         public CoolingTowerTanks(Consumer<Void> markDirty) {
-            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty));
         }
 
         public static CoolingTowerTanks makeClient() { return new CoolingTowerTanks(v -> {}); }

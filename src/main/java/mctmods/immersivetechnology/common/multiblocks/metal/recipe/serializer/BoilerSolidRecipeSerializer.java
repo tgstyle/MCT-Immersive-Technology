@@ -20,7 +20,7 @@ public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidR
     @Override public BoilerSolidRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
         IngredientWithSize input = IngredientWithSize.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         double heatPerTick = GsonHelper.getAsDouble(json, "heatPerTick");
-        double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerSolidLogic.DEFAULT_WORKING_HEAT_LEVEL);
+        double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerSolidLogic.defaultWorkingHeatLevel());
         return new BoilerSolidRecipe(recipeId, input, heatPerTick, targetHeat);
     }
 

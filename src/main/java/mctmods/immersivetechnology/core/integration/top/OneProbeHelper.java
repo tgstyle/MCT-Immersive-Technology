@@ -24,8 +24,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 public class OneProbeHelper {
-    private static final double solarWorkingHeatLevel = CommonConfig.solarTowerWorkingHeatLevel;
-    private static final double solarMelterWorkingHeatLevel = CommonConfig.solarMelterWorkingHeatLevel;
+    private static double solarWorkingHeatLevel() { return CommonConfig.solarTowerWorkingHeatLevel; }
+    private static double solarMelterWorkingHeatLevel() { return CommonConfig.solarMelterWorkingHeatLevel; }
 
     public static void register(ITheOneProbe top) {
         top.registerProvider(new AlternatorProvider());
@@ -247,7 +247,7 @@ public class OneProbeHelper {
                 addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
                 FluidStack input = state.tanks.input().getFluid();
                 MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
-                double workingLevel = recipe != null ? recipe.requiredTemp : MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
+                double workingLevel = recipe != null ? recipe.requiredTemp : MeltingCrucibleLogic.workingHeatLevel();
                 addTemperature(probeInfo, state.heatLevel, workingLevel);
 
                 if (state.queueSize > 0) {
@@ -296,7 +296,7 @@ public class OneProbeHelper {
                 addFluidTankDisplay(probeInfo, state.tanks.output());
                 FluidStack input = state.tanks.input().getFluid();
                 MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
-                double workingLevel = recipe != null ? recipe.requiredTemp : solarMelterWorkingHeatLevel;
+                double workingLevel = recipe != null ? recipe.requiredTemp : solarMelterWorkingHeatLevel();
                 addTemperature(probeInfo, state.heatLevel, workingLevel);
                 int percent = (state.totalProcessTime > 0) ? state.processProgress * 100 / state.totalProcessTime : 0;
                 addProcessPercent(probeInfo, percent);
@@ -315,7 +315,7 @@ public class OneProbeHelper {
                 addFluidTankDisplay(probeInfo, state.tanks.output());
                 FluidStack input = state.tanks.input().getFluid();
                 SolarTowerRecipe recipe = input.isEmpty() ? null : SolarTowerRecipe.findRecipe(level, input);
-                double workingLevel = recipe != null ? recipe.requiredTemp : solarWorkingHeatLevel;
+                double workingLevel = recipe != null ? recipe.requiredTemp : solarWorkingHeatLevel();
                 addTemperature(probeInfo, state.heatLevel, workingLevel);
                 int percent = (state.totalProcessTime > 0) ? state.processProgress * 100 / state.totalProcessTime : 0;
                 addProcessPercent(probeInfo, percent);

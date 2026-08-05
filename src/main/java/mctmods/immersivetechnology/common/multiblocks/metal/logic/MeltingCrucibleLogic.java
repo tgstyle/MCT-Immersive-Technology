@@ -60,15 +60,15 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
-    public static final int INPUT_TANK_CAPACITY = ServerConfig.meltingCrucibleInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.meltingCrucibleOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ServerConfig.meltingCrucibleEnergyCapacity;
+    public static int inputTankCapacity() { return ServerConfig.meltingCrucibleInputTankCapacity; }
+    public static int outputTankCapacity() { return ServerConfig.meltingCrucibleOutputTankCapacity; }
+    public static int energyCapacity() { return ServerConfig.meltingCrucibleEnergyCapacity; }
 
-    public static final double WORKING_HEAT_LEVEL = ServerConfig.meltingCrucibleHeatWorkingLevel;
-    private static final double HEAT_LOSS_MULTIPLIER = ServerConfig.meltingCrucibleHeatLossMultiplier;
-    private static final double HEAT_GAIN_BASE = ServerConfig.meltingCrucibleHeatGainBase;
-    private static final int ENERGY_PER_TICK_TO_HEAT = ServerConfig.meltingCrucibleEnergyPerTickToHeat;
-    private static final int ENERGY_PER_TICK_TO_MAINTAIN = ServerConfig.meltingCrucibleEnergyPerTickToMaintain;
+    public static double workingHeatLevel() { return ServerConfig.meltingCrucibleHeatWorkingLevel; }
+    private static double heatLossMultiplier() { return ServerConfig.meltingCrucibleHeatLossMultiplier; }
+    private static double heatGainBase() { return ServerConfig.meltingCrucibleHeatGainBase; }
+    private static int energyPerTickToHeat() { return ServerConfig.meltingCrucibleEnergyPerTickToHeat; }
+    private static int energyPerTickToMaintain() { return ServerConfig.meltingCrucibleEnergyPerTickToMaintain; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(MeltingCrucibleShape.DATA.pointsOfInterest);
 
@@ -119,7 +119,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = recipe; }
 
         boolean shouldRun = state.rsState.isEnabled(ctx);
-        int energyThisTick = state.heatLevel >= WORKING_HEAT_LEVEL ? ENERGY_PER_TICK_TO_MAINTAIN : ENERGY_PER_TICK_TO_HEAT;
+        int energyThisTick = state.heatLevel >= workingHeatLevel() ? energyPerTickToMaintain() : energyPerTickToHeat();
         boolean heating = shouldRun && state.energy.extractEnergy(energyThisTick, true) >= energyThisTick;
         if (heating) { state.energy.extractEnergy(energyThisTick, false); }
         heatLogic(ctx, heating, state);
@@ -142,7 +142,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         int newQueueSize = state.processor.getQueueSize();
         boolean queueSizeChanged = newQueueSize != state.queueSize;
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
-        int newComparatorValue = (int) Math.min(15, (15 * state.heatLevel) / WORKING_HEAT_LEVEL);
+        int newComparatorValue = (int) Math.min(15, (15 * state.heatLevel) / workingHeatLevel());
         boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
         if (comparatorChanged) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
         boolean update = activeChanged || energyChanged || tanksChanged || queueSizeChanged || comparatorChanged;
@@ -154,8 +154,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         double prev = state.heatLevel;
         state.heatLevel -= getCooldownAmount(ctx);
         state.heatLevel = Math.max(state.heatLevel, 0);
-        if (heating) { state.heatLevel += HEAT_GAIN_BASE; }
-        double maxHeat = state.activeRecipe != null ? state.activeRecipe.requiredTemp : WORKING_HEAT_LEVEL;
+        if (heating) { state.heatLevel += heatGainBase(); }
+        double maxHeat = state.activeRecipe != null ? state.activeRecipe.requiredTemp : workingHeatLevel();
         state.heatLevel = Math.min(state.heatLevel, maxHeat);
         if (prev != state.heatLevel) { ctx.markMasterDirty(); }
     }
@@ -165,7 +165,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         BlockPos pos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
         float biomeTemp = level.getBiome(pos).value().getBaseTemperature();
         double heatLost = biomeTemp > 0 ? biomeTemp : 0.1;
-        return (1 / heatLost) * HEAT_LOSS_MULTIPLIER;
+        return (1 / heatLost) * heatLossMultiplier();
     }
 
     private void tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
@@ -255,7 +255,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             this.inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input(), false, true, onChanged));
             this.outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
-            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
         }
@@ -313,7 +313,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
@@ -325,7 +325,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     public record MeltingCrucibleTank(MarkableFluidTank input, MarkableFluidTank output) {
         public MeltingCrucibleTank(Consumer<Void> markDirty) {
-            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty));
         }
 
         public static MeltingCrucibleTank makeClient() { return new MeltingCrucibleTank(v -> {}); }
@@ -343,7 +343,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return Math.max(INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY); }
+        public int getCapacity() { return Math.max(inputTankCapacity(), outputTankCapacity()); }
 
         public MarkableFluidTank input() { return input; }
         public MarkableFluidTank output() { return output; }

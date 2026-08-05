@@ -61,9 +61,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final int INPUT_FUEL_SLOT_FILLED = 0;
     public static final int INPUT_FUEL_SLOT_EMPTY = 1;
 
-    public static final double HEAT_LOSS_PER_TICK = ServerConfig.boilerLiquidHeatLossPerTick;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = CommonConfig.boilerDefaultWorkingHeat;
-    public static final double PILOT_HEAT = ServerConfig.boilerLiquidPilotHeat;
+    public static double heatLossPerTick() { return ServerConfig.boilerLiquidHeatLossPerTick; }
+    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
+    public static double pilotHeat() { return ServerConfig.boilerLiquidPilotHeat; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
 
@@ -87,9 +87,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
         float currentLevel = (float) (state.heatLevel / state.workingHeatLevel);
         float vol = (2 * currentLevel) / attenuation;
-        if ((!state.pilotLit || state.heatLevel > PILOT_HEAT) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+        if ((!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
             state.isSoundPlaying = ModSound.startSound(
-                    () -> (!state.pilotLit || state.heatLevel > PILOT_HEAT) && state.heatLevel > 0,
+                    () -> (!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
                     Sounds.boiler_liquid,
@@ -102,9 +102,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                     () -> (float) (state.heatLevel / state.workingHeatLevel)
             );
         }
-        if (state.pilotLit && state.heatLevel <= PILOT_HEAT && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) {
+        if (state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) {
             state.isPilotSoundPlaying = ModSound.startSound(
-                    () -> state.pilotLit && state.heatLevel <= PILOT_HEAT && state.heatLevel > 0,
+                    () -> state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
                     Sounds.pilot,
@@ -112,9 +112,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                         LocalPlayer p = Minecraft.getInstance().player;
                         if (p == null) { return 0f; }
                         float a = (float) Math.max(p.distanceToSqr(soundPos) / 8, 1);
-                        return (2 * (float) (PILOT_HEAT / state.workingHeatLevel)) / a;
+                        return (2 * (float) (pilotHeat() / state.workingHeatLevel)) / a;
                     },
-                    () -> (float) (PILOT_HEAT / state.workingHeatLevel)
+                    () -> (float) (pilotHeat() / state.workingHeatLevel)
             );
         }
         Level level = ctx.getLevel().getRawLevel();
@@ -127,7 +127,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ);
         }
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
-        if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && hasWater) {
+        if (state.pilotLit && state.heatLevel > pilotHeat() && state.rsState.isEnabled(ctx) && hasWater) {
             BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0));
             Vec3 smokePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 1.25, exhaustAbs.getZ() + 0.5);
             double velX = 0;
@@ -147,7 +147,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         boolean prevPilotLit = state.pilotLit;
         boolean wasActive = state.active;
         if (state.tanks.input1.getFluidAmount() <= 0) { state.pilotLit = false; }
-        double delta = HEAT_LOSS_PER_TICK;
+        double delta = heatLossPerTick();
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
         if (!state.pilotLit) {
@@ -163,7 +163,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                         } else {
                             state.heatLevel = Math.max(state.heatLevel - delta, state.targetHeat);
                         }
-                    } else { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                    } else { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
                 } else { state.burnRemaining = 0; }
             } else {
                 state.lastFuel = null;
@@ -187,19 +187,19 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                             }
                         } else {
                             drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
-                            if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                            if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
                             else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                         }
                     } else {
                         drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
-                        if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, PILOT_HEAT); }
+                        if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
                         else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                     }
                     state.pilotLit = true;
                 } else {
                     state.pilotLit = false;
                     state.heatLevel = Math.max(state.heatLevel - delta, 0);
-                    state.workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+                    state.workingHeatLevel = defaultWorkingHeatLevel();
                 }
             }
         }
@@ -266,8 +266,8 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public int burnPercent = 0;
         public int lastComparatorValue = -1;
         public BoilerLiquidRecipe lastFuel;
-        public double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
-        public double workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+        public double targetHeat = defaultWorkingHeatLevel();
+        public double workingHeatLevel = defaultWorkingHeatLevel();
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;

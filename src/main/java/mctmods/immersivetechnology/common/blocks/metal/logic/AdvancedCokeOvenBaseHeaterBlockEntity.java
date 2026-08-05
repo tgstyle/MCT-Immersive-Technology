@@ -32,13 +32,13 @@ import java.util.function.BooleanSupplier;
 
 public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IDirectionalBE, BlockInterfaces.IHasDummyBlocks, IEnergyStorage, IModelOffsetProvider {
 
-    private static final int MAX_ENERGY = ServerConfig.advancedCokeOvenBaseheaterMaxEnergy;
-    private static final int ENERGY_CONSUMPTION = ServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;
-    private static final float MAX_FAN_SPEED = (float) ClientConfig.advancedCokeOvenBaseheaterMaxFanSpeed;
-    private static final float FAN_ACCEL = (float) ClientConfig.advancedCokeOvenBaseheaterFanAccel;
-    private static final float FAN_DECEL = (float) ClientConfig.advancedCokeOvenBaseheaterFanDecel;
+    private static int maxEnergy() { return ServerConfig.advancedCokeOvenBaseheaterMaxEnergy; }
+    private static int energyConsumption() { return ServerConfig.advancedCokeOvenBaseheaterEnergyConsumption; }
+    private static float maxFanSpeed() { return (float) ClientConfig.advancedCokeOvenBaseheaterMaxFanSpeed; }
+    private static float fanAccel() { return (float) ClientConfig.advancedCokeOvenBaseheaterFanAccel; }
+    private static float fanDecel() { return (float) ClientConfig.advancedCokeOvenBaseheaterFanDecel; }
 
-    private final EnergyStorage energyStorage = new EnergyStorage(MAX_ENERGY);
+    private final EnergyStorage energyStorage = new EnergyStorage(maxEnergy());
     private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> this);
     private final LazyOptional<IEnergyStorage> dummyEnergyHandler = LazyOptional.of(ForwardingEnergyStorage::new);
 
@@ -126,7 +126,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
         if (level == null || wasSpeedupCalledThisTick) return active;
         wasSpeedupCalledThisTick = true;
 
-        int consumed = ENERGY_CONSUMPTION;
+        int consumed = energyConsumption();
         if (energyStorage.extractEnergy(consumed, true) == consumed) {
             setActive(true);
             energyStorage.extractEnergy(consumed, false);
@@ -147,12 +147,12 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
         if (dummy) return;
 
         prevFanRotation = fanRotation;
-        if (active) fanSpeed = Math.min(fanSpeed + FAN_ACCEL, MAX_FAN_SPEED);
-        else fanSpeed = Math.max(fanSpeed - FAN_DECEL, 0f);
+        if (active) fanSpeed = Math.min(fanSpeed + fanAccel(), maxFanSpeed());
+        else fanSpeed = Math.max(fanSpeed - fanDecel(), 0f);
         fanRotation += fanSpeed;
         fanRotation %= 360f;
 
-        soundVolume = fanSpeed / MAX_FAN_SPEED;
+        soundVolume = fanSpeed / maxFanSpeed();
         soundPitch = 0.7f + 0.3f * soundVolume;
 
         LocalPlayer player = Minecraft.getInstance().player;
@@ -294,7 +294,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
             if (m instanceof AdvancedCokeOvenBaseHeaterBlockEntity masterBE) return masterBE.energyStorage.getEnergyStored();
             return 0;
         }
-        @Override public int getMaxEnergyStored() { return MAX_ENERGY; }
+        @Override public int getMaxEnergyStored() { return maxEnergy(); }
         @Override public boolean canExtract() { return false; }
         @Override public boolean canReceive() { return false; }
     }

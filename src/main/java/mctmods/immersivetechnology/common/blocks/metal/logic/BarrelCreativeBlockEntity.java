@@ -44,7 +44,7 @@ import java.util.function.Consumer;
 public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
 
-    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = CommonConfig.creativeBarrelOutputAmount;
+    private static int creativeBarrelOutputAmount() { return CommonConfig.creativeBarrelOutputAmount; }
 
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> new IFluidHandler() {
         @Override public int getTanks() { return 1; }
@@ -82,7 +82,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
         }
 
         FluidStack baseFs = selectedFluid.copy();
-        baseFs.setAmount(CREATIVE_BARREL_OUTPUT_AMOUNT);
+        baseFs.setAmount(creativeBarrelOutputAmount());
         boolean hadTag = baseFs.hasTag() && baseFs.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
         if (hadTag) { baseFs.removeChildTag(IFluidPipe.NBT_PRESSURIZED); }
 

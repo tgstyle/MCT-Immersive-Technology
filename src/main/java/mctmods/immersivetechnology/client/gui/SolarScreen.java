@@ -88,7 +88,7 @@ public class SolarScreen extends ContainerScreen<SolarMenu> {
     }
 
     private double getMaxHeat() {
-        double workingHeat = isMelter ? SolarMelterLogic.WORKING_HEAT_LEVEL : SolarTowerLogic.WORKING_HEAT_LEVEL;
+        double workingHeat = isMelter ? SolarMelterLogic.workingHeatLevel() : SolarTowerLogic.workingHeatLevel();
         FluidStack fs = menu.inputTank.getFluid();
         if (fs.getAmount() <= 0) { return workingHeat; }
         assert minecraft != null;

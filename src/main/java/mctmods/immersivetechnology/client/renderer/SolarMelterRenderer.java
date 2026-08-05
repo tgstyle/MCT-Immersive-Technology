@@ -27,7 +27,7 @@ public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlock
         IMultiblockLevel mLevel = ctx.getLevel();
         Level level = be.getLevel();
         FluidStack fs = state.tanks.input().getFluid();
-        double maxHeat = SolarMelterLogic.WORKING_HEAT_LEVEL;
+        double maxHeat = SolarMelterLogic.workingHeatLevel();
         if (fs.getAmount() > 0) {
             MeltingRecipe recipe = MeltingRecipe.findRecipe(level, fs);
             if (recipe != null) { maxHeat = recipe.requiredTemp; }

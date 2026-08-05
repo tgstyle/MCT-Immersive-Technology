@@ -35,7 +35,7 @@ public class MeltingCrucibleScreen extends ContainerScreen<MeltingCrucibleMenu> 
     }
 
     private double getMaxHeat() {
-        double workingHeat = MeltingCrucibleLogic.WORKING_HEAT_LEVEL;
+        double workingHeat = MeltingCrucibleLogic.workingHeatLevel();
         FluidStack fs = menu.inputTank.getFluid();
         if (fs.getAmount() <= 0) { return workingHeat; }
         assert minecraft != null;

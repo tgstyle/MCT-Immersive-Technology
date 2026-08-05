@@ -52,9 +52,9 @@ import java.util.function.BiFunction;
 
 public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
 
-    public static final int INPUT_TANK_CAPACITY = ServerConfig.electrolyticCrucibleBatteryInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
+    public static int inputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryInputTankCapacity; }
+    public static int outputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity; }
+    public static int energyCapacity() { return ServerConfig.electrolyticCrucibleBatteryEnergyCapacity; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ElectrolyticCrucibleBatteryShape.DATA.pointsOfInterest);
 
@@ -219,7 +219,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.outputCap1 = new StoredCapability<>(new ArrayFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.outputCap2 = new StoredCapability<>(new ArrayFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.invCap = new StoredCapability<>(inventory);
-            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(3, 0f, 3, markDirty, ElectrolyticCrucibleBatteryRecipe.RECIPES::getById);
             this.itemOutputCap = new StoredCapability<>(inventory);
@@ -245,11 +245,11 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) { nbt.putBoolean("active", active); nbt.put("tanks", tanks.toNBT()); nbt.put("energy", energy.serializeNBT()); nbt.put("inventory", inventory.serializeNBT()); nbt.putIntArray("processPercents", processPercents); }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); int[] percents = nbt.getIntArray("processPercents"); processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1}; tanksDirty = false; inventoryDirty = false; }
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); int[] percents = nbt.getIntArray("processPercents"); processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1}; tanksDirty = false; inventoryDirty = false; }
     }
 
     public record ElectrolyticCrucibleBatteryTanks(MarkableFluidTank input, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
-        public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) { this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty)); }
+        public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) { this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty)); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();

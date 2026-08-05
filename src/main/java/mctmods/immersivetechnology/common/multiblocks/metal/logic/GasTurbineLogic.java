@@ -83,16 +83,16 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private static final RelativeBlockFace ENERGY_INPUT_MV_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_input_mv0");
     private static final RelativeBlockFace MECHANICAL_OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "mechanical_output0");
 
-    private static final int INPUT_TANK_CAPACITY = ServerConfig.gasTurbineInputTankCapacity;
-    private static final int OUTPUT_TANK_CAPACITY = ServerConfig.gasTurbineOutputTankCapacity;
-    private static final int ENERGY_CAPACITY_HV = ServerConfig.gasTurbineEnergyCapacityHV;
-    private static final int ENERGY_CAPACITY_MV = ServerConfig.gasTurbineEnergyCapacityMV;
-    private static final int STARTER_CONSUMPTION = ServerConfig.gasTurbineStarterConsumption;
-    private static final int SPARKPLUG_CONSUMPTION = ServerConfig.gasTurbineSparkplugConsumption;
-    private static final double BASE_MASS = ServerConfig.gasTurbineBaseMass;
-    private static final double DRIVE_TORQUE = ServerConfig.gasTurbineDriveTorque;
-    private static final double FRICTION = ServerConfig.gasTurbineFriction;
-    private static final int MAX_SPEED = (int) (MechanicalCapabilities.MAX_RPM * ServerConfig.gasTurbineMaxSpeedFactor);
+    private static int inputTankCapacity() { return ServerConfig.gasTurbineInputTankCapacity; }
+    private static int outputTankCapacity() { return ServerConfig.gasTurbineOutputTankCapacity; }
+    private static int energyCapacityHv() { return ServerConfig.gasTurbineEnergyCapacityHV; }
+    private static int energyCapacityMv() { return ServerConfig.gasTurbineEnergyCapacityMV; }
+    private static int starterConsumption() { return ServerConfig.gasTurbineStarterConsumption; }
+    private static int sparkplugConsumption() { return ServerConfig.gasTurbineSparkplugConsumption; }
+    private static double baseMass() { return ServerConfig.gasTurbineBaseMass; }
+    private static double driveTorque() { return ServerConfig.gasTurbineDriveTorque; }
+    private static double friction() { return ServerConfig.gasTurbineFriction; }
+    private static int maxSpeed() { return (int) (MechanicalCapabilities.MAX_RPM * ServerConfig.gasTurbineMaxSpeedFactor); }
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
@@ -251,7 +251,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         pumpOutputs(ctx);
         State state = ctx.getState();
         state.hasIgniter = state.mvInput.isPresent();
-        state.canIgniteClient = SPARKPLUG_CONSUMPTION <= state.energyStorageMV.getEnergyStored();
+        state.canIgniteClient = sparkplugConsumption() <= state.energyStorageMV.getEnergyStored();
         boolean wasActive = state.active;
         boolean wasStall = state.stall;
         state.active = false;
@@ -274,19 +274,19 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 consumerMaxSpeed = consumer.getMaxSpeed();
             }
         }
-        int effectiveMax = hasConsumer ? Math.min(MAX_SPEED, consumerMaxSpeed) : MAX_SPEED;
+        int effectiveMax = hasConsumer ? Math.min(maxSpeed(), consumerMaxSpeed) : maxSpeed();
         state.effectiveMaxSpeed = effectiveMax;
         if (additionalMass != state.connectedMass || additionalFriction != state.connectedFriction) {
             state.connectedMass = additionalMass;
             state.connectedFriction = additionalFriction;
-            state.inertia = new RotationInertiaProcess(BASE_MASS + state.connectedMass, DRIVE_TORQUE, FRICTION + state.connectedFriction, effectiveMax);
+            state.inertia = new RotationInertiaProcess(baseMass() + state.connectedMass, driveTorque(), friction() + state.connectedFriction, effectiveMax);
         }
         boolean isRSEnabled = state.rsState.isEnabled(ctx);
         state.ignited = state.ignitionGracePeriod > 0;
         state.starterRunning = false;
-        if (isRSEnabled && hasConsumer && STARTER_CONSUMPTION <= state.energyStorageHV.getEnergyStored()) {
+        if (isRSEnabled && hasConsumer && starterConsumption() <= state.energyStorageHV.getEnergyStored()) {
             state.starterRunning = true;
-            state.energyStorageHV.extractEnergy(STARTER_CONSUMPTION, false);
+            state.energyStorageHV.extractEnergy(starterConsumption(), false);
         }
         if (state.speed <= 0) { state.speed = 0; state.isShutdown = false; state.stall = false; state.everIgnited = false; }
         if (!isRSEnabled || !hasConsumer) {
@@ -358,10 +358,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         }
     }
 
-    private boolean canIgnite(State state) { return SPARKPLUG_CONSUMPTION <= state.energyStorageMV.getEnergyStored(); }
+    private boolean canIgnite(State state) { return sparkplugConsumption() <= state.energyStorageMV.getEnergyStored(); }
 
     private void ignite(State state, IMultiblockContext<State> ctx) {
-        state.energyStorageMV.extractEnergy(SPARKPLUG_CONSUMPTION, false);
+        state.energyStorageMV.extractEnergy(sparkplugConsumption(), false);
         state.everIgnited = true;
         state.ignited = true;
         state.ignitionGracePeriod = 60;
@@ -391,10 +391,10 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private record MechanicalEnergyProvider(State state) implements IMechanicalEnergyProvider {
         @Override public int getSpeed() { return state.speed; }
         @Override public float getTorque() { return state.currentTorque; }
-        @Override public int getMaxSpeed() { return MAX_SPEED; }
-        @Override public double getBaseMass() { return BASE_MASS; }
-        @Override public double getDriveTorque() { return DRIVE_TORQUE; }
-        @Override public double getFriction() { return FRICTION; }
+        @Override public int getMaxSpeed() { return maxSpeed(); }
+        @Override public double getBaseMass() { return baseMass(); }
+        @Override public double getDriveTorque() { return driveTorque(); }
+        @Override public double getFriction() { return friction(); }
     }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
@@ -424,7 +424,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public int burnRemaining = 0;
         public int ignitionGracePeriod = 0;
         public boolean isShutdown = false;
-        public int effectiveMaxSpeed = MAX_SPEED;
+        public int effectiveMaxSpeed = maxSpeed();
         public float animation_fanRotationStep = 0;
         public float animation_fanRotation = 0;
         private transient int animation_fanFadeIn = 0;
@@ -450,11 +450,11 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
-            this.tanks = new GasTurbineTank(v -> { onChanged.run(); this.tanksDirty = true; }, INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
+            this.tanks = new GasTurbineTank(v -> { onChanged.run(); this.tanksDirty = true; }, inputTankCapacity(), outputTankCapacity());
             this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.fluidCapExhaust = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.energyStorageHV = new AveragingEnergyStorage(ENERGY_CAPACITY_HV);
-            this.energyStorageMV = new AveragingEnergyStorage(ENERGY_CAPACITY_MV);
+            this.energyStorageHV = new AveragingEnergyStorage(energyCapacityHv());
+            this.energyStorageMV = new AveragingEnergyStorage(energyCapacityMv());
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
             this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
@@ -462,7 +462,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
             this.mvInput = ctx.getCapabilityAt(ForgeCapabilities.ENERGY, mvOpposingMBFace);
-            this.inertia = new RotationInertiaProcess(BASE_MASS, DRIVE_TORQUE, FRICTION, MAX_SPEED);
+            this.inertia = new RotationInertiaProcess(baseMass(), driveTorque(), friction(), maxSpeed());
             this.mechanicalProvider = new MechanicalEnergyProvider(this);
         }
 

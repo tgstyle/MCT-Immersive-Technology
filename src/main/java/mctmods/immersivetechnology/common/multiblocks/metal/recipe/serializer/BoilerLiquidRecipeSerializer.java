@@ -21,7 +21,7 @@ public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiqui
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         int time = GsonHelper.getAsInt(json, "time");
         double heatPerTick = GsonHelper.getAsDouble(json, "heatPerTick");
-        double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerLiquidLogic.DEFAULT_WORKING_HEAT_LEVEL);
+        double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerLiquidLogic.defaultWorkingHeatLevel());
         return new BoilerLiquidRecipe(recipeId, input, time, heatPerTick, targetHeat);
     }
 

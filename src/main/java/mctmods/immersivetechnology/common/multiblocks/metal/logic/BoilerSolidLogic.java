@@ -60,11 +60,11 @@ import java.util.function.BiFunction;
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
 
-    public static final double HEAT_LOSS_PER_TICK = ServerConfig.boilerSolidHeatLossPerTick;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = CommonConfig.boilerDefaultWorkingHeat;
-    public static final double PILOT_HEAT = ServerConfig.boilerSolidPilotHeat;
-    public static final int PILOT_MULTIPLIER = ServerConfig.boilerSolidPilotMultiplier;
-    public static final double DEFAULT_HEAT_PER_TICK = ServerConfig.boilerSolidDefaultHeatPerTick;
+    public static double heatLossPerTick() { return ServerConfig.boilerSolidHeatLossPerTick; }
+    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
+    public static double pilotHeat() { return ServerConfig.boilerSolidPilotHeat; }
+    public static int pilotMultiplier() { return ServerConfig.boilerSolidPilotMultiplier; }
+    public static double defaultHeatPerTick() { return ServerConfig.boilerSolidDefaultHeatPerTick; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
     private static final int WIDTH = BoilerSolidShape.WIDTH;
@@ -122,7 +122,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             level.addParticle(ParticleTypes.FLAME, flamePos.x, flamePos.y, flamePos.z, velX, velY, velZ);
         }
         boolean hasWater = state.boilerInput.isPresent() && state.boilerInput.get().getFluidAmount() > 0;
-        if (state.pilotLit && state.heatLevel > PILOT_HEAT && state.rsState.isEnabled(ctx) && hasWater) {
+        if (state.pilotLit && state.heatLevel > pilotHeat() && state.rsState.isEnabled(ctx) && hasWater) {
             BlockPos exhaustAbs = ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0));
             Vec3 smokePos = new Vec3(exhaustAbs.getX() + 0.5, exhaustAbs.getY() + 1.25, exhaustAbs.getZ() + 0.5);
             double velX = 0;
@@ -149,21 +149,21 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             updateAllBlocks(ctx, level, state.active);
         }
         if (!state.pilotLit) {
-            state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, 0);
+            state.heatLevel = Math.max(state.heatLevel - heatLossPerTick(), 0);
             state.burnRemaining = 0;
             state.totalBurnTime = 0;
-            state.workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+            state.workingHeatLevel = defaultWorkingHeatLevel();
         } else {
             if (state.burnRemaining > 0) {
-                boolean consumeThisTick = fullMode || (level.getGameTime() % PILOT_MULTIPLIER == 0);
+                boolean consumeThisTick = fullMode || (level.getGameTime() % pilotMultiplier() == 0);
                 if (consumeThisTick) { state.burnRemaining--; }
                 if (fullMode) {
                     if (state.heatLevel < state.targetHeat) {
                         state.heatLevel = Math.min(state.heatLevel + state.heatPerTick, state.targetHeat);
                     } else {
-                        state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, state.targetHeat);
+                        state.heatLevel = Math.max(state.heatLevel - heatLossPerTick(), state.targetHeat);
                     }
-                } else { state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, PILOT_HEAT); }
+                } else { state.heatLevel = Math.max(state.heatLevel - heatLossPerTick(), pilotHeat()); }
             } else {
                 state.totalBurnTime = 0;
                 ItemStack fuelStack = state.inventory.getStackInSlot(INPUT_FUEL_SLOT);
@@ -172,8 +172,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 ItemStack single = fuelStack.copy();
                 single.setCount(1);
                 int burnTimePerItem = ForgeHooks.getBurnTime(single, RecipeType.SMELTING);
-                double heatPerTick = DEFAULT_HEAT_PER_TICK;
-                double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
+                double heatPerTick = defaultHeatPerTick();
+                double targetHeat = defaultWorkingHeatLevel();
                 int consumeAmount = 1;
                 if (recipe != null) {
                     heatPerTick = recipe.getHeatPerTick();
@@ -183,8 +183,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                 }
                 if (burnTimePerItem <= 0) {
                     state.pilotLit = false;
-                    state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, 0);
-                    state.workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+                    state.heatLevel = Math.max(state.heatLevel - heatLossPerTick(), 0);
+                    state.workingHeatLevel = defaultWorkingHeatLevel();
                 } else {
                     ItemStack consumed = state.inventory.getRawHandler().extractItem(INPUT_FUEL_SLOT, consumeAmount, false);
                     if (consumed.getCount() == consumeAmount) {
@@ -196,8 +196,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
                         state.pilotLit = true;
                     } else {
                         state.pilotLit = false;
-                        state.heatLevel = Math.max(state.heatLevel - HEAT_LOSS_PER_TICK, 0);
-                        state.workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+                        state.heatLevel = Math.max(state.heatLevel - heatLossPerTick(), 0);
+                        state.workingHeatLevel = defaultWorkingHeatLevel();
                     }
                 }
             }
@@ -279,8 +279,8 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         public int burnRemaining = 0;
         public int totalBurnTime = 0;
         public double heatPerTick = 0;
-        public double targetHeat = DEFAULT_WORKING_HEAT_LEVEL;
-        public double workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+        public double targetHeat = defaultWorkingHeatLevel();
+        public double workingHeatLevel = defaultWorkingHeatLevel();
         public boolean pilotLit = false;
         public boolean active = false;
         public BooleanSupplier isSoundPlaying = () -> false;

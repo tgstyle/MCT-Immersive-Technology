@@ -15,7 +15,7 @@ import java.util.List;
 public class BoilerLiquidMenu extends ContainerMenu {
     public final BoilerLiquidLogic.BoilerTank tanks;
     private float heatLevel = 0.0f;
-    private double workingHeatLevel = BoilerLiquidLogic.DEFAULT_WORKING_HEAT_LEVEL;
+    private double workingHeatLevel = BoilerLiquidLogic.defaultWorkingHeatLevel();
 
     public static BoilerLiquidMenu makeServer(MenuType<BoilerLiquidMenu> type, int id, Inventory invPlayer, ContainerMenu.MultiblockMenuContext<BoilerLiquidLogic.State> ctx) {
         final BoilerLiquidLogic.State state = ctx.mbContext().getState();

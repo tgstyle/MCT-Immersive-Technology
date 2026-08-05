@@ -55,9 +55,9 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public static final int OUTPUT_SLOT_EMPTY = 2;
     public static final int OUTPUT_SLOT_FILLED = 3;
 
-    public static final int TANK_CAPACITY = ServerConfig.boilerTankCapacity;
-    public static final int PROGRESS_LOSS_PER_TICK = ServerConfig.boilerTankProgressLossPerTick;
-    public static final double DEFAULT_WORKING_HEAT_LEVEL = CommonConfig.boilerDefaultWorkingHeat;
+    public static int tankCapacity() { return ServerConfig.boilerTankCapacity; }
+    public static int progressLossPerTick() { return ServerConfig.boilerTankProgressLossPerTick; }
+    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerTankShape.DATA.pointsOfInterest);
 
@@ -85,7 +85,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         double previousHeatLevel = state.heatLevel;
         state.heatLevel = heatLevel;
 
-        double displayMax = DEFAULT_WORKING_HEAT_LEVEL;
+        double displayMax = defaultWorkingHeatLevel();
         if (state.lastRecipe != null) {
             displayMax = Math.max(displayMax, state.lastRecipe.requiredHeat);
         } else if (state.tanks.input.getFluidAmount() > 0) {
@@ -130,7 +130,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             int previousProgress = state.recipeTimeRemaining;
             if (state.lastRecipe == null) { state.recipeTimeRemaining = 0; update = true; }
             else {
-                state.recipeTimeRemaining = Math.min(state.recipeTimeRemaining + PROGRESS_LOSS_PER_TICK, state.lastRecipe.getTotalProcessTime());
+                state.recipeTimeRemaining = Math.min(state.recipeTimeRemaining + progressLossPerTick(), state.lastRecipe.getTotalProcessTime());
                 if (previousProgress != state.recipeTimeRemaining) { update = true; }
             }
         }
@@ -191,7 +191,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public int totalProcessTime = 0;
         public BoilerTankRecipe lastRecipe;
         public double heatLevel = 0;
-        public double workingHeatLevel = DEFAULT_WORKING_HEAT_LEVEL;
+        public double workingHeatLevel = defaultWorkingHeatLevel();
         public int lastComparatorValue = -1;
         public boolean active = false;
         public boolean tanksDirty = false;
@@ -281,7 +281,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
     public record BoilerTanks(MarkableFluidTank input, MarkableFluidTank output) {
         public BoilerTanks(Consumer<Void> markDirty) {
-            this(new MarkableFluidTank(TANK_CAPACITY, markDirty), new MarkableFluidTank(TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(tankCapacity(), markDirty), new MarkableFluidTank(tankCapacity(), markDirty));
         }
 
         public static BoilerTanks makeClient() { return new BoilerTanks(v -> {}); }
@@ -299,6 +299,6 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return tankCapacity(); }
     }
 }

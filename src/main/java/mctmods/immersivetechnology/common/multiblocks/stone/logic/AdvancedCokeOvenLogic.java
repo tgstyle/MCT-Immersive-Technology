@@ -79,9 +79,9 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static final int SLOT_FILLED_CONTAINER = 3;
     public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
 
-    public static final double BASE_SPEED = ServerConfig.advancedCokeOvenSpeedBase;
-    public static final double BASEHEATER_ADD = ServerConfig.advancedCokeOvenBaseheaterSpeedIncrease;
-    public static final double BASEHEATER_MULT = ServerConfig.advancedCokeOvenBaseheaterSpeedMultiplier;
+    public static double baseSpeed() { return ServerConfig.advancedCokeOvenSpeedBase; }
+    public static double baseheaterAdd() { return ServerConfig.advancedCokeOvenBaseheaterSpeedIncrease; }
+    public static double baseheaterMult() { return ServerConfig.advancedCokeOvenBaseheaterSpeedMultiplier; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AdvancedCokeOvenShape.DATA.pointsOfInterest);
 
@@ -377,7 +377,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
                 activeBaseheaters++;
             }
 
-            return (BASE_SPEED + activeBaseheaters * BASEHEATER_ADD) * (1 + activeBaseheaters * (BASEHEATER_MULT - 1));
+            return (baseSpeed() + activeBaseheaters * baseheaterAdd()) * (1 + activeBaseheaters * (baseheaterMult() - 1));
         }
 
         @Override public void turnOff(IMultiblockLevel level) { }
