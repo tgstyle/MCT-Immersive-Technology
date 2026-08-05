@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
 
-    private static final int CREATIVE_BARREL_OUTPUT_AMOUNT = CommonConfig.creativeBarrelOutputAmount;
+    private static int creativeBarrelOutputAmount() { return CommonConfig.creativeBarrelOutputAmount; }
 
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
@@ -50,7 +50,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
 
     @Override public void tickServer() {
         if (selectedFluid.isEmpty() || level == null) { super.tickServer(); return; }
-        FluidStack baseFs = pressurizedCopy(selectedFluid, CREATIVE_BARREL_OUTPUT_AMOUNT);
+        FluidStack baseFs = pressurizedCopy(selectedFluid, creativeBarrelOutputAmount());
         long thisTickOutput = 0;
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = worldPosition.relative(dir);

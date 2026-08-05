@@ -71,10 +71,10 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     private static final RelativeBlockFace OUTPUT_FLUID_1_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
     private static final RelativeBlockFace ENERGY_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
 
-    private static final int INPUT_TANK_CAPACITY = ServerConfig.heatExchangerInputTankCapacity;
-    private static final int OUTPUT_TANK_CAPACITY = ServerConfig.heatExchangerOutputTankCapacity;
-    private static final int ENERGY_CAPACITY = ServerConfig.heatExchangerEnergyCapacity;
-    private static final int ENERGY_MAX_IO = ServerConfig.heatExchangerEnergyMaxIO;
+    private static int inputTankCapacity() { return ServerConfig.heatExchangerInputTankCapacity; }
+    private static int outputTankCapacity() { return ServerConfig.heatExchangerOutputTankCapacity; }
+    private static int energyCapacity() { return ServerConfig.heatExchangerEnergyCapacity; }
+    private static int energyMaxIo() { return ServerConfig.heatExchangerEnergyMaxIO; }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
@@ -233,7 +233,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new HeatExchangerTanks(onChanged);
-            energy = new SyncEnergyStorage(ENERGY_CAPACITY, ENERGY_MAX_IO, onChanged);
+            energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), onChanged);
             inputCap[0] = new ArrayFluidHandler(tanks.input0, false, true, onChanged);
             inputCap[1] = new ArrayFluidHandler(tanks.input1, false, true, onChanged);
             outputCap[0] = new ArrayFluidHandler(tanks.output0, true, false, onChanged);
@@ -288,7 +288,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, ENERGY_MAX_IO, () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), () -> {}); }
             CompoundTag energyTag = nbt.getCompound("energy");
             if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
             processProgress = nbt.getInt("processProgress");
@@ -338,10 +338,10 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         public HeatExchangerTanks(Runnable onChanged) {
             this(
-                    new MarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
-                    new MarkableFluidTank(INPUT_TANK_CAPACITY, v -> onChanged.run()),
-                    new MarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run()),
-                    new MarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> onChanged.run())
+                    new MarkableFluidTank(inputTankCapacity(), v -> onChanged.run()),
+                    new MarkableFluidTank(inputTankCapacity(), v -> onChanged.run()),
+                    new MarkableFluidTank(outputTankCapacity(), v -> onChanged.run()),
+                    new MarkableFluidTank(outputTankCapacity(), v -> onChanged.run())
             );
         }
 

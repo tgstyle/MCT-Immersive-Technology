@@ -61,9 +61,9 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static final int SLOT_OUTPUT_FILLED = 3;
     public static final int OUTPUT_SLOT = 4;
 
-    public static final int INPUT_TANK_CAPACITY = ServerConfig.distillerInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.distillerOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ServerConfig.distillerEnergyCapacity;
+    public static int inputTankCapacity() { return ServerConfig.distillerInputTankCapacity; }
+    public static int outputTankCapacity() { return ServerConfig.distillerOutputTankCapacity; }
+    public static int energyCapacity() { return ServerConfig.distillerEnergyCapacity; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DistillerShape.DATA.pointsOfInterest);
 
@@ -263,7 +263,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.inputCap = new ArrayFluidHandler(tanks.input(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
             this.outputCap = new ArrayFluidHandler(tanks.output(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.invCap = inventory;
-            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
             this.itemOutputCap = new WrappingItemHandler(
                     inventory,
@@ -336,7 +336,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); }
             CompoundTag energyTag = nbt.getCompound("energy");
             if (!energyTag.isEmpty()) {
                 energy.deserializeNBT(provider, energyTag);
@@ -350,7 +350,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     public record DistillerTank(MarkableFluidTank input, MarkableFluidTank output) {
         public DistillerTank(Runnable markDirty) {
-            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, v -> markDirty.run()), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, v -> markDirty.run()));
+            this(new MarkableFluidTank(inputTankCapacity(), v -> markDirty.run()), new MarkableFluidTank(outputTankCapacity(), v -> markDirty.run()));
         }
 
         public static DistillerTank makeClient() { return new DistillerTank(() -> {}); }
@@ -368,7 +368,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return Math.max(INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY); }
+        public int getCapacity() { return Math.max(inputTankCapacity(), outputTankCapacity()); }
     }
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {

@@ -52,9 +52,9 @@ import java.util.function.BiFunction;
 
 public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
 
-    public static final int INPUT_TANK_CAPACITY = ServerConfig.electrolyticCrucibleBatteryInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity;
-    public static final int ENERGY_CAPACITY = ServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
+    public static int inputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryInputTankCapacity; }
+    public static int outputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity; }
+    public static int energyCapacity() { return ServerConfig.electrolyticCrucibleBatteryEnergyCapacity; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ElectrolyticCrucibleBatteryShape.DATA.pointsOfInterest);
 
@@ -228,7 +228,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.outputCap2 = new ArrayFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; });
             this.invCap = inventory;
             this.itemOutputCap = inventory;
-            this.energy = new SyncEnergyStorage(ENERGY_CAPACITY, onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(3, 0f, 3, markDirty, ElectrolyticCrucibleBatteryRecipe.RECIPES::getById);
             this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
         }
@@ -282,7 +282,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            if (energy == null) { energy = new SyncEnergyStorage(ENERGY_CAPACITY, () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); }
             CompoundTag energyTag = nbt.getCompound("energy");
             if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
@@ -295,7 +295,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
     public record ElectrolyticCrucibleBatteryTanks(MarkableFluidTank input, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
         public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) {
-            this(new MarkableFluidTank(INPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty), new MarkableFluidTank(OUTPUT_TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty));
         }
 
         public CompoundTag toNBT(HolderLookup.Provider provider) {

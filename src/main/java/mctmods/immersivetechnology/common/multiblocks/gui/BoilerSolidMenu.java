@@ -16,7 +16,7 @@ public class BoilerSolidMenu extends ContainerMenu {
     private float heatLevel = 0.0f;
     private int burnRemaining = 0;
     private int totalBurnTime = 0;
-    private double workingHeatLevel = BoilerSolidLogic.DEFAULT_WORKING_HEAT_LEVEL;
+    private double workingHeatLevel = BoilerSolidLogic.defaultWorkingHeatLevel();
 
     public static BoilerSolidMenu makeServer(MenuType<BoilerSolidMenu> type, int id, Inventory invPlayer, ContainerMenu.MultiblockMenuContext<BoilerSolidLogic.State> ctx) {
         final BoilerSolidLogic.State state = ctx.mbContext().getState();

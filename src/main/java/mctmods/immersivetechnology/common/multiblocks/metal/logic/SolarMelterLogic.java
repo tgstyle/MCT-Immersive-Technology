@@ -68,18 +68,18 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public static final int SLOT_OUTPUT_EMPTY = 2;
     public static final int SLOT_OUTPUT_FILLED = 3;
 
-    public static final int INPUT_TANK_CAPACITY = ServerConfig.solarMelterInputTankCapacity;
-    public static final int OUTPUT_TANK_CAPACITY = ServerConfig.solarMelterOutputTankCapacity;
+    public static int inputTankCapacity() { return ServerConfig.solarMelterInputTankCapacity; }
+    public static int outputTankCapacity() { return ServerConfig.solarMelterOutputTankCapacity; }
 
-    public static final double WORKING_HEAT_LEVEL = CommonConfig.solarMelterWorkingHeatLevel;
-    private static final double DAY_MIN_HEAT_LOSS = ServerConfig.solarMelterDayMinHeatLoss;
-    private static final double LOSS_PER_SECTION_DROP = ServerConfig.solarMelterLossPerSectionDrop;
-    private static final double TEMP_DEPENDENT_LOSS_FACTOR = ServerConfig.solarMelterTempDependentLossFactor;
-    private static final double HEAT_INCREASE_FACTOR = ServerConfig.solarMelterHeatIncreaseFactor;
-    private static final double TEMP_TO_MIN_REFLECTORS_DIVISOR = ServerConfig.solarMelterTempToMinReflectorsDivisor;
-    private static final double REFLECTOR_TIER_OFFSET = ServerConfig.solarMelterReflectorTierOffset;
-    public static final int PROGRESS_LOSS_OFF_TEMP = ServerConfig.solarMelterProgressLossOffTemp;
-    public static final float SPEED_MULTIPLIER = (float) ServerConfig.solarMelterSpeedMultiplier;
+    public static double workingHeatLevel() { return CommonConfig.solarMelterWorkingHeatLevel; }
+    private static double dayMinHeatLoss() { return ServerConfig.solarMelterDayMinHeatLoss; }
+    private static double lossPerSectionDrop() { return ServerConfig.solarMelterLossPerSectionDrop; }
+    private static double tempDependentLossFactor() { return ServerConfig.solarMelterTempDependentLossFactor; }
+    private static double heatIncreaseFactor() { return ServerConfig.solarMelterHeatIncreaseFactor; }
+    private static double tempToMinReflectorsDivisor() { return ServerConfig.solarMelterTempToMinReflectorsDivisor; }
+    private static double reflectorTierOffset() { return ServerConfig.solarMelterReflectorTierOffset; }
+    public static int progressLossOffTemp() { return ServerConfig.solarMelterProgressLossOffTemp; }
+    public static float speedMultiplier() { return (float) ServerConfig.solarMelterSpeedMultiplier; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarMelterShape.DATA.pointsOfInterest);
 
@@ -107,7 +107,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
             FluidStack fs = state.tanks.input().getFluid();
             MeltingRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fs);
-            double maxHeat = recipe != null ? recipe.requiredTemp : WORKING_HEAT_LEVEL;
+            double maxHeat = recipe != null ? recipe.requiredTemp : workingHeatLevel();
             boolean shouldPlay = state.heatLevel >= maxHeat && state.sunVisible && state.reflectorStrength > 0;
             if (shouldPlay) {
                 LocalPlayer player = Minecraft.getInstance().player;
@@ -122,7 +122,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                         state.isSoundPlaying = ModSound.startSound(() -> {
                             FluidStack fsActive = state.tanks.input().getFluid();
                             MeltingRecipe recipeActive = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsActive);
-                            double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : WORKING_HEAT_LEVEL;
+                            double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : workingHeatLevel();
                             return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
                         }, ctx.isValid(), soundVec, Sounds.solarMelter, () -> {
                             LocalPlayer playerVol = Minecraft.getInstance().player;
@@ -130,7 +130,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
                             float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 8, 1);
                             FluidStack fsVol = state.tanks.input().getFluid();
                             MeltingRecipe recipeVol = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsVol);
-                            double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : WORKING_HEAT_LEVEL;
+                            double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : workingHeatLevel();
                             float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
                             return (2 * heatFactorVol) / a;
                         }, () -> 1f);
@@ -140,7 +140,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         }
         FluidStack fsParticles = state.tanks.input().getFluid();
         MeltingRecipe recipeParticles = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsParticles);
-        double maxHeatParticles = recipeParticles != null ? recipeParticles.requiredTemp : WORKING_HEAT_LEVEL;
+        double maxHeatParticles = recipeParticles != null ? recipeParticles.requiredTemp : workingHeatLevel();
         if (state.heatLevel >= maxHeatParticles && state.sunVisible && state.reflectorStrength > 0) {
             Level clientLevel = ctx.getLevel().getRawLevel();
             if (clientLevel != null && clientLevel.getGameTime() % 4 == 0) {
@@ -246,7 +246,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             }
         }
         pumpOutputs(ctx);
-        double workingLevel = state.activeRecipe != null ? state.activeRecipe.requiredTemp : WORKING_HEAT_LEVEL;
+        double workingLevel = state.activeRecipe != null ? state.activeRecipe.requiredTemp : workingHeatLevel();
         int newComparatorValue = workingLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / workingLevel) : 0;
         if (newComparatorValue != state.lastComparatorValue) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; update = true; }
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
@@ -296,7 +296,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         double loss = getTemperatureLoss(state, level);
         double oldHeat = state.heatLevel;
         state.heatLevel = Math.max(0, state.heatLevel + inc - loss);
-        double maxHeat = state.activeRecipe != null ? state.activeRecipe.requiredTemp : WORKING_HEAT_LEVEL;
+        double maxHeat = state.activeRecipe != null ? state.activeRecipe.requiredTemp : workingHeatLevel();
         state.heatLevel = Math.min(maxHeat, state.heatLevel);
         return oldHeat != state.heatLevel;
     }
@@ -306,20 +306,20 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         if (state.registered && state.reflectorStrength > 0 && level.isDay() && !level.isRaining() && state.sunVisible) {
             double effectiveStrength = state.reflectorStrength;
             if (state.activeRecipe != null) {
-                double minReflectors = state.activeRecipe.requiredTemp / TEMP_TO_MIN_REFLECTORS_DIVISOR;
-                double bestReflectors = minReflectors + 2 * REFLECTOR_TIER_OFFSET;
+                double minReflectors = state.activeRecipe.requiredTemp / tempToMinReflectorsDivisor();
+                double bestReflectors = minReflectors + 2 * reflectorTierOffset();
                 effectiveStrength = Math.min(state.reflectorStrength, bestReflectors);
             }
-            inc = effectiveStrength * HEAT_INCREASE_FACTOR * getSolarIncidenceAngleSection(level);
+            inc = effectiveStrength * heatIncreaseFactor() * getSolarIncidenceAngleSection(level);
         }
         return inc;
     }
 
     private double getTemperatureLoss(State state, Level level) {
-        double loss = DAY_MIN_HEAT_LOSS;
+        double loss = dayMinHeatLoss();
         int section = getSolarIncidenceAngleSection(level);
-        loss += LOSS_PER_SECTION_DROP * (4 - section);
-        loss += state.heatLevel * TEMP_DEPENDENT_LOSS_FACTOR;
+        loss += lossPerSectionDrop() * (4 - section);
+        loss += state.heatLevel * tempDependentLossFactor();
         return loss;
     }
 
@@ -329,7 +329,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = MeltingRecipe.RECIPES.getById(level, state.activeRecipeId); state.activeRecipeId = null; }
         if (state.activeRecipe == null || !state.activeRecipe.matches(fs)) { state.activeRecipe = state.recipeGetter.apply(level, fs); state.processProgress = 0; state.totalProcessTime = 0; if (state.activeRecipe == null) { return false; } }
         if (state.activeRecipe == null) { state.processProgress = 0; state.totalProcessTime = 0; return false; }
-        if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) { state.processProgress += (int) SPEED_MULTIPLIER; } else { state.processProgress = Math.max(0, state.processProgress - PROGRESS_LOSS_OFF_TEMP); }
+        if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) { state.processProgress += (int) speedMultiplier(); } else { state.processProgress = Math.max(0, state.processProgress - progressLossOffTemp()); }
         int total = state.activeRecipe.getTotalProcessTime();
         if (state.processProgress >= total) {
             assert state.activeRecipe.fluidOutput != null;
@@ -425,7 +425,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new SolarTank(v -> onChanged.run(), INPUT_TANK_CAPACITY, OUTPUT_TANK_CAPACITY);
+            tanks = new SolarTank(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
             inventory = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT, SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
             inputCap = new ArrayFluidHandler(tanks.input(), false, true, onChanged);
             outputCap = new ArrayFluidHandler(tanks.output(), true, false, onChanged);

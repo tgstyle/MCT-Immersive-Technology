@@ -40,7 +40,7 @@ public class BoilerSolidProcess implements IMultiblockComponent<BoilerSolidLogic
         if (fuelStack.isEmpty() || burnTime <= 0 || fuelStack.getCount() < consumeAmount) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
         if (isClient) { return ItemInteractionResult.SUCCESS; }
         state.pilotLit = true;
-        state.heatLevel = BoilerSolidLogic.PILOT_HEAT;
+        state.heatLevel = BoilerSolidLogic.pilotHeat();
         level.playSound(null, ctx.getLevel().toAbsolute(BoilerSolidLogic.IGNITION_POIS.getFirst()), Sounds.gasIgnite.get(), SoundSource.BLOCKS, 0.5f, 1.0f);
         if (held.is(ModTags.igniters_consume)) { held.shrink(1); }
         else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND); }
