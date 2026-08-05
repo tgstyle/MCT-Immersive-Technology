@@ -27,7 +27,7 @@ public class BoilerFuelRecipeCategory extends ITRecipeCategory<BoilerFuelRecipe,
 	}
 
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerFuelRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		List<List<FluidStack>> inputs = ingredients.getOutputs(VanillaTypes.FLUID);
+		List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
 
 		int tankSize = getMaxFluidAmount(inputs);
 
