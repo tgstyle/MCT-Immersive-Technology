@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SolarRegistry {
-    public static final int SOLAR_MAX_RANGE = Config.ITConfig.Multiblocks.solarReflector.solarReflector_maxRange;
+    public static int solarMaxRange() { return Config.ITConfig.Multiblocks.solarReflector.solarReflector_maxRange; }
 
     public static class RegisterResult {
         public boolean success = false;
@@ -52,11 +52,11 @@ public class SolarRegistry {
             double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
             minDist = Math.min(minDist, dist);
             if (dx == 0 && dz == 0) { verticalFail = true; }
-            else if (dist < SOLAR_MAX_RANGE * 2) { overlapFail = true; }
+            else if (dist < solarMaxRange() * 2) { overlapFail = true; }
         }
         if (verticalFail) { result.vertical = true; return result; }
         if (overlapFail) {
-            result.requiredMove = (int) Math.ceil(SOLAR_MAX_RANGE * 2 - minDist) + 1;
+            result.requiredMove = (int) Math.ceil(solarMaxRange() * 2 - minDist) + 1;
             return result;
         }
         result.success = true;

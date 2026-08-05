@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase implements IIEInternalFluxHandler, IDirectionalTile, IHasDummyBlocks, IActiveState, ITickable {
-    private static final int cokeOvenConsumption = Multiblocks.advancedCokeOvenBaseheater.advancedCokeOvenBaseheater_energy_consumption;
+    private static int cokeOvenConsumption() { return Multiblocks.advancedCokeOvenBaseheater.advancedCokeOvenBaseheater_energy_consumption; }
     public EnumFacing facing = EnumFacing.NORTH;
     public FluxStorage energyStorage = new FluxStorage(8000);
     public boolean dummy = false;
@@ -73,7 +73,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
 
     public boolean doSpeedup() {
         if (dummy) { return false; }
-        int consumed = cokeOvenConsumption;
+        int consumed = cokeOvenConsumption();
         boolean didWork = false;
         if (this.energyStorage.extractEnergy(consumed, true) == consumed) {
             this.energyStorage.extractEnergy(consumed, false);

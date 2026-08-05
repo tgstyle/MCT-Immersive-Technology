@@ -58,17 +58,17 @@ import java.util.Objects;
 
 public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
 
-    private static final int inputTankSize = Multiblocks.boiler.boiler_input_tankSize;
-    private static final int outputTankSize = Multiblocks.boiler.boiler_output_tankSize;
-    private static final int inputFuelTankSize = Multiblocks.boiler.boiler_fuel_tankSize;
-    private static final int heatLossPerTick = Multiblocks.boiler.boiler_heat_lossPerTick;
-    private static final int progressLossPerTick = Multiblocks.boiler.boiler_progress_lossInTicks;
-    private static final double workingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
+    private static int inputTankSize() { return Multiblocks.boiler.boiler_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.boiler.boiler_output_tankSize; }
+    private static int inputFuelTankSize() { return Multiblocks.boiler.boiler_fuel_tankSize; }
+    private static int heatLossPerTick() { return Multiblocks.boiler.boiler_heat_lossPerTick; }
+    private static int progressLossPerTick() { return Multiblocks.boiler.boiler_progress_lossInTicks; }
+    private static double workingHeatLevel() { return Multiblocks.boiler.boiler_heat_workingLevel; }
 
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputFuelTankSize, this),
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputFuelTankSize(), this),
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
 
     public static int slotCount = 6;
@@ -138,7 +138,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        float targetSoundLevel = isRunning ? (float)(heatLevel / workingHeatLevel) : 0f;
+        float targetSoundLevel = isRunning ? (float)(heatLevel / workingHeatLevel()) : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
@@ -345,7 +345,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     private boolean recipeLogic() {
         boolean update = false;
-        if (heatLevel >= workingHeatLevel) {
+        if (heatLevel >= workingHeatLevel()) {
             if (processTimeRemaining > 0) {
                 if (gainProgress()) update = true;
             } else if (tanks[1].getFluidAmount() > 0) {
@@ -407,7 +407,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     private boolean heatUp() {
         double previous = heatLevel;
         if (cachedFuelRecipe == null) { fuelBurnRemaining = 0; return true; }
-        heatLevel = Math.min(heatLevel + cachedFuelRecipe.getHeat(), workingHeatLevel);
+        heatLevel = Math.min(heatLevel + cachedFuelRecipe.getHeat(), workingHeatLevel());
         return previous != heatLevel;
     }
 
@@ -415,14 +415,14 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         double previous = heatLevel;
         double multiplier = 1.0;
         if (ITCompatModule.isAdvancedRocketryLoaded) { multiplier = AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos().add(0, 2, 0)); }
-        heatLevel = Math.max(heatLevel - heatLossPerTick * multiplier, 0);
+        heatLevel = Math.max(heatLevel - heatLossPerTick() * multiplier, 0);
         return previous != heatLevel;
     }
 
     private boolean loseProgress() {
         if (cachedBoilerRecipe == null) { processTimeRemaining = 0; return true; }
         int previous = processTimeRemaining;
-        processTimeRemaining = Math.min(processTimeRemaining + progressLossPerTick, cachedBoilerRecipe.getTotalProcessTime());
+        processTimeRemaining = Math.min(processTimeRemaining + progressLossPerTick(), cachedBoilerRecipe.getTotalProcessTime());
         return previous != processTimeRemaining;
     }
 
@@ -458,7 +458,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         markContainingBlockForUpdate(null);
     }
 
-    @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel)); }
+    @Override public int getComparatorInputOverride() { return (int)(15 * (heatLevel / workingHeatLevel())); }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 

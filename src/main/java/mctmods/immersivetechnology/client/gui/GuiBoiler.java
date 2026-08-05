@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class GuiBoiler extends GuiIEContainerBase {
 	TileEntityBoilerMaster tile;
 
-	private static final double workingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
+	private static double workingHeatLevel() { return Multiblocks.boiler.boiler_heat_workingLevel; }
 	
 	public GuiBoiler(InventoryPlayer inventoryPlayer, TileEntityBoilerMaster tile) {
 		super(new ContainerBoiler(inventoryPlayer, tile));
@@ -31,7 +31,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.handleGuiTank(tile.tanks[2], guiLeft + 123, guiTop + 20, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_boiler.png", tooltip);
 		if (mx >= guiLeft + 100 && mx < guiLeft + 141 && my >= guiTop + 5 && my < guiTop + 14) {
 			tooltip.add("Temperature");
-			tooltip.add(TextFormatting.RED + "" + ((tile.heatLevel/20) + 30) + "/" + ((workingHeatLevel/20) + 30) + "C");
+			tooltip.add(TextFormatting.RED + "" + ((tile.heatLevel/20) + 30) + "/" + ((workingHeatLevel()/20) + 30) + "C");
 		}
 		if (!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, - 1);
@@ -44,7 +44,7 @@ public class GuiBoiler extends GuiIEContainerBase {
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_boiler.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-		int heatBarSize = (int)Math.round(41 * (tile.heatLevel / workingHeatLevel));
+		int heatBarSize = (int)Math.round(41 * (tile.heatLevel / workingHeatLevel()));
 
 		this.drawTexturedModalRect(guiLeft + 100, guiTop + 5, 176, 0, heatBarSize, 9);
 

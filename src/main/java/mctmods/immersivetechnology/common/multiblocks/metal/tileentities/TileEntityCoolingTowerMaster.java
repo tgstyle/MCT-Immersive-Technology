@@ -52,15 +52,15 @@ import java.util.Random;
 
 public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave implements TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
-    private static final int inputTankSize = Multiblocks.coolingTower.coolingTower_input_tankSize;
-    private static final int outputTankSize = Multiblocks.coolingTower.coolingTower_output_tankSize;
+    private static int inputTankSize() { return Multiblocks.coolingTower.coolingTower_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.coolingTower.coolingTower_output_tankSize; }
 
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this),
-            new ITFluidTank(outputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
 
     private CoolingTowerRecipe cachedCoolingRecipe;

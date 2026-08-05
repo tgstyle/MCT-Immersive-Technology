@@ -50,13 +50,13 @@ import javax.annotation.Nullable;
 
 public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ITFluidTank.TankListener, IIEInventory, IComparatorOverride {
 
-    private static final int tankSize = Multiblocks.advancedCokeOven.advancedCokeOven_tankSize;
+    private static int tankSize() { return Multiblocks.advancedCokeOven.advancedCokeOven_tankSize; }
     public static float baseSpeed = Multiblocks.advancedCokeOven.advancedCokeOven_speed_base;
     public static float baseheaterAdd = Multiblocks.advancedCokeOven.advancedCokeOven_baseheater_speed_increase;
     public static float baseheaterMult = Multiblocks.advancedCokeOven.advancedCokeOven_baseheater_speed_multiplier;
     public static int slotCount = 4;
 
-    public ITFluidTank tank = new ITFluidTank(tankSize, this);
+    public ITFluidTank tank = new ITFluidTank(tankSize(), this);
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     public int processTimeRemaining = 0;
     public int processTimeMax = 0;

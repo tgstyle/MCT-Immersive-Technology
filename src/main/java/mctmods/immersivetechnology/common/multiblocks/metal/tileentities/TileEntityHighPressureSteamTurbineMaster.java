@@ -46,14 +46,14 @@ import java.util.Objects;
 
 public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPressureSteamTurbineSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
-    private static final int inputTankSize = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_input_tankSize;
-    private static final int outputTankSize = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_output_tankSize;
-    private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
-    private static final int speedGainPerTick = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_gainPerTick;
-    private static final int speedLossPerTick = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_lossPerTick;
-    private static final float maxRotationSpeed = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxRotation;
+    private static int inputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_output_tankSize; }
+    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    private static int speedGainPerTick() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_gainPerTick; }
+    private static int speedLossPerTick() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_lossPerTick; }
+    private static float maxRotationSpeed() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxRotation; }
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize, this), new ITFluidTank(outputTankSize, this)};
+    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize(), this), new ITFluidTank(outputTankSize(), this)};
     public int fuelBurnRemaining = 0;
     public int speed = 0;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
@@ -105,7 +105,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        float targetSoundLevel = isRunning ? (float)speed / maxSpeed : 0f;
+        float targetSoundLevel = isRunning ? (float)speed / maxSpeed() : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -166,7 +166,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         }
 
         if (world.isRemote) {
-            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed) * maxRotationSpeed;
+            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed()) * maxRotationSpeed();
             float oldMomentum = animation.getAnimationMomentum();
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             animation.setAnimationMomentum(rotationSpeed);
@@ -182,7 +182,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
         if (fuelBurnRemaining > 0) {
             fuelBurnRemaining--;
-            speed = Math.min(maxSpeed, speed + speedGainPerTick);
+            speed = Math.min(maxSpeed(), speed + speedGainPerTick());
             changed = true;
             active = true;
         } else if (currentlyEnabled && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
@@ -200,14 +200,14 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
                 fuelBurnRemaining = recipe.getTotalProcessTime() - 1;
                 tanks[0].drain(recipe.fluidInput.amount, true);
                 if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
-                speed = Math.min(maxSpeed, speed + speedGainPerTick);
+                speed = Math.min(maxSpeed(), speed + speedGainPerTick());
                 changed = true;
                 active = true;
             } else {
-                speed = Math.max(0, speed - speedLossPerTick);
+                speed = Math.max(0, speed - speedLossPerTick());
             }
         } else {
-            speed = Math.max(0, speed - speedLossPerTick);
+            speed = Math.max(0, speed - speedLossPerTick());
         }
 
         if (pressureReleaseCooldown > 0) { pressureReleaseCooldown--; }
@@ -325,7 +325,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return false;
     }
 
-    @Override public int getComparatorInputOverride() { return maxSpeed <= 0 ? 0 : 15 * speed / maxSpeed; }
+    @Override public int getComparatorInputOverride() { return maxSpeed() <= 0 ? 0 : 15 * speed / maxSpeed(); }
 
     @Override public boolean isDummy() { return false; }
 

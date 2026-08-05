@@ -52,15 +52,15 @@ import java.util.List;
 
 public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ITFluidTank.TankListener, IIEInventory, IBinaryMessageReceiver, IComparatorOverride {
 
-    private static final int inputTankSize = Multiblocks.distiller.distiller_input_tankSize;
-    private static final int outputTankSize = Multiblocks.distiller.distiller_output_tankSize;
-    private static final int energyCapacity = Multiblocks.distiller.distiller_energy_size;
-    private static final int energyMaxInput = Multiblocks.distiller.distiller_energy_maxInput;
+    private static int inputTankSize() { return Multiblocks.distiller.distiller_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.distiller.distiller_output_tankSize; }
+    private static int energyCapacity() { return Multiblocks.distiller.distiller_energy_size; }
+    private static int energyMaxInput() { return Multiblocks.distiller.distiller_energy_maxInput; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public ITFluidTank[] tanks = new ITFluidTank[] {
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
 
     public static int slotCount = 5;

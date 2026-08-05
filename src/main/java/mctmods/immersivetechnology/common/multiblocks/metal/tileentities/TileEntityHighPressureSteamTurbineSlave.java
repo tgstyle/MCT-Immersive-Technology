@@ -34,7 +34,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultiblock<TileEntityHighPressureSteamTurbineSlave, HighPressureSteamTurbineRecipe, TileEntityHighPressureSteamTurbineMaster>
         implements IMechanicalEnergy, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
 
-    private static final float outputTorque = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque;
+    private static float outputTorque() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque; }
 
     private TileEntityHighPressureSteamTurbineMaster master;
     private int loadGrace = 0;
@@ -129,7 +129,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
         return m == null ? 0 : m.speed;
     }
 
-    @Override public float getTorqueMultiplier() { return outputTorque; }
+    @Override public float getTorqueMultiplier() { return outputTorque(); }
 
     public MechanicalEnergyAnimation getAnimation() {
         TileEntityHighPressureSteamTurbineMaster m = master();

@@ -52,13 +52,13 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     protected long onlyLocalDissassembly = -1;
 
-    private static final int inputTankSize = Multiblocks.radiator.radiator_input_tankSize;
-    private static final int outputTankSize = Multiblocks.radiator.radiator_output_tankSize;
-    private static final float speedMult = Multiblocks.radiator.radiator_speed_multiplier;
+    private static int inputTankSize() { return Multiblocks.radiator.radiator_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.radiator.radiator_output_tankSize; }
+    private static float speedMult() { return Multiblocks.radiator.radiator_speed_multiplier; }
 
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
 
     public int processTimeRemaining = 0;
@@ -462,7 +462,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
                     }
                     if (inputOk && outputOk) {
                         cachedRadiatorRecipe = recipe;
-                        processTimeRemaining = (int)(recipe.getTotalProcessTime() / speedMult);
+                        processTimeRemaining = (int)(recipe.getTotalProcessTime() / speedMult());
                         processTimeTotal = processTimeRemaining;
                         update = true;
                     }

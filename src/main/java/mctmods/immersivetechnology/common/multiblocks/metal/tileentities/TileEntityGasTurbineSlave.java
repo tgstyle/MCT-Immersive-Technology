@@ -35,7 +35,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     protected int loadGrace = 0;
     protected TileEntityGasTurbineMaster master;
 
-    private static final float outputtorque = Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque;
+    private static float outputtorque() { return Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque; }
 
     public TileEntityGasTurbineSlave() {
         super(TileEntityITMultiblockPartGasTurbine.instance, 0, true);
@@ -168,7 +168,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
         return m == null ? 0 : m.speed;
     }
 
-    @Override public float getTorqueMultiplier() { return outputtorque; }
+    @Override public float getTorqueMultiplier() { return outputtorque(); }
 
     public MechanicalEnergyAnimation getAnimation() {
         TileEntityGasTurbineMaster m = master();

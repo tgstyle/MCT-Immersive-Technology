@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class GuiMeltingCrucible extends GuiIEContainerBase {
     TileEntityMeltingCrucibleMaster tile;
 
-    private static final double workingHeatLevel = Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel;
+    private static double workingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel; }
 
     public GuiMeltingCrucible(InventoryPlayer invPlayer, TileEntityMeltingCrucibleMaster tile) {
         super(new ContainerMeltingCrucible(invPlayer, tile));
@@ -38,7 +38,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
         if (mx >= guiLeft + 30 && mx < guiLeft + 79 && my >= guiTop + 9 && my < guiTop + 18) {
             DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");
-            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / workingHeatLevel * 1000) + "/" + "1000" + "C");
+            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / workingHeatLevel() * 1000) + "/" + "1000" + "C");
         }
         if (!tooltip.isEmpty()) {
             ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
@@ -54,7 +54,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
         int stored = (int)(46 * (tile.getEnergyStored(null) / (float)tile.getMaxEnergyStored(null)));
         ClientUtils.drawGradientRect(guiLeft + 16, guiTop + 22 + (46 - stored), guiLeft + 23, guiTop + 68, 0xffb51500, 0xff600b00);
 
-        int heatBarSize = (int)(51 * (tile.heatLevel / workingHeatLevel));
+        int heatBarSize = (int)(51 * (tile.heatLevel / workingHeatLevel()));
         this.drawTexturedModalRect(guiLeft + 30, guiTop + 9, 176, 0, heatBarSize, 9);
 
         ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_melting_crucible.png", null);

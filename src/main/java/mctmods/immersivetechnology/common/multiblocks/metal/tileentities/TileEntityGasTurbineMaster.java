@@ -57,22 +57,22 @@ import java.util.Random;
 
 public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
-    private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
-    private static final float maxRotationSpeed = Multiblocks.gasTurbine.gasTurbine_speed_maxRotation;
-    private static final int speedGainPerTick = Multiblocks.gasTurbine.gasTurbine_speed_gainPerTick;
-    private static final int speedLossPerTick = Multiblocks.gasTurbine.gasTurbine_speed_lossPerTick;
-    private static final int inputTankSize = Multiblocks.gasTurbine.gasTurbine_input_tankSize;
-    private static final int outputTankSize = Multiblocks.gasTurbine.gasTurbine_output_tankSize;
-    public static final int electricStarterConsumption = Multiblocks.gasTurbine.gasTurbine_electric_starter_consumption;
-    public static final int sparkplugConsumption = Multiblocks.gasTurbine.gasTurbine_sparkplug_consumption;
-    private static final int electricStarterSize = Multiblocks.gasTurbine.gasTurbine_electric_starter_size;
-    private static final int sparkplugSize = Multiblocks.gasTurbine.gasTurbine_sparkplug_size;
+    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    private static float maxRotationSpeed() { return Multiblocks.gasTurbine.gasTurbine_speed_maxRotation; }
+    private static int speedGainPerTick() { return Multiblocks.gasTurbine.gasTurbine_speed_gainPerTick; }
+    private static int speedLossPerTick() { return Multiblocks.gasTurbine.gasTurbine_speed_lossPerTick; }
+    private static int inputTankSize() { return Multiblocks.gasTurbine.gasTurbine_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.gasTurbine.gasTurbine_output_tankSize; }
+    public static int electricStarterConsumption() { return Multiblocks.gasTurbine.gasTurbine_electric_starter_consumption; }
+    public static int sparkplugConsumption() { return Multiblocks.gasTurbine.gasTurbine_sparkplug_consumption; }
+    private static int electricStarterSize() { return Multiblocks.gasTurbine.gasTurbine_electric_starter_size; }
+    private static int sparkplugSize() { return Multiblocks.gasTurbine.gasTurbine_sparkplug_size; }
 
-    public ITFluxStorage starterStorage = new ITFluxStorage(electricStarterSize, false, true);
-    public ITFluxStorage sparkplugStorage = new ITFluxStorage(sparkplugSize, false, true);
+    public ITFluxStorage starterStorage = new ITFluxStorage(electricStarterSize(), false, true);
+    public ITFluxStorage sparkplugStorage = new ITFluxStorage(sparkplugSize(), false, true);
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -118,7 +118,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         isRunning = nbt.getBoolean("isRunning");
         if (formed && !descPacket) needsPoIInit = true;
         if (world.isRemote) {
-            targetSoundLevel = (float)speed / maxSpeed;
+            targetSoundLevel = (float)speed / maxSpeed();
             soundVolume = targetSoundLevel;
             soundGracePeriod = 60;
         }
@@ -144,7 +144,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
         if (particle0 == null) InitializePoIs();
-        if (!starterRunning || speed < maxSpeed / 4) return;
+        if (!starterRunning || speed < maxSpeed() / 4) return;
         Random rand = new Random();
         if (rand.nextInt(40) != 0) return;
         int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
@@ -166,10 +166,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         float att = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 64, 1);
         float level = ITUtils.remapRange(0, 1, 0.5f, 1.5f, soundVolume);
         if (speed == 0) ITSoundHandler.StopSound(soundPos0);
-        else ITSounds.gasTurbineRunning.PlayRepeating(soundPos0, (level - 0.5f) / (4 * att), level);
+        else ITSounds.gasTurbineRunning.PlayRepeating(soundPos0, (level - 0.5f) / att, level);
         if (starterRunning) {
             ITSounds.gasTurbineStarter.PlayRepeating(soundPos3, Math.min((level - .5f) / att, .2f), 1);
-            if (speed >= maxSpeed / 4) ITSounds.gasTurbineArc.PlayRepeating(soundPos1, Math.min((level - .5f) / att, .2f), 1);
+            if (speed >= maxSpeed() / 4) ITSounds.gasTurbineArc.PlayRepeating(soundPos1, Math.min((level - .5f) / att, .2f), 1);
         } else {
             ITSoundHandler.StopSound(soundPos3);
             ITSoundHandler.StopSound(soundPos1);
@@ -209,7 +209,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         else {
             speed = buf.readInt();
             starterRunning = buf.readBoolean();
-            targetSoundLevel = (float)speed / maxSpeed;
+            targetSoundLevel = (float)speed / maxSpeed();
             isRunning = buf.readBoolean();
         }
     }
@@ -232,7 +232,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) {
-                float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
+                float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed()) * maxRotationSpeed();
                 animation.setAnimationRotation(animation.getAnimationRotation() + animation.getAnimationMomentum());
                 animation.setAnimationMomentum(rotationSpeed);
                 if (soundVolume < targetSoundLevel) {
@@ -252,14 +252,14 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         ignited = ignitionGracePeriod > 0;
         boolean prevStarterRunning = starterRunning;
         boolean canRun = !isRSDisabled() && isValidAlternator();
-        if (canRun && electricStarterConsumption <= starterStorage.getEnergyStored()) {
+        if (canRun && electricStarterConsumption() <= starterStorage.getEnergyStored()) {
             starterRunning = true;
-            starterStorage.modifyEnergyStored(-electricStarterConsumption);
+            starterStorage.modifyEnergyStored(-electricStarterConsumption());
         } else starterRunning = false;
         int prevSpeed = speed;
         boolean wasRunning = isRunning;
 
-        if (speed < maxSpeed / 4) {
+        if (speed < maxSpeed() / 4) {
             if (canRun) {
                 if (ignitionGracePeriod > 0) ignitionGracePeriod--;
                 speedUp();
@@ -295,7 +295,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         else if (soundGracePeriod > 0) soundGracePeriod--;
         isRunning = soundGracePeriod > 0;
 
-        float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed) * maxRotationSpeed;
+        float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed()) * maxRotationSpeed();
         float oldMomentum = animation.getAnimationMomentum();
         animation.setAnimationMomentum(rotationSpeed);
         animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
@@ -323,17 +323,17 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private void speedUp() {
         if (starterRunning) {
-            if (speed >= maxSpeed / 4) speed = Math.max(Math.min(maxSpeed, speed + speedGainPerTick - speedLossPerTick), maxSpeed / 4);
-            else speed = Math.min(maxSpeed / 4, speed + speedGainPerTick);
+            if (speed >= maxSpeed() / 4) speed = Math.max(Math.min(maxSpeed(), speed + speedGainPerTick() - speedLossPerTick()), maxSpeed() / 4);
+            else speed = Math.min(maxSpeed() / 4, speed + speedGainPerTick());
         } else {
-            if (speed >= maxSpeed / 4) speed = Math.min(maxSpeed, speed + speedGainPerTick);
+            if (speed >= maxSpeed() / 4) speed = Math.min(maxSpeed(), speed + speedGainPerTick());
             else speedDown();
         }
     }
 
     private void speedDown() {
         if (ignitionGracePeriod > 0) ignitionGracePeriod--;
-        speed = Math.max(0, speed - speedLossPerTick);
+        speed = Math.max(0, speed - speedLossPerTick());
     }
 
     private boolean isValidAlternator() {
@@ -349,7 +349,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     private void ignite() {
-        sparkplugStorage.modifyEnergyStored(-sparkplugConsumption);
+        sparkplugStorage.modifyEnergyStored(-sparkplugConsumption());
         ignited = true;
         ignitionGracePeriod = 60;
         BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
@@ -359,7 +359,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private boolean canIgnite() {
         boolean canFuelCombust = true;
         if (ITCompatModule.isAdvancedRocketryLoaded) canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(getPos(), 0, 0, -1, facing, mirrored));
-        return sparkplugConsumption <= sparkplugStorage.getEnergyStored() && canFuelCombust;
+        return sparkplugConsumption() <= sparkplugStorage.getEnergyStored() && canFuelCombust;
     }
 
     private boolean pumpOutputOut() {
@@ -447,7 +447,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return false;
     }
 
-    @Override public int getComparatorInputOverride() { return maxSpeed <= 0 ? 0 : 15 * speed / maxSpeed; }
+    @Override public int getComparatorInputOverride() { return maxSpeed() <= 0 ? 0 : 15 * speed / maxSpeed(); }
 
     @Override public boolean isDummy() { return false; }
 

@@ -34,8 +34,8 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfigurableSides, IPlayerInteraction, ITileDrop, IComparatorOverride, ITFluidTank.TankListener {
 
-    private static final int tankSize = Blocks.barrels.barrel_steel_tankSize;
-    private static final int transferSpeed = Blocks.barrels.barrel_steel_transferSpeed;
+    private static int tankSize() { return Blocks.barrels.barrel_steel_tankSize; }
+    private static int transferSpeed() { return Blocks.barrels.barrel_steel_transferSpeed; }
 
     public int[] sideConfig = {1, 0};
 
@@ -48,7 +48,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
 
     public TileEntityBarrelSteel() { createTank(); }
 
-    public void createTank() { tank = new ITFluidTank(tankSize, this); }
+    public void createTank() { tank = new ITFluidTank(tankSize(), this); }
 
     @Override
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -92,7 +92,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
                 IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
                 if (output != null) {
                     if (sleep == 0) {
-                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
+                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed(), tank.getFluidAmount()), false);
                         if (accepted == null) { sleep = 20; return; }
                         accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
                         if (accepted.amount > 0) {

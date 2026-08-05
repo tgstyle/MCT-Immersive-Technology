@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 public class SolarTowerRecipeWrapper extends ITMultiblockRecipeWrapper {
 	public ITickTimer timer;
 	private final MultiblockRecipe recipe;
-	private static final float speedMult = Multiblocks.solarTower.solarTower_speed_multiplier;
+	private static float speedMult() { return Multiblocks.solarTower.solarTower_speed_multiplier; }
 	private static final DecimalFormat format = new DecimalFormat("#.####");
 
 	public SolarTowerRecipeWrapper(MultiblockRecipe recipe) {
@@ -21,7 +21,7 @@ public class SolarTowerRecipeWrapper extends ITMultiblockRecipeWrapper {
 	}
 
 	@Override public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		float time = recipe.getTotalProcessTime() / (speedMult * (timer.getValue() + 1));
+		float time = recipe.getTotalProcessTime() / (speedMult() * (timer.getValue() + 1));
 		drawTimeText(minecraft, time, format, 21, 10);
 	}
 }

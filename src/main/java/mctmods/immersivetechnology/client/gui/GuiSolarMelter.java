@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class GuiSolarMelter extends GuiIEContainerBase {
     TileEntitySolarMelterMaster tile;
 
-    private static final double workingHeatLevel = Multiblocks.solarMelter.solarMelter_heat_workingLevel;
+    private static double workingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingLevel; }
 
     public GuiSolarMelter(InventoryPlayer invPlayer, TileEntitySolarMelterMaster tile) {
         super(new ContainerSolarMelter(invPlayer, tile));
@@ -34,7 +34,7 @@ public class GuiSolarMelter extends GuiIEContainerBase {
         if (mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
             DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");
-            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / 20 + 30) + "/" + df.format(workingHeatLevel / 20 + 30) + "C");
+            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / 20 + 30) + "/" + df.format(workingHeatLevel() / 20 + 30) + "C");
         }
         if (!tooltip.isEmpty()) {
             ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
@@ -47,7 +47,7 @@ public class GuiSolarMelter extends GuiIEContainerBase {
         ClientUtils.bindTexture("immersivetech:textures/gui/gui_solar_melter.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-        int heatBarSize = (int)Math.round(42 * (tile.heatLevel / workingHeatLevel));
+        int heatBarSize = (int)Math.round(42 * (tile.heatLevel / workingHeatLevel()));
         this.drawTexturedModalRect(guiLeft + 16, guiTop + 9, 176, 0, heatBarSize, 9);
 
         if (tile.solarIncidenceAngleSection > 0) { this.drawTexturedModalRect(guiLeft + 32, guiTop + 24, 198, 31, 10, 10); }

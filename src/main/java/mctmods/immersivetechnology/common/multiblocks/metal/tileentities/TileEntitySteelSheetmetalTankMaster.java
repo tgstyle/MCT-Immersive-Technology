@@ -27,10 +27,10 @@ import java.util.List;
 
 public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ITFluidTank.TankListener, IComparatorOverride {
 
-    private static final int tankSize = Multiblocks.steelTank.steelTank_tankSize;
-    private static final int transferSpeed = Multiblocks.steelTank.steelTank_transferSpeed;
+    private static int tankSize() { return Multiblocks.steelTank.steelTank_tankSize; }
+    private static int transferSpeed() { return Multiblocks.steelTank.steelTank_transferSpeed; }
 
-    public ITFluidTank tank = new ITFluidTank(tankSize, this);
+    public ITFluidTank tank = new ITFluidTank(tankSize(), this);
 
     private int oldComparatorOutput = 0;
     private final List<PoICache> fluidInputs0 = new ArrayList<>();
@@ -61,7 +61,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                 BlockPos outPos = getBlockPosForPos(output.position).offset(output.facing);
                 IFluidHandler handler = FluidUtil.getFluidHandler(world, outPos, output.facing.getOpposite());
                 if (handler == null) { continue; }
-                FluidStack drainable = tank.drain(Math.min(transferSpeed, tank.getFluidAmount()), false);
+                FluidStack drainable = tank.drain(Math.min(transferSpeed(), tank.getFluidAmount()), false);
                 if (drainable == null || drainable.amount <= 0) { continue; }
                 TileEntity tile = world.getTileEntity(outPos);
                 boolean isITPipe = tile instanceof ITIPipe;

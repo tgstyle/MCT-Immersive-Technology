@@ -32,11 +32,11 @@ import javax.annotation.Nullable;
 import java.util.function.Function;
 
 public class OneProbeHelper extends ITCompatModule implements Function<ITheOneProbe, Void> {
-    private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
-    private static final double boilerWorkingHeatLevel = Multiblocks.boiler.boiler_heat_workingLevel;
-    private static final double solarWorkingHeatLevel = Multiblocks.solarTower.solarTower_heat_workingLevel;
-    private static final double meltingCrucibleWorkingHeatLevel = Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel;
-    private static final double solarMelterWorkingHeatLevel = Multiblocks.solarMelter.solarMelter_heat_workingLevel;
+    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    private static double boilerWorkingHeatLevel() { return Multiblocks.boiler.boiler_heat_workingLevel; }
+    private static double solarWorkingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingLevel; }
+    private static double meltingCrucibleWorkingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel; }
+    private static double solarMelterWorkingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingLevel; }
 
     @Override public void preInit() { FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName()); }
 
@@ -82,7 +82,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
     private static void addRPMDisplay(IProbeInfo probeInfo, int speed) {
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                .progress(speed, maxSpeed, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
+                .progress(speed, maxSpeed(), probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
     }
 
     private static void addProcessPercent(IProbeInfo probeInfo, int percent) {
@@ -167,7 +167,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, boilerWorkingHeatLevel);
+            addTemperature(probeInfo, master.heatLevel, boilerWorkingHeatLevel());
             int currentProg = (master.processTimeRemaining > 0 && master.processTimeMax > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
             addProcessPercent(probeInfo, currentProg);
         }
@@ -313,7 +313,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, meltingCrucibleWorkingHeatLevel);
+            addTemperature(probeInfo, master.heatLevel, meltingCrucibleWorkingHeatLevel());
             int maxProg = master.processTimeMax;
             int currentProg = maxProg - master.processTimeRemaining;
             int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
@@ -354,7 +354,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, solarMelterWorkingHeatLevel);
+            addTemperature(probeInfo, master.heatLevel, solarMelterWorkingHeatLevel());
             int maxProg = master.processTimeMax;
             int currentProg = maxProg - master.processTimeRemaining;
             int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
@@ -375,7 +375,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, solarWorkingHeatLevel);
+            addTemperature(probeInfo, master.heatLevel, solarWorkingHeatLevel());
             int currentProg = 0;
             if (master.processTimeRemaining > 0 && master.processTimeMax > 0) {
                 currentProg = (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax;

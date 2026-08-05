@@ -39,16 +39,16 @@ import javax.annotation.Nullable;
 
 public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver, IComparatorOverride {
 
-    private static final int maxSpeed = Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max;
-    private static final float maxRotationSpeed = Multiblocks.steamTurbine.steamTurbine_speed_maxRotation;
-    private static final int rfPerTick = Multiblocks.alternator.alternator_energy_perTick;
-    private static final double rfExponent = Multiblocks.alternator.alternator_exponent;
-    private static final double rfThreshold = Multiblocks.alternator.alternator_threshold;
-    private static final int rfPerTickPerPort = rfPerTick / 6;
-    private static final int speedLossPerTick = Multiblocks.steamTurbine.steamTurbine_speed_lossPerTick;
-    private static final boolean soundRPM = Multiblocks.alternator.alternator_sound_RPM;
+    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    private static float maxRotationSpeed() { return Multiblocks.steamTurbine.steamTurbine_speed_maxRotation; }
+    private static int rfPerTick() { return Multiblocks.alternator.alternator_energy_perTick; }
+    private static double rfExponent() { return Multiblocks.alternator.alternator_exponent; }
+    private static double rfThreshold() { return Multiblocks.alternator.alternator_threshold; }
+    private static final int rfPerTickPerPort = rfPerTick() / 6;
+    private static int speedLossPerTick() { return Multiblocks.steamTurbine.steamTurbine_speed_lossPerTick; }
+    private static boolean soundRPM() { return Multiblocks.alternator.alternator_sound_RPM; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick, rfPerTickPerPort);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick(), rfPerTickPerPort);
     public int speed = 0;
     public float torqueMult = 1f;
     public IMechanicalEnergy provider;
@@ -95,7 +95,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) return;
-        float targetSoundLevel = isRunning ? (soundRPM ? (float)speed / maxSpeed : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored()) : 0f;
+        float targetSoundLevel = isRunning ? (soundRPM() ? (float)speed / maxSpeed() : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored()) : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
@@ -136,7 +136,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
         if (world.isRemote) {
             float oldMomentum = animation.getAnimationMomentum();
-            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed) * maxRotationSpeed;
+            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed()) * maxRotationSpeed();
             animation.setAnimationMomentum(rotationSpeed);
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             handleSounds();
@@ -248,8 +248,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     @Override public TileEntityAlternatorMaster master() { return this; }
 
     private int energyGenerated() {
-        if ((double)speed / maxSpeed <= rfThreshold) return 0;
-        return (int)Math.round(Math.pow((double)speed / maxSpeed, rfExponent) * rfPerTick * torqueMult);
+        if ((double)speed / maxSpeed() <= rfThreshold()) return 0;
+        return (int)Math.round(Math.pow((double)speed / maxSpeed(), rfExponent()) * rfPerTick() * torqueMult);
     }
 
     private void checkProvider() {
@@ -257,7 +257,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             speed = provider.getSpeed();
             torqueMult = provider.getTorqueMultiplier();
         } else if (speed > 0) {
-            speed = Math.max(speed - speedLossPerTick, 0);
+            speed = Math.max(speed - speedLossPerTick(), 0);
         }
     }
 

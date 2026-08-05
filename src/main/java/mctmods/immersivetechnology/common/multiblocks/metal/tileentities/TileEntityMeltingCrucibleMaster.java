@@ -46,18 +46,18 @@ import javax.annotation.Nullable;
 
 public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
 
-    private static final int outputTankSize = Multiblocks.meltingCrucible.meltingCrucible_output_tankSize;
-    private static final int energyCapacity = Multiblocks.meltingCrucible.meltingCrucible_energy_size;
-    private static final int energyMaxInput = Multiblocks.meltingCrucible.meltingCrucible_energy_maxInput;
-    private static final double workingHeatLevel = Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel;
-    private static final double heatLossMultiplier = Multiblocks.meltingCrucible.meltingCrucible_heat_loss_multiplier;
-    private static final double heatGainBase = Multiblocks.meltingCrucible.meltingCrucible_heat_gain_base;
-    private static final int energyPerTickToHeat = Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_heating;
-    private static final int energyPerTickToMaintain = Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_maintain;
+    private static int outputTankSize() { return Multiblocks.meltingCrucible.meltingCrucible_output_tankSize; }
+    private static int energyCapacity() { return Multiblocks.meltingCrucible.meltingCrucible_energy_size; }
+    private static int energyMaxInput() { return Multiblocks.meltingCrucible.meltingCrucible_energy_maxInput; }
+    private static double workingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel; }
+    private static double heatLossMultiplier() { return Multiblocks.meltingCrucible.meltingCrucible_heat_loss_multiplier; }
+    private static double heatGainBase() { return Multiblocks.meltingCrucible.meltingCrucible_heat_gain_base; }
+    private static int energyPerTickToHeat() { return Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_heating; }
+    private static int energyPerTickToMaintain() { return Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_maintain; }
     private static final int progressResolution = 64;
     public static final int slotCount = 3;
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public ITFluidTank[] tanks = new ITFluidTank[1];
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     public IItemHandler insertionHandler;
@@ -83,7 +83,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     public TileEntityMeltingCrucibleMaster() {
-        tanks[0] = new ITFluidTank(outputTankSize, this);
+        tanks[0] = new ITFluidTank(outputTankSize(), this);
         insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     }
 
@@ -190,7 +190,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
         boolean update = false;
         boolean shouldRun = !isRSDisabled();
-        int energyThisTick = heatLevel >= workingHeatLevel ? energyPerTickToMaintain : energyPerTickToHeat;
+        int energyThisTick = heatLevel >= workingHeatLevel() ? energyPerTickToMaintain() : energyPerTickToHeat();
         boolean heating = shouldRun && energyStorage.extractEnergy(energyThisTick, true) >= energyThisTick;
         if (heating) energyStorage.extractEnergy(energyThisTick, false);
         update |= heatLogic(heating, heating ? energyThisTick : 0);
@@ -234,22 +234,22 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         heatLevel -= getCooldownAmount();
         heatLevel = Math.max(heatLevel, 0);
         if (heating) heatLevel += getTemperatureIncrease(energyUsed);
-        heatLevel = Math.min(heatLevel, workingHeatLevel);
+        heatLevel = Math.min(heatLevel, workingHeatLevel());
         if (prev != heatLevel) changed = true;
         return changed;
     }
 
-    private double getTemperatureIncrease(int energyUsed) { return (energyUsed / (double)energyPerTickToHeat) * heatGainBase; }
+    private double getTemperatureIncrease(int energyUsed) { return (energyUsed / (double)energyPerTickToHeat()) * heatGainBase(); }
 
     private double getCooldownAmount() {
         double heatLost = world.getBiome(getPos()).getTemperature(getPos());
         if (heatLost <= 0) heatLost = 0.1;
-        return (1 / heatLost) * heatLossMultiplier;
+        return (1 / heatLost) * heatLossMultiplier();
     }
 
     private boolean recipeLogic(boolean shouldRun) {
         boolean update = false;
-        if (processTimeRemaining == 0 && shouldRun && heatLevel >= workingHeatLevel) {
+        if (processTimeRemaining == 0 && shouldRun && heatLevel >= workingHeatLevel()) {
             ItemStack input = inventory.get(0);
             if (!input.isEmpty()) {
                 MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(input);
@@ -265,7 +265,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
                 }
             }
         }
-        if (processTimeRemaining > 0 && shouldRun && heatLevel >= workingHeatLevel) {
+        if (processTimeRemaining > 0 && shouldRun && heatLevel >= workingHeatLevel()) {
             int prev = processTimeRemaining;
             processTimeRemaining -= progressResolution;
             if (prev != processTimeRemaining) update = true;
@@ -368,7 +368,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return redstoneControlInverted != (power > 0);
     }
 
-    @Override public int getComparatorInputOverride() { return (int)(15 * heatLevel / workingHeatLevel); }
+    @Override public int getComparatorInputOverride() { return (int)(15 * heatLevel / workingHeatLevel()); }
 
     @Override public boolean isDummy() { return false; }
 

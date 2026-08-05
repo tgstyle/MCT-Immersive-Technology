@@ -50,17 +50,17 @@ import java.util.List;
 
 public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IComparatorOverride {
 
-    private static final int inputTankSize = Multiblocks.heatExchanger.heatExchanger_input_tankSize;
-    private static final int outputTankSize = Multiblocks.heatExchanger.heatExchanger_output_tankSize;
-    private static final int energyCapacity = Multiblocks.heatExchanger.heatExchanger_energy_size;
-    private static final int energyMaxInput = Multiblocks.heatExchanger.heatExchanger_energy_maxInput;
+    private static int inputTankSize() { return Multiblocks.heatExchanger.heatExchanger_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.heatExchanger.heatExchanger_output_tankSize; }
+    private static int energyCapacity() { return Multiblocks.heatExchanger.heatExchanger_energy_size; }
+    private static int energyMaxInput() { return Multiblocks.heatExchanger.heatExchanger_energy_maxInput; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public FluidTank[] tanks = new FluidTank[]{
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
 
     public int processTimeRemaining;
@@ -225,7 +225,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             if (!stillValid) { recipe = HeatExchangerRecipe.findRecipe(input0, input1); }
             if (recipe != null) {
                 int avail0 = input0.amount;
-                int avail1 = input1.amount;
+                int avail1 = input1 != null ? input1.amount : 0;
                 int needed0 = recipe.fluidInput0.amount;
                 int needed1 = recipe.fluidInput1 != null ? recipe.fluidInput1.amount : 0;
                 if (avail0 >= needed0 && avail1 >= needed1) {

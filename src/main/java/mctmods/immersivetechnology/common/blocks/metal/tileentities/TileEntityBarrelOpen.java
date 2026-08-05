@@ -25,8 +25,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlayerInteraction {
 
-    private static final int tankSize = Blocks.barrels.barrel_open_tankSize;
-    private static final int transferSpeed = Blocks.barrels.barrel_open_transferSpeed;
+    private static int tankSize() { return Blocks.barrels.barrel_open_tankSize; }
+    private static int transferSpeed() { return Blocks.barrels.barrel_open_transferSpeed; }
 
     private int lastRandom = 0;
     private int sleep = 0;
@@ -36,7 +36,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     public TileEntityBarrelOpen() {}
 
     @Override
-    public void createTank() { tank = new ITFluidTank(tankSize, this); }
+    public void createTank() { tank = new ITFluidTank(tankSize(), this); }
 
     @Override
     public void update() {
@@ -69,7 +69,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
                 IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
                 if (output != null) {
                     if (sleep == 0) {
-                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed, tank.getFluidAmount()), false);
+                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed(), tank.getFluidAmount()), false);
                         assert accepted != null;
                         accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
                         if (accepted.amount > 0) {

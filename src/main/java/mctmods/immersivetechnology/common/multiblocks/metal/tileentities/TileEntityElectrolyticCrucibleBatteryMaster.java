@@ -52,17 +52,17 @@ import java.util.List;
 
 public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IEBlockInterfaces.IComparatorOverride {
 
-    private static final int inputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize;
-    private static final int outputTankSize = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_output_tankSize;
-    private static final int energyCapacity = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_size;
-    private static final int energyMaxInput = Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_maxInput;
+    private static int inputTankSize() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize; }
+    private static int outputTankSize() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_output_tankSize; }
+    private static int energyCapacity() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_size; }
+    private static int energyMaxInput() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_maxInput; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity, energyMaxInput, energyMaxInput);
+    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public FluidTank[] tanks = new FluidTank[]{
-            new ITFluidTank(inputTankSize, this),
-            new ITFluidTank(outputTankSize, this),
-            new ITFluidTank(outputTankSize, this),
-            new ITFluidTank(outputTankSize, this)
+            new ITFluidTank(inputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this),
+            new ITFluidTank(outputTankSize(), this)
     };
 
     private float soundVolume = 0f;
