@@ -38,7 +38,7 @@ public class Boiler {
         public BoilerRecipe recipe;
         public Add(BoilerRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { BoilerRecipe.recipeList.add(recipe); }
+        @Override public void apply() { BoilerRecipe.addRecipe(recipe); }
 
         @Override public String describe() { return "Adding Boiler Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
     }
@@ -47,7 +47,7 @@ public class Boiler {
         public BoilerFuelRecipe recipe;
         public AddFuel(BoilerFuelRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { BoilerRecipe.fuelList.add(recipe); }
+        @Override public void apply() { BoilerRecipe.addFuel(recipe); }
 
         @Override public String describe() { return "Adding Boiler Fuel Recipe for " + recipe.fluidInput.getLocalizedName(); }
     }

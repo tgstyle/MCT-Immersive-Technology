@@ -30,7 +30,7 @@ public class HeatExchanger {
         public HeatExchangerRecipe recipe;
         public Add(HeatExchangerRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { HeatExchangerRecipe.recipeList.add(recipe); }
+        @Override public void apply() { HeatExchangerRecipe.addRecipe(recipe); }
 
         @Override public String describe() {
             String desc = "Adding Heat Exchanger recipe: " + recipe.fluidInput0.getLocalizedName() + " + " + recipe.fluidInput1.getLocalizedName();

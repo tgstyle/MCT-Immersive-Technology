@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,13 +14,11 @@ import java.util.Map;
 public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
     public static float energyModifier = 1;
-
     public final FluidStack fluidInput0;
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
     public final FluidStack fluidOutput2;
     public final ItemStack itemOutput;
-
     int totalProcessTime;
     int totalProcessEnergy;
 
@@ -35,19 +32,19 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         this.totalProcessEnergy = (int) Math.floor(energy * energyModifier);
         this.fluidInputList = Lists.newArrayList(fluidInput0);
         this.fluidOutputList = Lists.newArrayList(fluidOutput0);
-        if (fluidOutput1 != null) this.fluidOutputList.add(fluidOutput1);
-        if (fluidOutput2 != null) this.fluidOutputList.add(fluidOutput2);
+        if (fluidOutput1 != null) { this.fluidOutputList.add(fluidOutput1); }
+        if (fluidOutput2 != null) { this.fluidOutputList.add(fluidOutput2); }
         this.outputList = ListUtils.fromItems(itemOutput);
     }
 
     public static ArrayList<ElectrolyticCrucibleBatteryRecipe> recipeList = new ArrayList<>();
-
     private static final Map<Fluid, ElectrolyticCrucibleBatteryRecipe> recipeMap = new HashMap<>();
 
-    public static ElectrolyticCrucibleBatteryRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, ItemStack itemOutput, FluidStack fluidInput0, int energy, int time) {
-        ElectrolyticCrucibleBatteryRecipe recipe = new ElectrolyticCrucibleBatteryRecipe(fluidOutput0, fluidOutput1, fluidOutput2, itemOutput, fluidInput0, energy, time);
+    public static ElectrolyticCrucibleBatteryRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, ItemStack itemOutput, FluidStack fluidInput0, int energy, int time) { return addRecipe(new ElectrolyticCrucibleBatteryRecipe(fluidOutput0, fluidOutput1, fluidOutput2, itemOutput, fluidInput0, energy, time)); }
+
+    public static ElectrolyticCrucibleBatteryRecipe addRecipe(ElectrolyticCrucibleBatteryRecipe recipe) {
         recipeList.add(recipe);
-        recipeMap.put(fluidInput0.getFluid(), recipe);
+        recipeMap.put(recipe.fluidInput0.getFluid(), recipe);
         return recipe;
     }
 
@@ -57,11 +54,11 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     }
 
     public static ElectrolyticCrucibleBatteryRecipe findRecipe(FluidStack fluidInput0) {
-        if (fluidInput0 == null || fluidInput0.getFluid() == null) return null;
+        if (fluidInput0 == null || fluidInput0.getFluid() == null) { return null; }
         ElectrolyticCrucibleBatteryRecipe recipe = recipeMap.get(fluidInput0.getFluid());
-        if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0)) return recipe;
+        if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0)) { return recipe; }
         for (ElectrolyticCrucibleBatteryRecipe r : recipeList) {
-            if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0)) return r;
+            if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0)) { return r; }
         }
         return null;
     }

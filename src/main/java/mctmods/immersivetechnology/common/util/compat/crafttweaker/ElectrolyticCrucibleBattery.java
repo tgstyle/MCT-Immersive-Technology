@@ -32,7 +32,7 @@ public class ElectrolyticCrucibleBattery {
         public ElectrolyticCrucibleBatteryRecipe recipe;
         public Add(ElectrolyticCrucibleBatteryRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { ElectrolyticCrucibleBatteryRecipe.recipeList.add(recipe); }
+        @Override public void apply() { ElectrolyticCrucibleBatteryRecipe.addRecipe(recipe); }
 
         @Override public String describe() { return "Adding Electrolytic Crucible Battery recipe for " + recipe.fluidInput0.getLocalizedName(); }
     }

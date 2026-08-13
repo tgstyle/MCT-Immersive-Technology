@@ -27,7 +27,7 @@ public class SolarTower {
         public SolarTowerRecipe recipe;
         public Add(SolarTowerRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { SolarTowerRecipe.recipeList.add(recipe); }
+        @Override public void apply() { SolarTowerRecipe.addRecipe(recipe); }
 
         @Override public String describe() { return "Adding Solar Tower Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
     }

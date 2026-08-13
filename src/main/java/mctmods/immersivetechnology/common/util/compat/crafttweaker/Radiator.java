@@ -27,7 +27,7 @@ public class Radiator {
         public RadiatorRecipe recipe;
         public Add(RadiatorRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { RadiatorRecipe.recipeList.add(recipe); }
+        @Override public void apply() { RadiatorRecipe.addRecipe(recipe); }
 
         @Override public String describe() { return "Adding Radiator Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
     }

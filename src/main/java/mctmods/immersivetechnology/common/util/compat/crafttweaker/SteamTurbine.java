@@ -27,7 +27,7 @@ public class SteamTurbine {
         public SteamTurbineRecipe recipe;
         public Add(SteamTurbineRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { SteamTurbineRecipe.recipeList.add(recipe); }
+        @Override public void apply() { SteamTurbineRecipe.addFuel(recipe); }
 
         @Override public String describe() {
             if (recipe.fluidOutput == null) { return "Adding Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName(); }

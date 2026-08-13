@@ -31,7 +31,7 @@ public class CoolingTower {
         public CoolingTowerRecipe recipe;
         public Add(CoolingTowerRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { CoolingTowerRecipe.recipeList.add(recipe); }
+        @Override public void apply() { CoolingTowerRecipe.addRecipe(recipe); }
 
         @Override public String describe() {
             String desc = "Adding Cooling Tower recipe: " + recipe.fluidInput0.getLocalizedName() + " + " + recipe.fluidInput1.getLocalizedName() + " -> " + recipe.fluidOutput0.getLocalizedName();

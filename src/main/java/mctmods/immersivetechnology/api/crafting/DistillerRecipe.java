@@ -9,7 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +17,9 @@ public class DistillerRecipe extends MultiblockRecipe {
     public static float energyModifier = 1;
     public static float timeModifier = 1;
     public float chance;
-
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;
     public final ItemStack itemOutput;
-
     int totalProcessTime;
     int totalProcessEnergy;
 
@@ -39,14 +36,14 @@ public class DistillerRecipe extends MultiblockRecipe {
     }
 
     public static ArrayList<DistillerRecipe> recipeList = new ArrayList<>();
-
     private static final Map<Fluid, DistillerRecipe> recipeMap = new HashMap<>();
 
-    public static DistillerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) {
-        DistillerRecipe r = new DistillerRecipe(fluidOutput, fluidInput, itemOutput, energy, time, chance);
-        recipeList.add(r);
-        recipeMap.put(fluidInput.getFluid(), r);
-        return r;
+    public static DistillerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, ItemStack itemOutput, int energy, int time, float chance) { return addRecipe(new DistillerRecipe(fluidOutput, fluidInput, itemOutput, energy, time, chance)); }
+
+    public static DistillerRecipe addRecipe(DistillerRecipe recipe) {
+        recipeList.add(recipe);
+        recipeMap.put(recipe.fluidInput.getFluid(), recipe);
+        return recipe;
     }
 
     public static void removeRecipe(FluidStack fluidInput) {
@@ -55,11 +52,11 @@ public class DistillerRecipe extends MultiblockRecipe {
     }
 
     public static DistillerRecipe findRecipe(FluidStack fluidInput) {
-        if (fluidInput == null) return null;
+        if (fluidInput == null) { return null; }
         DistillerRecipe recipe = recipeMap.get(fluidInput.getFluid());
-        if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) return recipe;
+        if (recipe != null && fluidInput.containsFluid(recipe.fluidInput)) { return recipe; }
         for (DistillerRecipe r : recipeList) {
-            if (r.fluidInput != null && fluidInput.containsFluid(r.fluidInput)) return r;
+            if (r.fluidInput != null && fluidInput.containsFluid(r.fluidInput)) { return r; }
         }
         return null;
     }
@@ -81,8 +78,7 @@ public class DistillerRecipe extends MultiblockRecipe {
     @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
 
     @Override public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile) {
-        if (tile.getWorld().rand.nextFloat() <= chance) return outputList;
-        else return ListUtils.fromItems();
+        if (tile.getWorld().rand.nextFloat() <= chance) { return outputList; }
+        else { return ListUtils.fromItems(); }
     }
-
 }

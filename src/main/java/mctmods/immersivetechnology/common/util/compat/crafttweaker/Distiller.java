@@ -48,7 +48,7 @@ public class Distiller {
         public DistillerRecipe recipe;
         public Add(DistillerRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { DistillerRecipe.recipeList.add(recipe); }
+        @Override public void apply() { DistillerRecipe.addRecipe(recipe); }
 
         @Override public String describe() { return "Adding Distiller Recipe for " + recipe.fluidInput.getLocalizedName() + " -> " + recipe.fluidOutput.getLocalizedName(); }
     }

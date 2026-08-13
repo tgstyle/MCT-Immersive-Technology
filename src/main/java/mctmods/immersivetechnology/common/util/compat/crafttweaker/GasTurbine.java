@@ -27,7 +27,7 @@ public class GasTurbine {
         public GasTurbineRecipe recipe;
         public Add(GasTurbineRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { GasTurbineRecipe.recipeList.add(recipe); }
+        @Override public void apply() { GasTurbineRecipe.addFuel(recipe); }
 
         @Override public String describe() {
             if (recipe.fluidOutput == null) { return "Adding Gas Turbine Fuel for " + recipe.fluidInput.getLocalizedName(); }

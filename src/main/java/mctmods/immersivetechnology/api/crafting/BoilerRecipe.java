@@ -5,35 +5,32 @@ import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BoilerRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
-
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;
-
     int totalProcessTime;
 
     public BoilerRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
         this.fluidOutput = fluidOutput;
         this.fluidInput = fluidInput;
-        this.totalProcessTime = (int)Math.floor(time * timeModifier);
+        this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
         this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
     }
 
     public static ArrayList<BoilerRecipe> recipeList = new ArrayList<>();
-
     private static final Map<Fluid, BoilerRecipe> recipeMap = new HashMap<>();
 
-    public static BoilerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
-        BoilerRecipe recipe = new BoilerRecipe(fluidOutput, fluidInput, time);
+    public static BoilerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) { return addRecipe(new BoilerRecipe(fluidOutput, fluidInput, time)); }
+
+    public static BoilerRecipe addRecipe(BoilerRecipe recipe) {
         recipeList.add(recipe);
-        recipeMap.put(fluidInput.getFluid(), recipe);
+        recipeMap.put(recipe.fluidInput.getFluid(), recipe);
         return recipe;
     }
 
@@ -67,13 +64,14 @@ public class BoilerRecipe extends MultiblockRecipe {
     @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
     public static ArrayList<BoilerFuelRecipe> fuelList = new ArrayList<>();
-
     private static final Map<Fluid, BoilerFuelRecipe> fuelMap = new HashMap<>();
 
-    public static void addFuel(FluidStack fluidInput, int time, double heat) {
-        BoilerFuelRecipe recipe = new BoilerFuelRecipe(fluidInput, time, heat);
+    public static void addFuel(FluidStack fluidInput, int time, double heat) { addFuel(new BoilerFuelRecipe(fluidInput, time, heat)); }
+
+    public static BoilerFuelRecipe addFuel(BoilerFuelRecipe recipe) {
         fuelList.add(recipe);
-        fuelMap.put(fluidInput.getFluid(), recipe);
+        fuelMap.put(recipe.fluidInput.getFluid(), recipe);
+        return recipe;
     }
 
     public static void removeFuel(FluidStack fluidInput) {
@@ -93,15 +91,13 @@ public class BoilerRecipe extends MultiblockRecipe {
 
     public static class BoilerFuelRecipe extends MultiblockRecipe {
         public static float timeModifier = 1;
-
         public final FluidStack fluidInput;
-
         int totalProcessTime;
         double heat;
 
         public BoilerFuelRecipe(FluidStack fluidInput, int time, double heat) {
             this.fluidInput = fluidInput;
-            this.totalProcessTime = (int)Math.floor(time * timeModifier);
+            this.totalProcessTime = (int) Math.floor(time * timeModifier);
             this.heat = heat;
             this.fluidInputList = Lists.newArrayList(this.fluidInput);
         }

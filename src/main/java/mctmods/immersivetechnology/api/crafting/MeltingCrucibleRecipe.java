@@ -7,15 +7,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 
 public class MeltingCrucibleRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
-
     public final FluidStack fluidOutput;
     public final IngredientStack itemInput;
-
     int totalProcessTime;
 
     public MeltingCrucibleRecipe(FluidStack fluidOutput, Object itemInput, int time) {
@@ -29,43 +26,34 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
 
     public static ArrayList<MeltingCrucibleRecipe> recipeList = new ArrayList<>();
 
-    public static MeltingCrucibleRecipe addRecipe(FluidStack fluidOutput, Object itemInput, int time) {
-        MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOutput, itemInput, time);
+    public static MeltingCrucibleRecipe addRecipe(FluidStack fluidOutput, Object itemInput, int time) { return addRecipe(new MeltingCrucibleRecipe(fluidOutput, itemInput, time)); }
+
+    public static MeltingCrucibleRecipe addRecipe(MeltingCrucibleRecipe recipe) {
         recipeList.add(recipe);
         return recipe;
     }
 
+    public static void removeRecipe(ItemStack itemInput) { recipeList.removeIf(recipe -> recipe != null && recipe.itemInput.matches(itemInput)); }
+
     public static MeltingCrucibleRecipe findRecipe(ItemStack itemInput) {
-        if (itemInput.isEmpty()) {
-            return null;
-        }
+        if (itemInput.isEmpty()) { return null; }
         for (MeltingCrucibleRecipe r : recipeList) {
-            if (r.itemInput.matches(itemInput)) {
-                return r;
-            }
+            if (r.itemInput.matches(itemInput)) { return r; }
         }
         return null;
     }
 
     public static MeltingCrucibleRecipe findRecipe(IngredientStack itemInput) {
-        if (itemInput == null) {
-            return null;
-        }
+        if (itemInput == null) { return null; }
         for (MeltingCrucibleRecipe r : recipeList) {
-            if (r.itemInput.equals(itemInput)) {
-                return r;
-            }
+            if (r.itemInput.equals(itemInput)) { return r; }
         }
         return null;
     }
 
-    @Override public int getMultipleProcessTicks() {
-        return 0;
-    }
+    @Override public int getMultipleProcessTicks() { return 0; }
 
-    @Override public int getTotalProcessTime() {
-        return this.totalProcessTime;
-    }
+    @Override public int getTotalProcessTime() { return this.totalProcessTime; }
 
     @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         nbt.setTag("input", itemInput.writeToNBT(new NBTTagCompound()));

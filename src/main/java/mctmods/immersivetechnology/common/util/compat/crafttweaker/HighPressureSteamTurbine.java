@@ -27,7 +27,7 @@ public class HighPressureSteamTurbine {
         public HighPressureSteamTurbineRecipe recipe;
         public Add(HighPressureSteamTurbineRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { HighPressureSteamTurbineRecipe.recipeList.add(recipe); }
+        @Override public void apply() { HighPressureSteamTurbineRecipe.addFuel(recipe); }
 
         @Override public String describe() {
             if (recipe.fluidOutput == null) { return "Adding High Pressure Steam Turbine Fuel for " + recipe.fluidInput.getLocalizedName(); }

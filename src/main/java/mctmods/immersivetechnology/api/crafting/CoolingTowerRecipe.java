@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,28 +28,28 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
 
         this.fluidInputList = Lists.newArrayList();
-        if (fluidInput0 != null) this.fluidInputList.add(fluidInput0);
-        if (fluidInput1 != null) this.fluidInputList.add(fluidInput1);
+        if (fluidInput0 != null) { this.fluidInputList.add(fluidInput0); }
+        if (fluidInput1 != null) { this.fluidInputList.add(fluidInput1); }
 
         this.fluidOutputList = Lists.newArrayList(fluidOutput0);
-        if (fluidOutput1 != null) this.fluidOutputList.add(fluidOutput1);
-        if (fluidOutput2 != null) this.fluidOutputList.add(fluidOutput2);
+        if (fluidOutput1 != null) { this.fluidOutputList.add(fluidOutput1); }
+        if (fluidOutput2 != null) { this.fluidOutputList.add(fluidOutput2); }
     }
 
     public static ArrayList<CoolingTowerRecipe> recipeList = new ArrayList<>();
-
     private static final Map<FluidPair, CoolingTowerRecipe> recipeMap = new HashMap<>();
     private static final Map<Fluid, CoolingTowerRecipe> input0Map = new HashMap<>();
     private static final Map<Fluid, CoolingTowerRecipe> input1Map = new HashMap<>();
 
-    public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) {
-        CoolingTowerRecipe recipe = new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidOutput2, fluidInput0, fluidInput1, time);
+    public static CoolingTowerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidStack fluidInput0, FluidStack fluidInput1, int time) { return addRecipe(new CoolingTowerRecipe(fluidOutput0, fluidOutput1, fluidOutput2, fluidInput0, fluidInput1, time)); }
+
+    public static CoolingTowerRecipe addRecipe(CoolingTowerRecipe recipe) {
         recipeList.add(recipe);
-        Fluid f0 = fluidInput0 != null ? fluidInput0.getFluid() : null;
-        Fluid f1 = fluidInput1 != null ? fluidInput1.getFluid() : null;
+        Fluid f0 = recipe.fluidInput0 != null ? recipe.fluidInput0.getFluid() : null;
+        Fluid f1 = recipe.fluidInput1 != null ? recipe.fluidInput1.getFluid() : null;
         recipeMap.put(new FluidPair(f0, f1), recipe);
-        if (f0 != null) input0Map.put(f0, recipe);
-        if (f1 != null) input1Map.put(f1, recipe);
+        if (f0 != null) { input0Map.put(f0, recipe); }
+        if (f1 != null) { input1Map.put(f1, recipe); }
         return recipe;
     }
 
@@ -65,23 +64,33 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     }
 
     public static CoolingTowerRecipe findRecipe(FluidStack fluidInput0, FluidStack fluidInput1) {
-        if (fluidInput0 == null || fluidInput1 == null) return null;
+        if (fluidInput0 == null || fluidInput1 == null) { return null; }
         CoolingTowerRecipe recipe = recipeMap.get(new FluidPair(fluidInput0.getFluid(), fluidInput1.getFluid()));
-        if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0) && fluidInput1.containsFluid(recipe.fluidInput1)) return recipe;
+        if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0) && fluidInput1.containsFluid(recipe.fluidInput1)) { return recipe; }
         for (CoolingTowerRecipe r : recipeList) {
-            if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0) && r.fluidInput1 != null && fluidInput1.containsFluid(r.fluidInput1)) return r;
+            if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0) && r.fluidInput1 != null && fluidInput1.containsFluid(r.fluidInput1)) { return r; }
         }
         return null;
     }
 
     public static CoolingTowerRecipe findRecipeByFluid0(Fluid fluidInput0) {
-        if (fluidInput0 == null) return null;
-        return input0Map.get(fluidInput0);
+        if (fluidInput0 == null) { return null; }
+        CoolingTowerRecipe recipe = input0Map.get(fluidInput0);
+        if (recipe != null) { return recipe; }
+        for (CoolingTowerRecipe r : recipeList) {
+            if (r.fluidInput0 != null && r.fluidInput0.getFluid() == fluidInput0) { return r; }
+        }
+        return null;
     }
 
     public static CoolingTowerRecipe findRecipeByFluid1(Fluid fluidInput1) {
-        if (fluidInput1 == null) return null;
-        return input1Map.get(fluidInput1);
+        if (fluidInput1 == null) { return null; }
+        CoolingTowerRecipe recipe = input1Map.get(fluidInput1);
+        if (recipe != null) { return recipe; }
+        for (CoolingTowerRecipe r : recipeList) {
+            if (r.fluidInput1 != null && r.fluidInput1.getFluid() == fluidInput1) { return r; }
+        }
+        return null;
     }
 
     @Override public int getMultipleProcessTicks() { return 0; }
@@ -103,20 +112,19 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     static class FluidPair {
         private final Fluid fluid0;
         private final Fluid fluid1;
+
         FluidPair(Fluid f0, Fluid f1) {
             fluid0 = f0;
             fluid1 = f1;
         }
 
         @Override public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) { return true; }
+            if (o == null || getClass() != o.getClass()) { return false; }
             FluidPair that = (FluidPair) o;
             return Objects.equals(fluid0, that.fluid0) && Objects.equals(fluid1, that.fluid1);
         }
 
-        @Override public int hashCode() {
-            return Objects.hash(fluid0, fluid1);
-        }
+        @Override public int hashCode() { return Objects.hash(fluid0, fluid1); }
     }
 }

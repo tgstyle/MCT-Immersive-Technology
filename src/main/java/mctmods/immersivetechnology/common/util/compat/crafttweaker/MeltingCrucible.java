@@ -31,7 +31,7 @@ public class MeltingCrucible {
         public MeltingCrucibleRecipe recipe;
         public Add(MeltingCrucibleRecipe recipe) { this.recipe = recipe; }
 
-        @Override public void apply() { MeltingCrucibleRecipe.recipeList.add(recipe); }
+        @Override public void apply() { MeltingCrucibleRecipe.addRecipe(recipe); }
 
         @Override public String describe() {
             String inputName = recipe.itemInput.stack.getDisplayName();
@@ -51,9 +51,7 @@ public class MeltingCrucible {
 
         public Remove(ItemStack inputStack) { this.inputStack = inputStack; }
 
-        @Override public void apply() {
-            MeltingCrucibleRecipe.recipeList.removeIf(recipe -> recipe != null && recipe.itemInput.matches(inputStack));
-        }
+        @Override public void apply() { MeltingCrucibleRecipe.removeRecipe(inputStack); }
 
         @Override public String describe() { return "Removing Melting Crucible recipes matching " + inputStack.getDisplayName(); }
     }

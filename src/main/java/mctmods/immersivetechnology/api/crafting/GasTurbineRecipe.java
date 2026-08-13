@@ -5,17 +5,14 @@ import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GasTurbineRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
-
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;
-
     int totalProcessTime;
 
     public GasTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
@@ -24,17 +21,18 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
         this.fluidOutputList = Lists.newArrayList();
-        if (this.fluidOutput != null) this.fluidOutputList.add(this.fluidOutput);
+        if (this.fluidOutput != null) { this.fluidOutputList.add(this.fluidOutput); }
     }
 
     public static ArrayList<GasTurbineRecipe> recipeList = new ArrayList<>();
-
     private static final Map<Fluid, GasTurbineRecipe> fuelMap = new HashMap<>();
 
-    public static void addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) {
-        GasTurbineRecipe recipe = new GasTurbineRecipe(fluidOutput, fluidInput, time);
+    public static void addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) { addFuel(new GasTurbineRecipe(fluidOutput, fluidInput, time)); }
+
+    public static GasTurbineRecipe addFuel(GasTurbineRecipe recipe) {
         recipeList.add(recipe);
-        fuelMap.put(fluidInput.getFluid(), recipe);
+        fuelMap.put(recipe.fluidInput.getFluid(), recipe);
+        return recipe;
     }
 
     public static void removeFuel(FluidStack fluidInput) {
@@ -54,7 +52,12 @@ public class GasTurbineRecipe extends MultiblockRecipe {
 
     public static GasTurbineRecipe findFuelByFluid(Fluid fluidInput) {
         if (fluidInput == null) { return null; }
-        return fuelMap.get(fluidInput);
+        GasTurbineRecipe recipe = fuelMap.get(fluidInput);
+        if (recipe != null) { return recipe; }
+        for (GasTurbineRecipe r : recipeList) {
+            if (r.fluidInput != null && r.fluidInput.getFluid() == fluidInput) { return r; }
+        }
+        return null;
     }
 
     @Override public int getMultipleProcessTicks() { return 0; }
