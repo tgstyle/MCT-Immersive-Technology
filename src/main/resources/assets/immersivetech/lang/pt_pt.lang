@@ -108,6 +108,11 @@ desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=Fornalha de Coque 
 chat.immersivetech.solar_tower_vertical_fail=As Torres Solares não podem ser empilhadas verticalmente
 chat.immersivetech.solar_tower_too_close=Torre Solar demasiado próxima de outra — afaste pelo menos %s blocos
 tile.immersivetech.connectors.connectors_timer.name=Temporizador de Redstone
+ie.manual.entry.technologistsWrench.name=Chave do Tecnólogo
+ie.manual.entry.technologistsWrench.subtext=Aperta e afrouxa
+ie.manual.entry.technologistsWrench0=A §6Chave do Tecnólogo§r forma e configura os multiblocos do Immersive Technology. Faz tudo o que o Engineer's Hammer faz. Forma estruturas, roda blocos e alterna os painéis de controlo entre redstone normal e invertida.
+ie.manual.entry.technologistsWrench1=As entradas aceitam qualquer fluido que lhes seja enviado, e uma máquina com o fluido errado fica parada até esse tanque ser esvaziado. Agacha-te e usa a Chave numa entrada de fluido para a esvaziar.<br>O fluido é descartado e não devolvido, pelo que o tanque fica logo livre para o fluido correto. Funciona em todas as máquinas do Immersive Technology com entrada de fluido, e o Engineer's Hammer pode ser usado no seu lugar.
+
 ie.manual.entry.advancedCokeOven.name=Fornalha de Coque Avançada
 ie.manual.entry.alternator.name=Alternador
 ie.manual.entry.boiler.name=Caldeira

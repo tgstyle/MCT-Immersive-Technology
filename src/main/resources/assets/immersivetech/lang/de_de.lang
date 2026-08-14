@@ -108,6 +108,11 @@ desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=Verbesserter Kokso
 chat.immersivetech.solar_tower_vertical_fail=Solartürme können nicht vertikal gestapelt werden
 chat.immersivetech.solar_tower_too_close=Solarturm zu nah an einem anderen – mindestens %s Blöcke Abstand
 tile.immersivetech.connectors.connectors_timer.name=Redstone-Zeitgeber
+ie.manual.entry.technologistsWrench.name=Techniker-Schlüssel
+ie.manual.entry.technologistsWrench.subtext=Fest ist fest
+ie.manual.entry.technologistsWrench0=Der §6Techniker-Schlüssel§r formt und konfiguriert Multiblöcke von Immersive Technology. Er kann alles, was auch der Ingenieurshammer kann. Er formt Strukturen, dreht Blöcke und schaltet Bedienfelder zwischen normalem und invertiertem Redstone-Signal um.
+ie.manual.entry.technologistsWrench1=Eingänge nehmen jede Flüssigkeit an, die hineingeleitet wird, und eine Maschine mit der falschen Flüssigkeit steht still, bis der Tank geleert ist. Schleiche und benutze den Schlüssel an einem Flüssigkeitseingang, um ihn zu leeren.<br>Die Flüssigkeit wird verworfen und nicht zurückgegeben, sodass der Tank sofort für die richtige Flüssigkeit frei ist. Das funktioniert bei jeder Maschine von Immersive Technology mit Flüssigkeitseingang, und der Ingenieurshammer kann ebenso verwendet werden.
+
 ie.manual.entry.advancedCokeOven.name=Verbesserter Koksofen
 ie.manual.entry.alternator.name=Alternator
 ie.manual.entry.boiler.name=Kessel

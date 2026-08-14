@@ -108,6 +108,11 @@ desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=Покращена
 chat.immersivetech.solar_tower_vertical_fail=Сонячні вежі не можна ставити одна на одну
 chat.immersivetech.solar_tower_too_close=Сонячна вежа розташована надто близько до іншої — відійдіть мінімум на %s блоків
 tile.immersivetech.connectors.connectors_timer.name=Редстоун таймер
+ie.manual.entry.technologistsWrench.name=Ключ технолога
+ie.manual.entry.technologistsWrench.subtext=Затягнути й послабити
+ie.manual.entry.technologistsWrench0=§6Ключ технолога§r формує та налаштовує мультиблоки Immersive Technology. Він уміє все те саме, що й Engineer's Hammer. Формує структури, обертає блоки та перемикає панелі керування між звичайним та інвертованим сигналом редстоуну.
+ie.manual.entry.technologistsWrench1=Вхідні патрубки приймають будь-яку рідину, яку в них подають, і машина з неправильною рідиною простоює, доки цей резервуар не буде спорожнено. Присядьте та застосуйте Ключ до вхідного патрубка для рідини, щоб спорожнити його.<br>Рідина знищується, а не повертається, тож резервуар одразу готовий прийняти потрібну рідину. Це працює на будь-якій машині Immersive Technology із входом для рідини, і замість Ключа можна використати Engineer's Hammer.
+
 ie.manual.entry.advancedCokeOven.name=Покращена коксівна піч
 ie.manual.entry.alternator.name=Альтернатор
 ie.manual.entry.boiler.name=Котёл

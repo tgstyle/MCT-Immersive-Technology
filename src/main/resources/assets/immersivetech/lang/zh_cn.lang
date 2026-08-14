@@ -180,6 +180,11 @@ tile.immersivetech.connectors.connectors_timer.name=红石计时器
 ie.manual.category.it_power.name=涡轮发电系统
 ie.manual.category.it.name=沉浸科技
 
+ie.manual.entry.technologistsWrench.name=技术扳手
+ie.manual.entry.technologistsWrench.subtext=拧紧拧松
+ie.manual.entry.technologistsWrench0=§6技术扳手§r用于形成和配置Immersive Technology的多方块结构。工程师锤能做的它都能做：形成结构、旋转方块，以及在正常与反转红石信号之间切换控制面板。
+ie.manual.entry.technologistsWrench1=流体输入口会接受任何输入的流体，若机器中进了错误的流体，它会一直停机，直到该储罐被清空。潜行并对流体输入口使用扳手即可清空储罐。<br>流体会被丢弃而不是返还，因此储罐可以立刻接收正确的流体。这适用于所有带流体输入的Immersive Technology机器，也可以用工程师锤代替。
+
 ie.manual.entry.advancedCokeOven.name=高级焦炉
 ie.manual.entry.advancedCokeOven.subtext=现在更快了
 ie.manual.entry.advancedCokeOven0=高级焦炉是允许更快生产焦炭和木焦油的多方块结构。<br>结构如上所示，使用工程师锤击中央强化焦炉砖块形成。

@@ -180,6 +180,11 @@ tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 ie.manual.category.it_power.name=Turbine Power Systems
 ie.manual.category.it.name=Immersive Technology
 
+ie.manual.entry.technologistsWrench.name=Technologist's Wrench
+ie.manual.entry.technologistsWrench.subtext=Righty tighty
+ie.manual.entry.technologistsWrench0=The §6Technologist's Wrench§r forms and configures Immersive Technology multiblocks. Anything the Engineer's Hammer does, it does too. It forms structures, rotates blocks, and switches control panels between normal and inverted redstone.
+ie.manual.entry.technologistsWrench1=Input hatches accept any fluid piped into them, and a machine holding the wrong fluid will sit idle until that tank is emptied. Sneak and use the Wrench on a fluid input hatch to empty it.<br>The fluid is discarded rather than returned, so the tank is free for the correct fluid immediately. This works on every Immersive Technology machine with a fluid input, and the Engineer's Hammer can be used in its place.
+
 ie.manual.entry.advancedCokeOven.name=Advanced Coke Oven
 ie.manual.entry.advancedCokeOven.subtext=It's fast now
 ie.manual.entry.advancedCokeOven0=The Advanced Coke Oven is a multiblock structure that allows faster production of Coal Coke and Creosote Oil.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.

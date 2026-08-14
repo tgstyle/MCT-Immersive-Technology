@@ -180,6 +180,11 @@ tile.immersivetech.connectors.connectors_timer.name=레드스톤 타이머
 ie.manual.category.it_power.name=터빈 전력 시스템
 ie.manual.category.it.name=이머시브 테크놀로지
 
+ie.manual.entry.technologistsWrench.name=기술자 렌치
+ie.manual.entry.technologistsWrench.subtext=조이고 풀고
+ie.manual.entry.technologistsWrench0=§6기술자 렌치§r는 Immersive Technology 멀티블록을 형성하고 설정합니다. 엔지니어의 망치로 할 수 있는 일은 모두 할 수 있습니다. 구조물을 형성하고, 블록을 회전시키며, 제어판의 레드스톤 신호를 일반과 반전 사이에서 전환합니다.
+ie.manual.entry.technologistsWrench1=유체 입력구는 연결된 어떤 유체든 받아들이므로, 잘못된 유체가 들어간 기계는 해당 탱크를 비울 때까지 멈춰 있습니다. 웅크린 채로 렌치를 유체 입력구에 사용하면 탱크를 비울 수 있습니다.<br>유체는 회수되지 않고 폐기되므로 탱크는 곧바로 올바른 유체를 받을 수 있습니다. 유체 입력이 있는 모든 Immersive Technology 기계에서 작동하며, 엔지니어의 망치로도 대신할 수 있습니다.
+
 ie.manual.entry.advancedCokeOven.name=고급 코크스 오븐
 ie.manual.entry.advancedCokeOven.subtext=이제 빠릅니다
 ie.manual.entry.advancedCokeOven0=고급 코크스 오븐은 코크스 석탄과 크레오소트유를 더 빨리 생산할 수 있게 해 주는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강화 코크스 벽돌 블록의 엔지니어의 망치를 사용하여 형성됩니다.

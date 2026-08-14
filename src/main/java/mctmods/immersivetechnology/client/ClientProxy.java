@@ -250,6 +250,10 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override public void postInit() {
+        ManualHelper.addEntry("technologistsWrench", CAT_IT,
+                new ManualPages.Crafting(ManualHelper.getManual(), "technologistsWrench0", new ItemStack(ITContent.itemFormationTool)),
+                new ManualPages.Text(ManualHelper.getManual(), "technologistsWrench1"));
+
         if (Multiblocks.enable.enable_advancedCokeOven) {
             ManualHelper.addEntry("advancedCokeOven", CAT_IT,
                     new ManualPageMultiblock(ManualHelper.getManual(), "advancedCokeOven0", TileEntityITMultiblockPartAdvancedCokeOven.instance),
