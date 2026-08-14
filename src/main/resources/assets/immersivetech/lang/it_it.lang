@@ -1,6 +1,7 @@
 itemGroup.immersivetech=Tecnologia Immersiva
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Mattone di coke rinforzato
 item.immersivetech.material.salt.name=Sale
+item.immersivetech.formation_tool.name=Chiave del tecnologo
 tile.immersivetech.fluidDistWater.name=Acqua distillata
 tile.immersivetech.fluidSteam.name=Vapore
 tile.immersivetech.fluidExhaustSteam.name=Vapore di scarico
@@ -73,6 +74,8 @@ overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/t nell’ultimo 
 overlay.immersivetech.redstone_off=Modalità redstone: Disattivata
 overlay.immersivetech.redstone_normal=Modalità redstone: Normale
 overlay.immersivetech.redstone_inverted=Modalità redstone: Invertita
+gui.immersivetech.input_tank_cleared=Serbatoio di ingresso svuotato
+gui.immersivetech.input_tanks_cleared=Serbatoi di ingresso svuotati
 gui.immersivetech.empty=Vuoto
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

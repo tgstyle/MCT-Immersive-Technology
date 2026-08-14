@@ -1,6 +1,7 @@
 itemGroup.immersivetech=Поглиблена технологія
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Посилена коксівна цегла
 item.immersivetech.material.salt.name=Сіль
+item.immersivetech.formation_tool.name=Ключ технолога
 tile.immersivetech.fluidDistWater.name=Дистильована вода
 tile.immersivetech.fluidSteam.name=Пара
 tile.immersivetech.fluidExhaustSteam.name=Відпрацьована пара
@@ -73,6 +74,8 @@ overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/т за оста
 overlay.immersivetech.redstone_off=Режим редстоуну: вимкнено
 overlay.immersivetech.redstone_normal=Режим редстоуну: звичайний
 overlay.immersivetech.redstone_inverted=Режим редстоуну: інвертований
+gui.immersivetech.input_tank_cleared=Вхідний резервуар очищено
+gui.immersivetech.input_tanks_cleared=Вхідні резервуари очищено
 gui.immersivetech.empty=Порожньо
 gui.immersivetech.ticks=%s т
 gui.immersivetech.seconds=%s с

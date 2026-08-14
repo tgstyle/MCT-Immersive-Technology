@@ -21,6 +21,7 @@ import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDeco
 import mctmods.immersivetechnology.common.blocks.wooden.BlockWoodenCrate;
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.fluid.FluidColored;
+import mctmods.immersivetechnology.common.items.ItemFormationTool;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock1;
@@ -103,6 +104,7 @@ public class ITContent {
 
     /*MATERIALS*/
     public static Item itemMaterial;
+    public static Item itemFormationTool;
 
     /*FLUIDS*/
     public static Fluid fluidDistWater;
@@ -186,6 +188,7 @@ public class ITContent {
 
         /*ITEMS*/
         itemMaterial = new ItemITBase("material", 64, "salt");
+        itemFormationTool = new ItemFormationTool();
 
         /*MANUAL*/
         registerVariables();

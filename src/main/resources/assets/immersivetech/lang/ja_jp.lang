@@ -1,6 +1,7 @@
 itemGroup.immersivetech=Immersive Technology
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=強化コークスレンガ
 item.immersivetech.material.salt.name=塩
+item.immersivetech.formation_tool.name=技術者のレンチ
 tile.immersivetech.fluidDistWater.name=蒸留水
 tile.immersivetech.fluidSteam.name=蒸気
 tile.immersivetech.fluidExhaustSteam.name=排気蒸気
@@ -73,6 +74,8 @@ overlay.immersivetech.osd.trash_energy.normal.alternative=過去1秒で %s IF/t 
 overlay.immersivetech.redstone_off=レッドストーン: オフ
 overlay.immersivetech.redstone_normal=レッドストーン: 通常
 overlay.immersivetech.redstone_inverted=レッドストーン: 反転
+gui.immersivetech.input_tank_cleared=入力タンクをクリアしました
+gui.immersivetech.input_tanks_cleared=入力タンクをすべてクリアしました
 gui.immersivetech.empty=空
 gui.immersivetech.ticks=%s tick
 gui.immersivetech.seconds=%s秒

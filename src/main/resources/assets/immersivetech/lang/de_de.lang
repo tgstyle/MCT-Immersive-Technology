@@ -1,6 +1,7 @@
 itemGroup.immersivetech=Immersive Technologie
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Verstärkter Kokskohleziegel
 item.immersivetech.material.salt.name=Salz
+item.immersivetech.formation_tool.name=Techniker-Schlüssel
 tile.immersivetech.fluidDistWater.name=Destilliertes Wasser
 tile.immersivetech.fluidSteam.name=Dampf
 tile.immersivetech.fluidExhaustSteam.name=Auspuffdampf
@@ -73,6 +74,8 @@ overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/t in der letzten
 overlay.immersivetech.redstone_off=Redstone-Modus: Aus
 overlay.immersivetech.redstone_normal=Redstone-Modus: Normal
 overlay.immersivetech.redstone_inverted=Redstone-Modus: Invertiert
+gui.immersivetech.input_tank_cleared=Eingabetank geleert
+gui.immersivetech.input_tanks_cleared=Eingabetanks geleert
 gui.immersivetech.empty=Leer
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

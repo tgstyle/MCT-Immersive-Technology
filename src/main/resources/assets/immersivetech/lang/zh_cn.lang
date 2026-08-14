@@ -7,7 +7,7 @@ tile.immersivetech.stone_decoration.cokebrick_reinforced.name=强化焦炉砖
 
 #ITEMS
 item.immersivetech.material.salt.name=盐
-item.immersivetech.material.formation_tool.name=形成工具
+item.immersivetech.formation_tool.name=技术扳手
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
@@ -129,6 +129,8 @@ overlay.immersivetech.redstone_normal=红石模式正常
 overlay.immersivetech.redstone_inverted=红石模式反转
 
 #GUI
+gui.immersivetech.input_tank_cleared=输入槽已清空
+gui.immersivetech.input_tanks_cleared=输入槽已全部清空
 gui.immersivetech.empty=空
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

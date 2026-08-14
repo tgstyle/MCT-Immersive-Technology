@@ -436,8 +436,18 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (!fluidInputPos0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         FluidStack current = tanks[0].getFluid();
-        if (current == null) return ElectrolyticCrucibleBatteryRecipe.findRecipe(resource) != null;
-        return resource.isFluidEqual(current);
+        return current == null || resource.isFluidEqual(current);
+    }
+
+    @Override protected boolean isInputFluidPoI(int position) {
+        if (fluidInputPos0 == null) { InitializePoIs(); }
+        return fluidInputPos0.position == position;
+    }
+
+    @Override protected int clearInputTanks() {
+        tanks[0].drain(Integer.MAX_VALUE, true);
+        TankContentsChanged();
+        return 1;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {

@@ -7,7 +7,7 @@ tile.immersivetech.stone_decoration.cokebrick_reinforced.name=강화 코크스 �
 
 #ITEMS
 item.immersivetech.material.salt.name=소금
-item.immersivetech.material.formation_tool.name=형성 도구
+item.immersivetech.formation_tool.name=기술자 렌치
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=증류수
@@ -129,6 +129,8 @@ overlay.immersivetech.redstone_normal=레드스톤 모드 일반
 overlay.immersivetech.redstone_inverted=레드스톤 모드 반전
 
 #GUI
+gui.immersivetech.input_tank_cleared=입력 탱크 비움
+gui.immersivetech.input_tanks_cleared=입력 탱크들 비움
 gui.immersivetech.empty=비어 있음
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

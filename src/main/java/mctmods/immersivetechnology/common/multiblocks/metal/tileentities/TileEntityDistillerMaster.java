@@ -429,7 +429,18 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         FluidStack current = tanks[0].getFluid();
         if (current != null) return resource.isFluidEqual(current);
-        return DistillerRecipe.findRecipe(resource) != null;
+        return true;
+    }
+
+    @Override protected boolean isInputFluidPoI(int position) {
+        if (fluidInputPos0 == null) { InitializePoIs(); }
+        return fluidInputPos0.position == position;
+    }
+
+    @Override protected int clearInputTanks() {
+        tanks[0].drain(Integer.MAX_VALUE, true);
+        TankContentsChanged();
+        return 1;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {

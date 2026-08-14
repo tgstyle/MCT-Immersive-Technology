@@ -484,15 +484,27 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         if (fluidInputPos0 == null) InitializePoIs();
         if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
-            if (tanks[0].getFluid() == null) return BoilerRecipe.findFuel(resource) != null;
+            if (tanks[0].getFluid() == null) { return true; }
             return resource.isFluidEqual(tanks[0].getFluid());
         }
         if (iTank == 1 && fluidInputPos1.isPoI(side, position)) {
             if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
-            if (tanks[1].getFluid() == null) return BoilerRecipe.findRecipe(resource) != null;
+            if (tanks[1].getFluid() == null) { return true; }
             return resource.isFluidEqual(tanks[1].getFluid());
         }
         return false;
+    }
+
+    @Override protected boolean isInputFluidPoI(int position) {
+        if (fluidInputPos0 == null) { InitializePoIs(); }
+        return fluidInputPos0.position == position || fluidInputPos1.position == position;
+    }
+
+    @Override protected int clearInputTanks() {
+        tanks[0].drain(Integer.MAX_VALUE, true);
+        tanks[1].drain(Integer.MAX_VALUE, true);
+        TankContentsChanged();
+        return 2;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {

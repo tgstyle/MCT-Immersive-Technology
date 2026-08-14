@@ -347,8 +347,20 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (iTank == 1 && !fluidInputPos1.isPoI(side, position)) return false;
         if (tanks[iTank].getFluidAmount() >= tanks[iTank].getCapacity()) return false;
         FluidStack current = tanks[iTank].getFluid();
-        if (current != null) return resource.isFluidEqual(current);
-        return iTank == 0 ? CoolingTowerRecipe.findRecipeByFluid0(resource.getFluid()) != null : CoolingTowerRecipe.findRecipeByFluid1(resource.getFluid()) != null;
+        if (current != null) { return resource.isFluidEqual(current); }
+        return true;
+    }
+
+    @Override protected boolean isInputFluidPoI(int position) {
+        if (fluidInputPos0 == null) { InitializePoIs(); }
+        return fluidInputPos0.position == position || fluidInputPos1.position == position;
+    }
+
+    @Override protected int clearInputTanks() {
+        tanks[0].drain(Integer.MAX_VALUE, true);
+        tanks[1].drain(Integer.MAX_VALUE, true);
+        TankContentsChanged();
+        return 2;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {

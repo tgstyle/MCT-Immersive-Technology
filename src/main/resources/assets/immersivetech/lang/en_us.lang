@@ -7,7 +7,7 @@ tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Reinforced Coke Br
 
 #ITEMS
 item.immersivetech.material.salt.name=Salt
-item.immersivetech.material.formation_tool.name=Formation Tool
+item.immersivetech.formation_tool.name=Technologist's Wrench
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Distilled Water
@@ -129,6 +129,8 @@ overlay.immersivetech.redstone_normal=Redstone Mode Normal
 overlay.immersivetech.redstone_inverted=Redstone Mode Inverted
 
 #GUI
+gui.immersivetech.input_tank_cleared=Input tank cleared
+gui.immersivetech.input_tanks_cleared=Input tanks cleared
 gui.immersivetech.empty=Empty
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

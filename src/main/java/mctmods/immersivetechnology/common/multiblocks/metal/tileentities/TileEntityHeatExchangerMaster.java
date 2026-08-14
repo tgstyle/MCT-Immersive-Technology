@@ -430,16 +430,28 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             FluidStack current = tanks[0].getFluid();
-            if (current == null) return HeatExchangerRecipe.findRecipeByFluid0(resource.getFluid()) != null;
+            if (current == null) { return true; }
             return resource.isFluidEqual(current);
         }
         if (iTank == 1 && fluidInputPos1.isPoI(side, position)) {
             if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
             FluidStack current = tanks[1].getFluid();
-            if (current == null) return HeatExchangerRecipe.findRecipeByFluid1(resource.getFluid()) != null;
+            if (current == null) { return true; }
             return resource.isFluidEqual(current);
         }
         return false;
+    }
+
+    @Override protected boolean isInputFluidPoI(int position) {
+        if (fluidInputPos0 == null) { InitializePoIs(); }
+        return fluidInputPos0.position == position || fluidInputPos1.position == position;
+    }
+
+    @Override protected int clearInputTanks() {
+        tanks[0].drain(Integer.MAX_VALUE, true);
+        tanks[1].drain(Integer.MAX_VALUE, true);
+        TankContentsChanged();
+        return 2;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {

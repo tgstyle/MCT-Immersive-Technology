@@ -7,7 +7,7 @@ tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Армирован
 
 #ITEMS
 item.immersivetech.material.salt.name=Соль
-item.immersivetech.material.formation_tool.name=Инструмент формирования
+item.immersivetech.formation_tool.name=Ключ технолога
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Дистиллированная вода
@@ -129,6 +129,8 @@ overlay.immersivetech.redstone_normal=Режим редстоуна нормал
 overlay.immersivetech.redstone_inverted=Режим редстоуна инвертированный
 
 #GUI
+gui.immersivetech.input_tank_cleared=Входной резервуар очищен
+gui.immersivetech.input_tanks_cleared=Входные резервуары очищены
 gui.immersivetech.empty=Пусто
 gui.immersivetech.ticks=%sт
 gui.immersivetech.seconds=%sс

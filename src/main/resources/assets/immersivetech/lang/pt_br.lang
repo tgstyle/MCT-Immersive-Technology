@@ -7,7 +7,7 @@ tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Tijolos de Coque R
 
 #ITEMS
 item.immersivetech.material.salt.name=Sal
-item.immersivetech.material.formation_tool.name=Ferramenta de Formação
+item.immersivetech.formation_tool.name=Chave do Tecnólogo
 
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Água Destilada
@@ -129,6 +129,8 @@ overlay.immersivetech.redstone_normal=Modo Redstone Normal
 overlay.immersivetech.redstone_inverted=Modo Redstone Invertido
 
 #GUI
+gui.immersivetech.input_tank_cleared=Tanque de entrada limpo
+gui.immersivetech.input_tanks_cleared=Tanques de entrada limpos
 gui.immersivetech.empty=Vazio
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

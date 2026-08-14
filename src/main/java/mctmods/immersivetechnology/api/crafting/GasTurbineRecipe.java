@@ -50,16 +50,6 @@ public class GasTurbineRecipe extends MultiblockRecipe {
         return null;
     }
 
-    public static GasTurbineRecipe findFuelByFluid(Fluid fluidInput) {
-        if (fluidInput == null) { return null; }
-        GasTurbineRecipe recipe = fuelMap.get(fluidInput);
-        if (recipe != null) { return recipe; }
-        for (GasTurbineRecipe r : recipeList) {
-            if (r.fluidInput != null && r.fluidInput.getFluid() == fluidInput) { return r; }
-        }
-        return null;
-    }
-
     @Override public int getMultipleProcessTicks() { return 0; }
 
     @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {

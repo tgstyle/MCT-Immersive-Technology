@@ -50,16 +50,6 @@ public class HighPressureSteamTurbineRecipe extends MultiblockRecipe {
         return null;
     }
 
-    public static HighPressureSteamTurbineRecipe findFuelByFluid(Fluid fluidInput) {
-        if (fluidInput == null) { return null; }
-        HighPressureSteamTurbineRecipe recipe = recipeMap.get(fluidInput);
-        if (recipe != null) { return recipe; }
-        for (HighPressureSteamTurbineRecipe r : recipeList) {
-            if (r.fluidInput != null && r.fluidInput.getFluid() == fluidInput) { return r; }
-        }
-        return null;
-    }
-
     @Override public int getMultipleProcessTicks() { return 0; }
 
     @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {

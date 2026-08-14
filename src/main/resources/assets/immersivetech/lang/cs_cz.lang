@@ -1,6 +1,7 @@
 itemGroup.immersivetech=Imersivní technologie
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Zpevněná koková cihla
 item.immersivetech.material.salt.name=Sůl
+item.immersivetech.formation_tool.name=Klíč technologa
 tile.immersivetech.fluidDistWater.name=Destilovaná voda
 tile.immersivetech.fluidSteam.name=Pára
 tile.immersivetech.fluidExhaustSteam.name=Výfuková pára
@@ -73,6 +74,8 @@ overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/t za poslední s
 overlay.immersivetech.redstone_off=Režim redstone: Vypnuto
 overlay.immersivetech.redstone_normal=Režim redstone: Normální
 overlay.immersivetech.redstone_inverted=Režim redstone: Invertovaný
+gui.immersivetech.input_tank_cleared=Vstupní nádrž vyčištěna
+gui.immersivetech.input_tanks_cleared=Vstupní nádrže vyčištěny
 gui.immersivetech.empty=Prázdné
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

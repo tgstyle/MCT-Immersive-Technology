@@ -38,8 +38,6 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
 
     public static ArrayList<HeatExchangerRecipe> recipeList = new ArrayList<>();
     private static final Map<FluidPair, HeatExchangerRecipe> recipeMap = new HashMap<>();
-    private static final Map<Fluid, HeatExchangerRecipe> input0Map = new HashMap<>();
-    private static final Map<Fluid, HeatExchangerRecipe> input1Map = new HashMap<>();
 
     public static HeatExchangerRecipe addRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidInput0, FluidStack fluidInput1, int energy, int time) { return addRecipe(new HeatExchangerRecipe(fluidOutput0, fluidOutput1, fluidInput0, fluidInput1, energy, time)); }
 
@@ -48,8 +46,6 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         Fluid f0 = recipe.fluidInput0 != null ? recipe.fluidInput0.getFluid() : null;
         Fluid f1 = recipe.fluidInput1 != null ? recipe.fluidInput1.getFluid() : null;
         recipeMap.put(new FluidPair(f0, f1), recipe);
-        if (f0 != null) { input0Map.put(f0, recipe); }
-        if (f1 != null) { input1Map.put(f1, recipe); }
         return recipe;
     }
 
@@ -59,8 +55,6 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
                 (fluidInput1 == null || (recipe.fluidInput1 != null && recipe.fluidInput1.isFluidEqual(fluidInput1)));
         recipeList.removeIf(matches);
         recipeMap.values().removeIf(matches);
-        input0Map.values().removeIf(matches);
-        input1Map.values().removeIf(matches);
     }
 
     public static HeatExchangerRecipe findRecipe(FluidStack fluidInput0, FluidStack fluidInput1) {
@@ -69,26 +63,6 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         if (recipe != null && fluidInput0.containsFluid(recipe.fluidInput0) && fluidInput1.containsFluid(recipe.fluidInput1)) { return recipe; }
         for (HeatExchangerRecipe r : recipeList) {
             if (r.fluidInput0 != null && fluidInput0.containsFluid(r.fluidInput0) && r.fluidInput1 != null && fluidInput1.containsFluid(r.fluidInput1)) { return r; }
-        }
-        return null;
-    }
-
-    public static HeatExchangerRecipe findRecipeByFluid0(Fluid fluidInput0) {
-        if (fluidInput0 == null) { return null; }
-        HeatExchangerRecipe recipe = input0Map.get(fluidInput0);
-        if (recipe != null) { return recipe; }
-        for (HeatExchangerRecipe r : recipeList) {
-            if (r.fluidInput0 != null && r.fluidInput0.getFluid() == fluidInput0) { return r; }
-        }
-        return null;
-    }
-
-    public static HeatExchangerRecipe findRecipeByFluid1(Fluid fluidInput1) {
-        if (fluidInput1 == null) { return null; }
-        HeatExchangerRecipe recipe = input1Map.get(fluidInput1);
-        if (recipe != null) { return recipe; }
-        for (HeatExchangerRecipe r : recipeList) {
-            if (r.fluidInput1 != null && r.fluidInput1.getFluid() == fluidInput1) { return r; }
         }
         return null;
     }

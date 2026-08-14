@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
 import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
 import mctmods.immersivetechnology.common.util.shapes.Shapes;
@@ -8,6 +9,7 @@ import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -24,11 +26,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -37,7 +41,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
 
-public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T, R, M>, R extends IMultiblockRecipe, M extends T> extends TileEntityMultiblockMetal<T, R> {
+public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T, R, M>, R extends IMultiblockRecipe, M extends T> extends TileEntityMultiblockMetal<T, R> implements IPlayerInteraction {
     private int blockUpdateCooldown = 0;
     private VoxelShape voxelShapeCache;
     private int voxelShapeCachePos = Integer.MIN_VALUE;
@@ -53,6 +57,21 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     protected abstract GenericShape getShapeGetter();
 
     protected boolean useMirroredShape() { return true; }
+
+    protected boolean isInputFluidPoI(int position) { return false; }
+
+    protected int clearInputTanks() { return 0; }
+
+    @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+        if (!formed || !player.isSneaking() || !Utils.isHammer(heldItem)) { return false; }
+        M master = master();
+        if (master == null || !master.isInputFluidPoI(pos)) { return false; }
+        if (!world.isRemote) {
+            int cleared = master.clearInputTanks();
+            player.sendStatusMessage(new TextComponentTranslation(cleared > 1 ? TranslationKey.GUI_INPUT_TANKS_CLEARED.location : TranslationKey.GUI_INPUT_TANK_CLEARED.location), true);
+        }
+        return true;
+    }
 
     protected AxisAlignedBB preprocessShapeAABB(AxisAlignedBB aabb) { return aabb; }
 

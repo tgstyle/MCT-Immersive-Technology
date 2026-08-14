@@ -1,6 +1,7 @@
 itemGroup.immersivetech=Tecnologia Imersiva
 tile.immersivetech.stone_decoration.cokebrick_reinforced.name=Tijolo de Coque Reforçado
 item.immersivetech.material.salt.name=Sal
+item.immersivetech.formation_tool.name=Chave do Tecnólogo
 tile.immersivetech.fluidDistWater.name=Água Destilada
 tile.immersivetech.fluidSteam.name=Vapor
 tile.immersivetech.fluidExhaustSteam.name=Vapor de Escape
@@ -73,6 +74,8 @@ overlay.immersivetech.osd.trash_energy.normal.alternative=%s IF/t no último seg
 overlay.immersivetech.redstone_off=Modo Redstone: Desligado
 overlay.immersivetech.redstone_normal=Modo Redstone: Normal
 overlay.immersivetech.redstone_inverted=Modo Redstone: Invertido
+gui.immersivetech.input_tank_cleared=Tanque de entrada limpo
+gui.immersivetech.input_tanks_cleared=Tanques de entrada limpos
 gui.immersivetech.empty=Vazio
 gui.immersivetech.ticks=%s t
 gui.immersivetech.seconds=%s s

@@ -49,16 +49,6 @@ public class RadiatorRecipe extends MultiblockRecipe {
         return null;
     }
 
-    public static RadiatorRecipe findRecipeByFluid(Fluid fluidInput) {
-        if (fluidInput == null) { return null; }
-        RadiatorRecipe recipe = recipeMap.get(fluidInput);
-        if (recipe != null) { return recipe; }
-        for (RadiatorRecipe r : recipeList) {
-            if (r.fluidInput != null && r.fluidInput.getFluid() == fluidInput) { return r; }
-        }
-        return null;
-    }
-
     @Override public int getMultipleProcessTicks() { return 0; }
 
     @Override public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
