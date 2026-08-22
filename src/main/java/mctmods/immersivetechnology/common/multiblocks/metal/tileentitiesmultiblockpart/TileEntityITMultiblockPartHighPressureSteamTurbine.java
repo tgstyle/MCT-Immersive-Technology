@@ -29,10 +29,10 @@ public class TileEntityITMultiblockPartHighPressureSteamTurbine extends TileEnti
         MultiblockJSONSchema data = HighPressureSteamTurbineShape.DATA;
         if (data == null) { ITLogger.error("No data for high_pressure_steam_turbine"); return; }
         boolean useTurbineMaterial = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_turbine_material;
-        String blockOreName = useTurbineMaterial && OreDictionary.doesOreNameExist("blockTungsten") ? "blockTungsten" : "blockNickel";
-        String sheetmetalOreName = useTurbineMaterial && OreDictionary.doesOreNameExist("blockSheetmetalTungsten") ? "blockSheetmetalTungsten" : "blockSheetmetalNickel";
-        boolean useBlockOre = OreDictionary.doesOreNameExist(blockOreName);
-        boolean useSheetmetalOre = OreDictionary.doesOreNameExist(sheetmetalOreName);
+        String blockOreName = useTurbineMaterial && !OreDictionary.getOres("blockTungsten", false).isEmpty() ? "blockTungsten" : "blockNickel";
+        String sheetmetalOreName = useTurbineMaterial && !OreDictionary.getOres("blockSheetmetalTungsten", false).isEmpty() ? "blockSheetmetalTungsten" : "blockSheetmetalNickel";
+        boolean useBlockOre = !OreDictionary.getOres(blockOreName, false).isEmpty();
+        boolean useSheetmetalOre = !OreDictionary.getOres(sheetmetalOreName, false).isEmpty();
         for (BlockJSONSchema p : data.palette) {
             if (p.character == 'B' && useBlockOre) { p.mod = "ore"; p.name = blockOreName; p.meta = 0; }
             else if (p.character == 'M' && useSheetmetalOre) { p.mod = "ore"; p.name = sheetmetalOreName; p.meta = 0; }

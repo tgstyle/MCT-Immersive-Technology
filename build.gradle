@@ -111,9 +111,7 @@ tasks.named('runClient').configure {
 
 tasks.register('runClientGamescope', Exec) {
     workingDir = projectDir
-    commandLine 'bash', '-c', 'set -o pipefail; flatpak-spawn --host gamescope -W 1920 -H 1080 -- ./gradlew --no-daemon runClient 2>&1 ' + '| grep --line-buffered -v "xdg_backend: Changed refresh"'
-    //flatpack will need override for x11 "flatpak override --user --nosocket=fallback-x11 --socket=x11 com.jetbrains.IntelliJ-IDEA-Ultimate"
-    //flatpack may need perms "flatpak override --user --talk-name=org.freedesktop.Flatpak com.jetbrains.IntelliJ-IDEA-Ultimate"
+    commandLine 'bash', '-c', 'set -o pipefail; gamescope -W 1920 -H 1080 -- ./gradlew --no-daemon runClient 2>&1 ' + '| grep --line-buffered -v "xdg_backend: Changed refresh"'
 }
 
 tasks.named('runServer').configure {
