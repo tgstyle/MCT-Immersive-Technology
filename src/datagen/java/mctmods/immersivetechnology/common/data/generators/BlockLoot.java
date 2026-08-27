@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.core.util.loot.BEDropLootEntry;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
+import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -35,6 +36,17 @@ public class BlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.Metal.VALVE_LIMITER.get());
         dropSelf(ModBlocks.Metal.VALVE_LOAD.get());
         dropSelf(ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get());
+        dropSelf(ModBlocks.Metal.GRAPHITE_MODERATOR.get());
+        dropSelf(ModBlocks.Metal.NUCLEAR_ENGINEERING.get());
+        dropSelf(ModBlocks.Metal.REACTOR_CLADDING.get());
+        dropSelf(ModBlocks.Metal.STORAGE_STAINLESS_STEEL.get());
+        dropSelf(ModBlocks.Metal.STORAGE_CHROMIUM.get());
+        dropSelf(ModBlocks.Metal.STORAGE_MAGNESIUM.get());
+        dropSelf(ModBlocks.Metal.SHEETMETAL_STAINLESS_STEEL.get());
+        add(ModBlocks.Metal.ORE_CHROMIUM.get(), createOreDrop(ModBlocks.Metal.ORE_CHROMIUM.get(), ModItems.RAW_CHROMIUM.get()));
+        add(ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM.get(), createOreDrop(ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM.get(), ModItems.RAW_CHROMIUM.get()));
+        add(ModBlocks.Metal.ORE_MAGNESIUM.get(), createOreDrop(ModBlocks.Metal.ORE_MAGNESIUM.get(), ModItems.RAW_MAGNESIUM.get()));
+        add(ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM.get(), createOreDrop(ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM.get(), ModItems.RAW_MAGNESIUM.get()));
         dropSelf(ModBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());
         registerMultiblocksNoDrop();
@@ -64,6 +76,7 @@ public class BlockLoot extends BlockLootSubProvider {
         add(MultiblockRegistry.SOLAR_TOWER.block().get(), noDrop());
         add(MultiblockRegistry.STEAM_TURBINE.block().get(), noDrop());
         add(MultiblockRegistry.STEEL_SHEETMETAL_TANK.block().get(), noDrop());
+        add(MultiblockRegistry.STYLENOX.block().get(), noDrop());
     }
 
     private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }

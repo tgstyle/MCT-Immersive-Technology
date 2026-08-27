@@ -39,7 +39,6 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -51,8 +50,6 @@ public class MultiblockStateGenerator {
     private final ModBlockState main;
     private final ExistingFileHelper existingFileHelper;
     private final NongeneratedModels innerModels;
-
-    public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
 
     public MultiblockStateGenerator(ModBlockState main, ExistingFileHelper helper) {
         this.main = main;
@@ -80,6 +77,7 @@ public class MultiblockStateGenerator {
         generateMultiblockConfig("solar_tower", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("steam_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("steel_sheetmetal_tank", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
+        generateMultiblockConfig("stylenox", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
     }
 
     private ITNongeneratedModel createMirrorWrappedModel(String name, ITNongeneratedModel inner) {
@@ -212,7 +210,6 @@ public class MultiblockStateGenerator {
     }
 
     private void createMultiblockVariant(Supplier<? extends Block> b, ModelFile defaultMaster, @Nullable ModelFile activeMaster, @Nullable ModelFile defaultMirrored, @Nullable ModelFile activeMirrored, @Nullable Property<Boolean> mirroredState, @Nullable Property<Boolean> activeState) {
-        unsplitModels.put(b.get(), defaultMaster);
         Preconditions.checkArgument((defaultMirrored == null) == (mirroredState == null));
         Preconditions.checkArgument((activeMaster == null) == (activeState == null));
         VariantBlockStateBuilder builder = main.getVariantBuilder(b.get());

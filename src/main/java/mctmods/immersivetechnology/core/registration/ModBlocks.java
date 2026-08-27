@@ -43,11 +43,25 @@ public class ModBlocks {
     private static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OVERLAY = () -> DEFAULT_METAL_PROPERTIES.get().isViewBlocking((state, blockReader, pos) -> false);
     public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion().forceSolidOn();
 
+    private static final Supplier<BlockBehaviour.Properties> STONE_ORE_PROPERTIES = () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE);
+    private static final Supplier<BlockBehaviour.Properties> DEEPSLATE_ORE_PROPERTIES = () -> BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE);
+
     private static final Supplier<BlockBehaviour.Properties> DEFAULT_STONE_PROPERTIES = () -> BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(2, 20);
     public static final Supplier<BlockBehaviour.Properties> STONE_PROPERTIES_NO_OCCLUSION = () -> DEFAULT_STONE_PROPERTIES.get().noOcclusion();
 
     public static final class Metal {
         public static BlockEntry<AdvancedCokeOvenBaseHeaterBlock> ADVANCED_COKE_OVEN_BASEHEATER;
+        public static BlockEntry<Block> GRAPHITE_MODERATOR;
+        public static BlockEntry<Block> NUCLEAR_ENGINEERING;
+        public static BlockEntry<Block> REACTOR_CLADDING;
+        public static BlockEntry<Block> STORAGE_STAINLESS_STEEL;
+        public static BlockEntry<Block> STORAGE_CHROMIUM;
+        public static BlockEntry<Block> STORAGE_MAGNESIUM;
+        public static BlockEntry<Block> SHEETMETAL_STAINLESS_STEEL;
+        public static BlockEntry<Block> ORE_CHROMIUM;
+        public static BlockEntry<Block> DEEPSLATE_ORE_CHROMIUM;
+        public static BlockEntry<Block> ORE_MAGNESIUM;
+        public static BlockEntry<Block> DEEPSLATE_ORE_MAGNESIUM;
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
         public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
         public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
@@ -102,6 +116,72 @@ public class ModBlocks {
                     "technology_engineering",
                     DEFAULT_METAL_PROPERTIES,
                     TechnologyEngineeringBlock::new
+            );
+
+            GRAPHITE_MODERATOR = new BlockEntry<>(
+                    "graphite_moderator",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            NUCLEAR_ENGINEERING = new BlockEntry<>(
+                    "nuclear_engineering",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            REACTOR_CLADDING = new BlockEntry<>(
+                    "reactor_cladding",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            STORAGE_STAINLESS_STEEL = new BlockEntry<>(
+                    "storage_stainless_steel",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            STORAGE_CHROMIUM = new BlockEntry<>(
+                    "storage_chromium",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            STORAGE_MAGNESIUM = new BlockEntry<>(
+                    "storage_magnesium",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            SHEETMETAL_STAINLESS_STEEL = new BlockEntry<>(
+                    "sheetmetal_stainless_steel",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            ORE_CHROMIUM = new BlockEntry<>(
+                    "ore_chromium",
+                    STONE_ORE_PROPERTIES,
+                    Block::new
+            );
+
+            DEEPSLATE_ORE_CHROMIUM = new BlockEntry<>(
+                    "deepslate_ore_chromium",
+                    DEEPSLATE_ORE_PROPERTIES,
+                    Block::new
+            );
+
+            ORE_MAGNESIUM = new BlockEntry<>(
+                    "ore_magnesium",
+                    STONE_ORE_PROPERTIES,
+                    Block::new
+            );
+
+            DEEPSLATE_ORE_MAGNESIUM = new BlockEntry<>(
+                    "deepslate_ore_magnesium",
+                    DEEPSLATE_ORE_PROPERTIES,
+                    Block::new
             );
 
             TRASH_ENERGY = new BlockEntry<>(

@@ -8,6 +8,7 @@ import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
+import mctmods.immersivetechnology.client.models.multiblock.StyleNOXModels;
 import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.models.obj.ModObjLoader;
@@ -74,6 +75,8 @@ public class ClientProxy extends CommonProxy {
                 case "melting_crucible.energy_capacity" -> ServerConfig.meltingCrucibleEnergyCapacity;
                 case "steel_sheetmetal_tank.capacity" -> ServerConfig.steelSheetmetalTankCapacity;
                 case "steel_sheetmetal_tank.comparator_height" -> SteelSheetmetalTankLogic.COMPARATOR_HEIGHT;
+                case "stylenox.energy_capacity" -> ServerConfig.stylenoxEnergyCapacity;
+                case "stylenox.startup_time" -> ServerConfig.stylenoxStartupTime;
                 case "barrel_creative.output_amount" -> CommonConfig.creativeBarrelOutputAmount;
                 default -> null;
             });
@@ -153,6 +156,10 @@ public class ClientProxy extends CommonProxy {
             multiblock.readFromFile(Reference.rl("steel_sheetmetal_tank"));
             instance.addEntry(multiblock_category, multiblock.create());
 
+            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            multiblock.readFromFile(Reference.rl("stylenox"));
+            instance.addEntry(multiblock_category, multiblock.create());
+
             ManualEntry.ManualEntryBuilder normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             normalBlock.readFromFile(Reference.rl("open_barrel"));
             instance.addEntry(parent_category, normalBlock.create());
@@ -179,6 +186,7 @@ public class ClientProxy extends CommonProxy {
         event.register(MenuTypes.ROTOR_CREATIVE.getType(), RotorCreativeScreen::new);
         event.register(MenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
         event.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
+        event.register(MenuTypes.STYLENOX_MENU.getType(), StyleNOXScreen::new);
         event.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
         event.register(MenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
         event.register(MenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
@@ -239,6 +247,7 @@ public class ClientProxy extends CommonProxy {
         SolarReflectorModels.SUPPORT = new ModDynamicModel("solar_reflector_support");
         SolarReflectorModels.MIRROR = new ModDynamicModel("solar_reflector_mirror");
         AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ModDynamicModel("advanced_coke_oven_baseheater_fan");
+        StyleNOXModels.RODS = new ModDynamicModel("stylenox_rods");
     }
 
     @SubscribeEvent
@@ -255,5 +264,6 @@ public class ClientProxy extends CommonProxy {
         registerBERender(event, MultiblockRegistry.SOLAR_REFLECTOR.masterBE(), ctx1 -> new SolarReflectorRenderer());
         registerBERender(event, MultiblockRegistry.SOLAR_MELTER.masterBE(), ctx -> new SolarMelterRenderer());
         registerBERender(event, MultiblockRegistry.STEEL_SHEETMETAL_TANK.masterBE(), ctx -> new SteelSheetmetalTankRenderer());
+        registerBERender(event, MultiblockRegistry.STYLENOX.masterBE(), ctx -> new StyleNOXRenderer());
     }
 }

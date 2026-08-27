@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_graphite_moderator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "immersivetechnology:graphite_moderator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "immersivetechnology:crafting/graphite_moderator_to_ingot_hop_graphite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_graphite_moderator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "immersivetechnology:crafting/graphite_moderator_to_ingot_hop_graphite"
+    ]
+  }
+}

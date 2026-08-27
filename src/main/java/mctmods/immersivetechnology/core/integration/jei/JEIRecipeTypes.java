@@ -24,6 +24,7 @@ public class JEIRecipeTypes {
     public static final RecipeType<MeltingRecipe> MELTING = create(RecipeTypes.MELTING);
     public static final RecipeType<SolarTowerRecipe> SOLAR_TOWER = create(RecipeTypes.SOLAR_TOWER);
     public static final RecipeType<SteamTurbineRecipe> STEAM_TURBINE = create(RecipeTypes.STEAM_TURBINE);
+    public static final RecipeType<StyleNOXRecipe> STYLENOX = create(RecipeTypes.STYLENOX);
 
     private static <T extends Recipe<?>> RecipeType<T> create(IERecipeTypes.TypeWithClass<T> type) {
         return new RecipeType<>(type.type().getId(), type.recipeClass());

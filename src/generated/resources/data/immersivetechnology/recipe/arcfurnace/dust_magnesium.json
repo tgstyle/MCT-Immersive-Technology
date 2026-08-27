@@ -1,0 +1,14 @@
+{
+  "type": "immersiveengineering:arc_furnace",
+  "additives": [],
+  "energy": 51200,
+  "input": {
+    "tag": "c:dusts/magnesium"
+  },
+  "results": [
+    {
+      "tag": "c:ingots/magnesium"
+    }
+  ],
+  "time": 100
+}

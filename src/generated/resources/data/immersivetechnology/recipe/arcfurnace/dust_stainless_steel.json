@@ -1,0 +1,14 @@
+{
+  "type": "immersiveengineering:arc_furnace",
+  "additives": [],
+  "energy": 51200,
+  "input": {
+    "tag": "c:dusts/stainless_steel"
+  },
+  "results": [
+    {
+      "tag": "c:ingots/stainless_steel"
+    }
+  ],
+  "time": 100
+}

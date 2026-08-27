@@ -40,7 +40,7 @@ public class DataGenerators {
             ModBlockState blockStateProvider = new ModBlockState(generator, helper);
             generator.addProvider(event.includeClient(), blockStateProvider);
             generator.addProvider(event.includeClient(), new ComplexItemModel(out, helper));
-            generator.addProvider(event.includeClient(), new DynamicModelProvider(blockStateProvider, out, helper));
+            generator.addProvider(event.includeClient(), new DynamicModelProvider(out, helper));
             generator.addProvider(event.includeClient(), new ItemModel(generator, helper));
             generator.addProvider(event.includeClient(), new ModParticle(out));
             generator.addProvider(event.includeClient(), new SoundDefinitions(out, helper));

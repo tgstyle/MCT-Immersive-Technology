@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "immersivetechnology:storage_magnesium"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "immersivetechnology:ingot_magnesium"
+  }
+}

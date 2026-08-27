@@ -1,0 +1,5 @@
+StyleNOX 反应堆
+达到临界！
+<&multiblock>StyleNOX是一座Magnox型气冷反应堆。装入八根§lMagnox燃料元件§r，并供给§l蒸馏水§r和§l二氧化碳§r，即可将水煮沸为§l蒸汽§r，最多可驱动四台蒸汽涡轮。
+启动反应堆会在<config;i;stylenox.startup_time> tick内从其内部缓冲区（容量<config;i;stylenox.energy_capacity> Flux）汲取Flux。达到临界后即可自持运行；控制棒设定（25%到100%）决定有多少蒸汽通道处于工作状态，以及燃料燃耗的快慢。按下紧急停堆（SCRAM）按钮会立即落棒并关停反应堆。
+水从底部环形管道输入，蒸汽从上层回廊的四个角输出，二氧化碳和能量连接在侧面风道，燃料从后方风道装入。乏燃料元件会被推入燃料口后方的物品栏中。

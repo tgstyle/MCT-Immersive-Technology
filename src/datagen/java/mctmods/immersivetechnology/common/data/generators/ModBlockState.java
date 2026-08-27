@@ -19,7 +19,6 @@ import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.IGeneratedBlockState;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +32,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class ModBlockState extends BlockStateProvider {
-    public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
     public static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
 
     private final MultiblockStateGenerator multiblockGen;

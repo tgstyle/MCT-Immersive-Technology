@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:ingots/magnox"
+    },
+    {
+      "tag": "immersiveengineering:tools/hammers"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:plate_magnox"
+  }
+}

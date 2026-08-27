@@ -1,0 +1,22 @@
+{
+  "type": "immersiveengineering:arc_furnace",
+  "additives": [],
+  "energy": 25600,
+  "input": {
+    "tag": "c:raw_materials/magnesium"
+  },
+  "results": [
+    {
+      "tag": "c:ingots/magnesium"
+    }
+  ],
+  "secondaries": [
+    {
+      "chance": 0.5,
+      "output": {
+        "tag": "c:ingots/magnesium"
+      }
+    }
+  ],
+  "time": 100
+}

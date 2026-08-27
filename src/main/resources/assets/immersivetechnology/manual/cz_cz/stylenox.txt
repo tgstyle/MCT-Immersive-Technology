@@ -1,0 +1,5 @@
+Reaktor StyleNOX
+Do kritického stavu!
+<&multiblock>StyleNOX je plynem chlazený reaktor typu Magnox. Po naplnění osmi §lpalivovými články Magnox§r a přívodu §ldestilované vody§r a §loxidu uhličitého§r vaří vodu na §lpáru§r až pro čtyři parní turbíny.
+Spuštění reaktoru odebírá Flux po dobu <config;i;stylenox.startup_time> tiků z vnitřního zásobníku o kapacitě <config;i;stylenox.energy_capacity> Flux. Jakmile je reaktor kritický, udržuje se v chodu sám; nastavení regulačních tyčí (25 % až 100 %) určuje, kolik parních kanálů je v provozu a jak rychle palivo vyhořívá. Tlačítko SCRAM spustí tyče dolů a okamžitě reaktor odstaví.
+Voda vstupuje prstencem v suterénu, pára odchází ve čtyřech horních rozích ochozu, oxid uhličitý a energie se připojují k bočním kanálům a palivo se zaváží zadním kanálem. Vyhořelé články jsou vytlačovány do inventáře za palivovým otvorem.

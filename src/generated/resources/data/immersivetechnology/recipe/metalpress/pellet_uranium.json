@@ -1,0 +1,12 @@
+{
+  "type": "immersiveengineering:metal_press",
+  "energy": 2400,
+  "input": {
+    "tag": "c:ingots/uranium"
+  },
+  "mold": "immersiveengineering:mold_rod",
+  "result": {
+    "count": 2,
+    "id": "immersivetechnology:pellet_uranium"
+  }
+}

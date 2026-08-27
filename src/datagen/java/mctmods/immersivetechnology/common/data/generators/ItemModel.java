@@ -64,9 +64,31 @@ public class ItemModel extends ItemModelProvider {
     }
 
     private void generateGeneratedItem() {
-        withExistingParent("formation_tool", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "formation_tool"));
-        withExistingParent("salt", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "salt"));
+        generateFlatItem("formation_tool", "item/formation_tool");
+        generateFlatItem("salt", "item/salt");
+        generateFlatItem("fuel_element", "item/fuel_element");
+        generateFlatItem("spent_element", "item/spent_element");
+        generateFlatItem("ingot_chromium", "item/metal/ingots/chromium");
+        generateFlatItem("ingot_magnesium", "item/metal/ingots/magnesium");
+        generateFlatItem("ingot_magnox", "item/metal/ingots/magnox");
+        generateFlatItem("ingot_plutonium", "item/metal/ingots/plutonium");
+        generateFlatItem("ingot_stainless_steel", "item/metal/ingots/stainless_steel");
+        generateFlatItem("dust_chromium", "item/metal/dusts/chromium");
+        generateFlatItem("dust_magnesium", "item/metal/dusts/magnesium");
+        generateFlatItem("dust_magnox", "item/metal/dusts/magnox");
+        generateFlatItem("dust_spent_fuel", "item/metal/dusts/spent_fuel");
+        generateFlatItem("dust_stainless_steel", "item/metal/dusts/stainless_steel");
+        generateFlatItem("raw_chromium", "item/metal/raw/chromium");
+        generateFlatItem("raw_magnesium", "item/metal/raw/magnesium");
+        generateFlatItem("nugget_nuclear_waste", "item/metal/nuggets/nuclear_waste");
+        generateFlatItem("nugget_stainless_steel", "item/metal/nuggets/stainless_steel");
+        generateFlatItem("plate_magnox", "item/metal/plates/magnox");
+        generateFlatItem("plate_stainless_steel", "item/metal/plates/stainless_steel");
+        generateFlatItem("stick_stainless_steel", "item/metal/rods/stainless_steel");
+        generateFlatItem("pellet_uranium", "item/metal/pellets/uranium");
     }
+
+    private void generateFlatItem(String name, String texture) { withExistingParent(name, mcLoc("item/generated")).texture("layer0", modLoc(texture)); }
 
     private void createBucket(ModFluids.FluidEntry entry) {
         boolean isGas = entry.type().get().getDensity() < 0;
@@ -87,6 +109,17 @@ public class ItemModel extends ItemModelProvider {
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
         generateBlockItem("rotor_creative", "dynamic/rotor", false, -8, 4, 0.7f);
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
+        generateBlockItem("graphite_moderator", "metal/graphite_moderator");
+        generateBlockItem("nuclear_engineering", "metal/nuclear_engineering");
+        generateBlockItem("reactor_cladding", "metal/reactor_cladding");
+        generateBlockItem("storage_stainless_steel", "metal/storage_stainless_steel");
+        generateBlockItem("storage_chromium", "metal/storage_chromium");
+        generateBlockItem("storage_magnesium", "metal/storage_magnesium");
+        generateBlockItem("sheetmetal_stainless_steel", "metal/sheetmetal_stainless_steel");
+        generateBlockItem("ore_chromium", "metal/ore_chromium");
+        generateBlockItem("deepslate_ore_chromium", "metal/deepslate_ore_chromium");
+        generateBlockItem("ore_magnesium", "metal/ore_magnesium");
+        generateBlockItem("deepslate_ore_magnesium", "metal/deepslate_ore_magnesium");
         generateBlockItem("technology_engineering", "metal/technology_engineering");
         generateBlockItem("trash_energy", "metal/trash_energy");
         generateBlockItem("trash_fluid", "metal/trash_fluid");

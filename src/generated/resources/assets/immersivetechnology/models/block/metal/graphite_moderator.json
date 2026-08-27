@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "immersivetechnology:block/metal/graphite_moderator_top",
+    "side": "immersivetechnology:block/metal/graphite_moderator_side"
+  }
+}

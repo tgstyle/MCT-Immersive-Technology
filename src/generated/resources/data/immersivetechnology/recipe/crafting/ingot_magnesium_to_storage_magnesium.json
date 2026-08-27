@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "immersivetechnology:ingot_magnesium"
+    },
+    "s": {
+      "tag": "c:ingots/magnesium"
+    }
+  },
+  "pattern": [
+    "sss",
+    "sis",
+    "sss"
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:storage_magnesium"
+  }
+}

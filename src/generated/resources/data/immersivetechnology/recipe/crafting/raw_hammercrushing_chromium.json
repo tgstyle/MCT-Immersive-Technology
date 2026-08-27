@@ -1,0 +1,9 @@
+{
+  "type": "immersiveengineering:hammer_crushing",
+  "input": {
+    "tag": "c:raw_materials/chromium"
+  },
+  "result": {
+    "tag": "c:dusts/chromium"
+  }
+}

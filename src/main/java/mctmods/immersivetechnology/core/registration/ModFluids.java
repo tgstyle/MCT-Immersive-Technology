@@ -49,6 +49,11 @@ public class ModFluids {
     private static final HashMap<String, Supplier<? extends Fluid>> FLUID_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Fluid> getFluid = (key) -> FLUID_REGISTRY_MAP.get(key).get();
 
+    public static final ModFluids.FluidEntry CARBON_DIOXIDE = FluidEntry.make(
+            "carbon_dioxide", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            props -> props.density(-100).viscosity(500), 0xFFBFC8C3
+    );
+
     public static final ModFluids.FluidEntry CHLORINE = FluidEntry.make(
             "chlorine", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(1000), 0xFFC0E67B
@@ -64,6 +69,11 @@ public class ModFluids {
             props -> props.density(1000).viscosity(1000), 0xFF6D6565
     );
 
+    public static final ModFluids.FluidEntry CRUDE_NITRATE = FluidEntry.make(
+            "crude_nitrate", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1000).viscosity(1500), 0xFF8A6A3C
+    );
+
     public static final ModFluids.FluidEntry DISTILLED_WATER = FluidEntry.make(
             "distilled_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000), 0xFF7079E0
@@ -72,6 +82,11 @@ public class ModFluids {
     public static final ModFluids.FluidEntry FLUE_GAS = FluidEntry.make(
             "flue_gas", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(500), 0xFFFFFFFF
+    );
+
+    public static final ModFluids.FluidEntry FUEL_SLURRY = FluidEntry.make(
+            "fuel_slurry", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1000).viscosity(2000), 0xFF5A5F3A
     );
 
     public static final ModFluids.FluidEntry HEATED_GRAVEL = FluidEntry.make(
@@ -99,9 +114,24 @@ public class ModFluids {
             props -> props.density(1000).viscosity(10000).temperature(1000), 0xFFAEA0A2
     );
 
+    public static final ModFluids.FluidEntry NITRIC_ACID = FluidEntry.make(
+            "nitric_acid", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1000).viscosity(1200), 0xFFD8A93F
+    );
+
+    public static final ModFluids.FluidEntry NUCLEAR_WASTE = FluidEntry.make(
+            "nuclear_waste", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1000).viscosity(2000), 0xFF3E4A2E
+    );
+
     public static final ModFluids.FluidEntry SALT_SLURRY = FluidEntry.make(
             "salt_slurry", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000), 0xFFBB6528
+    );
+
+    public static final ModFluids.FluidEntry SULFURIC_ACID = FluidEntry.make(
+            "sulfuric_acid", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            props -> props.density(1830).viscosity(1200), 0xFFC9B247
     );
 
     public static final ModFluids.FluidEntry STEAM = FluidEntry.make(
@@ -110,17 +140,23 @@ public class ModFluids {
     );
 
     static {
+        FLUID_REGISTRY_MAP.put("carbon_dioxide", CARBON_DIOXIDE.getStillGetter());
         FLUID_REGISTRY_MAP.put("chlorine", CHLORINE.getStillGetter());
+        FLUID_REGISTRY_MAP.put("crude_nitrate", CRUDE_NITRATE.getStillGetter());
         FLUID_REGISTRY_MAP.put("distilled_water", DISTILLED_WATER.getStillGetter());
         FLUID_REGISTRY_MAP.put("exhaust_steam", EXHAUST_STEAM.getStillGetter());
         FLUID_REGISTRY_MAP.put("flue_gas", FLUE_GAS.getStillGetter());
+        FLUID_REGISTRY_MAP.put("fuel_slurry", FUEL_SLURRY.getStillGetter());
         FLUID_REGISTRY_MAP.put("gravel_slurry", GRAVEL_SLURRY.getStillGetter());
         FLUID_REGISTRY_MAP.put("heated_salt_slurry", HEATED_SALT.getStillGetter());
         FLUID_REGISTRY_MAP.put("hot_water", HOT_WATER.getStillGetter());
         FLUID_REGISTRY_MAP.put("hydrogen", HYDROGEN.getStillGetter());
         FLUID_REGISTRY_MAP.put("molten_salt", MOLTEN_SALT.getStillGetter());
+        FLUID_REGISTRY_MAP.put("nitric_acid", NITRIC_ACID.getStillGetter());
+        FLUID_REGISTRY_MAP.put("nuclear_waste", NUCLEAR_WASTE.getStillGetter());
         FLUID_REGISTRY_MAP.put("salt_slurry", SALT_SLURRY.getStillGetter());
         FLUID_REGISTRY_MAP.put("steam", STEAM.getStillGetter());
+        FLUID_REGISTRY_MAP.put("sulfuric_acid", SULFURIC_ACID.getStillGetter());
     }
 
     public static List<? extends Fluid> getITFluids() { return REGISTER.getEntries().stream().map(Supplier::get).collect(Collectors.toList()); }

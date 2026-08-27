@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pellet_uranium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "immersivetechnology:pellet_uranium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "immersivetechnology:crafting/fuel_element"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pellet_uranium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "immersivetechnology:crafting/fuel_element"
+    ]
+  }
+}

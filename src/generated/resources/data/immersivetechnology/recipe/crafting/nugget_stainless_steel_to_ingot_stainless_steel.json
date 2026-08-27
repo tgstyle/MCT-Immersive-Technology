@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "immersivetechnology:nugget_stainless_steel"
+    },
+    "s": {
+      "tag": "c:nuggets/stainless_steel"
+    }
+  },
+  "pattern": [
+    "sss",
+    "sis",
+    "sss"
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:ingot_stainless_steel"
+  }
+}

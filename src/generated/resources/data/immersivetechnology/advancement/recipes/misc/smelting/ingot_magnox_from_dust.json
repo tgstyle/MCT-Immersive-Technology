@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dust_magnox": {
+      "conditions": {
+        "items": [
+          {
+            "items": "immersivetechnology:dust_magnox"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "immersivetechnology:smelting/ingot_magnox_from_dust"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dust_magnox"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "immersivetechnology:smelting/ingot_magnox_from_dust"
+    ]
+  }
+}

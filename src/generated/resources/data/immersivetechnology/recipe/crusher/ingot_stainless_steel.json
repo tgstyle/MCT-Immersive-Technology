@@ -1,0 +1,10 @@
+{
+  "type": "immersiveengineering:crusher",
+  "energy": 3000,
+  "input": {
+    "tag": "c:ingots/stainless_steel"
+  },
+  "result": {
+    "tag": "c:dusts/stainless_steel"
+  }
+}

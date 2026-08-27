@@ -31,6 +31,7 @@ public class RecipeTypes {
     public static final TypeWithClass<RadiatorRecipe> RADIATOR = register("radiator", RadiatorRecipe.class);
     public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
     public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
+    public static final TypeWithClass<StyleNOXRecipe> STYLENOX = register("stylenox", StyleNOXRecipe.class);
 
     static {
         AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven", AdvancedCokeOvenRecipeSerializer::new);
@@ -46,6 +47,7 @@ public class RecipeTypes {
         RadiatorRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("radiator", RadiatorRecipeSerializer::new);
         SolarTowerRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("solar_tower", SolarTowerRecipeSerializer::new);
         SteamTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("steam_turbine", SteamTurbineRecipeSerializer::new);
+        StyleNOXRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("stylenox", StyleNOXRecipeSerializer::new);
     }
 
     private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) {

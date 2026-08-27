@@ -1,0 +1,5 @@
+Reator StyleNOX
+Ficando crítico!
+<&multiblock>O StyleNOX é um reator refrigerado a gás do tipo Magnox. Carregado com oito §lelementos combustíveis Magnox§r e alimentado com §lágua destilada§r e §ldióxido de carbono§r, ferve a água em §lvapor§r para até quatro Turbinas a vapor.
+Iniciar o reator consome Flux durante <config;i;stylenox.startup_time> ticks do seu buffer interno de <config;i;stylenox.energy_capacity> Flux. Uma vez crítico, ele se sustenta sozinho; o ajuste das barras de controle (de 25% a 100%) determina quantos canais de vapor ficam ativos e com que rapidez o combustível é queimado. O botão SCRAM derruba as barras e desliga o reator instantaneamente.
+A água entra pelo anel do porão, o vapor sai pelos quatro cantos da galeria superior, o dióxido de carbono e a energia se conectam aos dutos laterais, e o combustível é carregado pelo duto traseiro. Os elementos usados são empurrados para um inventário atrás da porta de combustível.

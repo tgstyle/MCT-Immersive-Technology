@@ -1,0 +1,22 @@
+{
+  "type": "immersiveengineering:arc_furnace",
+  "additives": [],
+  "energy": 25600,
+  "input": {
+    "tag": "c:raw_materials/chromium"
+  },
+  "results": [
+    {
+      "tag": "c:ingots/chromium"
+    }
+  ],
+  "secondaries": [
+    {
+      "chance": 0.5,
+      "output": {
+        "tag": "c:ingots/chromium"
+      }
+    }
+  ],
+  "time": 100
+}

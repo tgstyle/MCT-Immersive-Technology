@@ -29,6 +29,7 @@ public class Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> pilot = registerSound("pilot");
     public static final DeferredHolder<SoundEvent, SoundEvent> pressure_release = registerSound("pressure_release");
     public static final DeferredHolder<SoundEvent, SoundEvent> steamTurbine = registerSound("steam_turbine");
+    public static final DeferredHolder<SoundEvent, SoundEvent> stylenox = registerSound("stylenox");
     public static final DeferredHolder<SoundEvent, SoundEvent> solarMelter = registerSound("solar_melter");
     public static final DeferredHolder<SoundEvent, SoundEvent> solarTower = registerSound("solar_tower");
 

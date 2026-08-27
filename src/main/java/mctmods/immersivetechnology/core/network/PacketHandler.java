@@ -38,6 +38,12 @@ public class PacketHandler {
                 MessageTileSync.STREAM_CODEC,
                 MessageTileSync::handle
         );
+
+        registrar.playToClient(
+                OSDSyncBlock.TYPE,
+                OSDSyncBlock.STREAM_CODEC,
+                OSDSyncBlock::handle
+        );
     }
 
     public static void sendToPlayer(Player player, CustomPacketPayload message) {

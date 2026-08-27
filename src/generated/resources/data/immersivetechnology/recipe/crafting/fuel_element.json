@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "x": {
+      "item": "immersivetechnology:pellet_uranium"
+    },
+    "y": {
+      "tag": "c:plates/magnox"
+    }
+  },
+  "pattern": [
+    "xyx",
+    "x x",
+    "xyx"
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:fuel_element"
+  }
+}

@@ -20,7 +20,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
+public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
     final TranslationKey overlayNormal;
@@ -51,8 +51,6 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
 
     public long[] averages = new long[60];
     public long[] packetTotals = new long[60];
-
-    private int requestCooldown = 0;
 
     public void efficientSetChanged() { setChanged(); }
 
@@ -89,8 +87,6 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
     }
 
     @Override public void tickServer() { updateBase(); }
-
-    @Override public void tickClient() { if (requestCooldown > 0) requestCooldown--; }
 
     @Override public void onLoad() {
         super.onLoad();

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "immersivetechnology:ingot_stainless_steel"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "immersivetechnology:nugget_stainless_steel"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "P": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "T": {
+      "item": "immersivetechnology:technology_engineering"
+    },
+    "U": {
+      "tag": "c:ingots/uranium"
+    }
+  },
+  "pattern": [
+    "PTP",
+    "UTU",
+    "PTP"
+  ],
+  "result": {
+    "count": 4,
+    "id": "immersivetechnology:nuclear_engineering"
+  }
+}

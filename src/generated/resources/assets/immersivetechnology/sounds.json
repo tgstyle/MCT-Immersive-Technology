@@ -130,5 +130,11 @@
       "immersivetechnology:steam_turbine"
     ],
     "subtitle": "subtitles.immersivetechnology.steam_turbine"
+  },
+  "stylenox": {
+    "sounds": [
+      "immersivetechnology:alternator"
+    ],
+    "subtitle": "subtitles.immersivetechnology.stylenox"
   }
 }

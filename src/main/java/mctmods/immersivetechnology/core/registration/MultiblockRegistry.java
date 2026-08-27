@@ -208,6 +208,15 @@ public class MultiblockRegistry {
                     .withComparator()
                     .build();
 
+    public static final MultiblockRegistration<StyleNOXLogic.State> STYLENOX =
+            metal(new StyleNOXLogic(), "stylenox")
+                    .structure(() -> StyleNOX.INSTANCE)
+                    .redstone(s -> s.rsState, StyleNOXLogic.REDSTONE_POI)
+                    .component(new ClearTank<>(StyleNOXLogic.WATER_INPUT_POS_LIST, s -> s.tanks.water().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .gui(MenuTypes.STYLENOX_MENU)
+                    .withComparator()
+                    .build();
+
     @SuppressWarnings("unused")
     public static List<Class<? extends Block>> getAllBlockClasses() {
         return List.of(
@@ -228,7 +237,8 @@ public class MultiblockRegistry {
                 SOLAR_REFLECTOR.block().get().getClass(),
                 SOLAR_TOWER.block().get().getClass(),
                 STEAM_TURBINE.block().get().getClass(),
-                STEEL_SHEETMETAL_TANK.block().get().getClass()
+                STEEL_SHEETMETAL_TANK.block().get().getClass(),
+                STYLENOX.block().get().getClass()
         );
     }
 
@@ -254,6 +264,7 @@ public class MultiblockRegistry {
         registerMB("solar_tower", SolarTower.INSTANCE, SOLAR_TOWER);
         registerMB("steam_turbine", SteamTurbine.INSTANCE, STEAM_TURBINE);
         registerMB("steel_sheetmetal_tank", SteelSheetmetalTank.INSTANCE, STEEL_SHEETMETAL_TANK);
+        registerMB("stylenox", StyleNOX.INSTANCE, STYLENOX);
     }
 
     public static void forceClassLoad() { init(); }

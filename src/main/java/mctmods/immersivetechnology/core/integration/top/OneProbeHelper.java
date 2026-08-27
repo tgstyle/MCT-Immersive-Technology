@@ -44,6 +44,7 @@ public class OneProbeHelper {
         top.registerProvider(new SolarTowerProvider());
         top.registerProvider(new SteamTurbineProvider());
         top.registerProvider(new SteelSheetmetalTankProvider());
+        top.registerProvider(new StyleNOXProvider());
         top.registerProvider(new BarrelProvider());
     }
 
@@ -181,6 +182,23 @@ public class OneProbeHelper {
                 if (state.queueSize > 0) {
                     probeInfo.text("Processing (" + state.queueSize + " queued)");
                 }
+            }
+        }
+    }
+
+    public static class StyleNOXProvider implements IProbeInfoProvider {
+        @Override public ResourceLocation getID() { return ResourceLocation.fromNamespaceAndPath(Reference.MODID, "stylenox"); }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
+            IMultiblockContext<?> ctx = getContext(level, data.getPos());
+            if (ctx == null) { return; }
+            if (ctx.getState() instanceof StyleNOXLogic.State state) {
+                addFluidTankDisplay(probeInfo, state.tanks.water());
+                addFluidTankDisplay(probeInfo, state.tanks.co2());
+                addFluidTankDisplay(probeInfo, state.tanks.steam());
+                addEnergyDisplay(probeInfo, state.energy.getEnergyStored(), state.energy.getMaxEnergyStored());
+                probeInfo.text(state.reactorState.name() + " (" + (state.rodLevel * 25) + "%)");
+                if (state.burnTotal > 0 && state.hasLoad()) { addProcessPercent(probeInfo, (int) (100L * state.burnProgress / state.burnTotal)); }
             }
         }
     }

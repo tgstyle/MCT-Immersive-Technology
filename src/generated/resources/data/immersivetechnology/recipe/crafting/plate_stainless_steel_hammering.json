@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:ingots/stainless_steel"
+    },
+    {
+      "tag": "immersiveengineering:tools/hammers"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:plate_stainless_steel"
+  }
+}

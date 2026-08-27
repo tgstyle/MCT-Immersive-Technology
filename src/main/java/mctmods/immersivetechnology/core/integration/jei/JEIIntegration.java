@@ -64,6 +64,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCategories(new MeltingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SolarTowerCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SteamTurbineCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new StyleNOXCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override public void registerRecipes(IRecipeRegistration registration) {
@@ -80,6 +81,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipes(JEIRecipeTypes.MELTING, getSolarMelterRecipes());
         registration.addRecipes(JEIRecipeTypes.SOLAR_TOWER, getSolarTowerRecipes());
         registration.addRecipes(JEIRecipeTypes.STEAM_TURBINE, getSteamTurbineRecipes());
+        registration.addRecipes(JEIRecipeTypes.STYLENOX, getStyleNOXRecipes());
     }
 
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
@@ -99,6 +101,7 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipeCatalyst(MultiblockRegistry.MELTING_CRUCIBLE.iconStack(), JEIRecipeTypes.MELTING);
         registration.addRecipeCatalyst(MultiblockRegistry.SOLAR_TOWER.iconStack(), JEIRecipeTypes.SOLAR_TOWER);
         registration.addRecipeCatalyst(MultiblockRegistry.STEAM_TURBINE.iconStack(), JEIRecipeTypes.STEAM_TURBINE);
+        registration.addRecipeCatalyst(MultiblockRegistry.STYLENOX.iconStack(), JEIRecipeTypes.STYLENOX);
     }
 
     @Override public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
@@ -423,4 +426,5 @@ public class JEIIntegration implements IModPlugin {
     private List<MeltingRecipe> getSolarMelterRecipes() { assert Minecraft.getInstance().level != null; return MeltingRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
     private List<SolarTowerRecipe> getSolarTowerRecipes() { assert Minecraft.getInstance().level != null; return SolarTowerRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
     private List<SteamTurbineRecipe> getSteamTurbineRecipes() { assert Minecraft.getInstance().level != null; return SteamTurbineRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
+    private List<StyleNOXRecipe> getStyleNOXRecipes() { assert Minecraft.getInstance().level != null; return StyleNOXRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
 }

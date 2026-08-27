@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "immersiveengineering:ingot_hop_graphite"
+    },
+    "s": {
+      "tag": "c:ingots/hop_graphite"
+    }
+  },
+  "pattern": [
+    "sss",
+    "sis",
+    "sss"
+  ],
+  "result": {
+    "count": 1,
+    "id": "immersivetechnology:graphite_moderator"
+  }
+}

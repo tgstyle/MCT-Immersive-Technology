@@ -1,0 +1,13 @@
+{
+  "type": "immersiveengineering:crusher",
+  "energy": 6000,
+  "input": {
+    "tag": "c:ores/magnesium"
+  },
+  "result": {
+    "basePredicate": {
+      "tag": "c:dusts/magnesium"
+    },
+    "count": 2
+  }
+}

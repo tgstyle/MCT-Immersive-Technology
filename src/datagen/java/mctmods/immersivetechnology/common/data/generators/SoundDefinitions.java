@@ -29,6 +29,7 @@ public class SoundDefinitions extends SoundDefinitionsProvider {
         add(Sounds.pilot.get(), definition().subtitle("subtitles." + Reference.MODID + ".pilot").with(sound(Reference.MODID + ":pilot").volume(1.0f)));
         add(Sounds.pressure_release.get(), definition().subtitle("subtitles." + Reference.MODID + ".pressure_release").with(sound(Reference.MODID + ":pressure_release").volume(1.0f)));
         add(Sounds.steamTurbine.get(), definition().subtitle("subtitles." + Reference.MODID + ".steam_turbine").with(sound(Reference.MODID + ":steam_turbine").volume(1.0f)));
+        add(Sounds.stylenox.get(), definition().subtitle("subtitles." + Reference.MODID + ".stylenox").with(sound(Reference.MODID + ":alternator").volume(1.0f)));
         add(Sounds.solarMelter.get(), definition().subtitle("subtitles." + Reference.MODID + ".solar_melter").with(sound(Reference.MODID + ":solar_melter").attenuationDistance(64).volume(1.0f)));
         add(Sounds.solarTower.get(), definition().subtitle("subtitles." + Reference.MODID + ".solar_tower").with(sound(Reference.MODID + ":solar_tower").attenuationDistance(64).volume(1.0f)));
     }

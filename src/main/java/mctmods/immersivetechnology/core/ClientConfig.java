@@ -15,6 +15,7 @@ public class ClientConfig {
     public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE;
     public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE;
     public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR;
+    public static final ModConfigSpec.BooleanValue CONFIG_DO_SPECIAL_RENDER_STYLENOX;
     public static final ModConfigSpec.BooleanValue CONFIG_DISABLE_REFLECTOR_DANCE;
     public static final ModConfigSpec.BooleanValue CONFIG_LOOP_REFLECTOR_DANCE;
     public static final ModConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY;
@@ -32,6 +33,7 @@ public class ClientConfig {
     public static boolean doSpecialRenderGasTurbine;
     public static boolean doSpecialRenderSteamTurbine;
     public static boolean doSpecialRenderSolarReflector;
+    public static boolean doSpecialRenderStyleNOX;
     public static boolean disableReflectorDance;
     public static boolean loopReflectorDance;
     public static double solarReflectorBaseFrequency;
@@ -51,6 +53,7 @@ public class ClientConfig {
         CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Gas Turbine (Default: true).").define("gas_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Steam Turbine (Default: true).").define("steam_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR = BUILDER.comment("This controls if the animations and special client rendering applies to the Solar Reflector (Default: true).").define("solar_reflector_renderer", true);
+        CONFIG_DO_SPECIAL_RENDER_STYLENOX = BUILDER.comment("This controls if the control rod animation is smoothed for the StyleNOX (Default: true).").define("stylenox_renderer", true);
         CONFIG_DISABLE_FANCY_TESR = BUILDER.comment("Disables most lighting code for certain models that are rendered dynamically (TESR). May improve FPS. Affects various multiblocks.").define("disableFancyTESR", false);
         BUILDER.pop();
         BUILDER.comment("Solar Reflector options").push("solar_reflector");
@@ -82,6 +85,7 @@ public class ClientConfig {
             doSpecialRenderGasTurbine = CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE.get();
             doSpecialRenderSteamTurbine = CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE.get();
             doSpecialRenderSolarReflector = CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR.get();
+            doSpecialRenderStyleNOX = CONFIG_DO_SPECIAL_RENDER_STYLENOX.get();
             disableReflectorDance = CONFIG_DISABLE_REFLECTOR_DANCE.get();
             loopReflectorDance = CONFIG_LOOP_REFLECTOR_DANCE.get();
             solarReflectorBaseFrequency = CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY.get();

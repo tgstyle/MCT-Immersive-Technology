@@ -2,26 +2,18 @@ package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.common.data.builders.ModObjModelBuilder;
 import mctmods.immersivetechnology.core.lib.Reference;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
-import java.util.Map.Entry;
-import java.util.Objects;
 
 public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.SimpleModelBuilder> {
-    private final ModBlockState multiblocks;
-
-    public DynamicModelProvider(ModBlockState multiblocks, PackOutput output, ExistingFileHelper existingFileHelper) { super(output, Reference.MODID, "dynamic", rl -> new SimpleModelBuilder(rl, existingFileHelper), existingFileHelper); this.multiblocks = multiblocks; }
+    public DynamicModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) { super(output, Reference.MODID, "dynamic", rl -> new SimpleModelBuilder(rl, existingFileHelper), existingFileHelper); }
 
     @Override protected void registerModels() {
-        for(Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder("dynamic/advanced_coke_oven_baseheater_fan")
                 .customLoader(ModObjModelBuilder::new)
                 .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_fan.obj"))
@@ -62,6 +54,16 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
                 .modelLocation(modLoc("models/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj"))
                 .flipV(true)
                 .automaticCulling(false);
+        getBuilder("dynamic/stylenox_rods")
+                .customLoader(ModObjModelBuilder::new)
+                .modelLocation(modLoc("models/multiblock/metal/obj/stylenox/stylenox_rods.obj"))
+                .flipV(true)
+                .automaticCulling(false)
+                .shadeQuads(true)
+                .emissiveAmbient(true)
+                .end()
+                .texture("particle", modLoc("multiblock/metal/stylenox"))
+                .renderType("cutout");
     }
 
 

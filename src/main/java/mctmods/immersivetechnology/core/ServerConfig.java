@@ -119,6 +119,12 @@ public class ServerConfig {
     public static final ModConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
 
+    public static final ModConfigSpec.IntValue STYLENOX_WATER_TANK_CAPACITY;
+    public static final ModConfigSpec.IntValue STYLENOX_STEAM_TANK_CAPACITY;
+    public static final ModConfigSpec.IntValue STYLENOX_CO2_TANK_CAPACITY;
+    public static final ModConfigSpec.IntValue STYLENOX_ENERGY_CAPACITY;
+    public static final ModConfigSpec.IntValue STYLENOX_STARTUP_TIME;
+
     public static DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
 
     public static double advancedCokeOvenSpeedBase = 1.0D;
@@ -226,6 +232,12 @@ public class ServerConfig {
 
     public static int steelSheetmetalTankCapacity = 2048000;
     public static int steelSheetmetalTankTransferSpeed = 1000;
+
+    public static int stylenoxWaterTankCapacity = 48000;
+    public static int stylenoxSteamTankCapacity = 96000;
+    public static int stylenoxCo2TankCapacity = 24000;
+    public static int stylenoxEnergyCapacity = 1000000;
+    public static int stylenoxStartupTime = 400;
 
     static {
         BUILDER.push("multiblocks");
@@ -377,6 +389,16 @@ public class ServerConfig {
         STEEL_SHEETMETAL_TANK_TRANSFER_SPEED = BUILDER.defineInRange("transfer_speed", 1000, 1, Integer.MAX_VALUE);
         BUILDER.pop();
 
+        BUILDER.push("stylenox");
+        STYLENOX_WATER_TANK_CAPACITY = BUILDER.defineInRange("water_tank_capacity", 48000, 1000, Integer.MAX_VALUE);
+        STYLENOX_STEAM_TANK_CAPACITY = BUILDER.defineInRange("steam_tank_capacity", 96000, 1000, Integer.MAX_VALUE);
+        STYLENOX_CO2_TANK_CAPACITY = BUILDER.defineInRange("co2_tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        STYLENOX_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 1000000, 1000, Integer.MAX_VALUE);
+        STYLENOX_STARTUP_TIME = BUILDER
+                .comment("Ticks of powered startup before the reactor goes critical. The recipe's energy is drawn evenly across this time.")
+                .defineInRange("startup_time", 400, 20, Integer.MAX_VALUE);
+        BUILDER.pop();
+
         BUILDER.pop();
 
         BUILDER.push("fluid_pipe");
@@ -497,6 +519,12 @@ public class ServerConfig {
 
             steelSheetmetalTankCapacity = STEEL_SHEETMETAL_TANK_CAPACITY.get();
             steelSheetmetalTankTransferSpeed = STEEL_SHEETMETAL_TANK_TRANSFER_SPEED.get();
+
+            stylenoxWaterTankCapacity = STYLENOX_WATER_TANK_CAPACITY.get();
+            stylenoxSteamTankCapacity = STYLENOX_STEAM_TANK_CAPACITY.get();
+            stylenoxCo2TankCapacity = STYLENOX_CO2_TANK_CAPACITY.get();
+            stylenoxEnergyCapacity = STYLENOX_ENERGY_CAPACITY.get();
+            stylenoxStartupTime = STYLENOX_STARTUP_TIME.get();
         }
     }
 

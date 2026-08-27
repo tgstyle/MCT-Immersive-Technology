@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
@@ -20,19 +21,25 @@ import java.util.concurrent.CompletableFuture;
 
 public class ModBlockTags extends BlockTagsProvider {
     private static final MultiblockRegistration<?>[] MULTIBLOCKS = {
+            MultiblockRegistry.ADVANCED_COKE_OVEN,
             MultiblockRegistry.ALTERNATOR,
             MultiblockRegistry.BOILER_LIQUID,
             MultiblockRegistry.BOILER_SOLID,
             MultiblockRegistry.BOILER_TANK,
             MultiblockRegistry.COOLING_TOWER,
             MultiblockRegistry.DISTILLER,
+            MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY,
             MultiblockRegistry.GAS_TURBINE,
             MultiblockRegistry.HEAT_EXCHANGER,
+            MultiblockRegistry.MELTING_CRUCIBLE,
+            MultiblockRegistry.RADIATOR,
+            MultiblockRegistry.RADIATOR_HORIZONTAL,
             MultiblockRegistry.SOLAR_MELTER,
             MultiblockRegistry.SOLAR_REFLECTOR,
             MultiblockRegistry.SOLAR_TOWER,
             MultiblockRegistry.STEAM_TURBINE,
-            MultiblockRegistry.STEEL_SHEETMETAL_TANK
+            MultiblockRegistry.STEEL_SHEETMETAL_TANK,
+            MultiblockRegistry.STYLENOX
     };
 
     public ModBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, Reference.MODID, existingFileHelper); }
@@ -52,8 +59,19 @@ public class ModBlockTags extends BlockTagsProvider {
                 ModBlocks.Metal.BARREL_CREATIVE,
                 ModBlocks.Metal.BARREL_OPEN,
                 ModBlocks.Metal.BARREL_STEEL,
+                ModBlocks.Metal.GRAPHITE_MODERATOR,
                 ModBlocks.Metal.HEAT_CREATIVE,
+                ModBlocks.Metal.NUCLEAR_ENGINEERING,
+                ModBlocks.Metal.REACTOR_CLADDING,
                 ModBlocks.Metal.ROTOR_CREATIVE,
+                ModBlocks.Metal.ORE_CHROMIUM,
+                ModBlocks.Metal.ORE_MAGNESIUM,
+                ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM,
+                ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM,
+                ModBlocks.Metal.SHEETMETAL_STAINLESS_STEEL,
+                ModBlocks.Metal.STORAGE_CHROMIUM,
+                ModBlocks.Metal.STORAGE_MAGNESIUM,
+                ModBlocks.Metal.STORAGE_STAINLESS_STEEL,
                 ModBlocks.Metal.TRASH_ENERGY,
                 ModBlocks.Metal.TRASH_FLUID,
                 ModBlocks.Metal.TRASH_ITEM,
@@ -68,8 +86,19 @@ public class ModBlockTags extends BlockTagsProvider {
                 ModBlocks.Metal.BARREL_OPEN,
                 ModBlocks.Metal.BARREL_STEEL,
                 ModBlocks.Wooden.CRATE_CREATIVE,
+                ModBlocks.Metal.GRAPHITE_MODERATOR,
                 ModBlocks.Metal.HEAT_CREATIVE,
+                ModBlocks.Metal.NUCLEAR_ENGINEERING,
+                ModBlocks.Metal.REACTOR_CLADDING,
                 ModBlocks.Metal.ROTOR_CREATIVE,
+                ModBlocks.Metal.ORE_CHROMIUM,
+                ModBlocks.Metal.ORE_MAGNESIUM,
+                ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM,
+                ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM,
+                ModBlocks.Metal.SHEETMETAL_STAINLESS_STEEL,
+                ModBlocks.Metal.STORAGE_CHROMIUM,
+                ModBlocks.Metal.STORAGE_MAGNESIUM,
+                ModBlocks.Metal.STORAGE_STAINLESS_STEEL,
                 ModBlocks.Metal.TRASH_ENERGY,
                 ModBlocks.Metal.TRASH_FLUID,
                 ModBlocks.Metal.TRASH_ITEM,
@@ -79,6 +108,22 @@ public class ModBlockTags extends BlockTagsProvider {
                 ModBlocks.Metal.TECHNOLOGY_ENGINEERING,
                 ModBlocks.Stone.REINFORCED_COKE_BRICK
         );
+
+        registerMaterial("storage_blocks/chromium", ModBlocks.Metal.STORAGE_CHROMIUM);
+        registerMaterial("storage_blocks/magnesium", ModBlocks.Metal.STORAGE_MAGNESIUM);
+        registerMaterial("storage_blocks/stainless_steel", ModBlocks.Metal.STORAGE_STAINLESS_STEEL);
+        registerMaterial("storage_blocks/hop_graphite", ModBlocks.Metal.GRAPHITE_MODERATOR);
+        registerMaterial("sheetmetals/stainless_steel", ModBlocks.Metal.SHEETMETAL_STAINLESS_STEEL);
+        registerMaterial("ores/chromium", ModBlocks.Metal.ORE_CHROMIUM, ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM);
+        registerMaterial("ores/magnesium", ModBlocks.Metal.ORE_MAGNESIUM, ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM);
+        registerMaterial("ores_in_ground/stone", ModBlocks.Metal.ORE_CHROMIUM, ModBlocks.Metal.ORE_MAGNESIUM);
+        registerMaterial("ores_in_ground/deepslate", ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM, ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM);
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores"))).addTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores/chromium"))).addTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores/magnesium")));
+    }
+
+    private void registerMaterial(String path, ModBlocks.BlockEntry<?>... entries) {
+        IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag = this.tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", path)));
+        for (ModBlocks.BlockEntry<?> entry : entries) { tag.add(entry.get()); }
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag) {

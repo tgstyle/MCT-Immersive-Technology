@@ -1,0 +1,10 @@
+{
+  "type": "immersiveengineering:crusher",
+  "energy": 3000,
+  "input": {
+    "tag": "c:ingots/magnesium"
+  },
+  "result": {
+    "tag": "c:dusts/magnesium"
+  }
+}

@@ -9,20 +9,26 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 
 public class ModTags {
+    public static final TagKey<Fluid> fluidCarbonDioxide = FluidTags.create(modLoc("carbon_dioxide"));
     public static final TagKey<Fluid> fluidChlorine = FluidTags.create(modLoc("chlorine"));
+    public static final TagKey<Fluid> fluidCrudeNitrate = FluidTags.create(modLoc("crude_nitrate"));
     public static final TagKey<Fluid> fluidDistilledWater = FluidTags.create(modLoc("distilled_water"));
     public static final TagKey<Fluid> fluidDistilledWaterForge = FluidTags.create(cLoc("distilled_water"));
     public static final TagKey<Fluid> fluidExhaustSteam = FluidTags.create(modLoc("exhaust_steam"));
     public static final TagKey<Fluid> fluidFlueGas = FluidTags.create(modLoc("flue_gas"));
+    public static final TagKey<Fluid> fluidFuelSlurry = FluidTags.create(modLoc("fuel_slurry"));
     public static final TagKey<Fluid> fluidGravelSlurry = FluidTags.create(modLoc("gravel_slurry"));
     public static final TagKey<Fluid> fluidHeatedGravelSlurry = FluidTags.create(modLoc("heated_gravel_slurry"));
     public static final TagKey<Fluid> fluidHeatedSaltSlurry = FluidTags.create(modLoc("heated_salt_slurry"));
     public static final TagKey<Fluid> fluidHotWater = FluidTags.create(modLoc("hot_water"));
     public static final TagKey<Fluid> fluidHydrogen = FluidTags.create(modLoc("hydrogen"));
     public static final TagKey<Fluid> fluidMoltenSalt = FluidTags.create(modLoc("molten_salt"));
+    public static final TagKey<Fluid> fluidNitricAcid = FluidTags.create(modLoc("nitric_acid"));
+    public static final TagKey<Fluid> fluidNuclearWaste = FluidTags.create(modLoc("nuclear_waste"));
     public static final TagKey<Fluid> fluidSaltSlurry = FluidTags.create(modLoc("salt_slurry"));
     public static final TagKey<Fluid> fluidSteam = FluidTags.create(modLoc("steam"));
     public static final TagKey<Fluid> fluidSteamForge = FluidTags.create(cLoc("steam"));
+    public static final TagKey<Fluid> fluidSulfuricAcid = FluidTags.create(modLoc("sulfuric_acid"));
     public static final TagKey<Item> salt = ItemTags.create(modLoc("salt"));
     public static final TagKey<Item> saltForge = ItemTags.create(cLoc("dusts/salt"));
     public static final TagKey<Item> igniters = ItemTags.create(modLoc("igniters"));

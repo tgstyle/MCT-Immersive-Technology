@@ -1,0 +1,23 @@
+{
+  "type": "immersivetechnology:stylenox",
+  "co2Amount": 10,
+  "co2Tag": "immersivetechnology:carbon_dioxide",
+  "energy": 800000,
+  "input": {
+    "basePredicate": {
+      "item": "immersivetechnology:fuel_element"
+    },
+    "count": 8
+  },
+  "result": {
+    "count": 8,
+    "id": "immersivetechnology:spent_element"
+  },
+  "steamOutput": {
+    "amount": 400,
+    "id": "immersivetechnology:steam"
+  },
+  "time": 72000,
+  "waterAmount": 200,
+  "waterTag": "immersivetechnology:distilled_water"
+}

@@ -88,6 +88,17 @@ public class BasicStateGenerator {
     public void generate() {
         createSimpleBlock(ModBlocks.getBlock.apply("reinforced_coke_brick"), main.models().cubeAll("block/stone/reinforced_coke_brick", main.modLoc("block/stone/reinforced_coke_brick")));
         createSimpleBlock(ModBlocks.getBlock.apply("technology_engineering"), main.models().cubeAll("block/metal/technology_engineering", main.modLoc("block/metal/technology_engineering")));
+        createSimpleBlock(ModBlocks.getBlock.apply("graphite_moderator"), main.models().cubeColumn("block/metal/graphite_moderator", main.modLoc("block/metal/graphite_moderator_side"), main.modLoc("block/metal/graphite_moderator_top")));
+        createSimpleBlock(ModBlocks.getBlock.apply("nuclear_engineering"), main.models().cubeAll("block/metal/nuclear_engineering", main.modLoc("block/metal/nuclear_engineering")));
+        createSimpleBlock(ModBlocks.getBlock.apply("reactor_cladding"), main.models().cubeAll("block/metal/reactor_cladding", main.modLoc("block/metal/reactor_cladding")));
+        createCubeAllBlock("storage_stainless_steel", "stainless_steel");
+        createCubeAllBlock("storage_chromium", "chromium");
+        createCubeAllBlock("storage_magnesium", "magnesium");
+        createCubeAllBlock("sheetmetal_stainless_steel", "sheetmetal_stainless_steel");
+        createCubeAllBlock("ore_chromium", "ore_chromium");
+        createCubeAllBlock("deepslate_ore_chromium", "deepslate_ore_chromium");
+        createCubeAllBlock("ore_magnesium", "ore_magnesium");
+        createCubeAllBlock("deepslate_ore_magnesium", "deepslate_ore_magnesium");
         createSimpleBlock(ModBlocks.getBlock.apply("crate_creative"), main.models().cubeAll("block/wooden/crate_creative", main.modLoc("block/wooden/crate_creative")));
         ResourceLocation reinforcedTexture = main.modLoc("block/stone/reinforced_coke_brick");
         createSlabModels(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
@@ -335,6 +346,10 @@ public class BasicStateGenerator {
             else if (type == SlabType.TOP) { return ConfiguredModel.builder().modelFile(topModel).build(); }
             else { return ConfiguredModel.builder().modelFile(doubleModel).build(); }
         }, SlabBlock.WATERLOGGED);
+    }
+
+    private void createCubeAllBlock(String name, String texture) {
+        createSimpleBlock(ModBlocks.getBlock.apply(name), main.models().cubeAll("block/metal/" + name, main.modLoc("block/metal/" + texture)));
     }
 
     private void createSimpleBlock(Block block, ModelFile model) {

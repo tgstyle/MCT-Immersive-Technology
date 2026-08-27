@@ -1,0 +1,20 @@
+{
+  "type": "immersiveengineering:mixer",
+  "energy": 3200,
+  "fluid": {
+    "amount": 1000,
+    "tag": "immersivetechnology:sulfuric_acid"
+  },
+  "inputs": [
+    {
+      "basePredicate": {
+        "tag": "c:dusts/saltpeter"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "amount": 1000,
+    "id": "immersivetechnology:crude_nitrate"
+  }
+}

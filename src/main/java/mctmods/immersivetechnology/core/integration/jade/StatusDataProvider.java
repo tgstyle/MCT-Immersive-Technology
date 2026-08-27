@@ -47,6 +47,7 @@ public enum StatusDataProvider implements IServerDataProvider<BlockAccessor> {
             else if (state instanceof SolarTowerLogic.State tower) { active = tower.active; fuelEmpty = tower.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof SteamTurbineLogic.State steam) { active = steam.active; fuelEmpty = steam.tanks.input().getFluid().isEmpty(); }
             else if (state instanceof SteelSheetmetalTankLogic.State tank) { active = tank.active; }
+            else if (state instanceof StyleNOXLogic.State stylenox) { active = stylenox.active; fuelEmpty = !stylenox.hasLoad() && stylenox.inventory.getStackInSlot(StyleNOXLogic.SLOT_FUEL).isEmpty(); }
 
             long now = accessor.getLevel().getGameTime();
             BlockPos pos = accessor.getPosition();

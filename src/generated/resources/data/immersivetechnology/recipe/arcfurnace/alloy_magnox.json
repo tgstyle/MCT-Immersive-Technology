@@ -1,0 +1,24 @@
+{
+  "type": "immersiveengineering:arc_furnace",
+  "additives": [
+    {
+      "tag": "c:ingots/aluminum"
+    }
+  ],
+  "energy": 51200,
+  "input": {
+    "basePredicate": {
+      "tag": "c:ingots/magnesium"
+    },
+    "count": 3
+  },
+  "results": [
+    {
+      "basePredicate": {
+        "tag": "c:ingots/magnox"
+      },
+      "count": 4
+    }
+  ],
+  "time": 100
+}

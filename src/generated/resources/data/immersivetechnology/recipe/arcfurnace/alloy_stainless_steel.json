@@ -1,0 +1,30 @@
+{
+  "type": "immersiveengineering:arc_furnace",
+  "additives": [
+    {
+      "basePredicate": {
+        "tag": "c:ingots/chromium"
+      },
+      "count": 2
+    },
+    {
+      "tag": "c:ingots/nickel"
+    }
+  ],
+  "energy": 51200,
+  "input": {
+    "basePredicate": {
+      "tag": "c:ingots/steel"
+    },
+    "count": 6
+  },
+  "results": [
+    {
+      "basePredicate": {
+        "tag": "c:ingots/stainless_steel"
+      },
+      "count": 9
+    }
+  ],
+  "time": 100
+}

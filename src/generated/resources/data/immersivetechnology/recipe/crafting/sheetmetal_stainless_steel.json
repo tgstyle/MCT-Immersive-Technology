@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "p": {
+      "tag": "c:plates/stainless_steel"
+    }
+  },
+  "pattern": [
+    " p ",
+    "p p",
+    " p "
+  ],
+  "result": {
+    "count": 4,
+    "id": "immersivetechnology:sheetmetal_stainless_steel"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "immersivetechnology:item/metal/ingots/stainless_steel"
+  }
+}

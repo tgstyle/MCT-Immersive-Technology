@@ -1,0 +1,18 @@
+{
+  "type": "immersiveengineering:alloy",
+  "input0": {
+    "basePredicate": {
+      "tag": "c:ingots/magnesium"
+    },
+    "count": 3
+  },
+  "input1": {
+    "tag": "c:ingots/aluminum"
+  },
+  "result": {
+    "basePredicate": {
+      "tag": "c:ingots/magnox"
+    },
+    "count": 4
+  }
+}
