@@ -12,9 +12,11 @@ import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecip
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
+
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -112,8 +114,12 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             if (te instanceof TileEntityMultiblockPart<?>) {
                 TileEntityMultiblockPart<?> part = (TileEntityMultiblockPart<?>)te;
                 TileEntity master = part.master();
-                if (master instanceof IMechanicalEnergy) {
-                    int speed = ((IMechanicalEnergy)master).getSpeed();
+                if (master instanceof IMechanicalEnergyProvider) {
+                    int speed = ((IMechanicalEnergyProvider)master).getSpeed();
+                    addRPMDisplay(probeInfo, speed);
+                }
+                else if (master instanceof IMechanicalEnergyConsumer) {
+                    int speed = ((IMechanicalEnergyConsumer)master).getSpeed();
                     addRPMDisplay(probeInfo, speed);
                 }
             }

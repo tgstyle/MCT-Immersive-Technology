@@ -8,7 +8,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_Meta
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
-import mctmods.immersivetechnology.common.util.multiblock.*;
+
+import com.immersiveconvergence.api.multiblock.*;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;

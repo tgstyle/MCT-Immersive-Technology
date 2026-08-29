@@ -1,6 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+
 import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HighPressureSteamTurbineShape;
@@ -8,10 +11,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IAdvancedCollisionBounds;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IAdvancedSelectionBounds;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IBlockBounds;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultiblock<TileEntityHighPressureSteamTurbineSlave, HighPressureSteamTurbineRecipe, TileEntityHighPressureSteamTurbineMaster>
-        implements IMechanicalEnergy, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
+        implements IMechanicalEnergyProvider, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
 
     private static float outputTorque() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque; }
 
@@ -122,8 +123,6 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
         return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
     }
 
-    @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return false; }
-
     @Override public int getSpeed() {
         TileEntityHighPressureSteamTurbineMaster m = master();
         return m == null ? 0 : m.speed;
@@ -131,7 +130,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
 
     @Override public float getTorqueMultiplier() { return outputTorque(); }
 
-    public MechanicalEnergyAnimation getAnimation() {
+    @Override public MechanicalEnergyAnimation getAnimation() {
         TileEntityHighPressureSteamTurbineMaster m = master();
         return m == null ? null : m.animation;
     }

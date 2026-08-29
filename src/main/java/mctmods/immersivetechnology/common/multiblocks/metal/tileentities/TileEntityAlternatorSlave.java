@@ -1,13 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
@@ -31,7 +33,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster>
-        implements ITBlockInterfaces.IMechanicalEnergy, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds,
+        implements IMechanicalEnergyConsumer, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds,
         ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IComparatorOverride {
 
     private int loadGrace = 0;
@@ -120,15 +122,13 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public boolean isValid() { return formed; }
 
-    @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) { return false; }
-
     @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return master() != null && Objects.requireNonNull(master()).isMechanicalEnergyReceiver(facing, pos); }
 
     @Override public int getSpeed() { return master() == null ? 0 : Objects.requireNonNull(master()).speed; }
 
     @Override public float getTorqueMultiplier() { return master() == null ? 0f : Objects.requireNonNull(master()).torqueMult; }
 
-    public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : Objects.requireNonNull(master()).animation; }
+    @Override public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : Objects.requireNonNull(master()).animation; }
 
     @Override public int getComparatorInputOverride() { return master() == null ? 0 : Objects.requireNonNull(master()).getComparatorInputOverride(); }
 }

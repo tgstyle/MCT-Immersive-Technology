@@ -14,7 +14,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 public class ITUtils {
     public static IFluidTank[] emptyIFluidTankList = new IFluidTank[0];
@@ -103,10 +102,6 @@ public class ITUtils {
             }
             world.updateObservingBlocksAt(pos, blockType);
         }
-    }
-
-    public static <T> T make(Supplier<T> pSupplier) {
-        return pSupplier.get();
     }
 
     public static AxisAlignedBB rotateAABB(AxisAlignedBB aabb, EnumFacing facing, boolean mirrored) {

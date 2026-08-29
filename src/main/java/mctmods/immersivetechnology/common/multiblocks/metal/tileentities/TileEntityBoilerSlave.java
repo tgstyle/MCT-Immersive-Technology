@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import mctmods.immersivetechnology.api.ITGUI;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+
+import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
@@ -9,7 +11,6 @@ import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IA
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IBlockBounds;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;

@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.client.render.multiblock;
 
-import mctmods.immersivetechnology.api.particles.ColoredBeamRenderer;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
+
+import com.immersiveconvergence.api.particles.ColoredBeamRenderer;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;

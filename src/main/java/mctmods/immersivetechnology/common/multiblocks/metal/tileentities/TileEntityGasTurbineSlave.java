@@ -1,6 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
@@ -8,7 +11,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
@@ -30,7 +32,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IFluxReceiver, IIEInternalFluxHandler, ITBlockInterfaces.IMechanicalEnergy, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IFluxReceiver, IIEInternalFluxHandler, IMechanicalEnergyProvider, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
 
     protected int loadGrace = 0;
     protected TileEntityGasTurbineMaster master;
@@ -161,8 +163,6 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
         return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
     }
 
-    @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return false; }
-
     @Override public int getSpeed() {
         TileEntityGasTurbineMaster m = master();
         return m == null ? 0 : m.speed;
@@ -170,7 +170,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public float getTorqueMultiplier() { return outputtorque(); }
 
-    public MechanicalEnergyAnimation getAnimation() {
+    @Override public MechanicalEnergyAnimation getAnimation() {
         TileEntityGasTurbineMaster m = master();
         return m == null ? null : m.animation;
     }

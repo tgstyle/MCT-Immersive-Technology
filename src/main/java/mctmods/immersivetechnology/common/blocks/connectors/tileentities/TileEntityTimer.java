@@ -10,7 +10,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAttached
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 

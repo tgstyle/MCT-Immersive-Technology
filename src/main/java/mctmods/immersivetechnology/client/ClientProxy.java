@@ -15,7 +15,6 @@ import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITGUI;
 import mctmods.immersivetechnology.client.event.ClientEventHandler;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;

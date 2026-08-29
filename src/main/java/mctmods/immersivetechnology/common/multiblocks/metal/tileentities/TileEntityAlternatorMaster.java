@@ -5,18 +5,19 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparat
 import blusunrize.immersiveengineering.common.util.EnergyHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.PoICache;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.PoICache;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
@@ -51,7 +52,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick(), rfPerTickPerPort);
     public int speed = 0;
     public float torqueMult = 1f;
-    public IMechanicalEnergy provider;
+    public IMechanicalEnergyProvider provider;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
     private float soundVolume = 0f;
@@ -265,8 +266,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (mechanicalInputPos0 == null) InitializePoIs();
         if (provider == null || !provider.isValid()) {
             TileEntity te = world.getTileEntity(mechanicalInputTEPos0);
-            if (te instanceof IMechanicalEnergy) {
-                IMechanicalEnergy poss = (IMechanicalEnergy)te;
+            if (te instanceof IMechanicalEnergyProvider) {
+                IMechanicalEnergyProvider poss = (IMechanicalEnergyProvider)te;
                 if (poss.isValid() && poss.isMechanicalEnergyTransmitter(mechanicalInputPos0.facing.getOpposite())) {
                     provider = poss;
                     return true;

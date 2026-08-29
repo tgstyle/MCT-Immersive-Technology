@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.ITGUI;
+import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;

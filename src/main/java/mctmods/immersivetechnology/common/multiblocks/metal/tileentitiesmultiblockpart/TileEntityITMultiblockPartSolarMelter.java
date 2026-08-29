@@ -11,7 +11,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_Meta
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.*;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,6 +24,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.immersiveconvergence.api.multiblock.*;
 
 public class TileEntityITMultiblockPartSolarMelter extends TileEntityITMultiblockPart<TileEntitySolarMelterSlave> implements MultiblockHandler.IMultiblock {
     public static TileEntityITMultiblockPartSolarMelter instance = new TileEntityITMultiblockPartSolarMelter();

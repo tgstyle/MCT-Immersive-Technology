@@ -3,6 +3,11 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.PoICache;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -13,10 +18,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
-import mctmods.immersivetechnology.common.util.multiblock.PoICache;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
@@ -66,7 +67,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     private int pressureReleaseCooldown = 0;
 
     public SteamTurbineRecipe cachedTurbineRecipe;
-    private IMechanicalEnergy alternator;
+    private IMechanicalEnergyConsumer alternator;
 
     private boolean needsPoIInit = false;
     private boolean needsNotify = false;
@@ -264,8 +265,8 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         if (mechanicalOutputPos0 == null) InitializePoIs();
         if (alternator == null || !alternator.isValid()) {
             TileEntity te = world.getTileEntity(mechanicalOutputTEPos0);
-            if (te instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possible = (IMechanicalEnergy)te;
+            if (te instanceof IMechanicalEnergyConsumer) {
+                IMechanicalEnergyConsumer possible = (IMechanicalEnergyConsumer)te;
                 if (possible.isValid() && possible.isMechanicalEnergyReceiver(mechanicalOutputPos0.facing.getOpposite())) alternator = possible;
                 else alternator = null;
             } else alternator = null;

@@ -3,6 +3,8 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultibl
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
+import com.immersiveconvergence.api.multiblock.*;
+
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineSlave;
@@ -10,7 +12,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_Meta
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HighPressureSteamTurbineShape;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
 import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.util.multiblock.*;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;

@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.client.event;
 
+import com.immersiveconvergence.api.shapes.BooleanOp;
+import com.immersiveconvergence.api.shapes.Shapes;
+import com.immersiveconvergence.api.shapes.VoxelShape;
+
 import java.util.List;
 
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IAdvancedSelectionBounds;
-import mctmods.immersivetechnology.common.util.shapes.BooleanOp;
-import mctmods.immersivetechnology.common.util.shapes.Shapes;
-import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;

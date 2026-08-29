@@ -5,12 +5,14 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.*;
-import mctmods.immersivetechnology.common.util.shapes.BooleanOp;
-import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
-import mctmods.immersivetechnology.common.util.shapes.Shapes;
+
+import com.immersiveconvergence.api.multiblock.*;
+import com.immersiveconvergence.api.shapes.BooleanOp;
+import com.immersiveconvergence.api.shapes.Shapes;
+import com.immersiveconvergence.api.shapes.VoxelShape;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +56,7 @@ public abstract class TileEntityITMultiblockPart<T extends TileEntityMultiblockP
         this.masterBlockState = master;
         this.slaveBlockState = slave;
         try {
-            MultiblockJSONSchema data = MultiblockUtils.Load(structurePath);
+            MultiblockJSONSchema data = MultiblockUtils.Load(ImmersiveTechnology.MODID, structurePath);
             if (data == null) { ITLogger.error("Missing multiblock JSON: " + structurePath); return; }
             this.uniqueName = data.uniqueName;
             this.width = data.width;

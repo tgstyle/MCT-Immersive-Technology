@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import mctmods.immersivetechnology.api.ITGUI;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+
+import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
@@ -8,7 +10,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
 import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;

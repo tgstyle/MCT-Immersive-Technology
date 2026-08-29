@@ -5,14 +5,17 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.PoICache;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IMechanicalEnergy;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITFluxStorage;
@@ -20,8 +23,6 @@ import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
-import mctmods.immersivetechnology.common.util.multiblock.PoICache;
-import mctmods.immersivetechnology.common.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.network.MessageStopSound;
@@ -94,7 +95,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     public GasTurbineRecipe lastRecipe;
     private GasTurbineRecipe cachedFuelRecipe;
-    private IMechanicalEnergy alternator;
+    private IMechanicalEnergyConsumer alternator;
 
     protected PoICache energyInputPos0, energyInputPos1, fluidInputPos0, fluidOutputPos0, mechanicalOutputPos0, redstonePos0;
     private BlockPos outputFront0, mechanicalOutputTEPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3;
@@ -340,8 +341,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (mechanicalOutputPos0 == null) InitializePoIs();
         if (alternator == null || !alternator.isValid()) {
             TileEntity tile = world.getTileEntity(mechanicalOutputTEPos0);
-            if (tile instanceof IMechanicalEnergy) {
-                IMechanicalEnergy possible = (IMechanicalEnergy)tile;
+            if (tile instanceof IMechanicalEnergyConsumer) {
+                IMechanicalEnergyConsumer possible = (IMechanicalEnergyConsumer)tile;
                 if (possible.isValid() && possible.isMechanicalEnergyReceiver(mechanicalOutputPos0.facing.getOpposite())) alternator = possible;
             }
         }

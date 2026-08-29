@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
+import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.api.multiblock.MultiblockUtils;
+import com.immersiveconvergence.api.shapes.Shapes;
+import com.immersiveconvergence.api.shapes.VoxelShape;
+
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.multiblock.GenericShape;
-import mctmods.immersivetechnology.common.util.multiblock.MultiblockUtils;
-import mctmods.immersivetechnology.common.util.shapes.Shapes;
-import mctmods.immersivetechnology.common.util.shapes.VoxelShape;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
@@ -39,7 +40,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import static mctmods.immersivetechnology.common.util.shapes.BooleanOp.OR;
+import static com.immersiveconvergence.api.shapes.BooleanOp.OR;
 
 public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T, R, M>, R extends IMultiblockRecipe, M extends T> extends TileEntityMultiblockMetal<T, R> implements IPlayerInteraction {
     private int blockUpdateCooldown = 0;

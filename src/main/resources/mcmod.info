@@ -8,7 +8,7 @@
     "url": "${mod_url}",
     "authorList": ["${mod_authors}"],
     "logoFile": "ITlogo.png",
-    "dependencies": ["immersiveengineering", "cofhcore", "redstoneflux"]
+    "dependencies": ["immersiveengineering", "immersiveconvergence", "cofhcore", "redstoneflux"]
   },
   {
     "modid": "${mod_mixin_id}",

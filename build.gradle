@@ -73,7 +73,24 @@ repositories {
     mavenCentral()
 }
 
+def icJar = null
+def icDir = file('../ImmersiveConvergence-Legacy/build/libs')
+def icJars = icDir.exists() ? fileTree(icDir) {
+    include '*-dev.jar'
+    exclude '**/*-sources.jar'
+}.files : []
+
+if (!icJars.isEmpty()) {
+    icJar = icJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
+    logger.lifecycle("Found Immersive Convergence dev JAR: ${icJar.name}")
+} else {
+    logger.warn('No Immersive Convergence dev JAR found in ../ImmersiveConvergence-Legacy/build/libs, build one there first')
+}
+
 dependencies {
+    if (icJar != null) {
+        implementation files(icJar)
+    }
     implementation rfg.deobf("${common.mjei_version}")
     implementation rfg.deobf("curse.maven:${common.imme_version}")
     implementation rfg.deobf("curse.maven:${common.mtop_version}")

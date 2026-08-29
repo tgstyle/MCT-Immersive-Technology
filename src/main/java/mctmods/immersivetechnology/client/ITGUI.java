@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.api;
+package mctmods.immersivetechnology.client;
 
 public class ITGUI {
 	public static final int GUIID_Boiler = 0;
