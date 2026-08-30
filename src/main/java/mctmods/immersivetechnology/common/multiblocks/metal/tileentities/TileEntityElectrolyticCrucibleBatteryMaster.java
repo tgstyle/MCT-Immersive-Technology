@@ -380,16 +380,16 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstonePos0 == null) InitializePoIs();
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed) return new int[0];
         if (energyInputPos0 == null) InitializePoIs();
-        return new int[]{energyInputPos0.position, energyInputPos1.position, energyInputPos2.position};
+        return new int[]{toFlatIndex(energyInputPos0.position), toFlatIndex(energyInputPos1.position), toFlatIndex(energyInputPos2.position)};
     }
 
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed) return false;
         if (energyInputPos0 == null) InitializePoIs();
         if (facing == null) return false;
@@ -420,7 +420,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
     }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (redstonePos0 == null) InitializePoIs();
         if (side == null) return tanks;
@@ -431,7 +431,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (!formed) return false;
         if (redstonePos0 == null) InitializePoIs();
         if (!fluidInputPos0.isPoI(side, position)) return false;
@@ -440,9 +440,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return current == null || resource.isFluidEqual(current);
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position;
+        return fluidInputPos0.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -451,7 +451,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return 1;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (!formed) return false;
         if (redstonePos0 == null) InitializePoIs();
         if (fluidOutputPos0.isPoI(side, position)) return tanks[1].getFluidAmount() > 0;
@@ -509,9 +509,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         private final IFluidTank[] tanks;
         private final TileEntityElectrolyticCrucibleBatteryMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        ElectrolyticCrucibleBatteryFluidHandler(IFluidTank[] accessibleTanks, TileEntityElectrolyticCrucibleBatteryMaster master, EnumFacing side, int position) {
+        ElectrolyticCrucibleBatteryFluidHandler(IFluidTank[] accessibleTanks, TileEntityElectrolyticCrucibleBatteryMaster master, EnumFacing side, BlockPos position) {
             this.tanks = accessibleTanks;
             this.master = master;
             this.side = side;

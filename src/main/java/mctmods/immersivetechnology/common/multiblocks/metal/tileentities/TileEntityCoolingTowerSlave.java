@@ -86,18 +86,18 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
 
     @Override public int getProcessQueueMaxLength() { return 3; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntityCoolingTowerMaster m = master();
         if (m == null) return ITUtils.emptyIFluidTankList;
         return m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntityCoolingTowerMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntityCoolingTowerMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -105,7 +105,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityCoolingTowerMaster m = master();
-            if (m != null && formed) return m.getAccessibleFluidTanks(facing, pos).length > 0;
+            if (m != null && formed) return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0;
         }
         return super.hasCapability(capability, facing);
     }
@@ -115,8 +115,8 @@ public class TileEntityCoolingTowerSlave extends TileEntityITMultiblock<TileEnti
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityCoolingTowerMaster m = master();
             if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
-                if (accessible.length > 0) return (T)new TileEntityCoolingTowerMaster.CoolingTowerFluidHandler(accessible, m, facing, pos);
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
+                if (accessible.length > 0) return (T)new TileEntityCoolingTowerMaster.CoolingTowerFluidHandler(accessible, m, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);

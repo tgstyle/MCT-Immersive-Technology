@@ -58,14 +58,14 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
 
     protected boolean useMirroredShape() { return true; }
 
-    protected boolean isInputFluidPoI(int position) { return false; }
+    protected boolean isInputFluidPoI(BlockPos position) { return false; }
 
     protected int clearInputTanks() { return 0; }
 
     @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         if (!formed || !player.isSneaking() || !Utils.isHammer(heldItem)) { return false; }
         M master = master();
-        if (master == null || !master.isInputFluidPoI(pos)) { return false; }
+        if (master == null || !master.isInputFluidPoI(posInMultiblock())) { return false; }
         if (!world.isRemote) {
             int cleared = master.clearInputTanks();
             player.sendStatusMessage(new TextComponentTranslation(cleared > 1 ? TranslationKey.GUI_INPUT_TANKS_CLEARED.location : TranslationKey.GUI_INPUT_TANK_CLEARED.location), true);
@@ -75,11 +75,11 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
 
     protected AxisAlignedBB preprocessShapeAABB(AxisAlignedBB aabb) { return aabb; }
 
-    protected abstract IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position);
+    protected abstract IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position);
 
-    protected abstract boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, int position);
+    protected abstract boolean canFillTankFrom(int iTank, EnumFacing side, FluidStack resource, BlockPos position);
 
-    protected abstract boolean canDrainTankFrom(int iTank, EnumFacing side, int position);
+    protected abstract boolean canDrainTankFrom(int iTank, EnumFacing side, BlockPos position);
 
     public boolean shouldDropOriginal = true;
     public boolean shouldDropInventory = true;
@@ -129,7 +129,7 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
         return super.getCapability(capability, facing);
     }
 
-    private BlockPos posToMultiblock() {
+    public BlockPos posInMultiblock() {
         TileEntityITMultiblockPart<?> instance = (TileEntityITMultiblockPart<?>)mutliblockInstance;
         int width = instance.width;
         int length = instance.length;
@@ -137,7 +137,19 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
         int rem = pos % (length * width);
         int z = rem / width;
         int x = rem % width;
-        return adjustPosInMultiblock(new BlockPos(x, y, z), width);
+        return new BlockPos(x, y, z);
+    }
+
+    public int toFlatIndex(BlockPos posInMultiblock) {
+        TileEntityITMultiblockPart<?> instance = (TileEntityITMultiblockPart<?>)mutliblockInstance;
+        return posInMultiblock.getY() * (instance.length * instance.width) + posInMultiblock.getZ() * instance.width + posInMultiblock.getX();
+    }
+
+    public BlockPos getBlockPosForPos(BlockPos posInMultiblock) { return getBlockPosForPos(toFlatIndex(posInMultiblock)); }
+
+    private BlockPos posToMultiblock() {
+        TileEntityITMultiblockPart<?> instance = (TileEntityITMultiblockPart<?>)mutliblockInstance;
+        return adjustPosInMultiblock(posInMultiblock(), instance.width);
     }
 
     protected BlockPos adjustPosInMultiblock(BlockPos posInMultiblock, int width) { return posInMultiblock; }
@@ -202,19 +214,19 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side) {
         M master = master();
         if (master == null) return new IFluidTank[0];
-        return master.getAccessibleFluidTanks(side, this.pos);
+        return master.getAccessibleFluidTanks(side, posInMultiblock());
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource) {
         M master = master();
         if (master == null) return false;
-        return master.canFillTankFrom(iTank, side, resource, this.pos);
+        return master.canFillTankFrom(iTank, side, resource, posInMultiblock());
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side) {
         M master = master();
         if (master == null) return false;
-        return master.canDrainTankFrom(iTank, side, this.pos);
+        return master.canDrainTankFrom(iTank, side, posInMultiblock());
     }
 
     @Override public void disassemble() {

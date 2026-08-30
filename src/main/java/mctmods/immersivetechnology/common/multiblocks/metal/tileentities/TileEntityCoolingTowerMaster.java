@@ -331,7 +331,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         if (fluidInputPos0 == null) InitializePoIs();
         if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (fluidInputPos1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
@@ -341,7 +341,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (iTank > 1 || iTank < 0) return false;
         if (fluidInputPos0 == null) InitializePoIs();
         if (iTank == 0 && !fluidInputPos0.isPoI(side, position)) return false;
@@ -352,9 +352,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return true;
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position || fluidInputPos1.position == position;
+        return fluidInputPos0.position.equals(position) || fluidInputPos1.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -364,7 +364,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return 2;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (iTank < 2) return false;
         if (fluidInputPos0 == null) InitializePoIs();
         if (iTank == 2 && !fluidOutputPos0.isPoI(side, position)) return false;
@@ -381,9 +381,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         private final IFluidTank[] accessibleTanks;
         private final TileEntityCoolingTowerMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        public CoolingTowerFluidHandler(IFluidTank[] accessibleTanks, TileEntityCoolingTowerMaster master, EnumFacing side, int position) {
+        public CoolingTowerFluidHandler(IFluidTank[] accessibleTanks, TileEntityCoolingTowerMaster master, EnumFacing side, BlockPos position) {
             this.accessibleTanks = accessibleTanks;
             this.master = master;
             this.side = side;

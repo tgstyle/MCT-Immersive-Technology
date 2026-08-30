@@ -124,14 +124,14 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         TileEntityAdvancedCokeOvenMaster m = master();
         return m != null ? m.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) { return false; }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntityAdvancedCokeOvenMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -154,8 +154,8 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
         TileEntityAdvancedCokeOvenMaster m = master();
         if (m == null || facing == null) return super.hasCapability(capability, facing);
         if (m.itemInputPos0 == null) m.InitializePoIs();
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.itemInputPos0.isPoI(facing, this.pos) || m.itemOutputPos0.isPoI(facing, this.pos);
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return m.fluidOutputPos0.isPoI(facing, this.pos);
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.itemInputPos0.isPoI(facing, posInMultiblock()) || m.itemOutputPos0.isPoI(facing, posInMultiblock());
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return m.fluidOutputPos0.isPoI(facing, posInMultiblock());
         return super.hasCapability(capability, facing);
     }
 
@@ -165,10 +165,10 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityITMultiblock<Tile
         if (m == null || facing == null) return super.getCapability(capability, facing);
         if (m.itemInputPos0 == null) m.InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (m.itemInputPos0.isPoI(facing, this.pos)) return (T)m.inputHandler;
-            if (m.itemOutputPos0.isPoI(facing, this.pos)) return (T)m.outputHandler;
+            if (m.itemInputPos0.isPoI(facing, posInMultiblock())) return (T)m.inputHandler;
+            if (m.itemOutputPos0.isPoI(facing, posInMultiblock())) return (T)m.outputHandler;
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && m.fluidOutputPos0.isPoI(facing, this.pos)) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && m.fluidOutputPos0.isPoI(facing, posInMultiblock())) {
             return (T)new TileEntityAdvancedCokeOvenMaster.AdvancedCokeOvenFluidHandler(m);
         }
         return super.getCapability(capability, facing);

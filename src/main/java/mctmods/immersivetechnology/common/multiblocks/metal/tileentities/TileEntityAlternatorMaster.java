@@ -284,12 +284,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
     }
 
-    public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, int position) {
+    public boolean isMechanicalEnergyReceiver(@Nullable EnumFacing facing, BlockPos position) {
         if (mechanicalInputPos0 == null) InitializePoIs();
         return facing != null && mechanicalInputPos0.isPoI(facing, position);
     }
 
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
         if (energyOutputsPos0[0] == null) InitializePoIs();
         if (facing == null) return false;
         for (PoICache cache : energyOutputsPos0) if (cache != null && cache.isPoI(facing, position)) return true;
@@ -298,13 +298,13 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (redstonePos0 == null) InitializePoIs();
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (energyOutputsPos0[0] == null) InitializePoIs();
-        return new int[]{energyOutputsPos0[0].position, energyOutputsPos0[1].position, energyOutputsPos0[2].position,
-                energyOutputsPos0[3].position, energyOutputsPos0[4].position, energyOutputsPos0[5].position};
+        return new int[]{toFlatIndex(energyOutputsPos0[0].position), toFlatIndex(energyOutputsPos0[1].position), toFlatIndex(energyOutputsPos0[2].position),
+                toFlatIndex(energyOutputsPos0[3].position), toFlatIndex(energyOutputsPos0[4].position), toFlatIndex(energyOutputsPos0[5].position)};
     }
 
     @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }

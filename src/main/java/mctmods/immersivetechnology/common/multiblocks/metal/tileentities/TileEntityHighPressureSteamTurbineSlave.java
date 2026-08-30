@@ -101,17 +101,17 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntityHighPressureSteamTurbineMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntityHighPressureSteamTurbineMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntityHighPressureSteamTurbineMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -120,7 +120,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
 
     @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) {
         TileEntityHighPressureSteamTurbineMaster m = master();
-        return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
+        return m != null && m.isMechanicalEnergyTransmitter(facing, posInMultiblock());
     }
 
     @Override public int getSpeed() {
@@ -140,7 +140,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
             TileEntityHighPressureSteamTurbineMaster m = master();
             if (m == null) return false;
             if (m.fluidInputPos0 == null) m.InitializePoIs();
-            return m.fluidInputPos0.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos);
+            return m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock());
         }
         return super.hasCapability(capability, facing);
     }
@@ -151,8 +151,8 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
             TileEntityHighPressureSteamTurbineMaster m = master();
             if (m == null) return super.getCapability(capability, facing);
             if (m.fluidInputPos0 == null) m.InitializePoIs();
-            if (m.fluidInputPos0.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos)) {
-                return (T) new HighPressureSteamTurbineFluidHandler(m.getAccessibleFluidTanks(facing, pos), m, facing, pos);
+            if (m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock())) {
+                return (T) new HighPressureSteamTurbineFluidHandler(m.getAccessibleFluidTanks(facing, posInMultiblock()), m, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);
@@ -162,9 +162,9 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultibl
         private final IFluidTank[] accessibleTanks;
         private final TileEntityHighPressureSteamTurbineMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        public HighPressureSteamTurbineFluidHandler(IFluidTank[] accessibleTanks, TileEntityHighPressureSteamTurbineMaster master, EnumFacing side, int position) {
+        public HighPressureSteamTurbineFluidHandler(IFluidTank[] accessibleTanks, TileEntityHighPressureSteamTurbineMaster master, EnumFacing side, BlockPos position) {
             this.accessibleTanks = accessibleTanks;
             this.master = master;
             this.side = side;

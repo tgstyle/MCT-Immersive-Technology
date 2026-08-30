@@ -292,7 +292,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInputPos0 == null) InitializePoIs();
-            if (fluidInputPos0.isPoI(facing, pos) || fluidInputPos1.isPoI(facing, pos) || fluidOutputPos0.isPoI(facing, pos)) return true;
+            if (fluidInputPos0.isPoI(facing, posInMultiblock()) || fluidInputPos1.isPoI(facing, posInMultiblock()) || fluidOutputPos0.isPoI(facing, posInMultiblock())) return true;
         }
         return super.hasCapability(capability, facing);
     }
@@ -300,8 +300,8 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @SuppressWarnings("unchecked")
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            if (fluidInputPos0.isPoI(facing, pos) || fluidInputPos1.isPoI(facing, pos) || fluidOutputPos0.isPoI(facing, pos)) {
-                return (T)new BoilerFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
+            if (fluidInputPos0.isPoI(facing, posInMultiblock()) || fluidInputPos1.isPoI(facing, posInMultiblock()) || fluidOutputPos0.isPoI(facing, posInMultiblock())) {
+                return (T)new BoilerFluidHandler(getAccessibleFluidTanks(facing, posInMultiblock()), this, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);
@@ -471,7 +471,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
 
     @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return inventory; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
@@ -481,7 +481,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (fluidInputPos0 == null) InitializePoIs();
         if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
@@ -496,9 +496,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return false;
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position || fluidInputPos1.position == position;
+        return fluidInputPos0.position.equals(position) || fluidInputPos1.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -508,7 +508,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         return 2;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (fluidOutputPos0 == null) InitializePoIs();
         return iTank == 2 && fluidOutputPos0.isPoI(side, position);
     }
@@ -516,7 +516,7 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstonePos0 == null) InitializePoIs();
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
@@ -527,9 +527,9 @@ public class TileEntityBoilerMaster extends TileEntityBoilerSlave implements ITF
         private final IFluidTank[] accessibleTanks;
         private final TileEntityBoilerMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        public BoilerFluidHandler(IFluidTank[] accessibleTanks, TileEntityBoilerMaster master, EnumFacing side, int position) {
+        public BoilerFluidHandler(IFluidTank[] accessibleTanks, TileEntityBoilerMaster master, EnumFacing side, BlockPos position) {
             this.accessibleTanks = accessibleTanks;
             this.master = master;
             this.side = side;

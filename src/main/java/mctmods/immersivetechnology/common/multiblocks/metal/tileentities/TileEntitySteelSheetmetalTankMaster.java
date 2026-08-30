@@ -83,12 +83,12 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
         }
     }
 
-    private boolean isInputPoI(@Nullable EnumFacing side, int position) {
+    private boolean isInputPoI(@Nullable EnumFacing side, BlockPos position) {
         for (PoICache p : fluidInputs0) { if (p.isPoI(side, position)) { return true; } }
         return false;
     }
 
-    private boolean isOutputPoI(@Nullable EnumFacing side, int position) {
+    private boolean isOutputPoI(@Nullable EnumFacing side, BlockPos position) {
         for (PoICache p : fluidOutputs0) { if (p.isPoI(side, position)) { return true; } }
         return false;
     }
@@ -140,14 +140,14 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) { return new int[0]; }
         if (redstonePos0 == null) { InitializePoIs(); }
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override public boolean isDummy() { return false; }
 
     @Override public TileEntitySteelSheetmetalTankMaster master() { return this; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) { return ITUtils.emptyIFluidTankList; }
         if (fluidInputs0.isEmpty() && fluidOutputs0.isEmpty()) { InitializePoIs(); }
         if (side == null) { return new IFluidTank[]{tank}; }
@@ -155,12 +155,12 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (!formed || fluidInputs0.isEmpty()) { InitializePoIs(); }
         return isInputPoI(side, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (!formed || fluidOutputs0.isEmpty()) { InitializePoIs(); }
         return isOutputPoI(side, position);
     }

@@ -54,15 +54,12 @@ public class TileEntityITMultiblockPartSolarTower extends TileEntityITMultiblock
         boolean mirror = false;
         if (isInvalid(world, pos, side, false)) { mirror = true; if (isInvalid(world, pos, side, true)) return false; }
         BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? -(width - 1 - masterX) : -masterX).offset(EnumFacing.DOWN, masterY);
-        int linkPosition = -1;
+        BlockPos link = null;
         for (PoIJSONSchema poi : pointsOfInterest) {
-            if ("link0".equals(poi.name)) { linkPosition = poi.position; break; }
+            if ("link0".equals(poi.name)) { link = poi.position; break; }
         }
-        if (linkPosition == -1) { return false; }
-        int linkH = linkPosition / (width * length);
-        int linkL = (linkPosition % (width * length)) / width;
-        int linkW = linkPosition % width;
-        BlockPos basePos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - linkW) : linkW, linkH, linkL, side);
+        if (link == null) { return false; }
+        BlockPos basePos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - link.getX()) : link.getX(), link.getY(), link.getZ(), side);
         SolarRegistry.RegisterResult result = SolarRegistry.canRegisterTower(world, basePos);
         if (!result.success) {
             if (result.vertical) { player.sendMessage(new TextComponentTranslation("chat.immersivetech.solar_tower_vertical_fail")); }

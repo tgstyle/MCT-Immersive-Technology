@@ -124,17 +124,17 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
         return 1;
     }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntitySolarTowerMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntitySolarTowerMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntitySolarTowerMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -156,7 +156,7 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
         TileEntitySolarTowerMaster m = master();
         if (m == null) return super.hasCapability(capability, facing);
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+            IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
             return accessible.length > 0;
         }
         return super.hasCapability(capability, facing);
@@ -168,7 +168,7 @@ public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntity
         TileEntitySolarTowerMaster m = master();
         if (m == null) return super.getCapability(capability, facing);
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
+            IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
             if (accessible.length > 0) return (T)new TileEntitySolarTowerMaster.SolarTowerFluidHandler(this, facing);
         }
         return super.getCapability(capability, facing);

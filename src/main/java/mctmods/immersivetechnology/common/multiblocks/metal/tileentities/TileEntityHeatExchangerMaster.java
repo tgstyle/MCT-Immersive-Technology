@@ -392,16 +392,16 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstonePos0 == null) InitializePoIs();
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed) return new int[0];
         if (energyInputPos0 == null) InitializePoIs();
-        return new int[]{energyInputPos0.position};
+        return new int[]{toFlatIndex(energyInputPos0.position)};
     }
 
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed) return false;
         if (energyInputPos0 == null) InitializePoIs();
         if (facing == null) return false;
@@ -414,7 +414,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @Override @Nonnull public IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
@@ -425,7 +425,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (!formed) return false;
         if (fluidInputPos0 == null) InitializePoIs();
         if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
@@ -443,9 +443,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return false;
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position || fluidInputPos1.position == position;
+        return fluidInputPos0.position.equals(position) || fluidInputPos1.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -455,7 +455,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return 2;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (!formed) return false;
         if (fluidOutputPos0 == null) InitializePoIs();
         if (fluidOutputPos0.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
@@ -471,9 +471,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         private final IFluidTank[] tanks;
         private final TileEntityHeatExchangerMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        HeatExchangerFluidHandler(IFluidTank[] accessibleTanks, TileEntityHeatExchangerMaster master, EnumFacing side, int position) {
+        HeatExchangerFluidHandler(IFluidTank[] accessibleTanks, TileEntityHeatExchangerMaster master, EnumFacing side, BlockPos position) {
             this.tanks = accessibleTanks;
             this.master = master;
             this.side = side;

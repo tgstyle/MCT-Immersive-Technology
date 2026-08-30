@@ -335,16 +335,16 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstonePos0 == null) InitializePoIs();
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
-    public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
+    public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed) return false;
         if (mechanicalOutputPos0 == null) InitializePoIs();
         return facing != null && mechanicalOutputPos0.isPoI(facing, position);
     }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
@@ -353,7 +353,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (fluidInputPos0 == null) InitializePoIs();
         if (!fluidInputPos0.isPoI(side, position) || iTank != 0) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
@@ -361,9 +361,9 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return resource.isFluidEqual(tanks[0].getFluid());
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position;
+        return fluidInputPos0.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -372,7 +372,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return 1;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (fluidOutputPos0 == null) InitializePoIs();
         return fluidOutputPos0.isPoI(side, position) && iTank == 1 && tanks[1].getFluidAmount() > 0;
     }

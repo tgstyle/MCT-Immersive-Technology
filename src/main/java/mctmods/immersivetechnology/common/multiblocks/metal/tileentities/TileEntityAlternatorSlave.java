@@ -87,18 +87,18 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) { return false; }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) { return false; }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return new IFluidTank[0]; }
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) { return new IFluidTank[0]; }
 
     @Override @Nonnull protected IMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
-            if (m != null && formed) return m.isEnergyPosition(facing, pos);
+            if (m != null && formed) return m.isEnergyPosition(facing, posInMultiblock());
         }
         return super.hasCapability(capability, facing);
     }
@@ -107,7 +107,7 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) {
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) {
                 return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
             }
         }
@@ -117,12 +117,12 @@ public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntity
     @Override @Nonnull public FluxStorage getFluxStorage() { return master() == null ? new FluxStorage(0) : Objects.requireNonNull(master()).energyStorage; }
 
     @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
-        return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, pos) ? SideConfig.OUTPUT : SideConfig.NONE;
+        return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? SideConfig.OUTPUT : SideConfig.NONE;
     }
 
     @Override public boolean isValid() { return formed; }
 
-    @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return master() != null && Objects.requireNonNull(master()).isMechanicalEnergyReceiver(facing, pos); }
+    @Override public boolean isMechanicalEnergyReceiver(EnumFacing facing) { return master() != null && Objects.requireNonNull(master()).isMechanicalEnergyReceiver(facing, posInMultiblock()); }
 
     @Override public int getSpeed() { return master() == null ? 0 : Objects.requireNonNull(master()).speed; }
 

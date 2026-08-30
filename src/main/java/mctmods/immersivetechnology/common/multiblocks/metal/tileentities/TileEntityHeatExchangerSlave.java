@@ -93,17 +93,17 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntityHeatExchangerMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntityHeatExchangerMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntityHeatExchangerMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -112,12 +112,12 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
             if (m == null || !formed) return false;
-            return m.isEnergyPosition(facing, pos);
+            return m.isEnergyPosition(facing, posInMultiblock());
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
             if (m == null || !formed) return false;
-            return m.getAccessibleFluidTanks(facing, pos).length > 0;
+            return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0;
         }
         return super.hasCapability(capability, facing);
     }
@@ -126,13 +126,13 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
             if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
-                if (accessible.length > 0) return (T)new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, pos);
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
+                if (accessible.length > 0) return (T)new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);
@@ -143,7 +143,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityITMultiblock<TileEnt
         return m == null ? new FluxStorage(0) : m.energyStorage;
     }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? SideConfig.INPUT : SideConfig.NONE; }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityHeatExchangerMaster m = master();

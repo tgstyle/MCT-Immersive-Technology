@@ -99,11 +99,11 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) { return new IFluidTank[0]; }
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) { return new IFluidTank[0]; }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) { return false; }
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) { return false; }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) { return false; }
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) { return false; }
 
     @Override public boolean canOpenGui() { return formed; }
 
@@ -124,7 +124,7 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
             TileEntityBoilerMaster m = master();
             if (m != null && formed) {
                 if (m.fluidInputPos0 == null) m.InitializePoIs();
-                return m.fluidInputPos0.isPoI(facing, pos) || m.fluidInputPos1.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos);
+                return m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidInputPos1.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock());
             }
         }
         return super.hasCapability(capability, facing);
@@ -136,8 +136,8 @@ public class TileEntityBoilerSlave extends TileEntityITMultiblock<TileEntityBoil
             TileEntityBoilerMaster m = master();
             if (m != null && formed) {
                 if (m.fluidInputPos0 == null) m.InitializePoIs();
-                if (m.fluidInputPos0.isPoI(facing, pos) || m.fluidInputPos1.isPoI(facing, pos) || m.fluidOutputPos0.isPoI(facing, pos)) {
-                    return (T)new TileEntityBoilerMaster.BoilerFluidHandler(m.getAccessibleFluidTanks(facing, pos), m, facing, pos);
+                if (m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidInputPos1.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock())) {
+                    return (T)new TileEntityBoilerMaster.BoilerFluidHandler(m.getAccessibleFluidTanks(facing, posInMultiblock()), m, facing, posInMultiblock());
                 }
             }
         }

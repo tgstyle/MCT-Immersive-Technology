@@ -104,17 +104,17 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
         return m == null ? 1 : m.getProcessQueueMaxLength();
     }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -123,12 +123,12 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
             if (m == null || !formed) return false;
-            return m.isEnergyPosition(facing, pos);
+            return m.isEnergyPosition(facing, posInMultiblock());
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
             if (m == null || !formed) return false;
-            return m.getAccessibleFluidTanks(facing, pos).length > 0;
+            return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0;
         }
         return super.hasCapability(capability, facing);
     }
@@ -137,13 +137,13 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T) new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new EnergyHelper.IEForgeEnergyWrapper(this, facing);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
             if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, pos);
-                if (accessible.length > 0) return (T) new TileEntityElectrolyticCrucibleBatteryMaster.ElectrolyticCrucibleBatteryFluidHandler(accessible, m, facing, pos);
+                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
+                if (accessible.length > 0) return (T) new TileEntityElectrolyticCrucibleBatteryMaster.ElectrolyticCrucibleBatteryFluidHandler(accessible, m, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);
@@ -154,11 +154,11 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityITMult
         return m == null ? new FluxStorage(0) : m.getFluxStorage();
     }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE; }
+    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? SideConfig.INPUT : SideConfig.NONE; }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();
-        if (!formed || m == null || from == null || !m.isEnergyPosition(from, pos)) return 0;
+        if (!formed || m == null || from == null || !m.isEnergyPosition(from, posInMultiblock())) return 0;
         int received = m.energyStorage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();

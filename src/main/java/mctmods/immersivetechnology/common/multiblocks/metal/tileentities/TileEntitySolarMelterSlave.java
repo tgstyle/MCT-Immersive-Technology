@@ -126,17 +126,17 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         return 1;
     }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntitySolarMelterMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntitySolarMelterMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntitySolarMelterMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -158,11 +158,11 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         TileEntitySolarMelterMaster m = master();
         if (m == null) return super.hasCapability(capability, facing);
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, pos);
+            IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, posInMultiblock());
             return handlers.length > 0;
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, pos);
+            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, posInMultiblock());
             return tanks.length > 0;
         }
         return super.hasCapability(capability, facing);
@@ -174,11 +174,11 @@ public class TileEntitySolarMelterSlave extends TileEntityITMultiblock<TileEntit
         TileEntitySolarMelterMaster m = master();
         if (m == null) return super.getCapability(capability, facing);
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, pos);
+            IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, posInMultiblock());
             if (handlers.length > 0) return (T)handlers[0];
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, pos);
+            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, posInMultiblock());
             if (tanks.length > 0) return (T)new TileEntitySolarMelterMaster.SolarMelterFluidHandler(this, facing);
         }
         return super.getCapability(capability, facing);

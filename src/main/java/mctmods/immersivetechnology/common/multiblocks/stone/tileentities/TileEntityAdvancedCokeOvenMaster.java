@@ -392,14 +392,14 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public TileEntityAdvancedCokeOvenMaster master() { return this; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidOutputPos0 == null) InitializePoIs();
         if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tank};
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (!formed || fluidOutputPos0 == null) InitializePoIs();
         return fluidOutputPos0.isPoI(side, position) && iTank == 0;
     }
@@ -408,10 +408,10 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (!formed) return false;
         if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            return itemInputPos0.isPoI(facing, this.pos) || itemOutputPos0.isPoI(facing, this.pos);
+            return itemInputPos0.isPoI(facing, posInMultiblock()) || itemOutputPos0.isPoI(facing, posInMultiblock());
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            return fluidOutputPos0.isPoI(facing, this.pos);
+            return fluidOutputPos0.isPoI(facing, posInMultiblock());
         }
         return super.hasCapability(capability, facing);
     }
@@ -421,10 +421,10 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (!formed) return super.getCapability(capability, facing);
         if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            if (itemInputPos0.isPoI(facing, this.pos)) return (T)inputHandler;
-            if (itemOutputPos0.isPoI(facing, this.pos)) return (T)outputHandler;
+            if (itemInputPos0.isPoI(facing, posInMultiblock())) return (T)inputHandler;
+            if (itemOutputPos0.isPoI(facing, posInMultiblock())) return (T)outputHandler;
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && fluidOutputPos0.isPoI(facing, this.pos)) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && fluidOutputPos0.isPoI(facing, posInMultiblock())) {
             return (T)new AdvancedCokeOvenFluidHandler(this);
         }
         return super.getCapability(capability, facing);

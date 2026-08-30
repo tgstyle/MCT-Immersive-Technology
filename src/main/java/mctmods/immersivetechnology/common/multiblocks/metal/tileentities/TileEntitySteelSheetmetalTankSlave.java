@@ -120,17 +120,17 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityITMultiblock<T
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(@Nonnull EnumFacing side, int position) {
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(@Nonnull EnumFacing side, BlockPos position) {
         TileEntitySteelSheetmetalTankMaster m = master();
         return m != null ? m.getAccessibleFluidTanks(side, position) : ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntitySteelSheetmetalTankMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntitySteelSheetmetalTankMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }

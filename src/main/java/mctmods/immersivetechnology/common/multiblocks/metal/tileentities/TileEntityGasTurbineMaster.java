@@ -457,29 +457,29 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstonePos0 == null) InitializePoIs();
-        return new int[] {redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed) return new int[0];
         if (energyInputPos0 == null) InitializePoIs();
-        return new int[] {energyInputPos0.position, energyInputPos1.position};
+        return new int[]{toFlatIndex(energyInputPos0.position), toFlatIndex(energyInputPos1.position)};
     }
 
-    public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, int position) {
+    public boolean isMechanicalEnergyTransmitter(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed) return false;
         if (mechanicalOutputPos0 == null) InitializePoIs();
         return facing != null && mechanicalOutputPos0.isPoI(facing, position);
     }
 
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed) return false;
         if (facing == null) return false;
         if (energyInputPos0 == null) InitializePoIs();
         return energyInputPos0.isPoI(facing, position) || energyInputPos1.isPoI(facing, position);
     }
 
-    public IEnergyStorage getEnergyAtPosition(@Nullable EnumFacing facing, int position) {
+    public IEnergyStorage getEnergyAtPosition(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed || facing == null) return null;
         if (energyInputPos0 == null) InitializePoIs();
         if (energyInputPos0.isPoI(facing, position)) return starterStorage;
@@ -487,12 +487,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return null;
     }
 
-    public FluxStorage getFluxStorageAtPosition(int position) {
+    public FluxStorage getFluxStorageAtPosition(BlockPos position) {
         if (energyInputPos0 == null) InitializePoIs();
-        return energyInputPos1.position == position ? sparkplugStorage : starterStorage;
+        return energyInputPos1.position.equals(position) ? sparkplugStorage : starterStorage;
     }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
@@ -501,7 +501,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (!formed || fluidInputPos0 == null) InitializePoIs();
         if (!fluidInputPos0.isPoI(side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
@@ -509,9 +509,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return resource.getFluid() == tanks[0].getFluid().getFluid();
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position;
+        return fluidInputPos0.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -520,7 +520,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return 1;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (!formed || fluidOutputPos0 == null) InitializePoIs();
         return fluidOutputPos0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
     }
@@ -528,7 +528,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInputPos0 == null) InitializePoIs();
-            return fluidInputPos0.isPoI(facing, pos) || fluidOutputPos0.isPoI(facing, pos);
+            return fluidInputPos0.isPoI(facing, posInMultiblock()) || fluidOutputPos0.isPoI(facing, posInMultiblock());
         }
         return super.hasCapability(capability, facing);
     }
@@ -537,8 +537,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInputPos0 == null) InitializePoIs();
-            if (fluidInputPos0.isPoI(facing, pos) || fluidOutputPos0.isPoI(facing, pos)) {
-                return (T)new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, pos), this, facing, pos);
+            if (fluidInputPos0.isPoI(facing, posInMultiblock()) || fluidOutputPos0.isPoI(facing, posInMultiblock())) {
+                return (T)new GasTurbineFluidHandler(getAccessibleFluidTanks(facing, posInMultiblock()), this, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);
@@ -552,9 +552,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         private final IFluidTank[] accessibleTanks;
         private final TileEntityGasTurbineMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        public GasTurbineFluidHandler(IFluidTank[] accessibleTanks, TileEntityGasTurbineMaster master, EnumFacing side, int position) {
+        public GasTurbineFluidHandler(IFluidTank[] accessibleTanks, TileEntityGasTurbineMaster master, EnumFacing side, BlockPos position) {
             this.accessibleTanks = accessibleTanks;
             this.master = master;
             this.side = side;

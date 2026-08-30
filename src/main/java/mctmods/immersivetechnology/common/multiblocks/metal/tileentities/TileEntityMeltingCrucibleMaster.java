@@ -375,26 +375,26 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override public TileEntityMeltingCrucibleMaster master() { return this; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidOutputPos0 == null) InitializePoIs();
         if (fluidOutputPos0.isPoI(side, position)) return tanks;
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (fluidOutputPos0 == null) InitializePoIs();
         return iTank == 0 && fluidOutputPos0.isPoI(side, position);
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed || redstonePos0 == null) return new int[0];
-        return new int[]{redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed || energyInputPos0 == null) return new int[0];
-        return new int[]{energyInputPos0.position};
+        return new int[]{toFlatIndex(energyInputPos0.position)};
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{0}; }

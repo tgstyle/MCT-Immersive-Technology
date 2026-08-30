@@ -560,23 +560,23 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return this;
     }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidOutputPos0 == null) InitializePoIs();
         if (side != null && fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         return false;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (fluidOutputPos0 == null) InitializePoIs();
         return iTank == 0 && fluidOutputPos0.isPoI(side, position) && tanks[0].getFluidAmount() > 0;
     }
 
-    @Nonnull protected IItemHandler[] getAccessibleItemHandlers(@Nullable EnumFacing side, int position) {
+    @Nonnull protected IItemHandler[] getAccessibleItemHandlers(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return new IItemHandler[0];
         if (side != null && itemInputPos0 != null && itemInputPos0.isPoI(side, position)) return new IItemHandler[] {insertionHandler};
         return new IItemHandler[0];
@@ -584,7 +584,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (redstonePos0 == null) InitializePoIs();
-        return new int[] {redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getOutputTanks() {
@@ -628,14 +628,14 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         private final TileEntitySolarMelterSlave te;
         private final EnumFacing facing;
         private final IFluidTank[] tanks;
-        private final int position;
+        private final BlockPos position;
 
         public SolarMelterFluidHandler(TileEntitySolarMelterSlave te, EnumFacing facing) {
             this.te = te;
             this.facing = facing;
             TileEntitySolarMelterMaster master = te.master();
-            this.tanks = master != null ? master.getAccessibleFluidTanks(facing, te.pos) : new IFluidTank[0];
-            this.position = te.pos;
+            this.tanks = master != null ? master.getAccessibleFluidTanks(facing, te.posInMultiblock()) : new IFluidTank[0];
+            this.position = te.posInMultiblock();
         }
 
         @Override public IFluidTankProperties[] getTankProperties() {

@@ -388,7 +388,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override public TileEntityDistillerMaster master() { return this; }
 
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, int position) {
+    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
         if (!formed) return false;
         if (energyInputPos0 == null) InitializePoIs();
         return facing != null && energyInputPos0.isPoI(facing, position);
@@ -397,13 +397,13 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @Override @Nonnull public int[] getEnergyPos() {
         if (!formed) return new int[0];
         if (energyInputPos0 == null) InitializePoIs();
-        return new int[] {energyInputPos0.position};
+        return new int[]{toFlatIndex(energyInputPos0.position)};
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
         if (!formed) return new int[0];
         if (redstonePos0 == null) InitializePoIs();
-        return new int[] {redstonePos0.position};
+        return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getOutputSlots() { return new int[]{4}; }
@@ -416,14 +416,14 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
-    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         if (fluidInputPos0 == null) InitializePoIs();
         if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
         if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
         return ITUtils.emptyIFluidTankList;
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (iTank != 0) return false;
         if (fluidInputPos0 == null) InitializePoIs();
         if (!fluidInputPos0.isPoI(side, position)) return false;
@@ -433,9 +433,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         return true;
     }
 
-    @Override protected boolean isInputFluidPoI(int position) {
+    @Override protected boolean isInputFluidPoI(BlockPos position) {
         if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position == position;
+        return fluidInputPos0.position.equals(position);
     }
 
     @Override protected int clearInputTanks() {
@@ -444,7 +444,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         return 1;
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (iTank != 1) return false;
         if (fluidOutputPos0 == null) InitializePoIs();
         if (!fluidOutputPos0.isPoI(side, position)) return false;
@@ -480,9 +480,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         private final IFluidTank[] accessibleTanks;
         private final TileEntityDistillerMaster master;
         private final EnumFacing side;
-        private final int position;
+        private final BlockPos position;
 
-        public DistillerFluidHandler(IFluidTank[] accessibleTanks, TileEntityDistillerMaster master, EnumFacing side, int position) {
+        public DistillerFluidHandler(IFluidTank[] accessibleTanks, TileEntityDistillerMaster master, EnumFacing side, BlockPos position) {
             this.accessibleTanks = accessibleTanks;
             this.master = master;
             this.side = side;

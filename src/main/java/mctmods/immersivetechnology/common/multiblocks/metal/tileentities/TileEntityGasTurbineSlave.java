@@ -91,17 +91,17 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
-    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, int position) {
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntityGasTurbineMaster m = master();
         return m == null ? ITUtils.emptyIFluidTankList : m.getAccessibleFluidTanks(side, position);
     }
 
-    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, int position) {
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         TileEntityGasTurbineMaster m = master();
         return m != null && m.canFillTankFrom(iTank, side, resource, position);
     }
 
-    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, int position) {
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         TileEntityGasTurbineMaster m = master();
         return m != null && m.canDrainTankFrom(iTank, side, position);
     }
@@ -109,11 +109,11 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) return true;
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0) return true;
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) return true;
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return true;
         }
         return super.hasCapability(capability, facing);
     }
@@ -122,31 +122,31 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.getAccessibleFluidTanks(facing, pos).length > 0) {
-                return (T)new TileEntityGasTurbineMaster.GasTurbineFluidHandler(m.getAccessibleFluidTanks(facing, pos), m, facing, pos);
+            if (m != null && formed && m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0) {
+                return (T)new TileEntityGasTurbineMaster.GasTurbineFluidHandler(m.getAccessibleFluidTanks(facing, posInMultiblock()), m, facing, posInMultiblock());
             }
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, pos)) return (T)m.getEnergyAtPosition(facing, pos);
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T)m.getEnergyAtPosition(facing, posInMultiblock());
         }
         return super.getCapability(capability, facing);
     }
 
     @Override @Nonnull public FluxStorage getFluxStorage() {
         TileEntityGasTurbineMaster m = master();
-        return m == null ? new FluxStorage(0) : m.getFluxStorageAtPosition(pos);
+        return m == null ? new FluxStorage(0) : m.getFluxStorageAtPosition(posInMultiblock());
     }
 
     @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
         TileEntityGasTurbineMaster m = master();
-        return formed && m != null && m.isEnergyPosition(facing, pos) ? SideConfig.INPUT : SideConfig.NONE;
+        return formed && m != null && m.isEnergyPosition(facing, posInMultiblock()) ? SideConfig.INPUT : SideConfig.NONE;
     }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityGasTurbineMaster m = master();
         if (!formed || m == null) return 0;
-        IEnergyStorage storage = m.getEnergyAtPosition(from, pos);
+        IEnergyStorage storage = m.getEnergyAtPosition(from, posInMultiblock());
         if (storage == null) return 0;
         int received = storage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
@@ -160,7 +160,7 @@ public class TileEntityGasTurbineSlave extends TileEntityITMultiblock<TileEntity
 
     @Override public boolean isMechanicalEnergyTransmitter(EnumFacing facing) {
         TileEntityGasTurbineMaster m = master();
-        return m != null && m.isMechanicalEnergyTransmitter(facing, pos);
+        return m != null && m.isMechanicalEnergyTransmitter(facing, posInMultiblock());
     }
 
     @Override public int getSpeed() {
