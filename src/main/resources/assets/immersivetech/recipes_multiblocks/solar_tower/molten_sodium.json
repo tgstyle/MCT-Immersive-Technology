@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:solar_tower",
+  "input": {
+    "amount": 80,
+    "fluid": "moltensodium"
+  },
+  "output": {
+    "amount": 80,
+    "fluid": "superheatedmoltensodium"
+  },
+  "time": 20
+}

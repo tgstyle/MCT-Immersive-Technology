@@ -41,7 +41,6 @@ public class Config {
             public static MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
             public static MeltingCrucible meltingCrucible = new MeltingCrucible();
             public static Radiator radiator = new Radiator();
-            public static Recipes recipes = new Recipes();
             public static SolarMelter solarMelter = new SolarMelter();
             public static SolarReflector solarReflector = new SolarReflector();
             public static SolarTower solarTower = new SolarTower();
@@ -101,12 +100,6 @@ public class Config {
             public static class Distiller {
                 @Comment({"The capacity of the input tank for the Distiller [Default=24000]"})
                 public int distiller_input_tankSize = 24000;
-                @Comment({"The item chance for Salt the Distiller should output [Default=0.009999999776482582]"})
-                public float distiller_output_itemChance = 0.009999999776482582F;
-                @Comment({"The item for Salt the Distiller should output [Default=immersivetech:material]"})
-                public String distiller_output_item = "immersivetech:material";
-                @Comment({"The item meta for Salt the Distiller should output [Default=0]"})
-                public int distiller_output_itemMeta = 0;
                 @Comment({"The capacity of the output tank for the Distiller [Default=24000]"})
                 public int distiller_output_tankSize = 24000;
                 @Comment({"The maximum energy a Distiller can store [Default=16000]"})
@@ -237,30 +230,6 @@ public class Config {
                 public double radiator_biome_temp_factor = 0.5;
                 @Comment({"How much the local biome's humidity affects Radiator efficiency. 0 disables the effect entirely. Drier biomes give a bonus, wetter biomes a penalty [Default=3.0]"})
                 public double radiator_biome_humidity_factor = 3.0;
-            }
-            public static class Recipes {
-                @Comment({"Should default Boiler recipes be registered ? [Default=true]"})
-                public boolean register_boiler_recipes = true;
-                @Comment({"Should default Cooling Tower recipes be registered ? [Default=true]"})
-                public boolean register_cooling_tower_recipes = true;
-                @Comment({"Should default Distiller recipes be registered ? [Default=true]"})
-                public boolean register_distiller_recipes = true;
-                @Comment({"Should default Electrolytic Crucible Battery recipes be registered ? [Default=false]"})
-                public boolean register_electrolyticCrucibleBattery_recipes = true;
-                @Comment({"Should default Gas Turbine recipes be registered ? [Default=true]"})
-                public boolean register_gas_turbine_recipes = true;
-                @Comment({"Should default Heat Exchanger recipes be registered ? [Default=true]"})
-                public boolean register_heat_exchanger_recipes = true;
-                @Comment({"Should default High Pressure Steam Turbine recipes be registered ? [Default=false]"})
-                public boolean register_highPressureSteamTurbine_recipes = false;
-                @Comment({"Should default Melting Crucible recipes be registered ? [Default=false]"})
-                public boolean register_meltingCrucible_recipes = true;
-                @Comment({"Should default Radiator recipes be registered ? [Default=true]"})
-                public boolean register_radiator_recipes = true;
-                @Comment({"Should default Solar Tower recipes be registered ? [Default=true]"})
-                public boolean register_solarTower_recipes = true;
-                @Comment({"Should default Steam Turbine recipes be registered ? [Default=true]"})
-                public boolean register_steamTurbine_recipes = true;
             }
             public static class SolarMelter {
                 @Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})

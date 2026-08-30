@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -224,19 +225,19 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityElectrolyticCrucibleBatteryMaster master;
-            int pos;
+            BlockPos posInMB;
             if (te instanceof TileEntityElectrolyticCrucibleBatteryMaster) {
                 master = (TileEntityElectrolyticCrucibleBatteryMaster)te;
-                pos = ((TileEntityMultiblockPart<?>)te).pos;
+                posInMB = master.posInMultiblock();
             } else if (te instanceof TileEntityElectrolyticCrucibleBatterySlave) {
                 TileEntityElectrolyticCrucibleBatterySlave slave = (TileEntityElectrolyticCrucibleBatterySlave)te;
                 master = slave.master();
                 if (master == null) return;
-                pos = slave.pos;
+                posInMB = slave.posInMultiblock();
             } else return;
             EnumFacing facing = data.getSideHit();
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, pos);
+            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, posInMB);
             if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
             for (TileEntityMultiblockMetal.MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process : master.processQueue) {
                 if (process.maxTicks <= 0) continue;
@@ -272,18 +273,18 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityHeatExchangerMaster master;
-            int pos;
+            BlockPos posInMB;
             if (te instanceof TileEntityHeatExchangerMaster) {
                 master = (TileEntityHeatExchangerMaster)te;
-                pos = ((TileEntityMultiblockPart<?>)te).pos;
+                posInMB = master.posInMultiblock();
             } else if (te instanceof TileEntityHeatExchangerSlave) {
                 master = ((TileEntityHeatExchangerSlave)te).master();
                 if (master == null) return;
-                pos = ((TileEntityHeatExchangerSlave)te).pos;
+                posInMB = ((TileEntityHeatExchangerSlave)te).posInMultiblock();
             } else return;
             EnumFacing facing = data.getSideHit();
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, pos);
+            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, posInMB);
             if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
             int currentProg = (master.processTimeRemaining > 0 && master.processTimeMax > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
             addProcessPercent(probeInfo, currentProg);

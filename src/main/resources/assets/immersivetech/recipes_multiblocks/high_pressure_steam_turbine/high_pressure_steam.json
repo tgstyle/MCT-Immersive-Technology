@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:high_pressure_steam_turbine",
+  "input": {
+    "amount": 100,
+    "fluid": "highpressuresteam"
+  },
+  "output": {
+    "amount": 100,
+    "fluid": "steam"
+  },
+  "time": 1
+}

@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:gas_turbine",
+  "input": {
+    "amount": 160,
+    "fluid": "biodiesel"
+  },
+  "output": {
+    "amount": 1000,
+    "fluid": "fluegas"
+  },
+  "time": 10
+}

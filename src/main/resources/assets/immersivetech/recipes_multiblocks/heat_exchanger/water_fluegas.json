@@ -1,0 +1,17 @@
+{
+  "type": "immersivetech:heat_exchanger",
+  "energy": 640,
+  "input0": {
+    "amount": 250,
+    "fluid": "water"
+  },
+  "input1": {
+    "amount": 1000,
+    "fluid": "fluegas"
+  },
+  "output0": {
+    "amount": 450,
+    "fluid": "steam"
+  },
+  "time": 10
+}

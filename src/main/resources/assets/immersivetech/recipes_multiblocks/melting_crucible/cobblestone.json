@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:melting_crucible",
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "cobblestone"
+  },
+  "result": {
+    "amount": 1000,
+    "fluid": "lava"
+  },
+  "time": 80
+}

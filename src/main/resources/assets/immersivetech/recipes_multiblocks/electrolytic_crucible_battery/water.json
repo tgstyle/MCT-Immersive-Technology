@@ -1,0 +1,92 @@
+{
+  "type": "immersivetech:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "immersivetech:fluid_exists",
+          "fluid": "hydrogen"
+        },
+        {
+          "type": "immersivetech:fluid_exists",
+          "fluid": "oxygen"
+        }
+      ],
+      "recipe": {
+        "type": "immersivetech:electrolytic_crucible_battery",
+        "energy": 512000,
+        "input": {
+          "amount": 500,
+          "fluid": "water"
+        },
+        "result0": {
+          "amount": 1000,
+          "fluid": "hydrogen"
+        },
+        "result1": {
+          "amount": 500,
+          "fluid": "oxygen"
+        },
+        "time": 250
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "immersivetech:fluid_exists",
+          "fluid": "liquidhydrogen"
+        },
+        {
+          "type": "immersivetech:fluid_exists",
+          "fluid": "liquidoxygen"
+        }
+      ],
+      "recipe": {
+        "type": "immersivetech:electrolytic_crucible_battery",
+        "energy": 512000,
+        "input": {
+          "amount": 1000,
+          "fluid": "water"
+        },
+        "result0": {
+          "amount": 1000,
+          "fluid": "liquidhydrogen"
+        },
+        "result1": {
+          "amount": 500,
+          "fluid": "liquidoxygen"
+        },
+        "time": 250
+      }
+    },
+    {
+      "conditions": [
+        {
+          "type": "immersivetech:fluid_exists",
+          "fluid": "fluidhydrogen"
+        },
+        {
+          "type": "immersivetech:fluid_exists",
+          "fluid": "fluidoxygen"
+        }
+      ],
+      "recipe": {
+        "type": "immersivetech:electrolytic_crucible_battery",
+        "energy": 512000,
+        "input": {
+          "amount": 500,
+          "fluid": "water"
+        },
+        "result0": {
+          "amount": 1000,
+          "fluid": "fluidhydrogen"
+        },
+        "result1": {
+          "amount": 500,
+          "fluid": "fluidoxygen"
+        },
+        "time": 250
+      }
+    }
+  ]
+}

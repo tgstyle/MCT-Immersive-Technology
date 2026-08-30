@@ -1,0 +1,15 @@
+{
+  "conditions": [
+    {
+      "type": "immersivetech:fluid_exists",
+      "fluid": "diesel"
+    }
+  ],
+  "type": "immersivetech:boiler_fuel",
+  "heat": 10,
+  "input": {
+    "amount": 7,
+    "fluid": "diesel"
+  },
+  "time": 1
+}
