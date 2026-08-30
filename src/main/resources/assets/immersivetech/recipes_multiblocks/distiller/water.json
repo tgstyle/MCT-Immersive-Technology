@@ -1,0 +1,18 @@
+{
+  "type": "immersivetech:distiller",
+  "energy": 10000,
+  "input": {
+    "amount": 1000,
+    "fluid": "water"
+  },
+  "item_output": {
+    "chance": 0.01,
+    "data": 0,
+    "item": "immersivetech:material"
+  },
+  "result": {
+    "amount": 500,
+    "fluid": "distwater"
+  },
+  "time": 20
+}

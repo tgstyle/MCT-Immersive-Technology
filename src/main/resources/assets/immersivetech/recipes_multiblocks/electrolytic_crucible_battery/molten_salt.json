@@ -1,0 +1,17 @@
+{
+  "type": "immersivetech:electrolytic_crucible_battery",
+  "energy": 512000,
+  "input": {
+    "amount": 1000,
+    "fluid": "moltensalt"
+  },
+  "result0": {
+    "amount": 1000,
+    "fluid": "chlorine"
+  },
+  "result1": {
+    "amount": 1000,
+    "fluid": "moltensodium"
+  },
+  "time": 250
+}

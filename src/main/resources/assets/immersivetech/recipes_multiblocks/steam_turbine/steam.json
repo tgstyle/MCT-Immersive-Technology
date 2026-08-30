@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:steam_turbine",
+  "input": {
+    "amount": 100,
+    "fluid": "steam"
+  },
+  "output": {
+    "amount": 100,
+    "fluid": "exhauststeam"
+  },
+  "time": 1
+}

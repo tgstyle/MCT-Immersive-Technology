@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:solar_tower",
+  "input": {
+    "amount": 250,
+    "fluid": "water"
+  },
+  "output": {
+    "amount": 450,
+    "fluid": "steam"
+  },
+  "time": 20
+}

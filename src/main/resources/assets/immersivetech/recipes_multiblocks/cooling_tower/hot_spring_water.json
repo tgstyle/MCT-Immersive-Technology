@@ -1,0 +1,30 @@
+{
+  "conditions": [
+    {
+      "type": "immersivetech:fluid_exists",
+      "fluid": "hot_spring_water"
+    }
+  ],
+  "type": "immersivetech:cooling_tower",
+  "input0": {
+    "amount": 8100,
+    "fluid": "hot_spring_water"
+  },
+  "input1": {
+    "amount": 900,
+    "fluid": "water"
+  },
+  "output0": {
+    "amount": 2925,
+    "fluid": "water"
+  },
+  "output1": {
+    "amount": 2925,
+    "fluid": "water"
+  },
+  "output2": {
+    "amount": 2925,
+    "fluid": "water"
+  },
+  "time": 3
+}

@@ -1,0 +1,18 @@
+{
+  "conditions": [
+    {
+      "type": "immersivetech:fluid_exists",
+      "fluid": "diesel"
+    }
+  ],
+  "type": "immersivetech:gas_turbine",
+  "input": {
+    "amount": 114,
+    "fluid": "diesel"
+  },
+  "output": {
+    "amount": 1000,
+    "fluid": "fluegas"
+  },
+  "time": 10
+}

@@ -1,0 +1,21 @@
+{
+  "type": "immersivetech:heat_exchanger",
+  "energy": 160,
+  "input0": {
+    "amount": 500,
+    "fluid": "exhauststeam"
+  },
+  "input1": {
+    "amount": 4500,
+    "fluid": "water"
+  },
+  "output0": {
+    "amount": 250,
+    "fluid": "distwater"
+  },
+  "output1": {
+    "amount": 4500,
+    "fluid": "hotwater"
+  },
+  "time": 5
+}

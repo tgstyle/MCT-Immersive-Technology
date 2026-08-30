@@ -1,0 +1,21 @@
+{
+  "type": "immersivetech:heat_exchanger",
+  "energy": 640,
+  "input0": {
+    "amount": 250,
+    "fluid": "distwater"
+  },
+  "input1": {
+    "amount": 80,
+    "fluid": "moltensodium"
+  },
+  "output0": {
+    "amount": 500,
+    "fluid": "steam"
+  },
+  "output1": {
+    "amount": 80,
+    "fluid": "superheatedmoltensodium"
+  },
+  "time": 10
+}

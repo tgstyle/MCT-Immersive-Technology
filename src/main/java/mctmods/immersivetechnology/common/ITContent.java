@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.common.Config;
 import com.immersiveconvergence.api.multiblock.BlockMatcher;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.crafting.*;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
@@ -35,32 +34,28 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
 import mctmods.immersivetechnology.common.util.ITLogger;
+import mctmods.immersivetechnology.common.util.ITRecipeLoader;
 import mctmods.immersivetechnology.core.MCTMixinConfig;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.OreIngredient;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @EventBusSubscriber(modid = ImmersiveTechnology.MODID)
@@ -331,69 +326,7 @@ public class ITContent {
         }
     }
 
-    @SubscribeEvent public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        if (ITConfig.Multiblocks.enable.enable_boiler && ITConfig.Multiblocks.recipes.register_boiler_recipes) {
-            BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), new FluidStack(FluidRegistry.WATER, 250), 10);
-            BoilerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 10);
-            BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("biodiesel"), 10), 1, 10);
-            if (FluidRegistry.getFluid("gasoline") != null) { BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("gasoline"), 50), 1, 10); }
-            if (FluidRegistry.getFluid("diesel") != null) { BoilerRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("diesel"), 7), 1, 10); }
-        }
-        if (ITConfig.Multiblocks.enable.enable_distiller && ITConfig.Multiblocks.recipes.register_distiller_recipes) {
-            ResourceLocation distillerItemName = new ResourceLocation(ITConfig.Multiblocks.distiller.distiller_output_item);
-            int distillerItemMeta = ITConfig.Multiblocks.distiller.distiller_output_itemMeta;
-            float distillerChance = ITConfig.Multiblocks.distiller.distiller_output_itemChance;
-            if (!ForgeRegistries.ITEMS.containsKey(distillerItemName)) {
-                ITLogger.error("Item for Salt is invalid, setting default - ", distillerItemName);
-                distillerItemName = itemMaterial.getRegistryName();
-                distillerItemMeta = 0;
-            }
-            ItemStack distillerItem = new ItemStack(Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(distillerItemName)), 1, distillerItemMeta);
-            DistillerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 500), new FluidStack(FluidRegistry.WATER, 1000), distillerItem, 10000, 20, distillerChance);
-        }
-        if (ITConfig.Multiblocks.enable.enable_solarTower && ITConfig.Multiblocks.recipes.register_solarTower_recipes) {
-            SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), new FluidStack(FluidRegistry.WATER, 250), 20);
-            SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.getFluid("distwater"), 250), 20);
-            SolarTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("superheatedmoltensodium"), 80), new FluidStack(FluidRegistry.getFluid("moltensodium"), 80), 20);
-        }
-        if (ITConfig.Multiblocks.enable.enable_steamTurbine && ITConfig.Multiblocks.recipes.register_steamTurbine_recipes) {
-            SteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("exhauststeam"), 100), new FluidStack(FluidRegistry.getFluid("steam"), 100), 1);
-        }
-        if (ITConfig.Multiblocks.enable.enable_gasTurbine && ITConfig.Multiblocks.recipes.register_gas_turbine_recipes) {
-            GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("biodiesel"), 160), 10);
-            if (FluidRegistry.getFluid("gasoline") != null) { GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("gasoline"), 800), 10); }
-            if (FluidRegistry.getFluid("diesel") != null) { GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("diesel"), 114), 10); }
-            if (FluidRegistry.getFluid("kerosene") != null) { GasTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), new FluidStack(FluidRegistry.getFluid("kerosene"), 150), 10); }
-        }
-        if (ITConfig.Multiblocks.enable.enable_coolingTower && ITConfig.Multiblocks.recipes.register_cooling_tower_recipes) {
-            CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("hotwater"), 8100), new FluidStack(FluidRegistry.getFluid("water"), 900), 3);
-            if (FluidRegistry.getFluid("hot_spring_water") != null) { CoolingTowerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("water"), 2925), new FluidStack(FluidRegistry.getFluid("hot_spring_water"), 8100), new FluidStack(FluidRegistry.getFluid("water"), 900), 3); }
-        }
-        if (ITConfig.Multiblocks.enable.enable_heatExchanger && ITConfig.Multiblocks.recipes.register_heat_exchanger_recipes) {
-            HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), null, new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 640, 10);
-            HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), null, new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("fluegas"), 1000), 640, 10);
-            HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 450), new FluidStack(FluidRegistry.getFluid("moltensodium"), 80), new FluidStack(FluidRegistry.WATER, 250), new FluidStack(FluidRegistry.getFluid("superheatedmoltensodium"), 80), 640, 10);
-            HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("steam"), 500), new FluidStack(FluidRegistry.getFluid("moltensodium"), 80), new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("superheatedmoltensodium"), 80), 640, 10);
-            HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("hotwater"), 4500), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), new FluidStack(FluidRegistry.getFluid("water"), 4500), 160, 5);
-            if (FluidRegistry.getFluid("hot_spring_water") != null) { HeatExchangerRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("hot_spring_water"), 4500), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), new FluidStack(FluidRegistry.getFluid("water"), 4500), 160, 5); }
-        }
-        if (ITConfig.Multiblocks.enable.enable_highPressureSteamTurbine && ITConfig.Multiblocks.recipes.register_highPressureSteamTurbine_recipes) {
-            HighPressureSteamTurbineRecipe.addFuel(new FluidStack(FluidRegistry.getFluid("steam"), 100), new FluidStack(FluidRegistry.getFluid("highpressuresteam"), 100), 1);
-        }
-        if (ITConfig.Multiblocks.enable.enable_electrolyticCrucibleBattery && ITConfig.Multiblocks.recipes.register_electrolyticCrucibleBattery_recipes) {
-            if (FluidRegistry.isFluidRegistered("hydrogen") && FluidRegistry.isFluidRegistered("oxygen")) { ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("hydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("oxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 512000, 250); }
-            else if (FluidRegistry.isFluidRegistered("liquidhydrogen") && FluidRegistry.isFluidRegistered("liquidoxygen")) { ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("liquidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("liquidoxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 1000), 512000, 250); }
-            else if (FluidRegistry.isFluidRegistered("fluidhydrogen") && FluidRegistry.isFluidRegistered("fluidoxygen")) { ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("fluidhydrogen"), 1000), new FluidStack(FluidRegistry.getFluid("fluidoxygen"), 500), null, null, new FluidStack(FluidRegistry.getFluid("water"), 500), 512000, 250); }
-            ElectrolyticCrucibleBatteryRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("chlorine"), 1000), new FluidStack(FluidRegistry.getFluid("moltensodium"), 1000), null, null, new FluidStack(FluidRegistry.getFluid("moltensalt"), 1000), 512000, 250);
-        }
-        if ((ITConfig.Multiblocks.enable.enable_meltingCrucible && ITConfig.Multiblocks.recipes.register_meltingCrucible_recipes) || (ITConfig.Multiblocks.enable.enable_solarMelter && ITConfig.Multiblocks.recipes.register_meltingCrucible_recipes)) {
-            MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("lava"), 1000), new OreIngredient("cobblestone"), 80);
-            MeltingCrucibleRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("moltensalt"), 100), new OreIngredient("dustSalt"), 8);
-        }
-        if (ITConfig.Multiblocks.enable.enable_radiator && ITConfig.Multiblocks.recipes.register_radiator_recipes) {
-            RadiatorRecipe.addRecipe(new FluidStack(FluidRegistry.getFluid("distwater"), 250), new FluidStack(FluidRegistry.getFluid("exhauststeam"), 500), 80);
-        }
-    }
+    @SubscribeEvent public static void registerRecipes(RegistryEvent.Register<IRecipe> event) { ITRecipeLoader.loadRecipes(); }
 
     @SuppressWarnings("deprecation")
     public static void registerTile(Class<? extends TileEntity> tile) {

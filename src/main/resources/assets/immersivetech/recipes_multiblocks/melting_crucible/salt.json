@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:melting_crucible",
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "dustSalt"
+  },
+  "result": {
+    "amount": 100,
+    "fluid": "moltensalt"
+  },
+  "time": 8
+}
