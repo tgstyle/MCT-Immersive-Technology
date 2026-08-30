@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
+package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
@@ -15,7 +15,9 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.ITContent;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.conversion.CoolingTowerLegacyConverter;
 import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITFluidTank.TankListener;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -164,6 +166,10 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     @Override public void update() {
         if (!formed) return;
+        if (!world.isRemote && world.getBlockState(getPos()).getBlock() == ITContent.blockMetalMultiblock) {
+            CoolingTowerLegacyConverter.convert(this);
+            return;
+        }
         if (needsPoIInit || fluidInputPos0 == null) {
             InitializePoIs();
             needsPoIInit = false;

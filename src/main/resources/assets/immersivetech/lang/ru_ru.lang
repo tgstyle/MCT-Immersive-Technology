@@ -104,6 +104,8 @@ tile.immersivetech.metal_multiblock1.solar_melter_slave.name=Солнечный 
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.advanced_coke_oven.name=Улучшенная коксовая печь
 tile.immersivetech.stone_multiblock.advanced_coke_oven_slave.name=Улучшенная коксовая печь
+tile.immersivetech.stone_multiblock.cooling_tower.name=Охлаждающая башня
+tile.immersivetech.stone_multiblock.cooling_tower_slave.name=Охлаждающая башня
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s мБ

@@ -34,7 +34,7 @@ public class GenericMultiblockIngredient {
             if (Multiblocks.enable.enable_distiller) DISTILLER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.DISTILLER.getMeta()));
             if (Multiblocks.enable.enable_solarTower) SOLAR_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()));
             if (Multiblocks.enable.enable_boiler) BOILER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta()));
-            if (Multiblocks.enable.enable_coolingTower) COOLING_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.COOLING_TOWER.getMeta()));
+            if (Multiblocks.enable.enable_coolingTower) COOLING_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockStoneMultiblock, 1, BlockType_StoneMultiblock.COOLING_TOWER.getMeta()));
             if (Multiblocks.enable.enable_gasTurbine) GAS_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.GAS_TURBINE.getMeta()));
             if (Multiblocks.enable.enable_heatExchanger) HEAT_EXCHANGER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HEAT_EXCHANGER.getMeta()));
             if (Multiblocks.enable.enable_highPressureSteamTurbine) HIGH_PRESSURE_STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE.getMeta()));

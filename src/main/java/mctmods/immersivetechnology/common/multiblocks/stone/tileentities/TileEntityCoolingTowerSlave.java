@@ -1,10 +1,10 @@
-package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
+package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.CoolingTowerShape;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;

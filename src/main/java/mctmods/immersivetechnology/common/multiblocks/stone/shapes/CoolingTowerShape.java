@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.multiblocks.metal.shapes;
+package mctmods.immersivetechnology.common.multiblocks.stone.shapes;
 
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ShapeData;

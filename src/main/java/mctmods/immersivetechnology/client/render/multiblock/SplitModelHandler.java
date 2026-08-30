@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
@@ -39,7 +39,7 @@ public class SplitModelHandler {
         Map<String, Machine> byFile = new HashMap<>();
         addMachine(byFile, "metal_multiblock_alternator", TileEntityITMultiblockPartAlternator.instance);
         addMachine(byFile, "metal_multiblock_boiler", TileEntityITMultiblockPartBoiler.instance);
-        addMachine(byFile, "metal_multiblock_cooling_tower", TileEntityITMultiblockPartCoolingTower.instance);
+        addMachine(byFile, "stone_multiblock_cooling_tower", TileEntityITMultiblockPartCoolingTower.instance);
         addMachine(byFile, "metal_multiblock_distiller", TileEntityITMultiblockPartDistiller.instance);
         addMachine(byFile, "metal_multiblock_solar_tower", TileEntityITMultiblockPartSolarTower.instance);
         addMachine(byFile, "metal_multiblock_steam_turbine", TileEntityITMultiblockPartSteamTurbine.instance);

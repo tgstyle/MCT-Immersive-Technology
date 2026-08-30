@@ -8,7 +8,9 @@ import java.util.Locale;
 
 public enum BlockType_StoneMultiblock implements IStringSerializable, BlockITBase.IBlockEnum {
     ADVANCED_COKE_OVEN(true),
-    ADVANCED_COKE_OVEN_SLAVE(true);
+    ADVANCED_COKE_OVEN_SLAVE(true),
+    COOLING_TOWER(true),
+    COOLING_TOWER_SLAVE(true);
 
     private final boolean needsCustomState;
 

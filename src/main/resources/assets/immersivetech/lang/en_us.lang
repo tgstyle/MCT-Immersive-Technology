@@ -104,6 +104,8 @@ tile.immersivetech.metal_multiblock1.solar_melter_slave.name=Solar Melting Cruci
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.advanced_coke_oven.name=Advanced Coke Oven
 tile.immersivetech.stone_multiblock.advanced_coke_oven_slave.name=Advanced Coke Oven
+tile.immersivetech.stone_multiblock.cooling_tower.name=Cooling Tower
+tile.immersivetech.stone_multiblock.cooling_tower_slave.name=Cooling Tower
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB

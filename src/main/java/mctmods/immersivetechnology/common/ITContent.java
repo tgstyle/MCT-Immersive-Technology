@@ -31,7 +31,10 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.multiblocks.stone.BlockStoneMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITRecipeLoader;

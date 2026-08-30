@@ -104,6 +104,8 @@ tile.immersivetech.metal_multiblock1.solar_melter_slave.name=Crisol de Fusão So
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.advanced_coke_oven.name=Forno de Coque Avançado
 tile.immersivetech.stone_multiblock.advanced_coke_oven_slave.name=Forno de Coque Avançado
+tile.immersivetech.stone_multiblock.cooling_tower.name=Torre de Resfriamento
+tile.immersivetech.stone_multiblock.cooling_tower_slave.name=Torre de Resfriamento
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB

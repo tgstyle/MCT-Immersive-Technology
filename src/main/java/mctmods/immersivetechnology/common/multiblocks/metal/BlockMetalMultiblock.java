@@ -8,8 +8,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityAlternatorSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityCoolingTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarReflectorMaster;

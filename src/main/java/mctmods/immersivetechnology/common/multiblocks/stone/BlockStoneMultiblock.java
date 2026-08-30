@@ -6,6 +6,8 @@ import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
 import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 
@@ -50,6 +52,7 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
             int p = ((TileEntityAdvancedCokeOvenSlave)te).pos;
             return p == 1 || p == 4 || p == 7 || p == 31;
         }
+        if (te instanceof TileEntityCoolingTowerSlave) { return super.isSideSolid(state, world, pos, side); }
         return true;
     }
 
@@ -57,6 +60,8 @@ public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMulti
         switch (type) {
             case ADVANCED_COKE_OVEN: return new TileEntityAdvancedCokeOvenMaster();
             case ADVANCED_COKE_OVEN_SLAVE: return new TileEntityAdvancedCokeOvenSlave();
+            case COOLING_TOWER: return new TileEntityCoolingTowerMaster();
+            case COOLING_TOWER_SLAVE: return new TileEntityCoolingTowerSlave();
         }
         return null;
     }

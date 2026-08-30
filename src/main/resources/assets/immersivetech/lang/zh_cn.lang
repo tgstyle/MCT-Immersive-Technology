@@ -104,6 +104,8 @@ tile.immersivetech.metal_multiblock1.solar_melter_slave.name=太阳能熔炼塔
 #STONE MULTIBLOCKS
 tile.immersivetech.stone_multiblock.advanced_coke_oven.name=高级焦炉
 tile.immersivetech.stone_multiblock.advanced_coke_oven_slave.name=高级焦炉
+tile.immersivetech.stone_multiblock.cooling_tower.name=冷却塔
+tile.immersivetech.stone_multiblock.cooling_tower_slave.name=冷却塔
 
 #OVERLAY
 overlay.immersivetech.metal_multiblock.steel_tank.normal.firstline=%s : %s mB
