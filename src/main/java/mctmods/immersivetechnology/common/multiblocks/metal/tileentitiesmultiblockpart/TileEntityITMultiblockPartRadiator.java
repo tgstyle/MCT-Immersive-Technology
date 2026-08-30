@@ -24,6 +24,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPart<TileEntityRadiatorSlave> {
     public static TileEntityITMultiblockPartRadiator instance = new TileEntityITMultiblockPartRadiator();
@@ -34,6 +36,21 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
     public TileEntityITMultiblockPartRadiator() { super("IT:Radiator", RadiatorShape.SHAPE, ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR.getMeta()), ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR_SLAVE.getMeta())); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
+
+    @Override public Set<BlockPos> worldOffsetsFromMaster(EnumFacing facing, boolean mirrored) {
+        if (!mirrored) { return super.worldOffsetsFromMaster(facing, false); }
+        Set<BlockPos> offsets = new HashSet<>();
+        BlockPos master = localToWorld(BlockPos.ORIGIN, masterY, masterX, masterZ, facing);
+        for (int h = 0; h < height; h++) {
+            for (int l = 0; l < length; l++) {
+                for (int w = 0; w < width; w++) {
+                    if (template.getState(w, h, l) == null) { continue; }
+                    offsets.add(localToWorld(BlockPos.ORIGIN, h, w, l, facing).subtract(master));
+                }
+            }
+        }
+        return offsets;
+    }
 
     @Override public boolean canRenderFormedStructure() { return true; }
 

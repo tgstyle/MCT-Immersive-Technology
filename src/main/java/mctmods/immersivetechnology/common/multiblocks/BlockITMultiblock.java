@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks;
 
+import com.immersiveconvergence.api.client.split.SplitModelProperties;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
@@ -25,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,12 +40,31 @@ public abstract class BlockITMultiblock<E extends Enum<E> & BlockITBase.IBlockEn
     protected final boolean[] hasMultiblockTile;
 
     public BlockITMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockITBase> itemBlock, Object... additionalProperties) {
-        super(name, material, mainProperty, itemBlock, combineProperties(additionalProperties));
+        super(name, material, mainProperty, itemBlock, appendSplitProperty(combineProperties(additionalProperties)));
         this.hasMultiblockTile = new boolean[this.enumValues.length];
         Arrays.fill(this.hasMultiblockTile, true);
     }
 
+    private static Object[] appendSplitProperty(Object[] properties) {
+        Object[] array = new Object[properties.length + 1];
+        System.arraycopy(properties, 0, array, 0, properties.length);
+        array[properties.length] = SplitModelProperties.SUBMODEL_OFFSET;
+        return array;
+    }
+
     @Override @Nonnull public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) { return super.getActualState(state, world, pos); }
+
+    @Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
+        state = super.getExtendedState(state, world, pos);
+        if (state instanceof IExtendedBlockState) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileEntityMultiblockPart && ((TileEntityMultiblockPart<?>)te).formed) {
+                int[] offset = ((TileEntityMultiblockPart<?>)te).offset;
+                state = ((IExtendedBlockState)state).withProperty(SplitModelProperties.SUBMODEL_OFFSET, new BlockPos(offset[0], offset[1], offset[2]));
+            }
+        }
+        return state;
+    }
 
     @Override public boolean removedByPlayer(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player, boolean willHarvest) {
         if (!willHarvest) {

@@ -90,7 +90,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -124,10 +123,6 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) { ITSoundHandler.DeleteAllSounds(); }
 
     @SubscribeEvent public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ITSoundHandler.DeleteAllSounds(); }
-
-    @SubscribeEvent public void onClientWorldUnload(WorldEvent.Unload event) {
-        if (event.getWorld().isRemote) { TileRenderITMultiblockStatic.clearAll(); }
-    }
 
     @SubscribeEvent public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
@@ -228,16 +223,10 @@ public class ClientProxy extends CommonProxy {
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAdvancedCokeOvenBaseheater.class, new TileRenderAdvancedCokeOvenBaseheater());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBoilerMaster.class, new TileRenderBoiler());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCoolingTowerMaster.class, new TileRenderCoolingTower());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityElectrolyticCrucibleBatteryMaster.class, new TileRenderElectrolyticCrucibleBattery());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHeatExchangerMaster.class, new TileRenderHeatExchanger());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRadiatorMaster.class, new TileRenderRadiator());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarMelterMaster.class, new TileRenderSolarMelter());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarReflectorMaster.class, new TileRenderSolarReflector());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySolarTowerMaster.class, new TileRenderSolarTower());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
 
@@ -391,7 +380,6 @@ public class ClientProxy extends CommonProxy {
 
     static {
         IEApi.renderCacheClearers.add(ModelConfigurableSides.modelCache::clear);
-        IEApi.renderCacheClearers.add(TileRenderITMultiblockStatic::clearAll);
     }
 
     @Override public void clearRenderCaches() {
