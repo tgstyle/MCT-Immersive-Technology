@@ -47,6 +47,8 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
     private int voxelShapeCachePos = Integer.MIN_VALUE;
     private EnumFacing voxelShapeCacheFacing;
     private boolean voxelShapeCacheMirrored;
+    private VoxelShape aabbCacheShape;
+    private List<AxisAlignedBB> aabbCache;
 
     public TileEntityITMultiblock(MultiblockHandler.IMultiblock instance, int[] structureDimensions, int energyCapacity, boolean redstoneControl) { super(instance, structureDimensions, energyCapacity, redstoneControl); }
 
@@ -170,9 +172,18 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
         return vs;
     }
 
-    @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getVoxelShape().toAabbs(); }
+    private List<AxisAlignedBB> getAabbs() {
+        VoxelShape vs = getVoxelShape();
+        if (vs != aabbCacheShape) {
+            aabbCache = vs.toAabbs();
+            aabbCacheShape = vs;
+        }
+        return aabbCache;
+    }
 
-    @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getVoxelShape().toAabbs(); }
+    @Nonnull public List<AxisAlignedBB> getAdvancedCollisionBounds() { return getAabbs(); }
+
+    @Nonnull public List<AxisAlignedBB> getAdvancedSelectionBounds() { return getAabbs(); }
 
     @SuppressWarnings("unused") public boolean isOverrideBox(@Nonnull AxisAlignedBB box, @Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, @Nonnull List<AxisAlignedBB> list) { return true; }
 

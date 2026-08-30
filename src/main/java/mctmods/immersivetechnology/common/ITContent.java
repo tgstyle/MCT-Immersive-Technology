@@ -192,7 +192,7 @@ public class ITContent {
     }
 
     public static void init() {
-        BlockMatcher.addGenericOreNames("blockSteel", "blockSheetmetalSteel", "blockSheetmetalIron", "blockSheetmetalSilver", "slabSheetmetalSteel", "scaffoldingSteel", "fenceSteel");
+        BlockMatcher.addGenericOreNames("blockSteel", "blockSheetmetalSteel", "blockSheetmetalIron", "blockSheetmetalSilver", "slabSheetmetalSteel", "scaffoldingSteel", "fenceSteel", "blockNickel", "blockTungsten", "blockSheetmetalNickel", "blockSheetmetalTungsten");
 
         /*TILE ENTITIES*/
         registerTile(TileEntityITSlab.class);
