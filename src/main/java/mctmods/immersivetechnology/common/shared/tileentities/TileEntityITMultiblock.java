@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
 import com.immersiveconvergence.api.multiblock.GenericShape;
-import com.immersiveconvergence.api.multiblock.MultiblockUtils;
 import com.immersiveconvergence.api.shapes.Shapes;
 import com.immersiveconvergence.api.shapes.VoxelShape;
 
@@ -172,7 +171,7 @@ public abstract class TileEntityITMultiblock<T extends TileEntityITMultiblock<T,
         return new float[]{(float)bb.minX, (float)bb.minY, (float)bb.minZ, (float)bb.maxX, (float)bb.maxY, (float)bb.maxZ};
     }
 
-    @Override @Nonnull public ItemStack getOriginalBlock() { return MultiblockUtils.GetItemStack(pos, ((TileEntityITMultiblockPart<?>)this.mutliblockInstance).structureExport); }
+    @Override @Nonnull public ItemStack getOriginalBlock() { return ((TileEntityITMultiblockPart<?>)this.mutliblockInstance).getOriginalBlock(pos); }
 
     @Override public void doGraphicalUpdates(int slot) { this.markDirty(); this.markContainingBlockForUpdate(null); }
 

@@ -1,32 +1,26 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartSteelSheetmetalTank extends TileEntityITMultiblockPart<TileEntitySteelSheetmetalTankSlave> implements MultiblockHandler.IMultiblock {
+public class TileEntityITMultiblockPartSteelSheetmetalTank extends TileEntityITMultiblockPart<TileEntitySteelSheetmetalTankSlave> {
 
     public static TileEntityITMultiblockPartSteelSheetmetalTank instance = new TileEntityITMultiblockPartSteelSheetmetalTank();
 
     static ItemStack renderStack = ItemStack.EMPTY;
 
-    public TileEntityITMultiblockPartSteelSheetmetalTank() {
-        super("multiblocks/steel_sheetmetal_tank.json",
-                ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK.getMeta()),
-                ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK_SLAVE.getMeta()));
-    }
+    public TileEntityITMultiblockPartSteelSheetmetalTank() { super("IT:SteelSheetmetalTank", SteelSheetmetalTankShape.SHAPE, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK.getMeta()), ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK_SLAVE.getMeta())); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
-
-    @Override public float getManualScale() { return 10; }
 
     @Override public boolean canRenderFormedStructure() { return true; }
 

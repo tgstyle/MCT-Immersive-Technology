@@ -18,7 +18,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -26,39 +25,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPart<TileEntityRadiatorSlave> implements MultiblockHandler.IMultiblock {
+public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPart<TileEntityRadiatorSlave> {
     public static TileEntityITMultiblockPartRadiator instance = new TileEntityITMultiblockPartRadiator();
 
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartRadiator() {
-        super(ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR.getMeta()),
-                ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR_SLAVE.getMeta()));
-        MultiblockJSONSchema data = RadiatorShape.DATA;
-        if (data == null) return;
-        this.uniqueName = data.uniqueName;
-        this.width = data.width;
-        this.height = data.height;
-        this.length = data.length;
-        this.pointsOfInterest = data.pointsOfInterest != null ? data.pointsOfInterest : new PoIJSONSchema[0];
-        this.masterX = data.master.x;
-        this.masterY = data.master.y;
-        this.masterZ = data.master.z;
-        this.structure = MultiblockUtils.GetStructure(data, width, length, height);
-        this.materials = MultiblockUtils.GetMaterials(data);
-        this.structureExport = MultiblockUtils.Convert(this.structure);
-        if (data.master.mod.equals("ore")) { this.trigger = new OreDictRef(data.master.name); }
-        else {
-            Item item = Item.getByNameOrId(data.master.mod + ":" + data.master.name);
-            if (item == null) throw new IllegalArgumentException(String.format("Invalid item %s:%s", data.master.mod, data.master.name));
-            this.trigger = new ItemStackRef(new ItemStack(item, 1, data.master.meta));
-        }
-    }
+    public TileEntityITMultiblockPartRadiator() { super("IT:Radiator", RadiatorShape.SHAPE, ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR.getMeta()), ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR_SLAVE.getMeta())); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
-
-    @Override public float getManualScale() { return 6; }
 
     @Override public boolean canRenderFormedStructure() { return true; }
 
@@ -73,8 +48,6 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
         GlStateManager.scale(8, 8, 8);
         ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
     }
-
-    @Override public String getUniqueName() { return uniqueName; }
 
     private static final class Orientation {
         final boolean transposed;
@@ -131,7 +104,7 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
         for (int eff_h = 0; eff_h < orientation.height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < orientation.width; eff_w++) {
             int orig_h = orientation.transposed ? eff_w : eff_h;
             int orig_w = orientation.transposed ? eff_h : eff_w;
-            if (structure[orig_h][l][orig_w] == AirRef.instance) continue;
+            if (template.getState(orig_w, orig_h, l) == null) continue;
             int position = orig_h * (width * length) + l * width + orig_w;
             BlockPos pos2 = orientation.worldPos(eff_w, eff_h, l, side);
             world.setBlockState(pos2, pos2.equals(masterPos) ? masterState : slaveState);
@@ -155,12 +128,10 @@ public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPa
         for (int eff_h = 0; eff_h < orientation.height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < orientation.width; eff_w++) {
             int orig_h = orientation.transposed ? eff_w : eff_h;
             int orig_w = orientation.transposed ? eff_h : eff_w;
-            if (structure[orig_h][l][orig_w] == AirRef.instance) continue;
+            IBlockState expected = template.getState(orig_w, orig_h, l);
+            if (expected == null) continue;
             BlockPos blockPos = orientation.worldPos(eff_w, eff_h, l, side);
-            IBlockState state = world.getBlockState(blockPos);
-            ItemStack found = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
-            IRefComparable expected = structure[orig_h][l][orig_w];
-            if (!expected.isEquals(found)) return false;
+            if (!BlockMatcher.matches(expected, world.getBlockState(blockPos))) return false;
         }
         return true;
     }

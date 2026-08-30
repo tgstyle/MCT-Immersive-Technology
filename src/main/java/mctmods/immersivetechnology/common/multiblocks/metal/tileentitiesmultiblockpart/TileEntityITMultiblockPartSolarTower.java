@@ -9,14 +9,12 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerSha
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
-import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -27,39 +25,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.immersiveconvergence.api.multiblock.*;
 
-public class TileEntityITMultiblockPartSolarTower extends TileEntityITMultiblockPart<TileEntitySolarTowerSlave> implements MultiblockHandler.IMultiblock {
+public class TileEntityITMultiblockPartSolarTower extends TileEntityITMultiblockPart<TileEntitySolarTowerSlave> {
     public static TileEntityITMultiblockPartSolarTower instance = new TileEntityITMultiblockPartSolarTower();
 
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartSolarTower() {
-        super(ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()),
-                ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE.getMeta()));
-        MultiblockJSONSchema data = SolarTowerShape.DATA;
-        if (data == null) { ITLogger.error("No data for solar_tower"); return; }
-        this.uniqueName = data.uniqueName;
-        this.width = data.width;
-        this.height = data.height;
-        this.length = data.length;
-        this.pointsOfInterest = data.pointsOfInterest != null ? data.pointsOfInterest : new PoIJSONSchema[0];
-        this.masterX = data.master.x;
-        this.masterY = data.master.y;
-        this.masterZ = data.master.z;
-        this.structure = MultiblockUtils.GetStructure(data, width, length, height);
-        this.materials = MultiblockUtils.GetMaterials(data);
-        this.structureExport = MultiblockUtils.Convert(this.structure);
-        if (data.master.mod.equals("ore")) { this.trigger = new OreDictRef(data.master.name); }
-        else {
-            Item item = Item.getByNameOrId(data.master.mod + ":" + data.master.name);
-            if (item == null) throw new IllegalArgumentException(String.format("Invalid item %s:%s", data.master.mod, data.master.name));
-            this.trigger = new ItemStackRef(new ItemStack(item, 1, data.master.meta));
-        }
-    }
+    public TileEntityITMultiblockPartSolarTower() { super("IT:SolarTower", SolarTowerShape.SHAPE, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()), ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE.getMeta())); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
-
-    @Override public float getManualScale() { return 4; }
 
     @Override public boolean canRenderFormedStructure() { return true; }
 
@@ -101,7 +75,7 @@ public class TileEntityITMultiblockPartSolarTower extends TileEntityITMultiblock
         IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
         IBlockState slaveState = slaveBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, true);
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
-            if (structure[h][l][w] == AirRef.instance) continue;
+            if (template.getState(w, h, l) == null) continue;
             int position = h * (width * length) + l * width + w;
             BlockPos pos2 = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - w) : w, h, l, side);
             world.setBlockState(pos2, pos2.equals(masterPos) ? masterState : slaveState);

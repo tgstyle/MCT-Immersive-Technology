@@ -4,6 +4,8 @@ import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.common.Config;
 
+import com.immersiveconvergence.api.multiblock.BlockMatcher;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.*;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -195,6 +197,8 @@ public class ITContent {
     }
 
     public static void init() {
+        BlockMatcher.addGenericOreNames("blockSteel", "blockSheetmetalSteel", "blockSheetmetalIron", "blockSheetmetalSilver", "slabSheetmetalSteel", "scaffoldingSteel", "fenceSteel");
+
         /*TILE ENTITIES*/
         registerTile(TileEntityITSlab.class);
         registerTile(TileEntityTimer.class);
