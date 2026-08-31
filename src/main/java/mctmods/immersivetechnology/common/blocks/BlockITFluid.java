@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 
 public class BlockITFluid extends BlockFluidClassic {
 	private int flammability = 0;
@@ -39,6 +40,18 @@ public class BlockITFluid extends BlockFluidClassic {
 	public BlockITFluid setPotionEffects(PotionEffect... potionEffects) {
 		this.potionEffects = potionEffects;
 		return this;
+	}
+
+	@Override public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
+		if (!world.isRemote && getFluid().isGaseous()) {
+			if (isSourceBlock(world, pos)) {
+				super.updateTick(world, pos, state, rand);
+				if (world.getBlockState(pos).getBlock() == this) { world.setBlockToAir(pos); }
+			}
+			else { world.setBlockToAir(pos); }
+			return;
+		}
+		super.updateTick(world, pos, state, rand);
 	}
 
 	@Override public int getFlammability(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {

@@ -182,7 +182,7 @@ public class ITContent {
         fluidMoltenSalt = FluidColored.register(new FluidColored("moltensalt", 0xc4c6c7, 1100, 2170, 10000));
         fluidMoltenSodium = FluidColored.register(new FluidColored("moltensodium", 0xc2c2c2, 400, 927, 10000));
         fluidSuperheatedMoltenSodium = FluidColored.register(new FluidColored("superheatedmoltensodium", 0xaea0a2, 927, 1000, 10000));
-        fluidChlorine = FluidColored.register(new FluidColored("chlorine", 0xc0e67b, 300, -100, 1000, false));
+        fluidChlorine = FluidColored.register(new FluidColored("chlorine", 0xc0e67b, 300, -100, 1000, true));
 
         /*FLUID BLOCKS*/
         blockFluidSteam = new BlockITFluid("fluidSteam", fluidSteam, Material.WATER);
