@@ -124,7 +124,6 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (world.isRemote) {
             targetSoundLevel = (float)speed / maxSpeed();
             soundVolume = targetSoundLevel;
-            soundGracePeriod = 60;
         }
     }
 
@@ -268,13 +267,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed()) * maxRotationSpeed();
                 animation.setAnimationRotation(animation.getAnimationRotation() + animation.getAnimationMomentum());
                 animation.setAnimationMomentum(rotationSpeed);
-                if (soundVolume < targetSoundLevel) {
-                    soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f);
-                    soundGracePeriod = 60;
-                } else if (soundVolume > targetSoundLevel) {
-                    if (soundGracePeriod > 0) soundGracePeriod--;
-                    else soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f);
-                }
+                if (soundVolume < targetSoundLevel) { soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f); }
+                else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f); }
                 handleSounds();
                 spawnParticles();
                 spawnVentSmoke();
