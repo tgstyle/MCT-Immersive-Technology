@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.data.models;
 import com.google.common.base.Preconditions;
 import com.google.gson.*;
 import com.mojang.math.Transformation;
-import mctmods.immersivetechnology.client.models.util.ModelUtils;
+import com.immersiveconvergence.api.client.ModelUtils;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransform.Deserializer;
 import net.minecraft.util.Mth;

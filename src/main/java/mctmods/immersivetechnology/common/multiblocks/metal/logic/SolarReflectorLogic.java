@@ -13,10 +13,10 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOri
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
 import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.lib.ModSound;
@@ -38,7 +38,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;

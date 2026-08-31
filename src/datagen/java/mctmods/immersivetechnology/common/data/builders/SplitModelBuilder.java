@@ -3,8 +3,11 @@ package mctmods.immersivetechnology.common.data.builders;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.client.models.split.SplitModelLoader;
+import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.client.split.SplitModelLoader;
 import net.minecraft.core.Vec3i;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -12,13 +15,15 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import java.util.List;
 
 public class SplitModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
+    public static final ResourceLocation LOCATION = Reference.rl("basic_split");
+
     public static <T extends ModelBuilder<T>> SplitModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper) { return new SplitModelBuilder<>(parent, existingFileHelper); }
 
     private List<Vec3i> parts;
     private ModelBuilder<?> modelToSplit;
     private boolean isDynamic;
 
-    protected SplitModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(SplitModelLoader.LOCATION, parent, existingFileHelper); }
+    protected SplitModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(LOCATION, parent, existingFileHelper); }
 
     public SplitModelBuilder<T> parts(List<Vec3i> parts) { Preconditions.checkNotNull(parts); Preconditions.checkState(this.parts == null); this.parts = parts; return this; }
 

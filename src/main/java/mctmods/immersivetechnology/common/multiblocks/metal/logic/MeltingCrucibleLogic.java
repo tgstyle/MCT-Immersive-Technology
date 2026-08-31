@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
@@ -7,11 +8,9 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucib
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.ModSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
-
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;

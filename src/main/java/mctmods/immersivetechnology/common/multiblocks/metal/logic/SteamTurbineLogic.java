@@ -10,12 +10,10 @@ import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationIner
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.lib.ModSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
-
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -29,6 +27,7 @@ import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;

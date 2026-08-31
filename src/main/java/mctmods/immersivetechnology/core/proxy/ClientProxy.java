@@ -12,7 +12,7 @@ import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.models.obj.ModObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.MirroredModelLoader;
-import mctmods.immersivetechnology.client.models.split.SplitModelLoader;
+import com.immersiveconvergence.api.client.split.SplitModelLoader;
 import mctmods.immersivetechnology.client.particles.helper.ColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
@@ -242,7 +242,7 @@ public class ClientProxy extends CommonProxy {
         ev.register("obj", ModObjLoader.INSTANCE);
         ev.register(ModelConfigurableSides.Loader.NAME.getPath(), new ModelConfigurableSides.Loader());
         ev.register(MirroredModelLoader.ID.getPath(), MirroredModelLoader.INSTANCE);
-        ev.register(SplitModelLoader.LOCATION.getPath(), SplitModelLoader.INSTANCE);
+        ev.register("basic_split", SplitModelLoader.INSTANCE);
         RotorModels.ROTOR = new ModDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ModDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ModDynamicModel("solar_reflector_support");

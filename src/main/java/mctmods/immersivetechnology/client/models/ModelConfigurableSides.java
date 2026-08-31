@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.client.models.util.ModelUtils;
+import com.immersiveconvergence.api.client.ModelUtils;
 import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.Enums;
 import mctmods.immersivetechnology.common.blocks.helper.ModProperties;

@@ -2,10 +2,9 @@ package mctmods.immersivetechnology.common.multiblocks.helper;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
 import com.google.common.collect.ImmutableList;
-
 import java.util.List;
 
 public final class MultiblockPOIHelper {

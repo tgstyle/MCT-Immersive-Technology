@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.multiblocks.helper.*;
 import mctmods.immersivetechnology.common.fluids.helper.SolarTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.ISolarMultiblockState;
@@ -9,12 +10,10 @@ import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.ModSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
-
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;

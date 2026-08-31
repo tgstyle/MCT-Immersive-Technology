@@ -10,10 +10,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankSha
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
-
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -26,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.capability.IHeatProvider;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

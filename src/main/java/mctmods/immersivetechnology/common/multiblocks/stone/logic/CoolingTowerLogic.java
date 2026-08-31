@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
 import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
@@ -12,9 +13,7 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.ModSound;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
-
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;

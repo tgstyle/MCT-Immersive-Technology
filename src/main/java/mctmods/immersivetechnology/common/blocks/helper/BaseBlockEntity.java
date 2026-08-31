@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
 import com.google.common.base.Preconditions;
+import com.immersiveconvergence.api.client.split.IModelOffsetProvider;
+import com.immersiveconvergence.api.client.split.SplitModelProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -138,7 +140,7 @@ public abstract class BaseBlockEntity extends BlockEntity implements BlockInterf
 
     @Override @NotNull public ModelData getModelData() {
         BlockPos offset = getModelOffset(getState(), Vec3i.ZERO);
-        if (offset != null) { return ModelData.builder().with(ModProperties.Model.SUBMODEL_OFFSET, offset).build(); }
+        if (offset != null) { return ModelData.builder().with(SplitModelProperties.SUBMODEL_OFFSET, offset).build(); }
         return ModelData.EMPTY;
     }
 
