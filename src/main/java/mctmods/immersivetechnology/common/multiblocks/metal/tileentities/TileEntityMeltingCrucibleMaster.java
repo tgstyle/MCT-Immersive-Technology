@@ -95,7 +95,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         if (nbt.hasKey("inventory")) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
-        heatLevel = Math.min(nbt.getDouble("heatLevel"), workingHeatLevel());
+        heatLevel = nbt.getDouble("heatLevel");
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
@@ -235,7 +235,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         heatLevel -= getCooldownAmount();
         heatLevel = Math.max(heatLevel, 0);
         if (heating) heatLevel += getTemperatureIncrease(energyUsed);
-        heatLevel = Math.min(heatLevel, workingHeatLevel());
+        heatLevel = Math.min(heatLevel, targetTemperature());
         if (prev != heatLevel) changed = true;
         return changed;
     }
@@ -248,9 +248,15 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return (1 / heatLost) * heatLossMultiplier() / 19.4;
     }
 
+    public double targetTemperature() {
+        if (cachedMeltingRecipe != null) { return cachedMeltingRecipe.requiredTemp; }
+        MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
+        return recipe != null ? recipe.requiredTemp : workingHeatLevel();
+    }
+
     private boolean recipeLogic(boolean shouldRun) {
         boolean update = false;
-        if (processTimeRemaining == 0 && shouldRun && heatLevel >= workingHeatLevel()) {
+        if (processTimeRemaining == 0 && shouldRun && heatLevel >= targetTemperature()) {
             ItemStack input = inventory.get(0);
             if (!input.isEmpty()) {
                 MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(input);
@@ -266,7 +272,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
                 }
             }
         }
-        if (processTimeRemaining > 0 && shouldRun && heatLevel >= workingHeatLevel()) {
+        if (processTimeRemaining > 0 && shouldRun && heatLevel >= targetTemperature()) {
             int prev = processTimeRemaining;
             processTimeRemaining -= progressResolution;
             if (prev != processTimeRemaining) update = true;
@@ -369,7 +375,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return redstoneControlInverted != (power > 0);
     }
 
-    @Override public int getComparatorInputOverride() { return (int)(15 * heatLevel / workingHeatLevel()); }
+    @Override public int getComparatorInputOverride() { return (int)Math.min(15, 15 * heatLevel / targetTemperature()); }
 
     @Override public boolean isDummy() { return false; }
 

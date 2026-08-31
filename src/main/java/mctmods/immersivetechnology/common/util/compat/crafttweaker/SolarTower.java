@@ -5,6 +5,7 @@ import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import net.minecraftforge.fluids.FluidStack;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -13,13 +14,13 @@ import stanhebben.zenscript.annotations.ZenMethod;
 public class SolarTower {
 
     @ZenMethod
-    public static void addRecipe(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
+    public static void addRecipe(ILiquidStack outputFluid, ILiquidStack inputFluid, int time, @Optional double requiredTemp) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
 
         if (fluidOut == null || fluidIn == null) { return; }
 
-        SolarTowerRecipe recipe = new SolarTowerRecipe(fluidOut, fluidIn, time);
+        SolarTowerRecipe recipe = new SolarTowerRecipe(fluidOut, fluidIn, time, requiredTemp > 0 ? requiredTemp : SolarTowerRecipe.defaultTemperature());
         CraftTweakerAPI.apply(new Add(recipe));
     }
 

@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.client.gui;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
 
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 public class GuiSolarTower extends GuiIEContainerBase {
 	TileEntitySolarTowerMaster tile;
 
-	private static double workingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingTemperature; }
-
 	public GuiSolarTower(InventoryPlayer invPlayer, TileEntitySolarTowerMaster tile) {
 		super(new ContainerSolarTower(invPlayer, tile));
 		this.tile = tile;
@@ -35,7 +32,7 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		if (mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
 			DecimalFormat df = new DecimalFormat("0.00");
 			tooltip.add("Temperature");
-			tooltip.add(TextFormatting.RED + df.format(tile.heatLevel) + "/" + df.format(workingHeatLevel()) + "C");
+			tooltip.add(TextFormatting.RED + df.format(tile.heatLevel) + "/" + df.format(tile.targetTemperature()) + "C");
 		}
 		if (!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
@@ -48,7 +45,7 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		ClientUtils.bindTexture("immersivetech:textures/gui/gui_solar_tower.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-		int heatBarSize = (int)Math.round(42 * (tile.heatLevel / workingHeatLevel()));
+		int heatBarSize = (int)Math.round(42 * Math.min(1, tile.heatLevel / tile.targetTemperature()));
 		this.drawTexturedModalRect(guiLeft + 16, guiTop + 9, 176, 0, heatBarSize, 9);
 
 		if (tile.solarIncidenceAngleSection > 0) { this.drawTexturedModalRect(guiLeft + 32, guiTop + 24, 198, 31, 10, 10); }

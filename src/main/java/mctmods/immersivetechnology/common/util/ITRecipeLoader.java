@@ -46,7 +46,7 @@ public class ITRecipeLoader {
             }
             DistillerRecipe.addRecipe(getFluidStack(json, "result"), getFluidStack(json, "input"), itemOutput, JsonUtils.getInt(json, "energy"), JsonUtils.getInt(json, "time"), chance);
         });
-        MultiblockRecipeLoader.registerType("immersivetech:solar_tower", (json, context) -> SolarTowerRecipe.addRecipe(getFluidStack(json, "output"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time")));
+        MultiblockRecipeLoader.registerType("immersivetech:solar_tower", (json, context) -> SolarTowerRecipe.addRecipe(getFluidStack(json, "output"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time"), JsonUtils.getFloat(json, "requiredTemp")));
         MultiblockRecipeLoader.registerType("immersivetech:steam_turbine", (json, context) -> SteamTurbineRecipe.addFuel(getFluidStack(json, "output"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time")));
         MultiblockRecipeLoader.registerType("immersivetech:high_pressure_steam_turbine", (json, context) -> HighPressureSteamTurbineRecipe.addFuel(getFluidStack(json, "output"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time")));
         MultiblockRecipeLoader.registerType("immersivetech:gas_turbine", (json, context) -> GasTurbineRecipe.addFuel(getFluidStack(json, "output"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time")));
@@ -56,7 +56,7 @@ public class ITRecipeLoader {
             ItemStack itemOutput = json.has("item_output") ? CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "item_output"), context) : null;
             ElectrolyticCrucibleBatteryRecipe.addRecipe(getFluidStack(json, "result0"), optionalFluidStack(json, "result1"), optionalFluidStack(json, "result2"), itemOutput, getFluidStack(json, "input"), JsonUtils.getInt(json, "energy"), JsonUtils.getInt(json, "time"));
         });
-        MultiblockRecipeLoader.registerType("immersivetech:melting_crucible", (json, context) -> MeltingCrucibleRecipe.addRecipe(getFluidStack(json, "result"), CraftingHelper.getIngredient(json.get("input"), context), JsonUtils.getInt(json, "time")));
+        MultiblockRecipeLoader.registerType("immersivetech:melting_crucible", (json, context) -> MeltingCrucibleRecipe.addRecipe(getFluidStack(json, "result"), CraftingHelper.getIngredient(json.get("input"), context), JsonUtils.getInt(json, "time"), JsonUtils.getFloat(json, "requiredTemp")));
         MultiblockRecipeLoader.registerType("immersivetech:radiator", (json, context) -> RadiatorRecipe.addRecipe(getFluidStack(json, "output"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time")));
         MultiblockRecipeLoader.loadRecipes(ImmersiveTechnology.MODID, "recipes_multiblocks");
     }

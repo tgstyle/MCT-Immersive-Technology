@@ -8,5 +8,6 @@
     "amount": 1000,
     "fluid": "lava"
   },
+  "requiredTemp": 1000.0,
   "time": 80
 }

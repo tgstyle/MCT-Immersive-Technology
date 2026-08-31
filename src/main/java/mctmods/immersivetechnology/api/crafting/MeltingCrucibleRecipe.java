@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.api.crafting;
 
+import mctmods.immersivetechnology.common.Config;
+
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
@@ -13,20 +15,28 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
     public final IngredientStack itemInput;
+    public final double requiredTemp;
     int totalProcessTime;
 
-    public MeltingCrucibleRecipe(FluidStack fluidOutput, Object itemInput, int time) {
+    public MeltingCrucibleRecipe(FluidStack fluidOutput, Object itemInput, int time) { this(fluidOutput, itemInput, time, defaultTemperature()); }
+
+    public MeltingCrucibleRecipe(FluidStack fluidOutput, Object itemInput, int time, double requiredTemp) {
         this.fluidOutput = fluidOutput;
         this.itemInput = ApiUtils.createIngredientStack(itemInput);
+        this.requiredTemp = requiredTemp;
         this.inputList = new ArrayList<>();
         this.inputList.add(this.itemInput);
         this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
     }
 
+    public static double defaultTemperature() { return Config.ITConfig.Multiblocks.meltingCrucible.meltingCrucible_heat_workingTemperature; }
+
     public static ArrayList<MeltingCrucibleRecipe> recipeList = new ArrayList<>();
 
     public static MeltingCrucibleRecipe addRecipe(FluidStack fluidOutput, Object itemInput, int time) { return addRecipe(new MeltingCrucibleRecipe(fluidOutput, itemInput, time)); }
+
+    public static MeltingCrucibleRecipe addRecipe(FluidStack fluidOutput, Object itemInput, int time, double requiredTemp) { return addRecipe(new MeltingCrucibleRecipe(fluidOutput, itemInput, time, requiredTemp)); }
 
     public static MeltingCrucibleRecipe addRecipe(MeltingCrucibleRecipe recipe) {
         recipeList.add(recipe);

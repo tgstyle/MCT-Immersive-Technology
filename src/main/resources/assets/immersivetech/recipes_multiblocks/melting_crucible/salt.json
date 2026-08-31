@@ -8,5 +8,6 @@
     "amount": 100,
     "fluid": "moltensalt"
   },
+  "requiredTemp": 1000.0,
   "time": 8
 }

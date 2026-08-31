@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.api.crafting;
 
+import mctmods.immersivetechnology.common.Config;
+
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,20 +15,28 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;
+    public final double requiredTemp;
     int totalProcessTime;
 
-    public SolarTowerRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+    public SolarTowerRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) { this(fluidOutput, fluidInput, time, defaultTemperature()); }
+
+    public SolarTowerRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time, double requiredTemp) {
         this.fluidOutput = fluidOutput;
         this.fluidInput = fluidInput;
+        this.requiredTemp = requiredTemp;
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
         this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
     }
 
+    public static double defaultTemperature() { return Config.ITConfig.Multiblocks.solarTower.solarTower_heat_workingTemperature; }
+
     public static ArrayList<SolarTowerRecipe> recipeList = new ArrayList<>();
     private static final Map<Fluid, SolarTowerRecipe> recipeMap = new HashMap<>();
 
     public static SolarTowerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) { return addRecipe(new SolarTowerRecipe(fluidOutput, fluidInput, time)); }
+
+    public static SolarTowerRecipe addRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time, double requiredTemp) { return addRecipe(new SolarTowerRecipe(fluidOutput, fluidInput, time, requiredTemp)); }
 
     public static SolarTowerRecipe addRecipe(SolarTowerRecipe recipe) {
         recipeList.add(recipe);

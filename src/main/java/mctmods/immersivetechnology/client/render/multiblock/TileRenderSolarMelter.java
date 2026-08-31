@@ -13,7 +13,7 @@ public class TileRenderSolarMelter extends TileEntitySpecialRenderer<TileEntityS
     @Override public void render(TileEntitySolarMelterMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if (!te.formed || te.isInvalid()) { return; }
         if (te.particlePos0 == null) { return; }
-        if (te.heatLevel < TileEntitySolarMelterMaster.getWorkingHeatLevel() || te.reflectorStrength <= 0) { return; }
+        if (te.heatLevel < te.targetTemperature() || te.reflectorStrength <= 0) { return; }
         BlockPos offset = te.particlePos0.subtract(te.getPos());
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);

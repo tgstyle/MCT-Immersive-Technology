@@ -8,5 +8,6 @@
     "amount": 450,
     "fluid": "steam"
   },
+  "requiredTemp": 600.0,
   "time": 20
 }

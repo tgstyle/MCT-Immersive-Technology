@@ -114,7 +114,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-        heatLevel = Math.min(nbt.getDouble("heatLevel"), workingHeatLevel());
+        heatLevel = nbt.getDouble("heatLevel");
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
         reflectorStrength = nbt.getDouble("reflectorStrength");
@@ -317,9 +317,15 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         checkReflectorPositions();
     }
 
+    public double targetTemperature() {
+        if (cachedSolarTowerRecipe != null) { return cachedSolarTowerRecipe.requiredTemp; }
+        SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
+        return recipe != null ? recipe.requiredTemp : workingHeatLevel();
+    }
+
     private boolean heatUp() {
         double previous = heatLevel;
-        heatLevel = Math.min(heatLevel + getTemperatureIncrease(), workingHeatLevel());
+        heatLevel = Math.min(heatLevel + getTemperatureIncrease(), targetTemperature());
         return previous != heatLevel;
     }
 
@@ -415,7 +421,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private boolean recipeLogic() {
         boolean update = false;
         boolean didWork = false;
-        if (heatLevel >= workingHeatLevel() && !isRSDisabled()) {
+        if (heatLevel >= targetTemperature() && !isRSDisabled()) {
             if (processTimeRemaining > 0) {
                 processTimeRemaining--;
                 didWork = true;
@@ -529,7 +535,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     }
 
     @Override public int getComparatorInputOverride() {
-        return (int)(15 * heatLevel / workingHeatLevel());
+        return (int)Math.min(15, 15 * heatLevel / targetTemperature());
     }
 
     @Override public boolean isDummy() {

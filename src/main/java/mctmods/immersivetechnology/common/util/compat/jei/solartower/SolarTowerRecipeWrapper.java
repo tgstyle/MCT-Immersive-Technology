@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.util.compat.jei.solartower;
 
+import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockRecipeWrapper;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
@@ -23,5 +25,7 @@ public class SolarTowerRecipeWrapper extends ITMultiblockRecipeWrapper {
 	@Override public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
 		float time = recipe.getTotalProcessTime() / (speedMult() * (timer.getValue() + 1));
 		drawTimeText(minecraft, time, format, 21, 10);
+		String text = TranslationKey.KEYWORD_HEAT_LEVEL.text() + ": " + (int)((SolarTowerRecipe)recipe).requiredTemp;
+		minecraft.fontRenderer.drawString(text, 21, 20, 0x8B8B8B, true);
 	}
 }

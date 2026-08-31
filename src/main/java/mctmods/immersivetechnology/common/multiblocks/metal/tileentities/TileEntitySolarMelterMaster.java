@@ -66,7 +66,6 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private static double heatLossMultiplier() { return Multiblocks.solarMelter.solarMelter_heat_loss_multiplier; }
     private static float speedMult() { return Multiblocks.solarMelter.solarMelter_speed_multiplier; }
     private static double workingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingTemperature; }
-    public static double getWorkingHeatLevel() { return workingHeatLevel(); }
     private static double maximumReflectorStrength() { return Multiblocks.solarMelter.solarMelter_maximum_reflector_strength; }
     private static final int progressResolution = 64;
 
@@ -121,7 +120,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
-        heatLevel = Math.min(nbt.getDouble("heatLevel"), workingHeatLevel());
+        heatLevel = nbt.getDouble("heatLevel");
         reflectorStrength = nbt.getDouble("reflectorStrength");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
@@ -282,7 +281,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
         if (particlePos0 == null) return;
-        if (heatLevel < workingHeatLevel() || reflectorStrength <= 0) return;
+        if (heatLevel < targetTemperature() || reflectorStrength <= 0) return;
         Random rand = new Random();
         long time = world.getTotalWorldTime();
         double baseX = particlePos0.getX() + 0.5;
@@ -363,7 +362,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private boolean heatUp() {
         double previous = heatLevel;
-        heatLevel = Math.min(heatLevel + getTemperatureIncrease(), workingHeatLevel());
+        heatLevel = Math.min(heatLevel + getTemperatureIncrease(), targetTemperature());
         return previous != heatLevel;
     }
 
@@ -392,11 +391,17 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return update;
     }
 
+    public double targetTemperature() {
+        if (cachedSolarMelterRecipe != null) { return cachedSolarMelterRecipe.requiredTemp; }
+        MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
+        return recipe != null ? recipe.requiredTemp : workingHeatLevel();
+    }
+
     private boolean recipeLogic() {
         boolean update = false;
         boolean didWork = false;
         boolean shouldRun = !isRSDisabled();
-        if (processTimeRemaining == 0 && shouldRun && heatLevel >= workingHeatLevel()) {
+        if (processTimeRemaining == 0 && shouldRun && heatLevel >= targetTemperature()) {
             ItemStack inputStack = inventory.get(0);
             if (!inputStack.isEmpty()) {
                 MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inputStack);
@@ -414,7 +419,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if (processTimeRemaining > 0 && shouldRun) {
             if (cachedSolarMelterRecipe != null) {
                 int prev = processTimeRemaining;
-                if (heatLevel >= workingHeatLevel()) {
+                if (heatLevel >= targetTemperature()) {
                     processTimeRemaining -= progressResolution;
                     didWork = true;
                 }
@@ -549,7 +554,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     @Override public int getComparatorInputOverride() {
-        return (int)(15 * heatLevel / workingHeatLevel());
+        return (int)Math.min(15, 15 * heatLevel / targetTemperature());
     }
 
     @Override public boolean isDummy() {

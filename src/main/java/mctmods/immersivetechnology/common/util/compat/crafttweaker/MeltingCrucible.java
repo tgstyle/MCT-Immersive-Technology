@@ -9,6 +9,7 @@ import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -17,13 +18,13 @@ import stanhebben.zenscript.annotations.ZenMethod;
 public class MeltingCrucible {
 
     @ZenMethod
-    public static void addRecipe(ILiquidStack outputFluid, IIngredient inputItem, int time) {
+    public static void addRecipe(ILiquidStack outputFluid, IIngredient inputItem, int time, @Optional double requiredTemp) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         IngredientStack itemIn = CraftTweakerHelper.toIEIngredientStack(inputItem);
 
         if (fluidOut == null || itemIn == null || itemIn.inputSize <= 0) { return; }
 
-        MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, time);
+        MeltingCrucibleRecipe recipe = new MeltingCrucibleRecipe(fluidOut, itemIn, time, requiredTemp > 0 ? requiredTemp : MeltingCrucibleRecipe.defaultTemperature());
         CraftTweakerAPI.apply(new Add(recipe));
     }
 

@@ -8,5 +8,6 @@
     "amount": 80,
     "fluid": "superheatedmoltensodium"
   },
+  "requiredTemp": 600.0,
   "time": 20
 }
