@@ -34,6 +34,7 @@ public class Config {
             public static BoilerLiquid boilerLiquid = new BoilerLiquid();
             public static BoilerSolid boilerSolid = new BoilerSolid();
             public static CoolingTower coolingTower = new CoolingTower();
+            public static Disassembly disassembly = new Disassembly();
             public static Distiller distiller = new Distiller();
             public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery = new ElectrolyticCrucibleBattery();
             public static Enable enable = new Enable();
@@ -117,6 +118,10 @@ public class Config {
                 public double coolingTower_biome_temp_factor = 0.5;
                 @Comment({"How much the local biome's humidity affects Cooling Tower speed. 0 disables the effect entirely. Drier biomes speed it up, wetter biomes slow it down [Default=3.0]"})
                 public double coolingTower_biome_humidity_factor = 3.0;
+            }
+            public static class Disassembly {
+                @Comment({"Disassembling a machine breaks it down block by block over a few ticks and drops all its materials at the broken block; sneak-break to instantly revert it to its placed blocks instead [Default=true]"})
+                public boolean disassembly_queue = true;
             }
             public static class Distiller {
                 @Comment({"The capacity of the input tank for the Distiller [Default=24000]"})
