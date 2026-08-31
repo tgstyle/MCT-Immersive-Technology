@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryMessageTileSync;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
-import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
@@ -292,9 +292,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             double py = particlePos0.getY() + 1;
             for (int i = 0; i < 3; i++) {
                 float g = rand.nextFloat();
-                ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
+                ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
                         baseX + rand.nextGaussian() * 0.1, py, baseZ + rand.nextGaussian() * 0.1,
-                        0, 0.015 * ITConfig.client.particles.colored_smoke_height, 0);
+                        0, 0.21, 0, ITConfig.client.particles.colored_smoke_height);
                 cloud.setRBGColorF(1F, g, 0F);
                 Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
             }

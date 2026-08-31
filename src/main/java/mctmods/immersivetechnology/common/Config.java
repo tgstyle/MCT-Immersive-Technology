@@ -5,6 +5,8 @@ import net.minecraftforge.common.config.Config.Comment;
 
 @SuppressWarnings("unused")
 public class Config {
+    public static final double SMOKE_HEIGHT_DEFAULT = 0.7;
+
     public enum DisassemblyMode { PROCESS_QUEUE, TEMPLATE_BLOCKS }
 
     @net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="mct_immersivetechnology")
@@ -18,6 +20,8 @@ public class Config {
             public static Barrels barrels = new Barrels();
 
             public static class Barrels {
+                @Comment({"How much fluid the Creative Barrel offers each neighbour per tick [Default=2147483647]"})
+                public int barrel_creative_outputAmount = Integer.MAX_VALUE;
                 @Comment({"The capacity of the tank for the Open Barrel [Default=12000]"})
                 public int barrel_open_tankSize = 12000;
                 @Comment({"How fast can the Open Barrel push fluids out, in mB [Default=40]"})
@@ -324,8 +328,8 @@ public class Config {
             public static Render render = new Render();
 
             public static class Particles {
-                @Comment({"Height scale for the tinted smoke rising from the boilers, turbines, coke oven and solar melter. 1.0 is the shipped height [Default=1.0]"})
-                public double colored_smoke_height = 1.0;
+                @Comment({"How strongly the tinted smoke from the boilers, turbines, coke oven and solar melter rises [Default=0.7]"})
+                public double colored_smoke_height = 0.7;
                 @Comment({"Height scale for the cooling tower's smoke. 1.0 is the shipped height [Default=1.0]"})
                 public double custom_smoke_height = 1.0;
             }

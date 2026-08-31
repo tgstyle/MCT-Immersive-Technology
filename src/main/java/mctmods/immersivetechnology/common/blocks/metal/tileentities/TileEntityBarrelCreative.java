@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerIn
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITIPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -20,12 +21,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.RayTraceResult;
 
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,6 +45,16 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     private FluidStack selectedFluid;
 
     public TileEntityBarrelCreative() {}
+
+    private FluidStack getOutputStack(boolean pressurized) {
+        if (selectedFluid == null) { return null; }
+        FluidStack stack = Utils.copyFluidStackWithAmount(selectedFluid, Blocks.barrels.barrel_creative_outputAmount, true);
+        if (pressurized) {
+            if (stack.tag == null) { stack.tag = new NBTTagCompound(); }
+            stack.tag.setBoolean("pressurized", true);
+        }
+        return stack;
+    }
 
     private FluidStack getInfiniteStack(boolean pressurized) {
         if (selectedFluid == null) { return null; }
@@ -106,9 +120,11 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
             if (output != null) {
                 TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
-                FluidStack toFill = getInfiniteStack(tile instanceof ITIPipe);
-                if (toFill == null) { continue; }
-                acceptedAmount += output.fill(toFill, true);
+                FluidStack toOffer = getOutputStack(tile instanceof ITIPipe);
+                if (toOffer == null) { continue; }
+                int accepted = output.fill(toOffer, false);
+                if (accepted <= 0) { continue; }
+                acceptedAmount += output.fill(Utils.copyFluidStackWithAmount(toOffer, accepted, true), true);
             }
         }
     }
@@ -179,6 +195,10 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         if (contained != null && contained.amount > 0) {
             FluidStack toSet = Utils.copyFluidStackWithAmount(contained, 1, true);
             setSelectedFluid(toSet);
+            if (!world.isRemote) {
+                SoundEvent sound = contained.getFluid().getEmptySound(contained);
+                world.playSound(null, getPos(), sound == null ? SoundEvents.ITEM_BUCKET_EMPTY : sound, SoundCategory.BLOCKS, 1f, 1f);
+            }
             return true;
         } else if (player.isSneaking()) {
             setSelectedFluid(null);
@@ -217,12 +237,8 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
 
     @Override @Nonnull
     public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
-        if (requestCooldown == 0) {
-            ByteBuf message = Unpooled.copyBoolean(true);
-            BinaryMessageTileSync.sendToServer(getPos(), message);
-            requestCooldown = 20;
-        }
-        if (selectedFluid != null) { return new String[] { text().format(selectedFluid.getLocalizedName(), lastAcceptedAmount) }; }
+        requestOverlaySync();
+        if (selectedFluid != null) { return new String[] { text().format(selectedFluid.getLocalizedName(), formattedAmount()) }; }
         return new String[] { TranslationKey.GUI_EMPTY.text() };
     }
 

@@ -20,7 +20,10 @@ import net.minecraft.util.math.RayTraceResult;
 
 import javax.annotation.Nonnull;
 
+import java.text.DecimalFormat;
+
 public abstract class TileEntityCommonOSD extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBinaryMessageReceiver {
+    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
     public long acceptedAmount = 0;
     public long lastAcceptedAmount = 0;
     public int secondCounter = 0;
@@ -54,17 +57,22 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
     abstract public TranslationKey text();
 
+    protected String formattedAmount() {
+        double value = Settings.experimental.per_tick_trash_cans ? lastAcceptedAmount / 20.0 : lastAcceptedAmount;
+        return NUMBER_FORMAT.format(value);
+    }
+
+    protected void requestOverlaySync() {
+        if (requestCooldown > 0) { return; }
+        BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true));
+        requestCooldown = 20;
+    }
+
     public int requestCooldown = 0;
 
     @Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
-        if (requestCooldown == 0) {
-            ByteBuf message = Unpooled.copyBoolean(true);
-            BinaryMessageTileSync.sendToServer(getPos(), message);
-            requestCooldown = 20;
-        }
-        double value = Settings.experimental.per_tick_trash_cans ? lastAcceptedAmount / 20.0 : lastAcceptedAmount;
-        String formattedValue = String.format("%.0f", value);
-        return new String[]{ text().format(formattedValue) };
+        requestOverlaySync();
+        return new String[]{ text().format(formattedAmount()) };
     }
 
     @Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {

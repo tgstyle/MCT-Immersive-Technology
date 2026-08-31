@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryMessageTileSync;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
-import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
@@ -118,7 +118,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
         float normSpeed = Math.max(0f, ITUtils.remapRange(100f, maxSpeed(), 0f, 1f, speed));
         double dirVelHoriz = 0.125 * normSpeed;
-        double baseUp = (0.0625 + 0.1 * (1 - normSpeed)) * ITConfig.client.particles.colored_smoke_height;
+        double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
         double velX = facing.getXOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
         double velZ = facing.getZOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
         FluidStack outFluid = tanks[1].getFluid();
@@ -129,8 +129,8 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
             g = ((tint >> 8) & 0xFF) / 255f;
             b = (tint & 0xFF) / 255f;
         }
-        ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
-                smokePos0.getX() + 0.5, smokePos0.getY() + 0.5, smokePos0.getZ() + 0.5, velX, baseUp, velZ);
+        ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
+                smokePos0.getX() + 0.5, smokePos0.getY() + 0.5, smokePos0.getZ() + 0.5, velX, baseUp, velZ, ITConfig.client.particles.colored_smoke_height);
         cloud.setRBGColorF(r, g, b);
         Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
     }

@@ -17,6 +17,7 @@ import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
@@ -124,7 +125,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
         Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleCampfireSmoke(world,
                 smokePos0.getX() + 0.5, smokePos0.getY() + 0.9, smokePos0.getZ() + 0.5,
-                (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.client.particles.colored_smoke_height, (rand.nextDouble() - 0.5) * 0.0125));
+                (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.client.particles.colored_smoke_height / Config.SMOKE_HEIGHT_DEFAULT, (rand.nextDouble() - 0.5) * 0.0125));
     }
 
     @SideOnly(Side.CLIENT)

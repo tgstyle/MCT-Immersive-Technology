@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryMessageTileSync;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
-import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.particles.ParticleFlameCustom;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
@@ -242,11 +242,11 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
                     rand.nextFloat() * 0.0625f - 0.03125f, 0.0625f, rand.nextFloat() * 0.0625f - 0.03125f));
         }
         if (pilotLit && heatLevel > pilotHeat()) {
-            ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
+            ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
                     exhaustPos0.getX() + 0.5,
                     exhaustPos0.getY() + 1.25,
                     exhaustPos0.getZ() + 0.5,
-                    (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.client.particles.colored_smoke_height, (rand.nextDouble() - 0.5) * 0.0125);
+                    0, 0.125, 0, ITConfig.client.particles.colored_smoke_height);
             cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
             Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
         }

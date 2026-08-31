@@ -56,7 +56,7 @@ tile.immersivetech.metal_device.heat_creative.name=創造模式加熱器
 tile.immersivetech.metal_trash.trash_item.name=垃圾桶
 tile.immersivetech.metal_trash.trash_fluid.name=流體垃圾桶
 tile.immersivetech.metal_trash.trash_energy.name=能量垃圾桶
-tile.immersivetech.metal_barrel.barrel.name=創造模式金屬桶
+tile.immersivetech.metal_barrel.barrel.name=創造模式流體桶
 tile.immersivetech.metal_barrel.barrel_open.name=無蓋金屬桶
 tile.immersivetech.metal_barrel.barrel_steel.name=鋼製金屬桶
 tile.immersivetech.valve.fluid_valve.name=流體控制閥
@@ -67,7 +67,7 @@ tile.immersivetech.valve.stack_limiter.name=物品控制器
 tile.immersivetech.stone_decoration_slab.cokebrick_reinforced.name=強化焦爐磚臺階
 
 #WOODEN
-tile.immersivetech.wooden_crate.crate.name=創造存儲箱
+tile.immersivetech.wooden_crate.crate.name=創造模式存儲箱
 
 #METAL MULTIBLOCKS
 tile.immersivetech.metal_multiblock.distiller.name=蒸餾器

@@ -37,6 +37,7 @@ import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.BlockValve.BlockType_Valve;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
+import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
@@ -416,6 +417,7 @@ public class ClientProxy extends CommonProxy {
             if (ID == ITGUI.GUIID_Boiler_Tank && tile instanceof TileEntityBoilerTankMaster) { return new GuiBoilerTank(player.inventory, (TileEntityBoilerTankMaster)tile); }
             if (ID == ITGUI.GUIID_Boiler_Liquid && tile instanceof TileEntityBoilerLiquidMaster) { return new GuiBoilerLiquid(player.inventory, (TileEntityBoilerLiquidMaster)tile); }
             if (ID == ITGUI.GUIID_Boiler_Solid && tile instanceof TileEntityBoilerSolidMaster) { return new GuiBoilerSolid(player.inventory, (TileEntityBoilerSolidMaster)tile); }
+            if (ID == ITGUI.GUIID_Crate && tile instanceof TileEntityCrate) { return new GuiCrate(player.inventory, (TileEntityCrate)tile); }
             if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { return new GuiDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
             if (ID == ITGUI.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) { return new GuiFluidValve((TileEntityFluidValve)tile); }
             if (ID == ITGUI.GUIID_Load_Controller && tile instanceof TileEntityLoadController) { return new GuiLoadController((TileEntityLoadController)tile); }

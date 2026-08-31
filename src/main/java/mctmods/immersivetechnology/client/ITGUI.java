@@ -14,4 +14,5 @@ public class ITGUI {
 	public static final int GUIID_Melting_Crucible = 10;
 	public static final int GUIID_Boiler_Liquid = 11;
 	public static final int GUIID_Boiler_Solid = 12;
+	public static final int GUIID_Crate = 13;
 }
