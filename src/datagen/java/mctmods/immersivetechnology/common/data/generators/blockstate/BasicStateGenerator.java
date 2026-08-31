@@ -10,11 +10,7 @@ import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.data.util.GeneratorUtils;
 import mctmods.immersivetechnology.common.data.generators.ModBlockState;
-import mctmods.immersivetechnology.common.data.builders.ModObjModelBuilder;
-import mctmods.immersivetechnology.common.data.builders.SplitModelBuilder;
 import mctmods.immersivetechnology.common.data.models.ModelProviderUtils;
-import mctmods.immersivetechnology.common.data.models.NongeneratedModels;
-import mctmods.immersivetechnology.common.data.models.NongeneratedModels.ITNongeneratedModel;
 import mctmods.immersivetechnology.common.data.builders.SideConfigBuilder;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
@@ -33,6 +29,7 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
+import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,11 +42,9 @@ import java.util.function.Supplier;
 public class BasicStateGenerator {
     private final ModBlockState main;
     private final ExistingFileHelper existingFileHelper;
-    private final NongeneratedModels innerModels;
 
     private record ValveRotationConfig(int horizontalXRot, int verticalDownXRot, int verticalUpXRot, Function<Direction, Integer> yRotOffsetSupplier) {}
 
-    private static final List<Vec3i> BASEHEATER_PARTS = List.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
 
     private static final Map<String, ValveRotationConfig> VALVE_CONFIGS = Map.of(
             "fluid", new ValveRotationConfig(0, 90, 270, facing -> 2),
@@ -61,7 +56,6 @@ public class BasicStateGenerator {
     public BasicStateGenerator(ModBlockState main, ExistingFileHelper helper) {
         this.main = main;
         this.existingFileHelper = helper;
-        this.innerModels = new NongeneratedModels(main.getPackOutput(), existingFileHelper);
     }
 
     private int[] calculateValveRotations(Direction facing, int rotationVal, boolean mirrored, ValveRotationConfig config) {
@@ -181,10 +175,8 @@ public class BasicStateGenerator {
     }
 
     private void createBaseHeaterVariants() {
-        ITNongeneratedModel baseHeaterNormalUnsplit = createBaseHeaterUnsplit(false);
-        ITNongeneratedModel baseHeaterActiveUnsplit = createBaseHeaterUnsplit(true);
-        BlockModelBuilder baseHeaterNormalSplit = splitModel("block/metal/advanced_coke_oven_baseheater_split", baseHeaterNormalUnsplit, BASEHEATER_PARTS);
-        BlockModelBuilder baseHeaterActiveSplit = splitModel("block/metal/advanced_coke_oven_baseheater_active_split", baseHeaterActiveUnsplit, BASEHEATER_PARTS);
+        BlockModelBuilder baseHeaterNormalSplit = createBaseHeaterUnsplit(false);
+        BlockModelBuilder baseHeaterActiveSplit = createBaseHeaterUnsplit(true);
         setRenderType(RenderType.cutout(), baseHeaterNormalSplit, baseHeaterActiveSplit);
 
         VariantBlockStateBuilder heaterBuilder = main.getVariantBuilder(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
@@ -200,13 +192,12 @@ public class BasicStateGenerator {
     private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
         String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
         BlockModelBuilder builder = main.models().getBuilder(modelName);
-        ModObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ModObjModelBuilder::new)
+        CustomLoaderBuilder<BlockModelBuilder> loader = builder.customLoader(ObjModelBuilder::begin)
                 .modelLocation(main.modLoc("models/block/metal/" + objFolder + "/" + objFolder + ".obj"))
                 .automaticCulling(true)
                 .shadeQuads(true)
                 .flipV(true)
                 .emissiveAmbient(true)
-                .mtlOverride(null)
                 .visibility(baseVisibility, true)
                 .visibility("Handle_Open", isOpen)
                 .visibility("Handle_Closed", !isOpen);
@@ -220,14 +211,13 @@ public class BasicStateGenerator {
     private ModelFile createTimerObjModel(String baseName, String objFolder, String baseVisibility) {
         String modelName = "block/connector/" + baseName;
         BlockModelBuilder builder = main.models().getBuilder(modelName);
-        ModObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ModObjModelBuilder::new)
+        builder.renderType("translucent");
+        CustomLoaderBuilder<BlockModelBuilder> loader = builder.customLoader(ObjModelBuilder::begin)
                 .modelLocation(main.modLoc("models/block/connector/" + objFolder + "/" + objFolder + ".obj"))
                 .automaticCulling(false)
                 .shadeQuads(false)
                 .flipV(true)
                 .emissiveAmbient(true)
-                .mtlOverride(null)
-                .renderType("translucent")
                 .visibility(baseVisibility, true)
                 .visibility("cube", true)
                 .visibility("glass", true);
@@ -237,12 +227,12 @@ public class BasicStateGenerator {
         return model;
     }
 
-    private ITNongeneratedModel createBaseHeaterUnsplit(boolean active) {
+    private BlockModelBuilder createBaseHeaterUnsplit(boolean active) {
         String suffix = active ? "_active" : "";
         String modelName = "block/metal/advanced_coke_oven_baseheater" + suffix;
-        ITNongeneratedModel base = innerModels.withExistingParent(modelName, main.mcLoc("block"));
-        ModObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ModObjModelBuilder::new).modelLocation(main.modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj")).automaticCulling(false).shadeQuads(true).flipV(true).emissiveAmbient(active).visibility("Fan", false).visibility("fan", false).visibility("Rotor", false).visibility("rotor", false);
-        ITNongeneratedModel ret = loader.end();
+        BlockModelBuilder base = main.models().withExistingParent(modelName, main.mcLoc("block"));
+        CustomLoaderBuilder<BlockModelBuilder> loader = base.customLoader(ObjModelBuilder::begin).modelLocation(main.modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj")).automaticCulling(false).shadeQuads(true).flipV(true).emissiveAmbient(active).visibility("Fan", false).visibility("fan", false).visibility("Rotor", false).visibility("rotor", false);
+        BlockModelBuilder ret = loader.end();
         ret.ao(false);
         String particleTex = main.modLoc("block/metal/advanced_coke_oven_baseheater").toString();
         ret.texture("particle", particleTex);
@@ -272,12 +262,6 @@ public class BasicStateGenerator {
     }
 
     private void createSimpleBlock(Block block, ModelFile model) { main.getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
-
-    protected BlockModelBuilder splitModel(String name, ModelBuilder<?> model, List<Vec3i> parts) {
-        BlockModelBuilder result = main.models().withExistingParent(name, main.mcLoc("block")).customLoader(SplitModelBuilder::begin).innerModel(model).parts(parts).dynamic(false).end();
-        addParticleTextureFrom(result, model);
-        return result;
-    }
 
     protected void addParticleTextureFrom(BlockModelBuilder result, ModelBuilder<?> model) {
         String particles = ModBlockState.generatedParticleTextures.get(model.getLocation());

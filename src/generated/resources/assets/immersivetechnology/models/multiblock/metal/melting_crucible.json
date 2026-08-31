@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/multiblock/metal/melting_crucible/melting_crucible.obj",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/melting_crucible"
+  }
+}

@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.common.data.builders.ModObjModelBuilder;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import net.minecraft.data.DataGenerator;
@@ -11,6 +10,7 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -41,7 +41,7 @@ public class ItemModel extends ItemModelProvider {
 
     private void generateBaseHeaterItem() {
         ItemModelBuilder builder = getBuilder("advanced_coke_oven_baseheater")
-                .customLoader(ModObjModelBuilder::new)
+                .customLoader(ObjModelBuilder::begin)
                 .modelLocation(modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj"))
                 .automaticCulling(false)
                 .shadeQuads(true)

@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.data.models;
 import com.google.common.base.Preconditions;
 import com.google.gson.*;
 import com.mojang.math.Transformation;
-import com.immersiveconvergence.api.client.ModelUtils;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransform.Deserializer;
 import net.minecraft.util.Mth;
@@ -59,7 +58,7 @@ public class TransformationMap {
             if (forType != null) {
                 if (vanilla) {
                     ItemTransform vanillaTransform = gson.fromJson(forType, ItemTransform.class);
-                    transform = ModelUtils.fromItemTransform(vanillaTransform, false);
+                    transform = fromItemTransform(vanillaTransform, false);
                 } else {
                     transform = readMatrix(forType, gson);
                     if (type.map("no_corner_offset"::equals).orElse(false)) { transform = transform.blockCornerToCenter(); }
@@ -120,4 +119,26 @@ public class TransformationMap {
         ret.add(v.z());
         return ret;
     }
+
+    private static Transformation fromItemTransform(ItemTransform transform, boolean leftHand) {
+        Vector3f translate = new Vector3f(transform.translation);
+        if (leftHand) { translate.setComponent(0, -translate.x()); }
+
+        float rx = transform.rotation.x();
+        float ry = transform.rotation.y();
+        float rz = transform.rotation.z();
+        if (leftHand) {
+            ry = -ry;
+            rz = -rz;
+        }
+        Quaternionf leftRotation = new Quaternionf().rotateXYZ(Mth.DEG_TO_RAD * rx, Mth.DEG_TO_RAD * ry, Mth.DEG_TO_RAD * rz);
+
+        rx = transform.rightRotation.x();
+        ry = transform.rightRotation.y() * (leftHand ? -1.0F : 1.0F);
+        rz = transform.rightRotation.z() * (leftHand ? -1.0F : 1.0F);
+        Quaternionf rightRotation = new Quaternionf().rotateXYZ(Mth.DEG_TO_RAD * rx, Mth.DEG_TO_RAD * ry, Mth.DEG_TO_RAD * rz);
+
+        return new Transformation(translate, leftRotation, new Vector3f(transform.scale), rightRotation);
+    }
+
 }

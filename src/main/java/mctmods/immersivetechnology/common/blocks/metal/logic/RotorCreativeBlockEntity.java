@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
 import mctmods.immersivetechnology.common.blocks.helper.IClientTickableBE;

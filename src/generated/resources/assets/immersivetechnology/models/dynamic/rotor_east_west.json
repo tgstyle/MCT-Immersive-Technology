@@ -2,7 +2,7 @@
   "automatic_culling": false,
   "emissive_ambient": true,
   "flip_v": true,
-  "loader": "immersivetechnology:obj",
+  "loader": "forge:obj",
   "model": "immersivetechnology:models/multiblock/metal/rotor/rotor_east_west.obj",
   "render_type": "minecraft:cutout",
   "shade_quads": true,

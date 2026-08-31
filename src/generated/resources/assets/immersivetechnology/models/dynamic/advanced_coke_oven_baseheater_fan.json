@@ -2,7 +2,7 @@
   "automatic_culling": false,
   "emissive_ambient": true,
   "flip_v": true,
-  "loader": "immersivetechnology:obj",
+  "loader": "forge:obj",
   "model": "immersivetechnology:models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_fan.obj",
   "render_type": "minecraft:cutout",
   "shade_quads": true,

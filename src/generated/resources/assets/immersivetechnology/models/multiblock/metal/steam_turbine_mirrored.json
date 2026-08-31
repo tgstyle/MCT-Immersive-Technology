@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/multiblock/metal/steam_turbine/steam_turbine_mirrored.obj",
+  "mtl_override": "immersivetechnology:models/multiblock/metal/steam_turbine/steam_turbine.mtl",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/steam_turbine"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_active.obj",
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:block/metal/advanced_coke_oven_baseheater"
+  },
+  "visibility": {
+    "Fan": false,
+    "Rotor": false,
+    "fan": false,
+    "rotor": false
+  }
+}

@@ -10,9 +10,14 @@ import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
 import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.obj.ModObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.MirroredModelLoader;
-import com.immersiveconvergence.api.client.split.SplitModelLoader;
+import com.immersiveconvergence.api.client.split.SplitModelHandler;
+import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
+import mctmods.immersivetechnology.core.registration.ModBlocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import mctmods.immersivetechnology.client.particles.helper.ColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
@@ -55,10 +60,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Reference.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy extends CommonProxy {
+    private static final List<Vec3i> BASEHEATER_PARTS = List.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -239,15 +246,21 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
-        ev.register("obj", ModObjLoader.INSTANCE);
         ev.register(ModelConfigurableSides.Loader.NAME.getPath(), new ModelConfigurableSides.Loader());
         ev.register(MirroredModelLoader.ID.getPath(), MirroredModelLoader.INSTANCE);
-        ev.register("basic_split", SplitModelLoader.INSTANCE);
         RotorModels.ROTOR = new ModDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ModDynamicModel("rotor_east_west");
         SolarReflectorModels.SUPPORT = new ModDynamicModel("solar_reflector_support");
         SolarReflectorModels.MIRROR = new ModDynamicModel("solar_reflector_mirror");
         AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ModDynamicModel("advanced_coke_oven_baseheater_fan");
+        registerSplitModels();
+    }
+
+    private static void registerSplitModels() {
+        for (TemplateMultiblock template : MultiblockRegistry.MB_TEMPLATE_MAP.values()) {
+            if (template instanceof ModTemplateMultiblock multiblock) { SplitModelHandler.register(multiblock.getBlock(), multiblock.getUniqueName()); }
+        }
+        SplitModelHandler.register(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), BASEHEATER_PARTS, Direction.SOUTH);
     }
 
     @SubscribeEvent

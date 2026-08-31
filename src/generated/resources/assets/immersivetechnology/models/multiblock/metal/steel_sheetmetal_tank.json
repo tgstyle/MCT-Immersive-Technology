@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/multiblock/metal/steel_sheetmetal_tank/steel_sheetmetal_tank.obj",
+  "render_type": "minecraft:cutout_mipped",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
+  }
+}

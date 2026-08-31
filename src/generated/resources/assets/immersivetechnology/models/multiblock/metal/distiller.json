@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "forge:obj",
+  "model": "immersivetechnology:models/multiblock/metal/distiller/distiller.obj",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/distiller"
+  }
+}

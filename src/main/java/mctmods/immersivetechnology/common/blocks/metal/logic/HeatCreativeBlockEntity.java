@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
