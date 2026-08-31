@@ -11,6 +11,8 @@ public class FluidColored extends Fluid {
 	static final ResourceLocation ICON_MetalFlowing = new ResourceLocation("immersivetech:block/fluid/molten_flowing");
 	static final ResourceLocation ICON_Still = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_still");
 	static final ResourceLocation ICON_Flowing = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_flowing");
+	static final ResourceLocation ICON_GasStill = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_gas_still");
+	static final ResourceLocation ICON_GasFlowing = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_gas_flowing");
 
 	int color;
 
@@ -23,7 +25,7 @@ public class FluidColored extends Fluid {
 	}
 
 	public FluidColored(String name, int color, int density, int viscosity, boolean gaseous) {
-		super(name, ICON_Still, ICON_Flowing);
+		super(name, gaseous ? ICON_GasStill : ICON_Still, gaseous ? ICON_GasFlowing : ICON_Flowing);
 		this.color = color;
 		setDensity(density);
 		setViscosity(viscosity);
@@ -31,7 +33,7 @@ public class FluidColored extends Fluid {
 	}
 
 	public FluidColored(String name, int color, int temp, int density, int viscosity, boolean gaseous) {
-		super(name, ICON_Still, ICON_Flowing);
+		super(name, gaseous ? ICON_GasStill : ICON_Still, gaseous ? ICON_GasFlowing : ICON_Flowing);
 		this.color = color;
 		setTemperature(temp);
 		setDensity(density);
