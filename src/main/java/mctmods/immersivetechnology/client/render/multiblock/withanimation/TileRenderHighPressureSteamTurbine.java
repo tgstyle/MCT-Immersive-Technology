@@ -3,6 +3,8 @@ package mctmods.immersivetechnology.client.render.multiblock.withanimation;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
+import mctmods.immersivetechnology.client.render.ITTESRHelper;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineMaster;
 
@@ -27,6 +29,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
     @Override public boolean isGlobalRenderer(@Nonnull TileEntityHighPressureSteamTurbineMaster te) { return true; }
 
     @Override public void render(TileEntityHighPressureSteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        if (!ITConfig.client.render.steam_turbine_renderer || !ITTESRHelper.inRenderRange(x, y, z)) { return; }
         if (!te.formed || te.isInvalid() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Tessellator tessellator = Tessellator.getInstance();
@@ -51,7 +54,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
             state = state.withProperty(IEProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
-            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, masterPos, buffer, false);
+            ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, state, masterPos, buffer);
         }
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();

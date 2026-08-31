@@ -35,7 +35,7 @@ public class CommonProxy implements IGuiHandler {
 
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
-		QueueProcessor.queueEnabled = () -> ITConfig.Multiblocks.disassembly.disassembly_queue;
+		QueueProcessor.queueEnabled = () -> ITConfig.Multiblocks.disassembly.disassemblyMode == Config.DisassemblyMode.PROCESS_QUEUE;
 	}
 
 	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {

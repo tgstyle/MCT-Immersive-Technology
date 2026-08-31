@@ -3,6 +3,8 @@ package mctmods.immersivetechnology.client.render.multiblock.withanimation;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
+import mctmods.immersivetechnology.client.render.ITTESRHelper;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineMaster;
 
@@ -29,6 +31,7 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
     @Override public boolean isGlobalRenderer(@Nonnull TileEntityGasTurbineMaster te) { return true; }
 
     @Override public void render(TileEntityGasTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        if (!ITConfig.client.render.gas_turbine_renderer || !ITTESRHelper.inRenderRange(x, y, z)) { return; }
         if (!te.formed || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos blockPos = te.getPos();
@@ -52,7 +55,7 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
         GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), rotAxis.getXOffset(), 0, rotAxis.getZOffset());
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-        blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, blockPos.offset(rotAxis, ROTOR_DISTANCE), worldRenderer, false);
+        ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, state, blockPos.offset(rotAxis, ROTOR_DISTANCE), worldRenderer);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();
         GlStateManager.enableCull();

@@ -3,6 +3,8 @@ package mctmods.immersivetechnology.client.render.multiblock.withanimation;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
+import mctmods.immersivetechnology.client.render.ITTESRHelper;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteamTurbineMaster;
 
@@ -29,6 +31,7 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
     @Override public boolean isGlobalRenderer(@Nonnull TileEntitySteamTurbineMaster te) { return true; }
 
     @Override public void render(TileEntitySteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        if (!ITConfig.client.render.steam_turbine_renderer || !ITTESRHelper.inRenderRange(x, y, z)) { return; }
         if (!te.formed || te.isInvalid() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Tessellator tessellator = Tessellator.getInstance();
@@ -55,7 +58,7 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
             buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
             for (int distance : ROTOR_DISTANCES) {
                 BlockPos rotorPos = masterPos.offset(rotAxis, distance);
-                blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, rotorPos, buffer, false);
+                ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, state, rotorPos, buffer);
             }
         }
         buffer.setTranslation(0, 0, 0);

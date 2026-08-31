@@ -20,6 +20,7 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -292,7 +293,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             for (int i = 0; i < 3; i++) {
                 float g = rand.nextFloat();
                 ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
-                        baseX + rand.nextGaussian() * 0.1, py, baseZ + rand.nextGaussian() * 0.1, 0, 0, 0);
+                        baseX + rand.nextGaussian() * 0.1, py, baseZ + rand.nextGaussian() * 0.1,
+                        0, 0.015 * ITConfig.client.particles.colored_smoke_height, 0);
                 cloud.setRBGColorF(1F, g, 0F);
                 Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
             }

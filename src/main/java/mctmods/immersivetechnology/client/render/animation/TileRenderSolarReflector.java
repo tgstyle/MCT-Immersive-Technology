@@ -3,6 +3,8 @@ package mctmods.immersivetechnology.client.render.animation;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
+import mctmods.immersivetechnology.client.render.ITTESRHelper;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarReflectorMaster;
 
@@ -23,6 +25,7 @@ import org.lwjgl.opengl.GL11;
 public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEntitySolarReflectorMaster> {
 	@SuppressWarnings("deprecation")
 	@Override public void render(TileEntitySolarReflectorMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+		if (!ITConfig.client.render.solar_reflector_renderer) { return; }
 		if (!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
 		final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 		BlockPos blockPos = te.getPos();
@@ -48,7 +51,7 @@ public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEnti
 
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-		blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), supportModel, state, blockPos, worldRenderer, false);
+		ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), supportModel, state, blockPos, worldRenderer);
 		worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
 		tessellator.draw();
 
@@ -56,7 +59,7 @@ public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEnti
 
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-		blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), mirrorModel, state1, blockPos, worldRenderer, false);
+		ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), mirrorModel, state1, blockPos, worldRenderer);
 		worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
 		tessellator.draw();
 

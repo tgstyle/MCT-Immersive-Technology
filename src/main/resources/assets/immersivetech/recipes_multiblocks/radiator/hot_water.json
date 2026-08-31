@@ -1,0 +1,12 @@
+{
+  "type": "immersivetech:radiator",
+  "input": {
+    "amount": 1000,
+    "fluid": "hotwater"
+  },
+  "output": {
+    "amount": 800,
+    "fluid": "water"
+  },
+  "time": 20
+}

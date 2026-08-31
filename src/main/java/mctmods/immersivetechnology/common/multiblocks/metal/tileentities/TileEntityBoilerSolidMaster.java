@@ -21,6 +21,7 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerSolidRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -240,7 +241,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
                     exhaustPos0.getX() + 0.5,
                     exhaustPos0.getY() + 1.25,
                     exhaustPos0.getZ() + 0.5,
-                    (rand.nextDouble() - 0.5) * 0.0125, 0.05, (rand.nextDouble() - 0.5) * 0.0125);
+                    (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.client.particles.colored_smoke_height, (rand.nextDouble() - 0.5) * 0.0125);
             cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
             Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
         }

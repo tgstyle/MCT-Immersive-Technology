@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.client.render.animation;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.client.ClientUtils;
 
+import mctmods.immersivetechnology.client.render.ITTESRHelper;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
 
@@ -49,7 +50,7 @@ public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRende
         ClientUtils.bindAtlas();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         worldRenderer.setTranslation(-0.5 - blockPos.getX(), -0.5 - blockPos.getY(), -0.5 - blockPos.getZ());
-        blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), fanModel, dynamicState, blockPos, worldRenderer, false);
+        ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), fanModel, dynamicState, blockPos, worldRenderer);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();
 

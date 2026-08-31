@@ -20,6 +20,7 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteamTurbine;
 import mctmods.immersivetechnology.common.util.ITSounds;
@@ -117,7 +118,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
         float normSpeed = Math.max(0f, ITUtils.remapRange(100f, maxSpeed(), 0f, 1f, speed));
         double dirVelHoriz = 0.125 * normSpeed;
-        double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
+        double baseUp = (0.0625 + 0.1 * (1 - normSpeed)) * ITConfig.client.particles.colored_smoke_height;
         double velX = facing.getXOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
         double velZ = facing.getZOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
         FluidStack outFluid = tanks[1].getFluid();

@@ -5,9 +5,12 @@ import net.minecraftforge.common.config.Config.Comment;
 
 @SuppressWarnings("unused")
 public class Config {
+    public enum DisassemblyMode { PROCESS_QUEUE, TEMPLATE_BLOCKS }
+
     @net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="mct_immersivetechnology")
     public static class ITConfig {
         public static Blocks blocks;
+        public static Client client;
         public static Multiblocks multiBlocks;
         public static Settings settings;
 
@@ -120,8 +123,8 @@ public class Config {
                 public double coolingTower_biome_humidity_factor = 3.0;
             }
             public static class Disassembly {
-                @Comment({"Disassembling a machine breaks it down block by block over a few ticks and drops all its materials at the broken block; sneak-break to instantly revert it to its placed blocks instead [Default=true]"})
-                public boolean disassembly_queue = true;
+                @Comment({"How a machine comes apart. PROCESS_QUEUE breaks it down block by block over a few ticks and drops all its materials at the broken block; TEMPLATE_BLOCKS instantly reverts it to the blocks it was built from. Sneak-breaking always uses TEMPLATE_BLOCKS [Default=PROCESS_QUEUE]"})
+                public DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
             }
             public static class Distiller {
                 @Comment({"The capacity of the input tank for the Distiller [Default=24000]"})
@@ -314,6 +317,29 @@ public class Config {
                 public int steelTank_tankSize = 2048000;
                 @Comment({"How fast can the Steel Tank push fluids out, in mB, when powered by Redstone [Default=1000]"})
                 public int steelTank_transferSpeed = 1000;
+            }
+        }
+        public static class Client {
+            public static Particles particles = new Particles();
+            public static Render render = new Render();
+
+            public static class Particles {
+                @Comment({"Height scale for the tinted smoke rising from the boilers, turbines, coke oven and solar melter. 1.0 is the shipped height [Default=1.0]"})
+                public double colored_smoke_height = 1.0;
+                @Comment({"Height scale for the cooling tower's smoke. 1.0 is the shipped height [Default=1.0]"})
+                public double custom_smoke_height = 1.0;
+            }
+            public static class Render {
+                @Comment({"Disables the lighting code for models rendered dynamically (TESR). May improve FPS [Default=false]"})
+                public boolean disableFancyTESR = false;
+                @Comment({"Should the animations and special client rendering apply to the Gas Turbine [Default=true]"})
+                public boolean gas_turbine_renderer = true;
+                @Comment({"This modifies the distance a special multiblock renderer is visible from [Default=2.5]"})
+                public double multiblockSpecialRenderDistanceModifier = 2.5;
+                @Comment({"Should the animations and special client rendering apply to the Solar Reflector [Default=true]"})
+                public boolean solar_reflector_renderer = true;
+                @Comment({"Should the animations and special client rendering apply to the Steam Turbines [Default=true]"})
+                public boolean steam_turbine_renderer = true;
             }
         }
         public static class Settings {

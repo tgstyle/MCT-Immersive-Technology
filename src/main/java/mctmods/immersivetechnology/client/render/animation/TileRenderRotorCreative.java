@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client.render.animation;
 
+import mctmods.immersivetechnology.client.render.ITTESRHelper;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 
@@ -41,7 +42,7 @@ public class TileRenderRotorCreative extends TileEntitySpecialRenderer<TileEntit
         ClientUtils.bindAtlas();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         buffer.setTranslation(-0.5 - blockPos.getX(), -0.5 - blockPos.getY(), -0.5 - blockPos.getZ());
-        blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, dynamicState, blockPos, buffer, false);
+        ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, dynamicState, blockPos, buffer);
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();
         GlStateManager.enableCull();
