@@ -42,7 +42,7 @@ public class ItemModel extends ItemModelProvider {
     private void generateBaseHeaterItem() {
         ItemModelBuilder builder = getBuilder("advanced_coke_oven_baseheater")
                 .customLoader(ModObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj"))
+                .modelLocation(modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj"))
                 .automaticCulling(false)
                 .shadeQuads(true)
                 .flipV(true)

@@ -8,7 +8,7 @@
     "emissive_ambient": false,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj",
+    "model": "immersivetechnology:models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:block/metal/advanced_coke_oven_baseheater"

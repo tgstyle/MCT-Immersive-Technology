@@ -124,7 +124,7 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/boiler_solid/boiler_solid.obj",
+  "model": "immersivetechnology:models/multiblock/metal/boiler_solid/boiler_solid.obj",
   "textures": {
     "cube_front": "immersivetechnology:multiblock/metal/boiler_solid"
   }

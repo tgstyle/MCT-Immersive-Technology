@@ -22,7 +22,7 @@ public abstract class GenericShape implements Function<BlockPos, VoxelShape> {
     private final Map<BlockPos, VoxelShape> shapeCache = new ConcurrentHashMap<>();
 
     public static int[] loadDimensions(String multiblockName, String category) {
-        String path = "/assets/" + Reference.MODID + "/models/multiblock/" + category + "/obj/" + multiblockName + "/" + multiblockName + ".obj";
+        String path = "/assets/" + Reference.MODID + "/models/multiblock/" + category + "/" + multiblockName + "/" + multiblockName + ".obj";
         double minX = Double.MAX_VALUE, maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE, maxY = Double.MIN_VALUE;
         double minZ = Double.MAX_VALUE, maxZ = Double.MIN_VALUE;

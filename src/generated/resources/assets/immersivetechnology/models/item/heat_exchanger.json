@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/heat_exchanger/heat_exchanger.obj"
+  "model": "immersivetechnology:models/multiblock/metal/heat_exchanger/heat_exchanger.obj"
 }

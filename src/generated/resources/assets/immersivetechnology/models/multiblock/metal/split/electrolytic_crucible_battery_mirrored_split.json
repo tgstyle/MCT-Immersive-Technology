@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/electrolytic_crucible_battery/electrolytic_crucible_battery_mirrored.obj",
+    "model": "immersivetechnology:models/multiblock/metal/electrolytic_crucible_battery/electrolytic_crucible_battery_mirrored.obj",
     "mtl_override": "electrolytic_crucible_battery.mtl",
     "shade_quads": true,
     "textures": {

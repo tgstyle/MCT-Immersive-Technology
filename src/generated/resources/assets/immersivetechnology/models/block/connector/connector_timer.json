@@ -3,7 +3,7 @@
   "emissive_ambient": true,
   "flip_v": true,
   "loader": "immersivetechnology:obj",
-  "model": "immersivetechnology:models/block/connector/obj/connector_timer/connector_timer.obj",
+  "model": "immersivetechnology:models/block/connector/connector_timer/connector_timer.obj",
   "render_type": "translucent",
   "shade_quads": false,
   "textures": {

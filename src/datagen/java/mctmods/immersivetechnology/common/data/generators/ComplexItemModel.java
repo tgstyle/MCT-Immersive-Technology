@@ -58,7 +58,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
     }
 
     private TRSRModelBuilder createSolarReflectorModel(Supplier<? extends ItemLike> block) {
-        String base = "multiblock/metal/obj/solar_reflector/";
+        String base = "multiblock/metal/solar_reflector/";
         TRSRModelBuilder reflectorModel = createTransformedObjModel(base + "solar_reflector.obj", "solar_reflector_reflector", null);
         TRSRModelBuilder supportModel = createTransformedObjModel(base + "solar_reflector_support.obj", "solar_reflector_support", new Vector3f(1.6f, 0.0f, 1.6f));
         TRSRModelBuilder mirrorModel = createTransformedObjModel(base + "solar_reflector_mirror.obj", "solar_reflector_mirror", new Vector3f(1.6f, 0.0f, 1.6f));
@@ -108,7 +108,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
 
     private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block, Vector3f guiTrans, float guiScale, float groundScale, float fixedScale) {
         TRSRModelBuilder model;
-        String objPath = "multiblock/" + type + "/obj/" + id + "/" + id + ".obj";
+        String objPath = "multiblock/" + type + "/" + id + "/" + id + ".obj";
 
         if ("solar_reflector".equals(id)) { model = createSolarReflectorModel(block); }
         else if ("boiler_solid".equals(id)) { model = createBoilerSolidModel(block, objPath); }

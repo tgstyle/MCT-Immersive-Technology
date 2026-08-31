@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/melting_crucible/melting_crucible.obj"
+  "model": "immersivetechnology:models/multiblock/metal/melting_crucible/melting_crucible.obj"
 }

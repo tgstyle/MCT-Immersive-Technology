@@ -29,7 +29,7 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
         }
         getBuilder("dynamic/advanced_coke_oven_baseheater_fan")
                 .customLoader(ModObjModelBuilder::new)
-                .modelLocation(modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_fan.obj"))
+                .modelLocation(modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_fan.obj"))
                 .flipV(true)
                 .automaticCulling(false)
                 .shadeQuads(true)
@@ -39,7 +39,7 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
                 .renderType("cutout");
         getBuilder("dynamic/rotor")
                 .customLoader(ModObjModelBuilder::new)
-                .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/rotor/rotor.obj"))
                 .flipV(true)
                 .automaticCulling(false)
                 .shadeQuads(true)
@@ -49,7 +49,7 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
                 .renderType("cutout");
         getBuilder("dynamic/rotor_east_west")
                 .customLoader(ModObjModelBuilder::new)
-                .modelLocation(modLoc("models/multiblock/metal/obj/rotor/rotor_east_west.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/rotor/rotor_east_west.obj"))
                 .flipV(true)
                 .automaticCulling(false)
                 .shadeQuads(true)
@@ -59,12 +59,12 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
                 .renderType("cutout");
         getBuilder("dynamic/solar_reflector_mirror")
                 .customLoader(ModObjModelBuilder::new)
-                .modelLocation(modLoc("models/multiblock/metal/obj/solar_reflector/solar_reflector_mirror.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/solar_reflector/solar_reflector_mirror.obj"))
                 .flipV(true)
                 .automaticCulling(false);
         getBuilder("dynamic/solar_reflector_support")
                 .customLoader(ModObjModelBuilder::new)
-                .modelLocation(modLoc("models/multiblock/metal/obj/solar_reflector/solar_reflector_support.obj"))
+                .modelLocation(modLoc("models/multiblock/metal/solar_reflector/solar_reflector_support.obj"))
                 .flipV(true)
                 .automaticCulling(false);
     }

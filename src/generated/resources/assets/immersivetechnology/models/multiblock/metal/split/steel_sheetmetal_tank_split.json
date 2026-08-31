@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/steel_sheetmetal_tank/steel_sheetmetal_tank.obj",
+    "model": "immersivetechnology:models/multiblock/metal/steel_sheetmetal_tank/steel_sheetmetal_tank.obj",
     "render_type": "cutout_mipped",
     "shade_quads": true,
     "textures": {

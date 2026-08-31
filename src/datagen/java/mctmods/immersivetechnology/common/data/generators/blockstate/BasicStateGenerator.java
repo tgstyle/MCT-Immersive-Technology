@@ -201,7 +201,7 @@ public class BasicStateGenerator {
         String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
         BlockModelBuilder builder = main.models().getBuilder(modelName);
         ModObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ModObjModelBuilder::new)
-                .modelLocation(main.modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj"))
+                .modelLocation(main.modLoc("models/block/metal/" + objFolder + "/" + objFolder + ".obj"))
                 .automaticCulling(true)
                 .shadeQuads(true)
                 .flipV(true)
@@ -211,7 +211,7 @@ public class BasicStateGenerator {
                 .visibility("Handle_Open", isOpen)
                 .visibility("Handle_Closed", !isOpen);
         ModelFile model = loader.end();
-        String particleTex = GeneratorUtils.getTextureFromObj(main.modLoc("block/metal/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
+        String particleTex = GeneratorUtils.getTextureFromObj(main.modLoc("block/metal/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
         builder.texture("particle", particleTex);
         return model;
     }
@@ -221,7 +221,7 @@ public class BasicStateGenerator {
         String modelName = "block/connector/" + baseName;
         BlockModelBuilder builder = main.models().getBuilder(modelName);
         ModObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ModObjModelBuilder::new)
-                .modelLocation(main.modLoc("models/block/connector/obj/" + objFolder + "/" + objFolder + ".obj"))
+                .modelLocation(main.modLoc("models/block/connector/" + objFolder + "/" + objFolder + ".obj"))
                 .automaticCulling(false)
                 .shadeQuads(false)
                 .flipV(true)
@@ -232,7 +232,7 @@ public class BasicStateGenerator {
                 .visibility("cube", true)
                 .visibility("glass", true);
         ModelFile model = loader.end();
-        String particleTex = GeneratorUtils.getTextureFromObj(main.modLoc("block/connector/obj/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
+        String particleTex = GeneratorUtils.getTextureFromObj(main.modLoc("block/connector/" + objFolder + "/" + objFolder + ".obj"), existingFileHelper);
         builder.texture("particle", particleTex);
         return model;
     }
@@ -241,7 +241,7 @@ public class BasicStateGenerator {
         String suffix = active ? "_active" : "";
         String modelName = "block/metal/advanced_coke_oven_baseheater" + suffix;
         ITNongeneratedModel base = innerModels.withExistingParent(modelName, main.mcLoc("block"));
-        ModObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ModObjModelBuilder::new).modelLocation(main.modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj")).automaticCulling(false).shadeQuads(true).flipV(true).emissiveAmbient(active).visibility("Fan", false).visibility("fan", false).visibility("Rotor", false).visibility("rotor", false);
+        ModObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ModObjModelBuilder::new).modelLocation(main.modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj")).automaticCulling(false).shadeQuads(true).flipV(true).emissiveAmbient(active).visibility("Fan", false).visibility("fan", false).visibility("Rotor", false).visibility("rotor", false);
         ITNongeneratedModel ret = loader.end();
         ret.ao(false);
         String particleTex = main.modLoc("block/metal/advanced_coke_oven_baseheater").toString();

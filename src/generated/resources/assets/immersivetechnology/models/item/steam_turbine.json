@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/steam_turbine/steam_turbine.obj"
+  "model": "immersivetechnology:models/multiblock/metal/steam_turbine/steam_turbine.obj"
 }

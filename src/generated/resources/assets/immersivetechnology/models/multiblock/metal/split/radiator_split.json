@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/radiator/radiator.obj",
+    "model": "immersivetechnology:models/multiblock/metal/radiator/radiator.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/metal/radiator"

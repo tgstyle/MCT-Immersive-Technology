@@ -99,7 +99,7 @@ public class MultiblockStateGenerator {
         ModTemplateMultiblock multiblock = (ModTemplateMultiblock) MultiblockRegistry.getMBTemplate.apply(registry_name);
         boolean hasMirror = multiblock.getBlock().getStateDefinition().getProperties().contains(ModProperties.MIRRORED);
         boolean flipMirror = hasMirror && useSeparateMirror;
-        String baseObjPath = "multiblock/" + block_type + "/obj/" + registry_name + "/" + registry_name + ".obj";
+        String baseObjPath = "multiblock/" + block_type + "/" + registry_name + "/" + registry_name + ".obj";
         String mirroredObjPath = baseObjPath.replace(".obj", "_mirrored.obj");
         ITNongeneratedModel defaultUnsplit = createUnsplitModel(registry_name, baseObjPath, defaultTextures, renderType);
         ITNongeneratedModel activeUnsplit = hasActive ? createUnsplitModel(registry_name + "_active", baseObjPath, activeTextures, renderType) : null;

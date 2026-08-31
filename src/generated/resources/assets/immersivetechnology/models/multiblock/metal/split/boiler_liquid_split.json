@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/boiler_liquid/boiler_liquid.obj",
+    "model": "immersivetechnology:models/multiblock/metal/boiler_liquid/boiler_liquid.obj",
     "render_type": "cutout_mipped",
     "shade_quads": true,
     "textures": {

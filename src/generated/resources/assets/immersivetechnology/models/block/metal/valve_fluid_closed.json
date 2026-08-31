@@ -3,7 +3,7 @@
   "emissive_ambient": true,
   "flip_v": true,
   "loader": "immersivetechnology:obj",
-  "model": "immersivetechnology:models/block/metal/obj/valve_fluid/valve_fluid.obj",
+  "model": "immersivetechnology:models/block/metal/valve_fluid/valve_fluid.obj",
   "render_type": "minecraft:cutout",
   "shade_quads": true,
   "textures": {

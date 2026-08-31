@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/gas_turbine/gas_turbine_mirrored.obj",
+    "model": "immersivetechnology:models/multiblock/metal/gas_turbine/gas_turbine_mirrored.obj",
     "mtl_override": "gas_turbine.mtl",
     "shade_quads": true,
     "textures": {

@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/stone/obj/cooling_tower/cooling_tower.obj",
+    "model": "immersivetechnology:models/multiblock/stone/cooling_tower/cooling_tower.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/stone/cooling_tower_top"

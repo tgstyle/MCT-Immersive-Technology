@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/radiator_horizontal/radiator_horizontal.obj"
+  "model": "immersivetechnology:models/multiblock/metal/radiator_horizontal/radiator_horizontal.obj"
 }

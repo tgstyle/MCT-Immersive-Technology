@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/stone/obj/cooling_tower/cooling_tower.obj"
+  "model": "immersivetechnology:models/multiblock/stone/cooling_tower/cooling_tower.obj"
 }

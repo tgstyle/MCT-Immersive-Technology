@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/steel_sheetmetal_tank/steel_sheetmetal_tank.obj"
+  "model": "immersivetechnology:models/multiblock/metal/steel_sheetmetal_tank/steel_sheetmetal_tank.obj"
 }
