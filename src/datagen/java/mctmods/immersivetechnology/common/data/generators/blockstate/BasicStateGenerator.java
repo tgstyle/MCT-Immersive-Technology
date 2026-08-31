@@ -277,7 +277,7 @@ public class BasicStateGenerator {
 
     private ModelFile createValveObjModel(String baseName, String objFolder, boolean isOpen, String baseVisibility) {
         String modelName = "block/metal/" + baseName + (isOpen ? "_open" : "_closed");
-        ResourceLocation objLoc = main.modLoc("models/block/metal/obj/" + objFolder + "/" + objFolder + ".obj");
+        ResourceLocation objLoc = main.modLoc("models/block/metal/" + objFolder + "/" + objFolder + ".obj");
         Map<String, Boolean> vis = Map.of(
                 baseVisibility, true,
                 "Handle_Open", isOpen,
@@ -291,7 +291,7 @@ public class BasicStateGenerator {
         String modelName = "block/metal/advanced_coke_oven_baseheater" + suffix;
         ITNongeneratedModel base = innerModels.withExistingParent(modelName, main.mcLoc("block"));
         ModObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ModObjModelBuilder::begin);
-        loader.modelLocation(main.modLoc("models/block/metal/obj/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj"));
+        loader.modelLocation(main.modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj"));
         loader.automaticCulling(false);
         loader.shadeQuads(true);
         loader.flipV(true);

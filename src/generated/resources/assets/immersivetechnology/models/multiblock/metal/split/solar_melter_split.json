@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/solar_melter/solar_melter.obj",
+    "model": "immersivetechnology:models/multiblock/metal/solar_melter/solar_melter.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/metal/solar_melter"

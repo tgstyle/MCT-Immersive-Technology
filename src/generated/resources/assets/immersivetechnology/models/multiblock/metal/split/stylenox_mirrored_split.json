@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/stylenox/stylenox_mirrored.obj",
+    "model": "immersivetechnology:models/multiblock/metal/stylenox/stylenox_mirrored.obj",
     "mtl_override": "stylenox.mtl",
     "shade_quads": true,
     "textures": {

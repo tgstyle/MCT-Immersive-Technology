@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/steam_turbine/steam_turbine_mirrored.obj",
+    "model": "immersivetechnology:models/multiblock/metal/steam_turbine/steam_turbine_mirrored.obj",
     "mtl_override": "steam_turbine.mtl",
     "shade_quads": true,
     "textures": {
@@ -691,6 +691,11 @@
       0,
       2,
       8
+    ],
+    [
+      0,
+      2,
+      11
     ]
   ],
   "textures": {

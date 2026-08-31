@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/melting_crucible/melting_crucible_mirrored.obj",
+    "model": "immersivetechnology:models/multiblock/metal/melting_crucible/melting_crucible_mirrored.obj",
     "mtl_override": "melting_crucible.mtl",
     "shade_quads": true,
     "textures": {

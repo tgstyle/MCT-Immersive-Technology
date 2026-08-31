@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/stylenox/stylenox.obj",
+    "model": "immersivetechnology:models/multiblock/metal/stylenox/stylenox.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/metal/stylenox_base"

@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/stone/obj/cooling_tower/cooling_tower_mirrored.obj",
+    "model": "immersivetechnology:models/multiblock/stone/cooling_tower/cooling_tower_mirrored.obj",
     "mtl_override": "cooling_tower.mtl",
     "render_type": "minecraft:cutout_mipped",
     "shade_quads": true,

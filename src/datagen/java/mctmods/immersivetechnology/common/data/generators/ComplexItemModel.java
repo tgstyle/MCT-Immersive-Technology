@@ -68,10 +68,10 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
 
     private void generateMultiblockModel(String id, String type, Supplier<? extends ItemLike> block, Vector3f guiTrans, float guiScale, float groundScale, float fixedScale) {
         TRSRModelBuilder model;
-        String objPath = "multiblock/" + type + "/obj/" + id + "/" + id + ".obj";
+        String objPath = "multiblock/" + type + "/" + id + "/" + id + ".obj";
 
         if ("solar_reflector".equals(id)) {
-            String base = "multiblock/metal/obj/";
+            String base = "multiblock/metal/";
             String reflectorFile = base + "solar_reflector/solar_reflector.obj";
             String supportFile = base + "solar_reflector/solar_reflector_support.obj";
             String mirrorFile = base + "solar_reflector/solar_reflector_mirror.obj";

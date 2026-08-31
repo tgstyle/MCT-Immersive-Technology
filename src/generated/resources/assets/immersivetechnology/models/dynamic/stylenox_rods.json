@@ -3,7 +3,7 @@
   "emissive_ambient": true,
   "flip_v": true,
   "loader": "immersivetechnology:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/stylenox/stylenox_rods.obj",
+  "model": "immersivetechnology:models/multiblock/metal/stylenox/stylenox_rods.obj",
   "render_type": "minecraft:cutout",
   "shade_quads": true,
   "textures": {

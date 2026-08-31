@@ -8,7 +8,7 @@
     "emissive_ambient": true,
     "flip_v": true,
     "loader": "immersivetechnology:obj",
-    "model": "immersivetechnology:models/multiblock/metal/obj/distiller/distiller.obj",
+    "model": "immersivetechnology:models/multiblock/metal/distiller/distiller.obj",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/metal/distiller"

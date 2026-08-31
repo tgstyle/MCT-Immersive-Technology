@@ -124,5 +124,5 @@
   },
   "flip_v": true,
   "loader": "neoforge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/obj/stylenox/stylenox.obj"
+  "model": "immersivetechnology:models/multiblock/metal/stylenox/stylenox.obj"
 }
