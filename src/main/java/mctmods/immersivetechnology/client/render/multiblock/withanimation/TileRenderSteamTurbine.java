@@ -24,6 +24,8 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 
 public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntitySteamTurbineMaster> {
+    private static final int[] ROTOR_DISTANCES = {9, 4};
+
     @Override public boolean isGlobalRenderer(@Nonnull TileEntitySteamTurbineMaster te) { return true; }
 
     @Override public void render(TileEntitySteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -45,13 +47,16 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
         EnumFacing rotAxis = validFacing ? te.facing : EnumFacing.NORTH;
         GlStateManager.rotate(rotation, rotAxis.getXOffset(), 0, rotAxis.getZOffset());
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
         IBlockState state = te.getWorld().getBlockState(masterPos);
         if (state.getBlock() == ITContent.blockMetalMultiblock) {
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
             state = state.withProperty(IEProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
-            blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, masterPos, buffer, false);
+            buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
+            for (int distance : ROTOR_DISTANCES) {
+                BlockPos rotorPos = masterPos.offset(rotAxis, distance);
+                blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, rotorPos, buffer, false);
+            }
         }
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();

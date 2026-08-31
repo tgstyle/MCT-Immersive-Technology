@@ -24,6 +24,8 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 
 public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntityGasTurbineMaster> {
+    private static final int ROTOR_DISTANCE = 7;
+
     @Override public boolean isGlobalRenderer(@Nonnull TileEntityGasTurbineMaster te) { return true; }
 
     @Override public void render(TileEntityGasTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -50,7 +52,7 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
         GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), rotAxis.getXOffset(), 0, rotAxis.getZOffset());
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-        blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, blockPos, worldRenderer, false);
+        blockRenderer.getBlockModelRenderer().renderModel(te.getWorld(), model, state, blockPos.offset(rotAxis, ROTOR_DISTANCE), worldRenderer, false);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();
         GlStateManager.enableCull();
