@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.proxy;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
@@ -11,24 +12,28 @@ import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels
 import mctmods.immersivetechnology.client.models.multiblock.StyleNOXModels;
 import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.obj.ModObjLoader;
 import mctmods.immersivetechnology.client.models.mirror.MirroredModelLoader;
-import com.immersiveconvergence.api.client.split.SplitModelLoader;
+import com.immersiveconvergence.api.client.split.SplitModelHandler;
 import mctmods.immersivetechnology.client.particles.helper.ColoredSmokeProvider;
 import mctmods.immersivetechnology.client.particles.helper.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
 import mctmods.immersivetechnology.common.items.helper.IFlagItem;
+import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import mctmods.immersivetechnology.core.registration.Particles;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -49,10 +54,12 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.api.distmarker.Dist;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 @EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
 public class ClientProxy extends CommonProxy {
+    private static final List<Vec3i> BASEHEATER_PARTS = List.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
@@ -238,9 +245,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
-        ev.register(Reference.rl("obj"), ModObjLoader.INSTANCE);
         ev.register(ModelConfigurableSides.Loader.NAME, ModelConfigurableSides.Loader.INSTANCE);
-        ev.register(Reference.rl("split"), SplitModelLoader.INSTANCE);
         ev.register(MirroredModelLoader.ID, MirroredModelLoader.INSTANCE);
         RotorModels.ROTOR = new ModDynamicModel("rotor");
         RotorModels.ROTOR_EAST_WEST = new ModDynamicModel("rotor_east_west");
@@ -248,6 +253,14 @@ public class ClientProxy extends CommonProxy {
         SolarReflectorModels.MIRROR = new ModDynamicModel("solar_reflector_mirror");
         AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ModDynamicModel("advanced_coke_oven_baseheater_fan");
         StyleNOXModels.RODS = new ModDynamicModel("stylenox_rods");
+        registerSplitModels();
+    }
+
+    private static void registerSplitModels() {
+        for (TemplateMultiblock template : MultiblockRegistry.MB_TEMPLATE_MAP.values()) {
+            if (template instanceof ModTemplateMultiblock multiblock) { SplitModelHandler.register(multiblock.getBlock(), multiblock.getUniqueName()); }
+        }
+        SplitModelHandler.register(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), BASEHEATER_PARTS, Direction.SOUTH);
     }
 
     @SubscribeEvent

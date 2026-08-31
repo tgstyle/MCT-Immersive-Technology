@@ -9,7 +9,7 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
-import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.HeatCapabilities;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;

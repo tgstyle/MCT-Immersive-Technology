@@ -10,10 +10,7 @@ import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.data.util.GeneratorUtils;
-import mctmods.immersivetechnology.common.data.builders.SplitModelBuilder;
 import mctmods.immersivetechnology.common.data.models.ModelProviderUtils;
-import mctmods.immersivetechnology.common.data.models.NongeneratedModels;
-import mctmods.immersivetechnology.common.data.models.NongeneratedModels.ITNongeneratedModel;
 import mctmods.immersivetechnology.common.data.builders.SideConfigBuilder;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
@@ -36,6 +33,7 @@ import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
+import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +47,6 @@ public class BasicStateGenerator {
 
     private final ModBlockState main;
     private final ExistingFileHelper existingFileHelper;
-    private final NongeneratedModels innerModels;
 
     private record ValveRotationConfig(int horizontalXRot, int verticalDownXRot, int verticalUpXRot, Function<Direction, Integer> yRotOffsetSupplier) {}
 
@@ -71,7 +68,6 @@ public class BasicStateGenerator {
         return new int[]{xRot, yRot};
     }
 
-    private static final List<Vec3i> BASEHEATER_PARTS = List.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
 
     private static final Map<String, ValveRotationConfig> VALVE_CONFIGS = Map.of(
             "fluid", new ValveRotationConfig(0, 90, 270, facing -> 2),
@@ -82,7 +78,6 @@ public class BasicStateGenerator {
     public BasicStateGenerator(ModBlockState main, ExistingFileHelper helper) {
         this.main = main;
         this.existingFileHelper = helper;
-        this.innerModels = new NongeneratedModels(main.getPackOutput(), existingFileHelper);
     }
 
     public void generate() {
@@ -239,26 +234,23 @@ public class BasicStateGenerator {
     }
 
     private void createBaseHeaterVariants() {
-        ITNongeneratedModel baseHeaterNormalUnsplit = createBaseHeaterUnsplit(false);
-        ITNongeneratedModel baseHeaterActiveUnsplit = createBaseHeaterUnsplit(true);
-        BlockModelBuilder baseHeaterNormalSplit = splitModel("block/metal/advanced_coke_oven_baseheater_split", baseHeaterNormalUnsplit, BASEHEATER_PARTS);
-        BlockModelBuilder baseHeaterActiveSplit = splitModel("block/metal/advanced_coke_oven_baseheater_active_split", baseHeaterActiveUnsplit, BASEHEATER_PARTS);
-        setRenderType(RenderType.cutout(), baseHeaterNormalSplit, baseHeaterActiveSplit);
+        BlockModelBuilder baseHeaterNormal = createBaseHeaterUnsplit(false);
+        BlockModelBuilder baseHeaterActive = createBaseHeaterUnsplit(true);
+        setRenderType(RenderType.cutout(), baseHeaterNormal, baseHeaterActive);
 
         VariantBlockStateBuilder heaterBuilder = main.getVariantBuilder(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
         heaterBuilder.forAllStatesExcept(state -> {
             Direction facing = state.getValue(ModProperties.FACING_HORIZONTAL);
             boolean active = state.getValue(ModProperties.ACTIVE);
-            ModelFile modelFile = active ? baseHeaterActiveSplit : baseHeaterNormalSplit;
+            ModelFile modelFile = active ? baseHeaterActive : baseHeaterNormal;
             int yRot = (int) facing.toYRot();
             return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).uvLock(true).build();
         }, ModProperties.MULTIBLOCKSLAVE, BlockStateProperties.WATERLOGGED);
-        main.itemModels().getBuilder("advanced_coke_oven_baseheater").parent(new ModelFile.UncheckedModelFile(main.modLoc("block/metal/advanced_coke_oven_baseheater_split")));
     }
 
     private ModelFile createConfiguredObjModel(String modelName, ResourceLocation objLoc, Map<String, Boolean> visibilityOverrides) {
         BlockModelBuilder builder = main.models().getBuilder(modelName);
-        ModObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ModObjModelBuilder::begin);
+        ObjModelBuilder<BlockModelBuilder> loader = builder.customLoader(ObjModelBuilder::begin);
         loader.modelLocation(objLoc)
                 .automaticCulling(true)
                 .shadeQuads(true)
@@ -286,11 +278,11 @@ public class BasicStateGenerator {
         return createConfiguredObjModel(modelName, objLoc, vis);
     }
 
-    private ITNongeneratedModel createBaseHeaterUnsplit(boolean active) {
+    private BlockModelBuilder createBaseHeaterUnsplit(boolean active) {
         String suffix = active ? "_active" : "";
         String modelName = "block/metal/advanced_coke_oven_baseheater" + suffix;
-        ITNongeneratedModel base = innerModels.withExistingParent(modelName, main.mcLoc("block"));
-        ModObjModelBuilder<ITNongeneratedModel> loader = base.customLoader(ModObjModelBuilder::begin);
+        BlockModelBuilder base = main.models().withExistingParent(modelName, main.mcLoc("block"));
+        ObjModelBuilder<BlockModelBuilder> loader = base.customLoader(ObjModelBuilder::begin);
         loader.modelLocation(main.modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater" + suffix + ".obj"));
         loader.automaticCulling(false);
         loader.shadeQuads(true);
@@ -300,7 +292,7 @@ public class BasicStateGenerator {
         loader.visibility("fan", false);
         loader.visibility("Rotor", false);
         loader.visibility("rotor", false);
-        ITNongeneratedModel ret = loader.end();
+        BlockModelBuilder ret = loader.end();
         ret.ao(false);
         String particleTex = main.modLoc("block/metal/advanced_coke_oven_baseheater").toString();
         ret.texture("particle", particleTex);
@@ -356,13 +348,6 @@ public class BasicStateGenerator {
         main.getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model));
     }
 
-    @SuppressWarnings("SameParameterValue")
-    protected BlockModelBuilder splitModel(String name, ModelBuilder<?> model, List<Vec3i> parts) {
-        BlockModelBuilder result = main.models().withExistingParent(name, main.mcLoc("block")).customLoader(SplitModelBuilder::begin).innerModel(model).parts(parts).dynamic(false).end();
-        addParticleTextureFrom(result, model);
-        return result;
-    }
-
     protected void addParticleTextureFrom(BlockModelBuilder result, ModelBuilder<?> model) {
         String particles = ModBlockState.generatedParticleTextures.get(model.getLocation());
         if (particles != null) {
@@ -408,22 +393,6 @@ public class BasicStateGenerator {
             for (final ModelBuilder<?> model : builders) {
                 model.renderType(typeName);
             }
-        }
-    }
-
-    public static class ModObjModelBuilder<T extends ModelBuilder<T>> extends net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder<T> {
-        private final java.util.Map<String, Boolean> visibility = new java.util.HashMap<>();
-        protected ModObjModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(parent, existingFileHelper); }
-        public static <T extends ModelBuilder<T>> ModObjModelBuilder<T> begin(@NotNull T parent, @NotNull ExistingFileHelper existingFileHelper) { return new ModObjModelBuilder<>(parent, existingFileHelper); }
-        @NotNull public ModObjModelBuilder<T> visibility(@NotNull String part, boolean show) { visibility.put(part, show); return this; }
-        @Override @NotNull public com.google.gson.JsonObject toJson(@NotNull com.google.gson.JsonObject json) {
-            json = super.toJson(json);
-            if (!visibility.isEmpty()) {
-                com.google.gson.JsonObject visJson = new com.google.gson.JsonObject();
-                visibility.forEach(visJson::addProperty);
-                json.add("visibility", visJson);
-            }
-            return json;
         }
     }
 }

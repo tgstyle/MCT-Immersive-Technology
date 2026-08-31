@@ -21,7 +21,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockL
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;

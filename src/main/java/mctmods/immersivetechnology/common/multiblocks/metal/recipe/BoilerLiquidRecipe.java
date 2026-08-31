@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.immersiveconvergence.api.HeatCapabilities;
+import com.immersiveconvergence.api.capability.HeatCapabilities;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerLiquidRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.HolderLookup;
