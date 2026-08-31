@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 
+import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
@@ -46,6 +47,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.util.Random;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -75,6 +78,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     PoICache baseheaterPos0;
     PoICache baseheaterPos1;
     private BlockPos soundPos0;
+    private BlockPos smokePos0;
 
     BlockPos itemOutputTEPos0;
     BlockPos fluidOutputTEPos0;
@@ -105,6 +109,20 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         nbt.setTag("inventory", Utils.writeInventory(inventory));
         nbt.setBoolean("isRunning", isRunning);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void spawnParticles() {
+        if (smokePos0 == null) InitializePoIs();
+        if (smokePos0 == null || !isRunning) return;
+        Random rand = new Random();
+        int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
+        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
+        Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleCampfireSmoke(world,
+                smokePos0.getX() + 0.5, smokePos0.getY() + 0.9, smokePos0.getZ() + 0.5,
+                (rand.nextDouble() - 0.5) * 0.0125, 0.05, (rand.nextDouble() - 0.5) * 0.0125));
     }
 
     @SideOnly(Side.CLIENT)
@@ -176,6 +194,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         }
         if (world.isRemote) {
             handleSounds();
+            spawnParticles();
             return;
         }
         boolean update = false;
@@ -366,6 +385,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "smoke0":
+                    smokePos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

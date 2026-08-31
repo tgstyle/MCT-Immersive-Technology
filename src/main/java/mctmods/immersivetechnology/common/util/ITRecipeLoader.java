@@ -3,7 +3,9 @@ package mctmods.immersivetechnology.common.util;
 import com.immersiveconvergence.api.crafting.MultiblockRecipeLoader;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.crafting.BoilerRecipe;
+import mctmods.immersivetechnology.api.crafting.BoilerLiquidRecipe;
+import mctmods.immersivetechnology.api.crafting.BoilerSolidRecipe;
+import mctmods.immersivetechnology.api.crafting.BoilerTankRecipe;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
@@ -15,6 +17,7 @@ import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 
+import blusunrize.immersiveengineering.api.crafting.IngredientStack;
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonUtils;
@@ -25,8 +28,14 @@ import static com.immersiveconvergence.api.crafting.MultiblockRecipeLoader.optio
 
 public class ITRecipeLoader {
     public static void loadRecipes() {
-        MultiblockRecipeLoader.registerType("immersivetech:boiler", (json, context) -> BoilerRecipe.addRecipe(getFluidStack(json, "result"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time")));
-        MultiblockRecipeLoader.registerType("immersivetech:boiler_fuel", (json, context) -> BoilerRecipe.addFuel(getFluidStack(json, "input"), JsonUtils.getInt(json, "time"), json.get("heat").getAsDouble()));
+        MultiblockRecipeLoader.registerType("immersivetech:boiler_tank", (json, context) -> BoilerTankRecipe.addRecipe(getFluidStack(json, "result"), getFluidStack(json, "input"), JsonUtils.getInt(json, "time"), json.get("requiredHeat").getAsDouble()));
+        MultiblockRecipeLoader.registerType("immersivetech:boiler_liquid", (json, context) -> BoilerLiquidRecipe.addFuel(getFluidStack(json, "input"), JsonUtils.getInt(json, "time"), json.get("heatPerTick").getAsDouble(), json.get("targetHeat").getAsDouble()));
+        MultiblockRecipeLoader.registerType("immersivetech:boiler_solid", (json, context) -> {
+            JsonObject input = JsonUtils.getJsonObject(json, "input");
+            int count = JsonUtils.getInt(input, "count", 1);
+            Object itemInput = input.has("ore") ? new IngredientStack(JsonUtils.getString(input, "ore"), count) : CraftingHelper.getItemStack(input, context);
+            BoilerSolidRecipe.addFuel(itemInput, json.get("heatPerTick").getAsDouble(), json.get("targetHeat").getAsDouble());
+        });
         MultiblockRecipeLoader.registerType("immersivetech:distiller", (json, context) -> {
             ItemStack itemOutput = ItemStack.EMPTY;
             float chance = 0;

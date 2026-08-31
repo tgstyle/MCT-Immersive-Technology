@@ -11,6 +11,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -38,6 +39,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Random;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,7 +76,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     private boolean needsNotify = false;
 
     protected PoICache fluidInputPos0, fluidOutputPos0, mechanicalOutputPos0, redstonePos0;
-    private BlockPos fluidOutputTEPos0, mechanicalOutputTEPos0, soundPos0;
+    private BlockPos fluidOutputTEPos0, mechanicalOutputTEPos0, soundPos0, smokePos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -99,6 +102,35 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void spawnParticles() {
+        if (smokePos0 == null || fluidOutputPos0 == null) InitializePoIs();
+        if (smokePos0 == null || !isRunning || world.getTotalWorldTime() % 2 != 0) return;
+        if (FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite()) != null) return;
+        Random rand = new Random();
+        int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
+        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
+        float normSpeed = Math.max(0f, ITUtils.remapRange(100f, maxSpeed(), 0f, 1f, speed));
+        double dirVelHoriz = 0.125 * normSpeed;
+        double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
+        double velX = facing.getXOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        double velZ = facing.getZOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        FluidStack outFluid = tanks[1].getFluid();
+        float r = 0.5F, g = 0.5F, b = 0.5F;
+        if (outFluid != null) {
+            int tint = outFluid.getFluid().getColor(outFluid);
+            r = ((tint >> 16) & 0xFF) / 255f;
+            g = ((tint >> 8) & 0xFF) / 255f;
+            b = (tint & 0xFF) / 255f;
+        }
+        ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
+                smokePos0.getX() + 0.5, smokePos0.getY() + 0.5, smokePos0.getZ() + 0.5, velX, baseUp, velZ);
+        cloud.setRBGColorF(r, g, b);
+        Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
     }
 
     @SideOnly(Side.CLIENT)
@@ -170,6 +202,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             animation.setAnimationMomentum(rotationSpeed);
             handleSounds();
+            spawnParticles();
             return;
         }
 
@@ -293,6 +326,9 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);
+                    break;
+                case "smoke0":
+                    smokePos0 = getBlockPosForPos(poi.position);
                     break;
             }
         }

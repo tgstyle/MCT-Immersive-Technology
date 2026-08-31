@@ -1,0 +1,16 @@
+{
+  "conditions": [
+    {
+      "type": "immersivetech:fluid_exists",
+      "fluid": "diesel"
+    }
+  ],
+  "type": "immersivetech:boiler_liquid",
+  "input": {
+    "amount": 14,
+    "fluid": "diesel"
+  },
+  "time": 10,
+  "heatPerTick": 0.1,
+  "targetHeat": 600.0
+}

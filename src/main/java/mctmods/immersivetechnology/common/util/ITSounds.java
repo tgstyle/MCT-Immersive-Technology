@@ -15,7 +15,9 @@ public class ITSounds {
 	public static ITSoundEvent advancedCokeOven = registerSound("advancedCokeOven");
 	public static ITSoundEvent advancedCokeOvenFan = registerSound("advancedCokeOvenFan");
 	public static ITSoundEvent alternator = registerSound("alternator");
-	public static ITSoundEvent boiler = registerSound("boiler");
+	public static ITSoundEvent boilerLiquid = registerSound("boilerLiquid");
+	public static ITSoundEvent boilerSolid = registerSound("boilerSolid");
+	public static ITSoundEvent pilot = registerSound("pilot");
 	public static ITSoundEvent coolingTower = registerSound("coolingTower");
 	public static ITSoundEvent distiller = registerSound("distiller");
 	public static ITSoundEvent electrolyticCrucibleBattery = registerSound("electrolyticCrucibleBattery");

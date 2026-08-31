@@ -18,6 +18,12 @@ file('version.properties').withInputStream { versionProps.load(it) }
 def gradleProps = new Properties()
 file('gradle.properties').withInputStream { gradleProps.load(it) }
 
+def building = gradle.startParameter.taskNames*.toLowerCase().any { it.contains('build') || it.contains('jar') || it.contains('assemble') }
+if (building) {
+    versionProps['build_number'] = ((versionProps.getProperty('build_number')?.toInteger() ?: 0) + 1).toString()
+    file('version.properties').withOutputStream { versionProps.store(it, null) }
+}
+
 ext.modversion = versionProps.getProperty('version')
 ext.version_buildnumber = versionProps.getProperty('build_number')?.toInteger() ?: 0
 ext.stage = versionProps.getProperty('stage') ?: ''
@@ -134,33 +140,6 @@ tasks.register('runClientGamescope', Exec) {
 tasks.named('runServer').configure {
     workingDir = file('run/server')
 }
-
-tasks.register('bumpVersion') {
-    doLast {
-        def requested = gradle.startParameter.taskNames*.toLowerCase()
-        if (!requested.any { it.contains('build') || it.contains('jar') || it.contains('assemble') }) { return }
-
-        def props = new Properties()
-        file('version.properties').withInputStream { props.load(it) }
-        def currentBuild = props['build_number'].toInteger()
-        def nextBuild = currentBuild + 1
-        props['build_number'] = nextBuild.toString()
-        file('version.properties').withOutputStream { props.store(it, null) }
-
-        ext.version_buildnumber = nextBuild
-        def newStage = props['stage'] ?: ''
-        def newVersion = "${common.mcversion}-${props['version']}.${nextBuild}-${newStage}"
-
-        project.version = newVersion
-        tasks.withType(Jar).configureEach {
-            it.archiveVersion.set(newVersion)
-        }
-    }
-}
-
-build.dependsOn bumpVersion
-processResources.dependsOn bumpVersion
-jar.dependsOn bumpVersion
 
 processResources {
     inputs.property('version', providers.provider { "${modversion}.${version_buildnumber}" })

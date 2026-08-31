@@ -26,6 +26,7 @@ import mctmods.immersivetechnology.common.items.ItemFormationTool;
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock1;
+import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock2;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.BlockStoneMultiblock;
@@ -43,7 +44,9 @@ import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -69,6 +72,7 @@ public class ITContent {
     /*MULTIBLOCKS*/
     public static BlockITBase<?> blockMetalMultiblock;
     public static BlockITBase<?> blockMetalMultiblock1;
+    public static BlockITBase<?> blockMetalMultiblock2;
     public static BlockITBase<?> blockStoneMultiblock;
 
     /*CONNECTORS*/
@@ -79,6 +83,7 @@ public class ITContent {
     public static BlockITBase<?> blockMetalTrash;
     public static BlockITBase<?> blockMetalBarrel;
     public static BlockITBase<?> blockValve;
+    public static BlockITBase<?> blockMetalDecoration;
 
     /*STONE*/
     public static BlockITBase<?> blockStoneDecoration;
@@ -121,7 +126,9 @@ public class ITContent {
     public static Set<Fluid> normallyPressurized = new HashSet<>();
 
     public static TileEntityITMultiblockPartAdvancedCokeOven multiblockAdvancedCokeOven;
-    public static TileEntityITMultiblockPartBoiler multiblockBoiler;
+    public static TileEntityITMultiblockPartBoilerTank multiblockBoilerTank;
+    public static TileEntityITMultiblockPartBoilerLiquid multiblockBoilerLiquid;
+    public static TileEntityITMultiblockPartBoilerSolid multiblockBoilerSolid;
     public static TileEntityITMultiblockPartDistiller multiblockDistiller;
     public static TileEntityITMultiblockPartSolarTower multiblockSolarTower;
     public static TileEntityITMultiblockPartSolarReflector multiblockSolarReflector;
@@ -144,6 +151,7 @@ public class ITContent {
         /*MULTIBLOCKS*/
         blockMetalMultiblock = new BlockMetalMultiblock();
         blockMetalMultiblock1 = new BlockMetalMultiblock1();
+        blockMetalMultiblock2 = new BlockMetalMultiblock2();
         blockStoneMultiblock = new BlockStoneMultiblock();
 
         /*CONNECTORS*/
@@ -154,6 +162,8 @@ public class ITContent {
         blockMetalBarrel = new BlockMetalBarrel();
         blockValve = new BlockValve();
         if (ITConfig.Multiblocks.enable.enable_advancedCokeOven) { blockMetalDevice = new BlockMetalDevice(); }
+
+        blockMetalDecoration = new BlockMetalDecoration();
 
         /*STONE*/
         blockStoneDecoration = new BlockStoneDecoration();
@@ -195,7 +205,7 @@ public class ITContent {
     }
 
     public static void init() {
-        BlockMatcher.addGenericOreNames("blockSteel", "blockSheetmetalSteel", "blockSheetmetalIron", "blockSheetmetalSilver", "slabSheetmetalSteel", "scaffoldingSteel", "fenceSteel", "blockNickel", "blockTungsten", "blockSheetmetalNickel", "blockSheetmetalTungsten");
+        BlockMatcher.addGenericOreNames("blockSteel", "blockSheetmetalSteel", "blockSheetmetalIron", "blockSheetmetalSilver", "slabSheetmetalSteel", "scaffoldingSteel", "fenceSteel", "blockNickel", "blockTungsten", "blockSheetmetalNickel", "blockSheetmetalTungsten", "blockFurnace");
 
         /*TILE ENTITIES*/
         registerTile(TileEntityITSlab.class);
@@ -219,10 +229,20 @@ public class ITContent {
             multiblockAdvancedCokeOven = TileEntityITMultiblockPartAdvancedCokeOven.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_boiler) {
-            registerTile(TileEntityBoilerSlave.class);
-            registerTile(TileEntityBoilerMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoiler.instance);
-            multiblockBoiler = TileEntityITMultiblockPartBoiler.instance;
+            registerTileAlias(TileEntityBoilerTankSlave.class, "BoilerSlave");
+            registerTileAlias(TileEntityBoilerTankMaster.class, "BoilerMaster");
+            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoilerTank.instance);
+            multiblockBoilerTank = TileEntityITMultiblockPartBoilerTank.instance;
+            registerTile(TileEntityBoilerLiquidSlave.class);
+            registerTile(TileEntityBoilerLiquidMaster.class);
+            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoilerLiquid.instance);
+            multiblockBoilerLiquid = TileEntityITMultiblockPartBoilerLiquid.instance;
+        }
+        if (ITConfig.Multiblocks.enable.enable_boilerSolid) {
+            registerTile(TileEntityBoilerSolidSlave.class);
+            registerTile(TileEntityBoilerSolidMaster.class);
+            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoilerSolid.instance);
+            multiblockBoilerSolid = TileEntityITMultiblockPartBoilerSolid.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_distiller) {
             registerTile(TileEntityDistillerSlave.class);
@@ -338,6 +358,9 @@ public class ITContent {
         GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + tileEntity);
     }
 
+    @SuppressWarnings("deprecation")
+    public static void registerTileAlias(Class<? extends TileEntity> tile, String alias) { GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + alias); }
+
     @SubscribeEvent public static void registerBlocks(RegistryEvent.Register<Block> event) {
         for (Block block : registeredITBlocks) { event.getRegistry().register(block.setRegistryName(createRegistryName(block.getTranslationKey()))); }
     }
@@ -357,6 +380,7 @@ public class ITContent {
         OreDictionary.registerOre("dustSalt", itemMaterial);
         OreDictionary.registerOre("itemSalt", itemMaterial);
         OreDictionary.registerOre("foodSalt", itemMaterial);
+        OreDictionary.registerOre("blockFurnace", new ItemStack(Blocks.FURNACE, 1, OreDictionary.WILDCARD_VALUE));
     }
 
     public static void registerVariables() {
@@ -364,7 +388,7 @@ public class ITContent {
         Config.manual_int.put("alternator_energyPerTickPerPort", (ITConfig.Multiblocks.alternator.alternator_energy_perTick / 6));
         Config.manual_int.put("alternator_energyStorage", ITConfig.Multiblocks.alternator.alternator_energy_capacitorSize);
         Config.manual_int.put("alternator_energyPerTick", ITConfig.Multiblocks.alternator.alternator_energy_perTick);
-        Config.manual_double.put("boiler_cooldownTime", ((ITConfig.Multiblocks.boiler.boiler_heat_workingLevel / ITConfig.Multiblocks.boiler.boiler_progress_lossInTicks) / 20));
+        Config.manual_int.put("boilerTank_tankSize", ITConfig.Multiblocks.boilerTank.boilerTank_tankSize);
         Config.manual_int.put("solarTower_minRange", ITConfig.Multiblocks.solarReflector.solarReflector_minRange);
         Config.manual_int.put("solarTower_maxRange", ITConfig.Multiblocks.solarReflector.solarReflector_maxRange);
         Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max / ITConfig.Multiblocks.steamTurbine.steamTurbine_speed_gainPerTick) / 20));

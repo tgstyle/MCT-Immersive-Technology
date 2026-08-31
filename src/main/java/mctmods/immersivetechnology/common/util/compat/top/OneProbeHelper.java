@@ -38,10 +38,9 @@ import java.util.function.Function;
 
 public class OneProbeHelper extends ITCompatModule implements Function<ITheOneProbe, Void> {
     private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
-    private static double boilerWorkingHeatLevel() { return Multiblocks.boiler.boiler_heat_workingLevel; }
-    private static double solarWorkingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingLevel; }
-    private static double meltingCrucibleWorkingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel; }
-    private static double solarMelterWorkingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingLevel; }
+    private static double solarWorkingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingTemperature; }
+    private static double meltingCrucibleWorkingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingTemperature; }
+    private static double solarMelterWorkingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingTemperature; }
 
     @Override public void preInit() { FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", this.getClass().getName()); }
 
@@ -54,7 +53,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         input.registerProvider(new MechanicalEnergyProvider());
         input.registerProvider(new AdvancedCokeOvenProvider());
         input.registerProvider(new AlternatorProvider());
-        input.registerProvider(new BoilerProvider());
+        input.registerProvider(new BoilerTankProvider());
+        input.registerProvider(new BoilerLiquidProvider());
+        input.registerProvider(new BoilerSolidProvider());
         input.registerProvider(new CoolingTowerProvider());
         input.registerProvider(new DistillerProvider());
         input.registerProvider(new ElectrolyticCrucibleBatteryProvider());
@@ -95,11 +96,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 .progress(percent, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
     }
 
-    private static void addTemperature(IProbeInfo probeInfo, double heatLevel, double workingLevel) {
-        double displayHeat = heatLevel / 20.0 + 30;
-        double displayMax = workingLevel / 20.0 + 30;
-        int current = (int)displayHeat;
-        int max = (int)displayMax;
+    private static void addTemperatureRaw(IProbeInfo probeInfo, double heatLevel, double workingLevel) {
+        int current = (int)heatLevel;
+        int max = (int)workingLevel;
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                 .progress(current, max, probeInfo.defaultProgressStyle()
                         .suffix(" °C")
@@ -163,22 +162,55 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         }
     }
 
-    public static class BoilerProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "BoilerInfo"; }
+    public static class BoilerTankProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "BoilerTankInfo"; }
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            TileEntityBoilerMaster master;
-            if (te instanceof TileEntityBoilerMaster) {
-                master = (TileEntityBoilerMaster)te;
-            } else if (te instanceof TileEntityBoilerSlave) {
-                master = ((TileEntityBoilerSlave)te).master();
+            TileEntityBoilerTankMaster master;
+            if (te instanceof TileEntityBoilerTankMaster) {
+                master = (TileEntityBoilerTankMaster)te;
+            } else if (te instanceof TileEntityBoilerTankSlave) {
+                master = ((TileEntityBoilerTankSlave)te).master();
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, boilerWorkingHeatLevel());
+            addTemperatureRaw(probeInfo, master.heatLevel, master.workingHeatLevel);
             int currentProg = (master.processTimeRemaining > 0 && master.processTimeMax > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
             addProcessPercent(probeInfo, currentProg);
+        }
+    }
+
+    public static class BoilerLiquidProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "BoilerLiquidInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            TileEntityBoilerLiquidMaster master;
+            if (te instanceof TileEntityBoilerLiquidMaster) {
+                master = (TileEntityBoilerLiquidMaster)te;
+            } else if (te instanceof TileEntityBoilerLiquidSlave) {
+                master = ((TileEntityBoilerLiquidSlave)te).master();
+                if (master == null) return;
+            } else return;
+            for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            addTemperatureRaw(probeInfo, master.heatLevel, master.workingHeatLevel);
+        }
+    }
+
+    public static class BoilerSolidProvider implements IProbeInfoProvider {
+        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "BoilerSolidInfo"; }
+
+        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
+            TileEntity te = world.getTileEntity(data.getPos());
+            TileEntityBoilerSolidMaster master;
+            if (te instanceof TileEntityBoilerSolidMaster) {
+                master = (TileEntityBoilerSolidMaster)te;
+            } else if (te instanceof TileEntityBoilerSolidSlave) {
+                master = ((TileEntityBoilerSolidSlave)te).master();
+                if (master == null) return;
+            } else return;
+            addTemperatureRaw(probeInfo, master.heatLevel, master.workingHeatLevel);
         }
     }
 
@@ -322,7 +354,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, meltingCrucibleWorkingHeatLevel());
+            addTemperatureRaw(probeInfo, master.heatLevel, meltingCrucibleWorkingHeatLevel());
             int maxProg = master.processTimeMax;
             int currentProg = maxProg - master.processTimeRemaining;
             int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
@@ -363,7 +395,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, solarMelterWorkingHeatLevel());
+            addTemperatureRaw(probeInfo, master.heatLevel, solarMelterWorkingHeatLevel());
             int maxProg = master.processTimeMax;
             int currentProg = maxProg - master.processTimeRemaining;
             int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
@@ -384,7 +416,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            addTemperature(probeInfo, master.heatLevel, solarWorkingHeatLevel());
+            addTemperatureRaw(probeInfo, master.heatLevel, solarWorkingHeatLevel());
             int currentProg = 0;
             if (master.processTimeRemaining > 0 && master.processTimeMax > 0) {
                 currentProg = (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax;

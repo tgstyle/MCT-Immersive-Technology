@@ -4,6 +4,7 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock2;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
 
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,9 @@ public class GenericMultiblockIngredient {
     public static GenericMultiblockIngredient STEAM_TURBINE;
     public static GenericMultiblockIngredient DISTILLER;
     public static GenericMultiblockIngredient SOLAR_TOWER;
-    public static GenericMultiblockIngredient BOILER;
+    public static GenericMultiblockIngredient BOILER_TANK;
+    public static GenericMultiblockIngredient BOILER_LIQUID;
+    public static GenericMultiblockIngredient BOILER_SOLID;
     public static GenericMultiblockIngredient COOLING_TOWER;
     public static GenericMultiblockIngredient GAS_TURBINE;
     public static GenericMultiblockIngredient HEAT_EXCHANGER;
@@ -33,7 +36,11 @@ public class GenericMultiblockIngredient {
             if (Multiblocks.enable.enable_steamTurbine) STEAM_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()));
             if (Multiblocks.enable.enable_distiller) DISTILLER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.DISTILLER.getMeta()));
             if (Multiblocks.enable.enable_solarTower) SOLAR_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()));
-            if (Multiblocks.enable.enable_boiler) BOILER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER.getMeta()));
+            if (Multiblocks.enable.enable_boiler) {
+                BOILER_TANK = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.BOILER_TANK.getMeta()));
+                BOILER_LIQUID = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.BOILER_LIQUID.getMeta()));
+            }
+            if (Multiblocks.enable.enable_boilerSolid) BOILER_SOLID = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock2, 1, BlockType_MetalMultiblock2.BOILER_SOLID.getMeta()));
             if (Multiblocks.enable.enable_coolingTower) COOLING_TOWER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockStoneMultiblock, 1, BlockType_StoneMultiblock.COOLING_TOWER.getMeta()));
             if (Multiblocks.enable.enable_gasTurbine) GAS_TURBINE = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.GAS_TURBINE.getMeta()));
             if (Multiblocks.enable.enable_heatExchanger) HEAT_EXCHANGER = new GenericMultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HEAT_EXCHANGER.getMeta()));

@@ -13,6 +13,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -98,7 +99,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private IMechanicalEnergyConsumer alternator;
 
     protected PoICache energyInputPos0, energyInputPos1, fluidInputPos0, fluidOutputPos0, mechanicalOutputPos0, redstonePos0;
-    private BlockPos outputFront0, mechanicalOutputTEPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3;
+    private BlockPos outputFront0, mechanicalOutputTEPos0, particle0, soundPos0, soundPos1, soundPos2, soundPos3, smokePos1;
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
@@ -158,6 +159,35 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 particle0.getZ() + 2 - rand.nextFloat() * 3,
                 0, 0.02f, 0);
         ClientUtils.mc().effectRenderer.addEffect(particle);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void spawnVentSmoke() {
+        if (smokePos1 == null || fluidOutputPos0 == null) InitializePoIs();
+        if (smokePos1 == null || !isRunning || world.getTotalWorldTime() % 2 != 0) return;
+        if (FluidUtil.getFluidHandler(world, outputFront0, fluidOutputPos0.facing.getOpposite()) != null) return;
+        Random rand = new Random();
+        int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
+        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (smokePos1.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
+        float normSpeed = Math.max(0f, ITUtils.remapRange(100f, maxSpeed(), 0f, 1f, speed));
+        double dirVelHoriz = 0.125 * normSpeed;
+        double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
+        double velX = facing.getXOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        double velZ = facing.getZOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        FluidStack outFluid = tanks[1].getFluid();
+        float r = 0.5F, g = 0.5F, b = 0.5F;
+        if (outFluid != null) {
+            int tint = outFluid.getFluid().getColor(outFluid);
+            r = ((tint >> 16) & 0xFF) / 255f;
+            g = ((tint >> 8) & 0xFF) / 255f;
+            b = (tint & 0xFF) / 255f;
+        }
+        ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
+                smokePos1.getX() + 0.5, smokePos1.getY() + 0.5, smokePos1.getZ() + 0.5, velX, baseUp, velZ);
+        cloud.setRBGColorF(r, g, b);
+        ClientUtils.mc().effectRenderer.addEffect(cloud);
     }
 
     @SideOnly(Side.CLIENT)
@@ -245,6 +275,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 }
                 handleSounds();
                 spawnParticles();
+                spawnVentSmoke();
             }
             return;
         }
@@ -388,6 +419,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                     break;
                 case "particle0":
                     particle0 = getBlockPosForPos(poi.position);
+                    break;
+                case "smoke1":
+                    smokePos1 = getBlockPosForPos(poi.position);
                     break;
                 case "sound0":
                     soundPos0 = getBlockPosForPos(poi.position);

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class GuiSolarTower extends GuiIEContainerBase {
 	TileEntitySolarTowerMaster tile;
 
-	private static double workingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingLevel; }
+	private static double workingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingTemperature; }
 
 	public GuiSolarTower(InventoryPlayer invPlayer, TileEntitySolarTowerMaster tile) {
 		super(new ContainerSolarTower(invPlayer, tile));
@@ -35,7 +35,7 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		if (mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
 			DecimalFormat df = new DecimalFormat("0.00");
 			tooltip.add("Temperature");
-			tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / 20 + 30) + "/" + df.format(workingHeatLevel() / 20 + 30) + "C");
+			tooltip.add(TextFormatting.RED + df.format(tile.heatLevel) + "/" + df.format(workingHeatLevel()) + "C");
 		}
 		if (!tooltip.isEmpty()) {
 			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);

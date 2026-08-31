@@ -13,6 +13,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -32,6 +33,8 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
         super("metal_multiblock1", Material.IRON, PropertyEnum.create("type", BlockType_MetalMultiblock1.class), ItemBlockITBase.class, IEProperties.DYNAMICRENDER, IEProperties.BOOLEANS[0], Properties.AnimationProperty, IEProperties.OBJ_TEXTURE_REMAP);
         setHardness(3.0F);
         setResistance(15.0F);
+        setMetaBlockLayer(BlockType_MetalMultiblock1.BOILER_LIQUID.getMeta(), BlockRenderLayer.CUTOUT);
+        setMetaBlockLayer(BlockType_MetalMultiblock1.BOILER_LIQUID_SLAVE.getMeta(), BlockRenderLayer.CUTOUT);
         setAllNotNormalBlock();
         lightOpacity = 0;
     }
@@ -58,6 +61,8 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
             case RADIATOR_SLAVE: { return new TileEntityRadiatorSlave(); }
             case SOLAR_MELTER: { return new TileEntitySolarMelterMaster(); }
             case SOLAR_MELTER_SLAVE: { return new TileEntitySolarMelterSlave(); }
+            case BOILER_LIQUID: { return new TileEntityBoilerLiquidMaster(); }
+            case BOILER_LIQUID_SLAVE: { return new TileEntityBoilerLiquidSlave(); }
         }
         return null;
     }

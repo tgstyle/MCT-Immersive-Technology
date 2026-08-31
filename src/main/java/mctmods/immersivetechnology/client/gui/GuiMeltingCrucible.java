@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class GuiMeltingCrucible extends GuiIEContainerBase {
     TileEntityMeltingCrucibleMaster tile;
 
-    private static double workingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel; }
+    private static double workingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingTemperature; }
 
     public GuiMeltingCrucible(InventoryPlayer invPlayer, TileEntityMeltingCrucibleMaster tile) {
         super(new ContainerMeltingCrucible(invPlayer, tile));
@@ -38,7 +38,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
         if (mx >= guiLeft + 30 && mx < guiLeft + 79 && my >= guiTop + 9 && my < guiTop + 18) {
             DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");
-            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel / workingHeatLevel() * 1000) + "/" + "1000" + "C");
+            tooltip.add(TextFormatting.RED + df.format(tile.heatLevel) + "/" + df.format(workingHeatLevel()) + "C");
         }
         if (!tooltip.isEmpty()) {
             ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);

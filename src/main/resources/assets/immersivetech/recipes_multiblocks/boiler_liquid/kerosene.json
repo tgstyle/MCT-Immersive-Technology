@@ -1,0 +1,16 @@
+{
+  "conditions": [
+    {
+      "type": "immersivetech:fluid_exists",
+      "fluid": "kerosene"
+    }
+  ],
+  "type": "immersivetech:boiler_liquid",
+  "input": {
+    "amount": 9,
+    "fluid": "kerosene"
+  },
+  "time": 10,
+  "heatPerTick": 0.1,
+  "targetHeat": 600.0
+}

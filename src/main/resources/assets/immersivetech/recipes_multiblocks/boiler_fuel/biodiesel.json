@@ -1,9 +1,0 @@
-{
-  "type": "immersivetech:boiler_fuel",
-  "heat": 10,
-  "input": {
-    "amount": 10,
-    "fluid": "biodiesel"
-  },
-  "time": 1
-}

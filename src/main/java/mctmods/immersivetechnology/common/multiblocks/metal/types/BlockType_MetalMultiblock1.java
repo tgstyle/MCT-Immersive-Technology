@@ -21,7 +21,9 @@ public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBa
     RADIATOR(true),
     RADIATOR_SLAVE(true),
     SOLAR_MELTER(true),
-    SOLAR_MELTER_SLAVE(true);
+    SOLAR_MELTER_SLAVE(true),
+    BOILER_LIQUID(true),
+    BOILER_LIQUID_SLAVE(true);
 
     private final boolean needsCustomState;
     BlockType_MetalMultiblock1(boolean needsCustomState) {

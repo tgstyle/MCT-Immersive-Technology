@@ -17,9 +17,18 @@ public class ComputerManualHelper {
 			if (Multiblocks.enable.enable_steamTurbine) ManualHelper.getManual().addEntry("computer.steamTurbine", "computers",
 					new ManualPages.Text(ManualHelper.getManual(), "computer.steamTurbine0")
 			);
-			if (Multiblocks.enable.enable_boiler) ManualHelper.getManual().addEntry("computer.boiler", "computers",
-					new ManualPages.Text(ManualHelper.getManual(), "computer.boiler0"),
-					new ManualPages.Text(ManualHelper.getManual(), "computer.boiler1")
+			if (Multiblocks.enable.enable_boiler) {
+				ManualHelper.getManual().addEntry("computer.boilerTank", "computers",
+						new ManualPages.Text(ManualHelper.getManual(), "computer.boilerTank0"),
+						new ManualPages.Text(ManualHelper.getManual(), "computer.boilerTank1")
+				);
+				ManualHelper.getManual().addEntry("computer.boilerLiquid", "computers",
+						new ManualPages.Text(ManualHelper.getManual(), "computer.boilerLiquid0"),
+						new ManualPages.Text(ManualHelper.getManual(), "computer.boilerLiquid1")
+				);
+			}
+			if (Multiblocks.enable.enable_boilerSolid) ManualHelper.getManual().addEntry("computer.boilerSolid", "computers",
+					new ManualPages.Text(ManualHelper.getManual(), "computer.boilerSolid0")
 			);
 			if (Multiblocks.enable.enable_distiller) ManualHelper.getManual().addEntry("computer.distiller", "computers",
 					new ManualPages.Text(ManualHelper.getManual(), "computer.distiller0"),

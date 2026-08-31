@@ -44,7 +44,9 @@ import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevi
 import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerLiquid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerTank;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
@@ -250,11 +252,20 @@ public class ClientProxy extends CommonProxy {
                     new ManualPages.Text(ManualHelper.getManual(), "advancedCokeOven3"));
         }
         if (Multiblocks.enable.enable_boiler) {
-            ManualHelper.addEntry("boiler", CAT_POWER,
-                    new ManualPageMultiblock(ManualHelper.getManual(), "boiler0", TileEntityITMultiblockPartBoiler.instance),
-                    new ManualPages.Text(ManualHelper.getManual(), "boiler1"),
-                    new ManualPages.Text(ManualHelper.getManual(), "boiler2"),
-                    new ManualPages.Text(ManualHelper.getManual(), "boiler3"));
+            ManualHelper.addEntry("boilerTank", CAT_POWER,
+                    new ManualPageMultiblock(ManualHelper.getManual(), "boilerTank0", TileEntityITMultiblockPartBoilerTank.instance),
+                    new ManualPages.Text(ManualHelper.getManual(), "boilerTank1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "boilerTank2"));
+            ManualHelper.addEntry("boilerLiquid", CAT_POWER,
+                    new ManualPageMultiblock(ManualHelper.getManual(), "boilerLiquid0", TileEntityITMultiblockPartBoilerLiquid.instance),
+                    new ManualPages.Text(ManualHelper.getManual(), "boilerLiquid1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "boilerLiquid2"));
+        }
+        if (Multiblocks.enable.enable_boilerSolid) {
+            ManualHelper.addEntry("boilerSolid", CAT_POWER,
+                    new ManualPageMultiblock(ManualHelper.getManual(), "boilerSolid0", TileEntityITMultiblockPartBoilerSolid.instance),
+                    new ManualPages.Text(ManualHelper.getManual(), "boilerSolid1"),
+                    new ManualPages.Text(ManualHelper.getManual(), "boilerSolid2"));
         }
         if (Multiblocks.enable.enable_solarTower) {
             ManualHelper.addEntry("solarTower", CAT_POWER,
@@ -390,7 +401,9 @@ public class ClientProxy extends CommonProxy {
         TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
         if (tile instanceof IGuiTile) {
             if (ID == ITGUI.GUIID_Advanced_coke_oven && tile instanceof TileEntityAdvancedCokeOvenMaster) { return new GuiAdvancedCokeOven(player.inventory, (TileEntityAdvancedCokeOvenMaster)tile); }
-            if (ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) { return new GuiBoiler(player.inventory, (TileEntityBoilerMaster)tile); }
+            if (ID == ITGUI.GUIID_Boiler_Tank && tile instanceof TileEntityBoilerTankMaster) { return new GuiBoilerTank(player.inventory, (TileEntityBoilerTankMaster)tile); }
+            if (ID == ITGUI.GUIID_Boiler_Liquid && tile instanceof TileEntityBoilerLiquidMaster) { return new GuiBoilerLiquid(player.inventory, (TileEntityBoilerLiquidMaster)tile); }
+            if (ID == ITGUI.GUIID_Boiler_Solid && tile instanceof TileEntityBoilerSolidMaster) { return new GuiBoilerSolid(player.inventory, (TileEntityBoilerSolidMaster)tile); }
             if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { return new GuiDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
             if (ID == ITGUI.GUIID_Fluid_Valve && tile instanceof TileEntityFluidValve) { return new GuiFluidValve((TileEntityFluidValve)tile); }
             if (ID == ITGUI.GUIID_Load_Controller && tile instanceof TileEntityLoadController) { return new GuiLoadController((TileEntityLoadController)tile); }

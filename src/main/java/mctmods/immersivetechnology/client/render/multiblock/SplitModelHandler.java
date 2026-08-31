@@ -5,7 +5,9 @@ import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoiler;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerLiquid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerTank;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
@@ -38,7 +40,9 @@ public class SplitModelHandler {
     private static Map<String, Machine> machinesByFile() {
         Map<String, Machine> byFile = new HashMap<>();
         addMachine(byFile, "metal_multiblock_alternator", TileEntityITMultiblockPartAlternator.instance);
-        addMachine(byFile, "metal_multiblock_boiler", TileEntityITMultiblockPartBoiler.instance);
+        addMachine(byFile, "metal_multiblock_boiler_tank", TileEntityITMultiblockPartBoilerTank.instance);
+        addMachine(byFile, "metal_multiblock1_boiler_liquid", TileEntityITMultiblockPartBoilerLiquid.instance);
+        addMachine(byFile, "metal_multiblock2_boiler_solid", TileEntityITMultiblockPartBoilerSolid.instance);
         addMachine(byFile, "stone_multiblock_cooling_tower", TileEntityITMultiblockPartCoolingTower.instance);
         addMachine(byFile, "metal_multiblock_distiller", TileEntityITMultiblockPartDistiller.instance);
         addMachine(byFile, "metal_multiblock_solar_tower", TileEntityITMultiblockPartSolarTower.instance);
@@ -90,7 +94,7 @@ public class SplitModelHandler {
 
     private static boolean isSplitVariant(String variant) { return !variant.contains("inventory") && !variant.contains("_1dynamicrender=true") && variant.contains("facing="); }
 
-    private static String variantKey(Machine machine, String variant) { return machine.masterFile + "|" + facingOf(variant) + "|" + mirroredOf(variant); }
+    private static String variantKey(Machine machine, String variant) { return machine.masterFile + "|" + facingOf(variant) + "|" + mirroredOf(variant) + "|" + variant.contains("boolean1=true"); }
 
     private static EnumFacing facingOf(String variant) {
         int start = variant.indexOf("facing=") + 7;

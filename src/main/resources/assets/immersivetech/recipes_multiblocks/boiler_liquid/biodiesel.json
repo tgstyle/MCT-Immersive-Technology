@@ -1,0 +1,10 @@
+{
+  "type": "immersivetech:boiler_liquid",
+  "input": {
+    "amount": 10,
+    "fluid": "biodiesel"
+  },
+  "time": 10,
+  "heatPerTick": 0.1,
+  "targetHeat": 600.0
+}

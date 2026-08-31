@@ -7,7 +7,7 @@ import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.particles.ParticleSmokeCustom;
+import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -65,7 +65,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private static int solarMinRange() { return Multiblocks.solarReflector.solarReflector_minRange; }
     private static double heatLossMultiplier() { return Multiblocks.solarMelter.solarMelter_heat_loss_multiplier; }
     private static float speedMult() { return Multiblocks.solarMelter.solarMelter_speed_multiplier; }
-    private static double workingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingLevel; }
+    private static double workingHeatLevel() { return Multiblocks.solarMelter.solarMelter_heat_workingTemperature; }
     public static double getWorkingHeatLevel() { return workingHeatLevel(); }
     private static double maximumReflectorStrength() { return Multiblocks.solarMelter.solarMelter_maximum_reflector_strength; }
     private static final int progressResolution = 64;
@@ -121,7 +121,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
-        heatLevel = nbt.getDouble("heatLevel");
+        heatLevel = Math.min(nbt.getDouble("heatLevel"), workingHeatLevel());
         reflectorStrength = nbt.getDouble("reflectorStrength");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
@@ -288,11 +288,11 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         double baseX = particlePos0.getX() + 0.5;
         double baseZ = particlePos0.getZ() + 0.5;
         if (time % 4 == 0) {
-            double py = particlePos0.getY() + 3;
-            for (int i = 0; i < 12; i++) {
+            double py = particlePos0.getY() + 1;
+            for (int i = 0; i < 3; i++) {
                 float g = rand.nextFloat();
-                ParticleSmokeCustom cloud = new ParticleSmokeCustom(world,
-                        baseX + (rand.nextFloat() - 0.5F) * 3, py, baseZ + (rand.nextFloat() - 0.5F) * 3, 0, 0.15f, 0, 1F, 3.0F);
+                ParticleCampfireSmoke cloud = new ParticleCampfireSmoke(world,
+                        baseX + rand.nextGaussian() * 0.1, py, baseZ + rand.nextGaussian() * 0.1, 0, 0, 0);
                 cloud.setRBGColorF(1F, g, 0F);
                 Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
             }
@@ -368,7 +368,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     private float getTemperatureIncrease() {
-        return speedMult() * (1 + (solarIncidenceAngleSection - 1)) * 10 * (float)(reflectorStrength / maximumReflectorStrength()) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f);
+        return speedMult() * (1 + (solarIncidenceAngleSection - 1)) * (10f / 19.4f) * (float)(reflectorStrength / maximumReflectorStrength()) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f);
     }
 
     private boolean cooldown() {
@@ -377,7 +377,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         if (heatLost <= 0) heatLost = 0.1;
         double conduction = 1.0;
         if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, reflectorPos0);
-        heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier() * conduction), 0);
+        heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier() * conduction / 19.4), 0);
         return previous != heatLevel;
     }
 

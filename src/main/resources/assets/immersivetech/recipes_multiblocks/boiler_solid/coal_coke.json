@@ -1,0 +1,8 @@
+{
+  "type": "immersivetech:boiler_solid",
+  "input": {
+    "ore": "fuelCoke"
+  },
+  "heatPerTick": 0.1,
+  "targetHeat": 600.0
+}

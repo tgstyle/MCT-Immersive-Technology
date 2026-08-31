@@ -29,7 +29,10 @@ public class Config {
             public static Alternator alternator = new Alternator();
             public static AdvancedCokeOven advancedCokeOven = new AdvancedCokeOven();
             public static AdvancedCokeOvenBaseheater advancedCokeOvenBaseheater = new AdvancedCokeOvenBaseheater();
-            public static Boiler boiler = new Boiler();
+            public static BoilerHeat boilerHeat = new BoilerHeat();
+            public static BoilerTank boilerTank = new BoilerTank();
+            public static BoilerLiquid boilerLiquid = new BoilerLiquid();
+            public static BoilerSolid boilerSolid = new BoilerSolid();
             public static CoolingTower coolingTower = new CoolingTower();
             public static Distiller distiller = new Distiller();
             public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery = new ElectrolyticCrucibleBattery();
@@ -73,19 +76,37 @@ public class Config {
                 @Comment({"The energy per tick the Coke Oven Baseheater consumes while processing [Default=32]"})
                 public int advancedCokeOvenBaseheater_energy_consumption = 32;
             }
-            public static class Boiler {
-                @Comment({"The capacity of the fuel tank for the Boiler [Default=2000]"})
-                public int boiler_fuel_tankSize = 2000;
-                @Comment({"How fast the Boiler cools down per tick when turned off or missing fuel [Default=5]"})
-                public int boiler_heat_lossPerTick = 5;
-                @Comment({"A Boiler can only start processing recipes once it reaches this heat level [Default=12000.0]"})
-                public double boiler_heat_workingLevel = 12000.0;
-                @Comment({"The capacity of the input tank for the Boiler [Default=20000]"})
-                public int boiler_input_tankSize = 20000;
-                @Comment({"The capacity of the output tank for the Boiler [Default=20000]"})
-                public int boiler_output_tankSize = 20000;
-                @Comment({"How fast the Boiler loses progress in ticks when the heat drops below processing heat level [Default=1]"})
-                public int boiler_progress_lossInTicks = 1;
+            public static class BoilerHeat {
+                @Comment({"The maximum heat level any boiler recipe can require or target [Default=2000.0]"})
+                public double boiler_heat_max = 2000.0;
+                @Comment({"The heat level boilers work toward when no recipe specifies one [Default=100.0]"})
+                public double boiler_heat_workingLevel = 100.0;
+            }
+            public static class BoilerTank {
+                @Comment({"The capacity of the input and output tanks for the Boiler Tank [Default=24000]"})
+                public int boilerTank_tankSize = 24000;
+                @Comment({"How fast the Boiler Tank loses progress in ticks when the heat drops below the required level [Default=1]"})
+                public int boilerTank_progress_lossInTicks = 1;
+            }
+            public static class BoilerLiquid {
+                @Comment({"The capacity of the fuel tank for the Liquid Boiler [Default=24000]"})
+                public int boilerLiquid_fuel_tankSize = 24000;
+                @Comment({"How fast the Liquid Boiler cools down per tick when unlit [Default=0.2]"})
+                public double boilerLiquid_heat_lossPerTick = 0.2;
+                @Comment({"The heat level the Liquid Boiler holds while idling on its pilot light [Default=20.0]"})
+                public double boilerLiquid_heat_pilot = 20.0;
+            }
+            public static class BoilerSolid {
+                @Comment({"How fast the Solid Boiler cools down per tick when unlit [Default=0.2]"})
+                public double boilerSolid_heat_lossPerTick = 0.2;
+                @Comment({"The heat level the Solid Boiler holds while idling on its pilot light [Default=20.0]"})
+                public double boilerSolid_heat_pilot = 20.0;
+                @Comment({"Fuel is only consumed every this many ticks while the Solid Boiler idles on its pilot light [Default=15]"})
+                public int boilerSolid_pilot_fuelMultiplier = 15;
+                @Comment({"Heat added per tick by furnace fuels that have no Solid Boiler recipe [Default=0.1]"})
+                public double boilerSolid_heat_defaultPerTick = 0.1;
+                @Comment({"Furnace burn times are divided by this value to get the Solid Boiler burn time [Default=10]"})
+                public int boilerSolid_burnTime_divider = 10;
             }
             public static class CoolingTower {
                 @Comment({"The capacity of the input tanks for the Cooling Tower [Default=100000]"})
@@ -120,8 +141,10 @@ public class Config {
             public static class Enable {
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Advanced Coke Oven Multiblock structure and Baseheater be built ? [Default=true]"})
                 public boolean enable_advancedCokeOven = true;
-                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Multiblock structure be built ? [Default=true]"})
+                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Boiler Tank and Liquid Boiler Multiblock structures be built ? [Default=true]"})
                 public boolean enable_boiler = true;
+                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solid Boiler Multiblock structure be built ? [Default=true]"})
+                public boolean enable_boilerSolid = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Cooling Tower Multiblock structures be built ? [Default=true]"})
                 public boolean enable_coolingTower = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
@@ -204,14 +227,14 @@ public class Config {
             public static class MeltingCrucible {
                 @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 1.0]"})
                 public double meltingCrucible_heat_loss_multiplier = 1.0;
-                @Comment({"Base heat gain per tick when consuming full heating energy. Actual gain is proportional to energy consumed. [Default=4.5]"})
-                public double meltingCrucible_heat_gain_base = 4.5;
+                @Comment({"Temperature gain per tick when consuming full heating energy. Actual gain is proportional to energy consumed. [Default=0.23]"})
+                public double meltingCrucible_heat_gainPerTick = 0.23;
                 @Comment({"The maximum energy a Melting Crucible can store [Default=50000]"})
                 public int meltingCrucible_energy_size = 50000;
                 @Comment({"The maximum energy input per tick per port for the Melting Crucible [Default=1024]"})
                 public int meltingCrucible_energy_maxInput = 1024;
-                @Comment({"A Melting Crucible can only start processing recipes once it reaches this heat level [Default=19400.0]"})
-                public double meltingCrucible_heat_workingLevel = 19400.0;
+                @Comment({"A Melting Crucible can only start processing recipes once it reaches this temperature [Default=1000.0]"})
+                public double meltingCrucible_heat_workingTemperature = 1000.0;
                 @Comment({"The capacity of the output tank for the Melting Crucible [Default=10000]"})
                 public int meltingCrucible_output_tankSize = 10000;
                 @Comment({"RF per tick consumed while heating the crucible to working temperature [Default: 1000]"})
@@ -234,8 +257,8 @@ public class Config {
             public static class SolarMelter {
                 @Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
                 public double solarMelter_heat_loss_multiplier = 1.0;
-                @Comment({"A Solar Melter can only start processing recipes once it reaches this heat level [Default=19400.0]"})
-                public double solarMelter_heat_workingLevel = 19400.0;
+                @Comment({"A Solar Melter can only start processing recipes once it reaches this temperature [Default=1000.0]"})
+                public double solarMelter_heat_workingTemperature = 1000.0;
                 @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
                 public double solarMelter_maximum_reflector_strength = 227.5;
                 @Comment({"The capacity of the output tank for the Solar Melter [Default=10000]"})
@@ -254,8 +277,8 @@ public class Config {
             public static class SolarTower {
                 @Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
                 public double solarTower_heat_loss_multiplier = 1.0;
-                @Comment({"A Solar Tower can only start processing recipes once it reaches this heat level [Default=12000.0]"})
-                public double solarTower_heat_workingLevel = 12000.0;
+                @Comment({"A Solar Tower can only start processing recipes once it reaches this temperature [Default=600.0]"})
+                public double solarTower_heat_workingTemperature = 600.0;
                 @Comment({"The capacity of the input tank for the Solar Tower [Default=32000]"})
                 public int solarTower_input_tankSize = 32000;
                 @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})

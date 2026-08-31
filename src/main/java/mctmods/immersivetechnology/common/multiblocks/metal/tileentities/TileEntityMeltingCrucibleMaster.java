@@ -50,9 +50,9 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private static int outputTankSize() { return Multiblocks.meltingCrucible.meltingCrucible_output_tankSize; }
     private static int energyCapacity() { return Multiblocks.meltingCrucible.meltingCrucible_energy_size; }
     private static int energyMaxInput() { return Multiblocks.meltingCrucible.meltingCrucible_energy_maxInput; }
-    private static double workingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingLevel; }
+    private static double workingHeatLevel() { return Multiblocks.meltingCrucible.meltingCrucible_heat_workingTemperature; }
     private static double heatLossMultiplier() { return Multiblocks.meltingCrucible.meltingCrucible_heat_loss_multiplier; }
-    private static double heatGainBase() { return Multiblocks.meltingCrucible.meltingCrucible_heat_gain_base; }
+    private static double heatGainBase() { return Multiblocks.meltingCrucible.meltingCrucible_heat_gainPerTick; }
     private static int energyPerTickToHeat() { return Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_heating; }
     private static int energyPerTickToMaintain() { return Multiblocks.meltingCrucible.meltingCrucible_energy_per_tick_maintain; }
     private static final int progressResolution = 64;
@@ -95,7 +95,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         if (nbt.hasKey("inventory")) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
-        heatLevel = nbt.getDouble("heatLevel");
+        heatLevel = Math.min(nbt.getDouble("heatLevel"), workingHeatLevel());
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
@@ -245,7 +245,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private double getCooldownAmount() {
         double heatLost = world.getBiome(getPos()).getTemperature(getPos());
         if (heatLost <= 0) heatLost = 0.1;
-        return (1 / heatLost) * heatLossMultiplier();
+        return (1 / heatLost) * heatLossMultiplier() / 19.4;
     }
 
     private boolean recipeLogic(boolean shouldRun) {

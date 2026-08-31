@@ -74,7 +74,9 @@ public class CommonProxy implements IGuiHandler {
 		if (tile instanceof IGuiTile) {
 			Object gui = null;
 			if (ID == ITGUI.GUIID_Advanced_coke_oven && tile instanceof TileEntityAdvancedCokeOvenMaster) { gui = new ContainerAdvancedCokeOven(player.inventory, (TileEntityAdvancedCokeOvenMaster)tile); }
-			if (ID == ITGUI.GUIID_Boiler && tile instanceof TileEntityBoilerMaster) { gui = new ContainerBoiler(player.inventory, (TileEntityBoilerMaster)tile); }
+			if (ID == ITGUI.GUIID_Boiler_Tank && tile instanceof TileEntityBoilerTankMaster) { gui = new ContainerBoilerTank(player.inventory, (TileEntityBoilerTankMaster)tile); }
+			if (ID == ITGUI.GUIID_Boiler_Liquid && tile instanceof TileEntityBoilerLiquidMaster) { gui = new ContainerBoilerLiquid(player.inventory, (TileEntityBoilerLiquidMaster)tile); }
+			if (ID == ITGUI.GUIID_Boiler_Solid && tile instanceof TileEntityBoilerSolidMaster) { gui = new ContainerBoilerSolid(player.inventory, (TileEntityBoilerSolidMaster)tile); }
 			if (ID == ITGUI.GUIID_Distiller && tile instanceof TileEntityDistillerMaster) { gui = new ContainerDistiller(player.inventory, (TileEntityDistillerMaster)tile); }
 			if (ID == ITGUI.GUIID_Melting_Crucible && tile instanceof TileEntityMeltingCrucibleMaster) { gui = new ContainerMeltingCrucible(player.inventory, (TileEntityMeltingCrucibleMaster) tile); }
 			if (ID == ITGUI.GUIID_Solar_Melter && tile instanceof TileEntitySolarMelterMaster) { gui = new ContainerSolarMelter(player.inventory, (TileEntitySolarMelterMaster)tile); }

@@ -6,8 +6,8 @@ import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityAlternatorMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityAlternatorSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
@@ -49,8 +49,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
         setHardness(3.0F);
         setResistance(15.0F);
         setMetaBlockLayer(BlockType_MetalMultiblock.STEEL_TANK.getMeta(), BlockRenderLayer.CUTOUT);
-        setMetaBlockLayer(BlockType_MetalMultiblock.BOILER.getMeta(), BlockRenderLayer.CUTOUT);
-        setMetaBlockLayer(BlockType_MetalMultiblock.BOILER_SLAVE.getMeta(), BlockRenderLayer.CUTOUT);
+        setMetaBlockLayer(BlockType_MetalMultiblock.BOILER_TANK.getMeta(), BlockRenderLayer.CUTOUT);
+        setMetaBlockLayer(BlockType_MetalMultiblock.BOILER_TANK_SLAVE.getMeta(), BlockRenderLayer.CUTOUT);
         setAllNotNormalBlock();
         lightOpacity = 0;
     }
@@ -67,8 +67,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
         switch (type) {
             case ALTERNATOR: return new TileEntityAlternatorMaster();
             case ALTERNATOR_SLAVE: return new TileEntityAlternatorSlave();
-            case BOILER: return new TileEntityBoilerMaster();
-            case BOILER_SLAVE: return new TileEntityBoilerSlave();
+            case BOILER_TANK: return new TileEntityBoilerTankMaster();
+            case BOILER_TANK_SLAVE: return new TileEntityBoilerTankSlave();
             case DISTILLER: return new TileEntityDistillerMaster();
             case DISTILLER_SLAVE: return new TileEntityDistillerSlave();
             case SOLAR_REFLECTOR: return new TileEntitySolarReflectorMaster();

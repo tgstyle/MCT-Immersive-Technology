@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
 import mctmods.immersivetechnology.api.crafting.*;
-import mctmods.immersivetechnology.api.crafting.BoilerRecipe.BoilerFuelRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerFuelRecipeCategory;
-import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerLiquidRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerSolidRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerTankRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.coolingtower.CoolingTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.distiller.DistillerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery.ElectrolyticCrucibleBatteryRecipeCategory;
@@ -62,9 +62,10 @@ public class JEIHelper implements IModPlugin {
         slotDrawable = guiHelper.getSlotDrawable();
         if (Multiblocks.enable.enable_distiller) { categories.put(DistillerRecipe.class, new DistillerRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_boiler) {
-            categories.put(BoilerRecipe.class, new BoilerRecipeCategory(guiHelper));
-            categories.put(BoilerFuelRecipe.class, new BoilerFuelRecipeCategory(guiHelper));
+            categories.put(BoilerTankRecipe.class, new BoilerTankRecipeCategory(guiHelper));
+            categories.put(BoilerLiquidRecipe.class, new BoilerLiquidRecipeCategory(guiHelper));
         }
+        if (Multiblocks.enable.enable_boilerSolid) { categories.put(BoilerSolidRecipe.class, new BoilerSolidRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_solarTower) { categories.put(SolarTowerRecipe.class, new SolarTowerRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_steamTurbine) { categories.put(SteamTurbineRecipe.class, new SteamTurbineRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_coolingTower) { categories.put(CoolingTowerRecipe.class, new CoolingTowerRecipeCategory(guiHelper)); }
@@ -86,9 +87,10 @@ public class JEIHelper implements IModPlugin {
         }
         if (Multiblocks.enable.enable_distiller) { modRegistry.addRecipes(new ArrayList<Object>((DistillerRecipe.recipeList)), "it.distiller"); }
         if (Multiblocks.enable.enable_boiler) {
-            modRegistry.addRecipes(new ArrayList<Object>((BoilerRecipe.recipeList)), "it.boiler");
-            modRegistry.addRecipes(new ArrayList<Object>((BoilerRecipe.fuelList)), "it.boilerFuel");
+            modRegistry.addRecipes(new ArrayList<Object>((BoilerTankRecipe.recipeList)), "it.boilerTank");
+            modRegistry.addRecipes(new ArrayList<Object>((BoilerLiquidRecipe.fuelList)), "it.boilerLiquid");
         }
+        if (Multiblocks.enable.enable_boilerSolid) { modRegistry.addRecipes(new ArrayList<Object>((BoilerSolidRecipe.fuelList)), "it.boilerSolid"); }
         if (Multiblocks.enable.enable_solarTower) { modRegistry.addRecipes(new ArrayList<Object>((SolarTowerRecipe.recipeList)), "it.solarTower"); }
         if (Multiblocks.enable.enable_steamTurbine) { modRegistry.addRecipes(new ArrayList<Object>((SteamTurbineRecipe.recipeList)), "it.steamTurbine"); }
         if (Multiblocks.enable.enable_coolingTower) { modRegistry.addRecipes(new ArrayList<Object>((CoolingTowerRecipe.recipeList)), "it.coolingTower"); }

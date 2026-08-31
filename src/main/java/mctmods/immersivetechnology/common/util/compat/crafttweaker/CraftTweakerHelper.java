@@ -18,7 +18,12 @@ import crafttweaker.CraftTweakerAPI;
 public class CraftTweakerHelper extends ITCompatModule {
 
     @Override public void preInit() {
-        if (Multiblocks.enable.enable_boiler) { CraftTweakerAPI.registerClass(Boiler.class); }
+        if (Multiblocks.enable.enable_boiler) {
+            CraftTweakerAPI.registerClass(Boiler.class);
+            CraftTweakerAPI.registerClass(BoilerTank.class);
+            CraftTweakerAPI.registerClass(BoilerLiquid.class);
+        }
+        if (Multiblocks.enable.enable_boilerSolid) { CraftTweakerAPI.registerClass(BoilerSolid.class); }
         if (Multiblocks.enable.enable_distiller) { CraftTweakerAPI.registerClass(Distiller.class); }
         if (Multiblocks.enable.enable_solarTower) { CraftTweakerAPI.registerClass(SolarTower.class); }
         if (Multiblocks.enable.enable_steamTurbine) { CraftTweakerAPI.registerClass(SteamTurbine.class); }

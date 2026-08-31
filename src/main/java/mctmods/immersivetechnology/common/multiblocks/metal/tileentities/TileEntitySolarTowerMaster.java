@@ -62,7 +62,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     private static int progressLossPerTick() { return Multiblocks.solarTower.solarTower_progress_lossInTicks; }
     private static double heatLossMultiplier() { return Multiblocks.solarTower.solarTower_heat_loss_multiplier; }
     private static float speedMult() { return Multiblocks.solarTower.solarTower_speed_multiplier; }
-    private static double workingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingLevel; }
+    private static double workingHeatLevel() { return Multiblocks.solarTower.solarTower_heat_workingTemperature; }
     private static double maximumReflectorStrength() { return Multiblocks.solarTower.solarTower_maximum_reflector_strength; }
 
     public FluidTank[] tanks = new FluidTank[] {
@@ -114,7 +114,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         super.readCustomNBT(nbt, descPacket);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
-        heatLevel = nbt.getDouble("heatLevel");
+        heatLevel = Math.min(nbt.getDouble("heatLevel"), workingHeatLevel());
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
         reflectorStrength = nbt.getDouble("reflectorStrength");
@@ -324,7 +324,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
     }
 
     private float getTemperatureIncrease() {
-        return speedMult() * (1 + (solarIncidenceAngleSection - 1)) * 10 * (float)(reflectorStrength / maximumReflectorStrength()) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f);
+        return speedMult() * (1 + (solarIncidenceAngleSection - 1)) * 0.5f * (float)(reflectorStrength / maximumReflectorStrength()) * (world.isRaining() ? 0.1f : world.isThundering() ? 0.05f : 1f);
     }
 
     private boolean cooldown() {
@@ -333,7 +333,7 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         if (heatLost <= 0) heatLost = 0.1;
         double conduction = 1.0;
         if (ITCompatModule.isAdvancedRocketryLoaded) conduction *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, collectorPos0);
-        heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier() * conduction), 0);
+        heatLevel = Math.max(heatLevel - ((world.isRaining() ? 2 : 1) * (1 / heatLost) * heatLossMultiplier() * conduction / 20), 0);
         return previous != heatLevel;
     }
 

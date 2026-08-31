@@ -20,12 +20,26 @@
     ],
     "subtitle": "subtitle.immersivetech.alternator"
   },
-  "boiler": {
+  "boilerLiquid": {
     "category": "block",
     "sounds": [
-      "immersivetech:boiler"
+      "immersivetech:boiler_liquid"
     ],
-    "subtitle": "subtitle.immersivetech.boiler"
+    "subtitle": "subtitle.immersivetech.boilerLiquid"
+  },
+  "boilerSolid": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:boiler_solid"
+    ],
+    "subtitle": "subtitle.immersivetech.boilerSolid"
+  },
+  "pilot": {
+    "category": "block",
+    "sounds": [
+      "immersivetech:pilot"
+    ],
+    "subtitle": "subtitle.immersivetech.pilot"
   },
   "coolingTower": {
     "category": "block",
