@@ -7,8 +7,8 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
@@ -32,9 +32,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
-public class TileEntityAlternatorSlave extends TileEntityITMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster>
-        implements IMechanicalEnergyConsumer, IIEInternalFluxHandler, ITBlockInterfaces.IBlockBounds,
-        ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IComparatorOverride {
+public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster>
+        implements IMechanicalEnergyConsumer, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds,
+        ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IComparatorOverride {
 
     private int loadGrace = 0;
     private TileEntityAlternatorMaster master;

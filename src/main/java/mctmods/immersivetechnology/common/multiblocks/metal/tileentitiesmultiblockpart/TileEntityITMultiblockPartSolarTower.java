@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.immersiveconvergence.api.multiblock.*;
 
-public class TileEntityITMultiblockPartSolarTower extends TileEntityITMultiblockPart<TileEntitySolarTowerSlave> {
+public class TileEntityITMultiblockPartSolarTower extends MachineTemplateMultiblock<TileEntitySolarTowerSlave> {
     public static TileEntityITMultiblockPartSolarTower instance = new TileEntityITMultiblockPartSolarTower();
 
     @SideOnly(Side.CLIENT)

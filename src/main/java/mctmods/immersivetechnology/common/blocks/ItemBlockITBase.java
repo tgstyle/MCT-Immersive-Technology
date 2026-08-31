@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks;
 
+import com.immersiveconvergence.api.block.ICBlockBase;
+
 import blusunrize.immersiveengineering.client.ClientProxy;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.ImmersiveTechnology;
@@ -37,22 +39,22 @@ import java.util.Locale;
 public class ItemBlockITBase extends ItemBlock {
     public ItemBlockITBase(Block b) {
         super(b);
-        if (((BlockITBase<?>) b).enumValues.length > 1) setHasSubtypes(true);
+        if (((ICBlockBase<?>) b).enumValues.length > 1) setHasSubtypes(true);
     }
 
     @Override public int getMetadata(int damageValue) { return damageValue; }
 
     @Override public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> itemList) { if (this.isInCreativeTab(tab)) this.block.getSubBlocks(tab, itemList); }
 
-    @Override @Nonnull public String getTranslationKey(@Nonnull ItemStack stack) { return ((BlockITBase<?>) this.block).getTranslationKey(stack); }
+    @Override @Nonnull public String getTranslationKey(@Nonnull ItemStack stack) { return ((ICBlockBase<?>) this.block).getTranslationKey(stack); }
 
     @SideOnly(Side.CLIENT)
     @Override public FontRenderer getFontRenderer(@Nonnull ItemStack stack) { return ClientProxy.itemFont; }
 
     @Override public void addInformation(@Nonnull ItemStack stack, World worldIn, @Nonnull List<String> list, @Nonnull ITooltipFlag advInfo) {
-        if (((BlockITBase<?>) block).hasFlavour(stack)) {
-            String subName = ((BlockITBase<?>) this.block).getStateFromMeta(stack.getItemDamage()).getValue(((BlockITBase<?>) this.block).property).toString().toLowerCase(Locale.US);
-            String flavourKey = "desc." + ImmersiveTechnology.MODID + ".flavor." + ((BlockITBase<?>) this.block).name + "." + subName;
+        if (((ICBlockBase<?>) block).hasFlavour(stack)) {
+            String subName = ((ICBlockBase<?>) this.block).getStateFromMeta(stack.getItemDamage()).getValue(((ICBlockBase<?>) this.block).property).toString().toLowerCase(Locale.US);
+            String flavourKey = "desc." + ImmersiveTechnology.MODID + ".flavor." + ((ICBlockBase<?>) this.block).name + "." + subName;
             list.add(TextFormatting.GRAY + I18n.format(flavourKey));
         }
         super.addInformation(stack, worldIn, list, advInfo);
@@ -65,11 +67,11 @@ public class ItemBlockITBase extends ItemBlock {
     }
 
     @Override public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull IBlockState newState) {
-        if (!((BlockITBase<?>) this.block).canITBlockBePlaced(world, pos, newState, side, hitX, hitY, hitZ, player, stack)) return false;
+        if (!((ICBlockBase<?>) this.block).canITBlockBePlaced(world, pos, newState, side, hitX, hitY, hitZ, player, stack)) return false;
 
         boolean ret = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 
-        if (ret) ((BlockITBase<?>) this.block).onITBlockPlacedBy(world, pos, newState, side, hitX, hitY, hitZ, player, stack);
+        if (ret) ((ICBlockBase<?>) this.block).onITBlockPlacedBy(world, pos, newState, side, hitX, hitY, hitZ, player, stack);
         return ret;
     }
 
@@ -104,7 +106,7 @@ public class ItemBlockITBase extends ItemBlock {
 
     @SuppressWarnings("deprecation")
     private boolean canBlockBePlaced(World w, BlockPos pos, EnumFacing side, ItemStack stack) {
-        BlockITBase<?> blockIn = (BlockITBase<?>) this.block;
+        ICBlockBase<?> blockIn = (ICBlockBase<?>) this.block;
         Block block = w.getBlockState(pos).getBlock();
         AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox(blockIn.getStateFromMeta(stack.getItemDamage()), w, pos);
         if (axisalignedbb != null && !w.checkNoEntityCollision(axisalignedbb.offset(pos), null)) return false;

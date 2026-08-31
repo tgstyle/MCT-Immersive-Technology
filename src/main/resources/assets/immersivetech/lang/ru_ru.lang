@@ -136,8 +136,6 @@ overlay.immersivetech.redstone_normal=Режим редстоуна нормал
 overlay.immersivetech.redstone_inverted=Режим редстоуна инвертированный
 
 #GUI
-gui.immersivetech.input_tank_cleared=Входной резервуар очищен
-gui.immersivetech.input_tanks_cleared=Входные резервуары очищены
 gui.immersivetech.empty=Пусто
 gui.immersivetech.ticks=%sт
 gui.immersivetech.seconds=%sс

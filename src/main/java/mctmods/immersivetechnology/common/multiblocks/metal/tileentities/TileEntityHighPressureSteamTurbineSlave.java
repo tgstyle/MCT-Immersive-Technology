@@ -8,10 +8,10 @@ import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HighPressureSteamTurbineShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IAdvancedCollisionBounds;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IAdvancedSelectionBounds;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IBlockBounds;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedCollisionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedSelectionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class TileEntityHighPressureSteamTurbineSlave extends TileEntityITMultiblock<TileEntityHighPressureSteamTurbineSlave, HighPressureSteamTurbineRecipe, TileEntityHighPressureSteamTurbineMaster>
+public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateMultiblock<TileEntityHighPressureSteamTurbineSlave, HighPressureSteamTurbineRecipe, TileEntityHighPressureSteamTurbineMaster>
         implements IMechanicalEnergyProvider, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
 
     private static float outputTorque() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque; }

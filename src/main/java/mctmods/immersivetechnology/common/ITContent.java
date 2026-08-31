@@ -1,10 +1,11 @@
 package mctmods.immersivetechnology.common;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.common.Config;
 
+import com.immersiveconvergence.api.block.ICBlockBase;
 import com.immersiveconvergence.api.multiblock.BlockMatcher;
+import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -70,27 +71,27 @@ public class ITContent {
     public static ArrayList<Block> registeredITBlocks = new ArrayList<>();
 
     /*MULTIBLOCKS*/
-    public static BlockITBase<?> blockMetalMultiblock;
-    public static BlockITBase<?> blockMetalMultiblock1;
-    public static BlockITBase<?> blockMetalMultiblock2;
-    public static BlockITBase<?> blockStoneMultiblock;
+    public static ICBlockBase<?> blockMetalMultiblock;
+    public static ICBlockBase<?> blockMetalMultiblock1;
+    public static ICBlockBase<?> blockMetalMultiblock2;
+    public static ICBlockBase<?> blockStoneMultiblock;
 
     /*CONNECTORS*/
-    public static BlockITBase<?> blockConnectors;
+    public static ICBlockBase<?> blockConnectors;
 
     /*METAL*/
-    public static BlockITBase<?> blockMetalDevice;
-    public static BlockITBase<?> blockMetalTrash;
-    public static BlockITBase<?> blockMetalBarrel;
-    public static BlockITBase<?> blockValve;
-    public static BlockITBase<?> blockMetalDecoration;
+    public static ICBlockBase<?> blockMetalDevice;
+    public static ICBlockBase<?> blockMetalTrash;
+    public static ICBlockBase<?> blockMetalBarrel;
+    public static ICBlockBase<?> blockValve;
+    public static ICBlockBase<?> blockMetalDecoration;
 
     /*STONE*/
-    public static BlockITBase<?> blockStoneDecoration;
-    public static BlockITBase<?> blockStoneDecorationSlab;
+    public static ICBlockBase<?> blockStoneDecoration;
+    public static ICBlockBase<?> blockStoneDecorationSlab;
 
     /*WOODEN*/
-    public static BlockITBase<?> blockWoodenCrate;
+    public static ICBlockBase<?> blockWoodenCrate;
 
     /*FLUID BLOCKS*/
     public static BlockITFluid blockFluidDistWater;
@@ -167,7 +168,7 @@ public class ITContent {
 
         /*STONE*/
         blockStoneDecoration = new BlockStoneDecoration();
-        blockStoneDecorationSlab = (BlockITBase<?>) new BlockITSlab<>("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
+        blockStoneDecorationSlab = (ICBlockBase<?>) new BlockITSlab<>("stone_decoration_slab", Material.ROCK, PropertyEnum.create("type", BlockType_StoneDecoration.class)).setMetaExplosionResistance(BlockType_StoneDecoration.COKEBRICK_REINFORCED.getMeta(), 180).setHardness(2.0F).setResistance(10.0F);
 
         /*WOODEN*/
         blockWoodenCrate = new BlockWoodenCrate();
@@ -227,118 +228,118 @@ public class ITContent {
             registerTile(TileEntityAdvancedCokeOvenSlave.class);
             registerTile(TileEntityAdvancedCokeOvenMaster.class);
             registerTile(TileEntityAdvancedCokeOvenBaseheater.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartAdvancedCokeOven.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartAdvancedCokeOven.instance);
             multiblockAdvancedCokeOven = TileEntityITMultiblockPartAdvancedCokeOven.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_boiler) {
             registerTileAlias(TileEntityBoilerTankSlave.class, "BoilerSlave");
             registerTileAlias(TileEntityBoilerTankMaster.class, "BoilerMaster");
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoilerTank.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartBoilerTank.instance);
             multiblockBoilerTank = TileEntityITMultiblockPartBoilerTank.instance;
             registerTile(TileEntityBoilerLiquidSlave.class);
             registerTile(TileEntityBoilerLiquidMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoilerLiquid.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartBoilerLiquid.instance);
             multiblockBoilerLiquid = TileEntityITMultiblockPartBoilerLiquid.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_boilerSolid) {
             registerTile(TileEntityBoilerSolidSlave.class);
             registerTile(TileEntityBoilerSolidMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartBoilerSolid.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartBoilerSolid.instance);
             multiblockBoilerSolid = TileEntityITMultiblockPartBoilerSolid.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_distiller) {
             registerTile(TileEntityDistillerSlave.class);
             registerTile(TileEntityDistillerMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartDistiller.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartDistiller.instance);
             multiblockDistiller = TileEntityITMultiblockPartDistiller.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_solarTower) {
             registerTile(TileEntitySolarTowerSlave.class);
             registerTile(TileEntitySolarTowerMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartSolarTower.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartSolarTower.instance);
             multiblockSolarTower = TileEntityITMultiblockPartSolarTower.instance;
             registerTile(TileEntitySolarReflectorSlave.class);
             registerTile(TileEntitySolarReflectorMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartSolarReflector.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartSolarReflector.instance);
             multiblockSolarReflector = TileEntityITMultiblockPartSolarReflector.instance;
         }
         boolean alternatorRegistered = false;
         if (ITConfig.Multiblocks.enable.enable_steamTurbine) {
             registerTile(TileEntityAlternatorSlave.class);
             registerTile(TileEntityAlternatorMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartAlternator.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartAlternator.instance);
             multiblockAlternator = TileEntityITMultiblockPartAlternator.instance;
             alternatorRegistered = true;
             registerTile(TileEntitySteamTurbineSlave.class);
             registerTile(TileEntitySteamTurbineMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartSteamTurbine.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartSteamTurbine.instance);
             multiblockSteamTurbine = TileEntityITMultiblockPartSteamTurbine.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_coolingTower) {
             registerTile(TileEntityCoolingTowerSlave.class);
             registerTile(TileEntityCoolingTowerMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartCoolingTower.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartCoolingTower.instance);
             multiblockCoolingTower = TileEntityITMultiblockPartCoolingTower.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_gasTurbine) {
             if (!alternatorRegistered) {
                 registerTile(TileEntityAlternatorSlave.class);
                 registerTile(TileEntityAlternatorMaster.class);
-                MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartAlternator.instance);
+                MultiblockRegistry.register(TileEntityITMultiblockPartAlternator.instance);
                 multiblockAlternator = TileEntityITMultiblockPartAlternator.instance;
                 alternatorRegistered = true;
             }
             registerTile(TileEntityGasTurbineSlave.class);
             registerTile(TileEntityGasTurbineMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartGasTurbine.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartGasTurbine.instance);
             multiblockGasTurbine = TileEntityITMultiblockPartGasTurbine.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_heatExchanger) {
             registerTile(TileEntityHeatExchangerSlave.class);
             registerTile(TileEntityHeatExchangerMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartHeatExchanger.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartHeatExchanger.instance);
             multiblockHeatExchanger = TileEntityITMultiblockPartHeatExchanger.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_highPressureSteamTurbine) {
             if (!alternatorRegistered) {
                 registerTile(TileEntityAlternatorSlave.class);
                 registerTile(TileEntityAlternatorMaster.class);
-                MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartAlternator.instance);
+                MultiblockRegistry.register(TileEntityITMultiblockPartAlternator.instance);
                 multiblockAlternator = TileEntityITMultiblockPartAlternator.instance;
             }
             registerTile(TileEntityHighPressureSteamTurbineSlave.class);
             registerTile(TileEntityHighPressureSteamTurbineMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartHighPressureSteamTurbine.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartHighPressureSteamTurbine.instance);
             multiblockHighPressureSteamTurbine = TileEntityITMultiblockPartHighPressureSteamTurbine.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_electrolyticCrucibleBattery) {
             registerTile(TileEntityElectrolyticCrucibleBatterySlave.class);
             registerTile(TileEntityElectrolyticCrucibleBatteryMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance);
             multiblockElectrolyticCrucibleBattery = TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_meltingCrucible) {
             registerTile(TileEntityMeltingCrucibleSlave.class);
             registerTile(TileEntityMeltingCrucibleMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartMeltingCrucible.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartMeltingCrucible.instance);
             multiblockMeltingCrucible = TileEntityITMultiblockPartMeltingCrucible.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_radiator) {
             registerTile(TileEntityRadiatorSlave.class);
             registerTile(TileEntityRadiatorMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartRadiator.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartRadiator.instance);
             multiblockRadiator = TileEntityITMultiblockPartRadiator.instance;
         }
         if (ITConfig.Multiblocks.enable.enable_solarMelter) {
             registerTile(TileEntitySolarMelterSlave.class);
             registerTile(TileEntitySolarMelterMaster.class);
-            MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartSolarMelter.instance);
+            MultiblockRegistry.register(TileEntityITMultiblockPartSolarMelter.instance);
             multiblockSolarMelter = TileEntityITMultiblockPartSolarMelter.instance;
         }
 
         registerTile(TileEntitySteelSheetmetalTankSlave.class);
         registerTile(TileEntitySteelSheetmetalTankMaster.class);
-        MultiblockHandler.registerMultiblock(TileEntityITMultiblockPartSteelSheetmetalTank.instance);
+        MultiblockRegistry.register(TileEntityITMultiblockPartSteelSheetmetalTank.instance);
         multiblockSteelSheetmetalTank = TileEntityITMultiblockPartSteelSheetmetalTank.instance;
         if (MCTMixinConfig.mixinSettings.replace_IE_pipes) {
             normallyPressurized.add(FluidRegistry.getFluid("water"));

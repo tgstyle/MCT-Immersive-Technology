@@ -6,8 +6,8 @@ import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarTower;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblock;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
@@ -26,7 +26,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntitySolarTowerSlave extends TileEntityITMultiblock<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, ITBlockInterfaces.IBlockBounds, ITBlockInterfaces.IAdvancedCollisionBounds, ITBlockInterfaces.IAdvancedSelectionBounds, IIEInventory {
+public class TileEntitySolarTowerSlave extends TileEntityTemplateMultiblock<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements IEBlockInterfaces.IGuiTile, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IIEInventory {
 
     private int loadGrace = 0;
 

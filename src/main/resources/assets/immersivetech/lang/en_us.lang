@@ -136,8 +136,6 @@ overlay.immersivetech.redstone_normal=Redstone Mode Normal
 overlay.immersivetech.redstone_inverted=Redstone Mode Inverted
 
 #GUI
-gui.immersivetech.input_tank_cleared=Input tank cleared
-gui.immersivetech.input_tanks_cleared=Input tanks cleared
 gui.immersivetech.empty=Empty
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

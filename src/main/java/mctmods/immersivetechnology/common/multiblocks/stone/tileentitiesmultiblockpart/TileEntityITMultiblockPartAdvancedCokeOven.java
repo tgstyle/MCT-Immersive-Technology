@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartAdvancedCokeOven extends TileEntityITMultiblockPart<TileEntityAdvancedCokeOvenSlave> {
+public class TileEntityITMultiblockPartAdvancedCokeOven extends MachineTemplateMultiblock<TileEntityAdvancedCokeOvenSlave> {
     public static TileEntityITMultiblockPartAdvancedCokeOven instance = new TileEntityITMultiblockPartAdvancedCokeOven();
 
     @SideOnly(Side.CLIENT)

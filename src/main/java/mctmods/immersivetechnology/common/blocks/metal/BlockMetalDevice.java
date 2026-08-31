@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHe
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -86,8 +86,8 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 
     @Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         TileEntity te = source.getTileEntity(pos);
-        if (te instanceof ITBlockInterfaces.IBlockBounds) {
-            float[] bounds = ((ITBlockInterfaces.IBlockBounds)te).getBlockBounds();
+        if (te instanceof ICBlockInterfaces.IBlockBounds) {
+            float[] bounds = ((ICBlockInterfaces.IBlockBounds)te).getBlockBounds();
             return new AxisAlignedBB(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
         }
         return super.getBoundingBox(state, source, pos);

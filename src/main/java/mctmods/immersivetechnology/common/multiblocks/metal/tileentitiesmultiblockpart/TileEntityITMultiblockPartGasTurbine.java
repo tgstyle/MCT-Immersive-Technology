@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartGasTurbine extends TileEntityITMultiblockPart<TileEntityGasTurbineSlave> {
+public class TileEntityITMultiblockPartGasTurbine extends MachineTemplateMultiblock<TileEntityGasTurbineSlave> {
 
     public static TileEntityITMultiblockPartGasTurbine instance = new TileEntityITMultiblockPartGasTurbine();
 

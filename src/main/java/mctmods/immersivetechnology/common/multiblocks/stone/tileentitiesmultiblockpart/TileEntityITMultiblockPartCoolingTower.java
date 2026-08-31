@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartCoolingTower extends TileEntityITMultiblockPart<TileEntityCoolingTowerSlave> {
+public class TileEntityITMultiblockPartCoolingTower extends MachineTemplateMultiblock<TileEntityCoolingTowerSlave> {
     public static TileEntityITMultiblockPartCoolingTower instance = new TileEntityITMultiblockPartCoolingTower();
 
     @SideOnly(Side.CLIENT)

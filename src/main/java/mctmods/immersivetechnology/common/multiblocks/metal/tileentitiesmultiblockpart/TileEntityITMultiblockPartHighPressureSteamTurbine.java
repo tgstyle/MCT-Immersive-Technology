@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HighPressureSteamTurbineShape;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import com.immersiveconvergence.api.multiblock.BlockMatcher;
 import net.minecraft.block.Block;
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TileEntityITMultiblockPartHighPressureSteamTurbine extends TileEntityITMultiblockPart<TileEntityHighPressureSteamTurbineSlave> {
+public class TileEntityITMultiblockPartHighPressureSteamTurbine extends MachineTemplateMultiblock<TileEntityHighPressureSteamTurbineSlave> {
     public static TileEntityITMultiblockPartHighPressureSteamTurbine instance = new TileEntityITMultiblockPartHighPressureSteamTurbine();
     private Map<IBlockState, IBlockState> turbineMaterial;
     private boolean turbineMaterialResolved;

@@ -136,8 +136,6 @@ overlay.immersivetech.redstone_normal=紅石模式正常
 overlay.immersivetech.redstone_inverted=紅石模式反轉
 
 #GUI
-gui.immersivetech.input_tank_cleared=輸入槽已清空
-gui.immersivetech.input_tanks_cleared=輸入槽已全部清空
 gui.immersivetech.empty=空
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

@@ -21,7 +21,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -87,8 +87,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 
     @Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         TileEntity te = source.getTileEntity(pos);
-        if (te instanceof ITBlockInterfaces.IBlockBounds) {
-            float[] bounds = ((ITBlockInterfaces.IBlockBounds)te).getBlockBounds();
+        if (te instanceof ICBlockInterfaces.IBlockBounds) {
+            float[] bounds = ((ICBlockInterfaces.IBlockBounds)te).getBlockBounds();
             return new AxisAlignedBB(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
         }
         return FULL_BLOCK_AABB;
@@ -97,8 +97,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
     @SideOnly(Side.CLIENT)
     @Override @Nonnull public AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ITBlockInterfaces.IAdvancedSelectionBounds) {
-            List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedSelectionBounds)te).getAdvancedSelectionBounds();
+        if (te instanceof ICBlockInterfaces.IAdvancedSelectionBounds) {
+            List<AxisAlignedBB> list = ((ICBlockInterfaces.IAdvancedSelectionBounds)te).getAdvancedSelectionBounds();
             if (!list.isEmpty()) { return new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D); }
         }
         return getBoundingBox(state, world, pos).offset(pos);
@@ -106,8 +106,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
 
     @Override public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ITBlockInterfaces.IAdvancedSelectionBounds) {
-            List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedSelectionBounds)te).getAdvancedSelectionBounds();
+        if (te instanceof ICBlockInterfaces.IAdvancedSelectionBounds) {
+            List<AxisAlignedBB> list = ((ICBlockInterfaces.IAdvancedSelectionBounds)te).getAdvancedSelectionBounds();
             RayTraceResult minMOP = null;
             double minDist = Double.POSITIVE_INFINITY;
             int subHit = 0;
@@ -132,8 +132,8 @@ public class BlockMetalMultiblock extends BlockITMultiblock<BlockType_MetalMulti
     @Override public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
         TileEntity te = world.getTileEntity(pos);
         boolean hasAdvanced = false;
-        if (te instanceof ITBlockInterfaces.IAdvancedCollisionBounds) {
-            List<AxisAlignedBB> list = ((ITBlockInterfaces.IAdvancedCollisionBounds)te).getAdvancedCollisionBounds();
+        if (te instanceof ICBlockInterfaces.IAdvancedCollisionBounds) {
+            List<AxisAlignedBB> list = ((ICBlockInterfaces.IAdvancedCollisionBounds)te).getAdvancedCollisionBounds();
             for (AxisAlignedBB aabb : list) {
                 AxisAlignedBB worldAABB = aabb.offset(pos);
                 if (worldAABB.intersects(entityBox)) { collidingBoxes.add(worldAABB); }

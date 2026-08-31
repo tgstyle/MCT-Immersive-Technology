@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidShape;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartBoilerLiquid extends TileEntityITMultiblockPart<TileEntityBoilerLiquidSlave> {
+public class TileEntityITMultiblockPartBoilerLiquid extends MachineTemplateMultiblock<TileEntityBoilerLiquidSlave> {
     public static TileEntityITMultiblockPartBoilerLiquid instance = new TileEntityITMultiblockPartBoilerLiquid();
 
     @SideOnly(Side.CLIENT)

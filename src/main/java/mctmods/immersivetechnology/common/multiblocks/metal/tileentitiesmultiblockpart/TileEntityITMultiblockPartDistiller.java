@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartDistiller extends TileEntityITMultiblockPart<TileEntityDistillerSlave> {
+public class TileEntityITMultiblockPartDistiller extends MachineTemplateMultiblock<TileEntityDistillerSlave> {
     public static TileEntityITMultiblockPartDistiller instance = new TileEntityITMultiblockPartDistiller();
 
     @SideOnly(Side.CLIENT)

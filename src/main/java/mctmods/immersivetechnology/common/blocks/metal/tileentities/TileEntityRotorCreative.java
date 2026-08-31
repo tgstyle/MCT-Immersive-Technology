@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.gui.GuiRotorCreative;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces.IBlockBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;

@@ -136,8 +136,6 @@ overlay.immersivetech.redstone_normal=레드스톤 모드 일반
 overlay.immersivetech.redstone_inverted=레드스톤 모드 반전
 
 #GUI
-gui.immersivetech.input_tank_cleared=입력 탱크 비움
-gui.immersivetech.input_tanks_cleared=입력 탱크들 비움
 gui.immersivetech.empty=비어 있음
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss

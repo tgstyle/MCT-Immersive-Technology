@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityMeltingCrucibleSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityITMultiblockPartMeltingCrucible extends TileEntityITMultiblockPart<TileEntityMeltingCrucibleSlave> {
+public class TileEntityITMultiblockPartMeltingCrucible extends MachineTemplateMultiblock<TileEntityMeltingCrucibleSlave> {
     public static TileEntityITMultiblockPartMeltingCrucible instance = new TileEntityITMultiblockPartMeltingCrucible();
 
     @SideOnly(Side.CLIENT)

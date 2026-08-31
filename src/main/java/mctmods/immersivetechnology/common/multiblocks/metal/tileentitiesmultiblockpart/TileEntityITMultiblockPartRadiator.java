@@ -11,7 +11,7 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityRadiatorSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITMultiblockPart;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.state.IBlockState;
@@ -27,7 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TileEntityITMultiblockPartRadiator extends TileEntityITMultiblockPart<TileEntityRadiatorSlave> {
+public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultiblock<TileEntityRadiatorSlave> {
     public static TileEntityITMultiblockPartRadiator instance = new TileEntityITMultiblockPartRadiator();
 
     @SideOnly(Side.CLIENT)

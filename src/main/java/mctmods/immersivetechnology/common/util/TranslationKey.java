@@ -3,8 +3,6 @@ package mctmods.immersivetechnology.common.util;
 import net.minecraft.client.resources.I18n;
 
 public enum TranslationKey {
-    GUI_INPUT_TANK_CLEARED("gui.immersivetech.input_tank_cleared"),
-    GUI_INPUT_TANKS_CLEARED("gui.immersivetech.input_tanks_cleared"),
     OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_item.normal.firstline"),
     OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_fluid.normal.firstline"),
     OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_energy.normal.firstline"),

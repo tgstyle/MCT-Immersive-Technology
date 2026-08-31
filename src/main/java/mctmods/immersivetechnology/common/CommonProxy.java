@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology.common;
 
+import com.immersiveconvergence.api.multiblock.QueueProcessor;
+import mctmods.immersivetechnology.common.Config.ITConfig;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
@@ -32,7 +35,10 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class CommonProxy implements IGuiHandler {
 
-	public void preInit() { MinecraftForge.EVENT_BUS.register(this); }
+	public void preInit() {
+		MinecraftForge.EVENT_BUS.register(this);
+		QueueProcessor.queueEnabled = () -> ITConfig.Multiblocks.disassembly.disassembly_queue;
+	}
 
 	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {
 		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) { ITUtils.REMOVE_FROM_TICKING.removeIf(te -> te.getWorld() == event.getWorld()); }
