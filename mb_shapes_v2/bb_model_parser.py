@@ -24,8 +24,21 @@ def load_triangles(file_path, debug=False):
         if el_type == 'mesh':
             verts = el.get('vertices', {})
             origin = el.get('origin', [0, 0, 0])
+            rot = el.get('rotation')
+            rot_mat = None
+            if rot and any(abs(r) > 1e-9 for r in rot):
+                rx, ry, rz = (math.radians(r) for r in rot)
+                cx, sx = math.cos(rx), math.sin(rx)
+                cy, sy = math.cos(ry), math.sin(ry)
+                cz, sz = math.cos(rz), math.sin(rz)
+                mx = np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+                my = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+                mz = np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
+                rot_mat = mx @ my @ mz
             world = {}
             for k, v in verts.items():
+                if rot_mat is not None:
+                    v = rot_mat @ np.asarray(v, dtype=np.float64)
                 p = [v[i] + origin[i] for i in range(3)]
                 for c in p:
                     if abs(c / grid_size - round(c / grid_size)) > 1e-6:
