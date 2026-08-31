@@ -1,0 +1,38 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cube_all",
+    "textures": {
+      "all": "immersivetech:block/metal/heat_creative",
+      "particle": "immersivetech:block/metal/heat_creative"
+    }
+  },
+  "variants": {
+    "inventory,type=heat_creative": [
+      {}
+    ],
+    "type": {
+      "heat_creative": {}
+    },
+    "_0multiblockslave": {
+      "false": {},
+      "true": {}
+    },
+    "_1dynamicrender": {
+      "false": {},
+      "true": {}
+    },
+    "boolean0": {
+      "false": {},
+      "true": {}
+    },
+    "facing": {
+      "north": {},
+      "south": {},
+      "west": {},
+      "east": {},
+      "up": {},
+      "down": {}
+    }
+  }
+}

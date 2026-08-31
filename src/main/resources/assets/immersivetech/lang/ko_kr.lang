@@ -51,6 +51,8 @@ chat.immersivetech.fluid_pump.push_only_mode=펌프가 내용물을 밀어내기
 #TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=고급 코크스 오븐 베이스히터
+tile.immersivetech.metal_device.rotor_creative.name=크리에이티브 로터
+tile.immersivetech.metal_device.heat_creative.name=크리에이티브 가열기
 tile.immersivetech.metal_trash.trash_item.name=쓰레기통
 tile.immersivetech.metal_trash.trash_fluid.name=유체 쓰레기통
 tile.immersivetech.metal_trash.trash_energy.name=에너지 쓰레기통
@@ -149,6 +151,9 @@ gui.immersivetech.fluid_valve.limitdestination=출력 탱크에 mB
 gui.immersivetech.load_controller.limitpacket=패킷당 IF
 gui.immersivetech.load_controller.limittime=초당 IF
 gui.immersivetech.load_controller.limitdestination=출력 저장소에 IF
+gui.immersivetech.apply=적용
+gui.immersivetech.rotor_creative=크리에이티브 로터
+gui.immersivetech.rotor_creative.rpm=RPM
 gui.immersivetech.stack_limiter.limitpacket=패킷당 아이템
 gui.immersivetech.stack_limiter.limittime=초당 아이템
 gui.immersivetech.stack_limiter.limitdestination=출력 저장소에 아이템

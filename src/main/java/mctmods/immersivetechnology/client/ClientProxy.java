@@ -26,6 +26,7 @@ import mctmods.immersivetechnology.client.render.multiblock.withanimation.TileRe
 import mctmods.immersivetechnology.client.render.multiblock.withanimation.TileRendererGasTurbine;
 import mctmods.immersivetechnology.client.render.fluid.TileRenderSteelSheetmetalTank;
 import mctmods.immersivetechnology.client.render.animation.TileRenderAdvancedCokeOvenBaseheater;
+import mctmods.immersivetechnology.client.render.animation.TileRenderRotorCreative;
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
@@ -39,6 +40,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLo
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.items.ItemITBase;
@@ -224,6 +226,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAdvancedCokeOvenBaseheater.class, new TileRenderAdvancedCokeOvenBaseheater());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRotorCreative.class, new TileRenderRotorCreative());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHighPressureSteamTurbineMaster.class, new TileRenderHighPressureSteamTurbine());

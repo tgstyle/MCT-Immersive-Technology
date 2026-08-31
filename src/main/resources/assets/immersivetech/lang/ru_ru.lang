@@ -51,6 +51,8 @@ chat.immersivetech.fluid_pump.push_only_mode=Помпа будет только 
 #TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Базовый подогреватель улучшенной коксовой печи
+tile.immersivetech.metal_device.rotor_creative.name=Творческий ротор
+tile.immersivetech.metal_device.heat_creative.name=Творческий нагреватель
 tile.immersivetech.metal_trash.trash_item.name=Корзина
 tile.immersivetech.metal_trash.trash_fluid.name=Жидкостная корзина
 tile.immersivetech.metal_trash.trash_energy.name=Энергетическая корзина
@@ -149,6 +151,9 @@ gui.immersivetech.fluid_valve.limitdestination=мБ в выходном резе
 gui.immersivetech.load_controller.limitpacket=IF за пакет
 gui.immersivetech.load_controller.limittime=IF за секунду
 gui.immersivetech.load_controller.limitdestination=IF в выходном хранилище
+gui.immersivetech.apply=Применить
+gui.immersivetech.rotor_creative=Творческий ротор
+gui.immersivetech.rotor_creative.rpm=об/мин
 gui.immersivetech.stack_limiter.limitpacket=Предметов за пакет
 gui.immersivetech.stack_limiter.limittime=Предметов за секунду
 gui.immersivetech.stack_limiter.limitdestination=Предметов в выходном хранилище

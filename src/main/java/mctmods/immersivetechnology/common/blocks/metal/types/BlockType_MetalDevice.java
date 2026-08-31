@@ -8,7 +8,9 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public enum BlockType_MetalDevice implements IStringSerializable, BlockITBase.IBlockEnum {
-    ADVANCED_COKE_OVEN_BASEHEATER;
+    ADVANCED_COKE_OVEN_BASEHEATER,
+    ROTOR_CREATIVE,
+    HEAT_CREATIVE;
 
     @Override @Nonnull public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 

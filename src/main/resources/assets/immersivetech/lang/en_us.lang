@@ -51,6 +51,8 @@ chat.immersivetech.fluid_pump.push_only_mode=Pump will only push out contents
 #TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Advanced Coke Oven Baseheater
+tile.immersivetech.metal_device.rotor_creative.name=Creative Rotor
+tile.immersivetech.metal_device.heat_creative.name=Creative Heater
 tile.immersivetech.metal_trash.trash_item.name=Trash Can
 tile.immersivetech.metal_trash.trash_fluid.name=Fluid Trash Can
 tile.immersivetech.metal_trash.trash_energy.name=Energy Trash Can
@@ -149,6 +151,9 @@ gui.immersivetech.fluid_valve.limitdestination=mB in output tank
 gui.immersivetech.load_controller.limitpacket=IF per packet
 gui.immersivetech.load_controller.limittime=IF per second
 gui.immersivetech.load_controller.limitdestination=IF in output storage
+gui.immersivetech.apply=Apply
+gui.immersivetech.rotor_creative=Creative Rotor
+gui.immersivetech.rotor_creative.rpm=RPM
 gui.immersivetech.stack_limiter.limitpacket=Items per packet
 gui.immersivetech.stack_limiter.limittime=Items per second
 gui.immersivetech.stack_limiter.limitdestination=Items in output storage

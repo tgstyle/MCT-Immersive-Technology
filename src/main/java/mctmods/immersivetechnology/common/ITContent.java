@@ -220,6 +220,8 @@ public class ITContent {
         registerTile(TileEntityFluidValve.class);
         registerTile(TileEntityLoadController.class);
         registerTile(TileEntityStackLimiter.class);
+        registerTile(TileEntityRotorCreative.class);
+        registerTile(TileEntityHeatCreative.class);
 
         if (ITConfig.Multiblocks.enable.enable_advancedCokeOven) {
             registerTile(TileEntityAdvancedCokeOvenSlave.class);

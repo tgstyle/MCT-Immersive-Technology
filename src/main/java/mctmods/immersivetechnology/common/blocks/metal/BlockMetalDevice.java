@@ -4,8 +4,11 @@ import blusunrize.immersiveengineering.api.IEProperties;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatCreative;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+import mctmods.immersivetechnology.common.shared.interfaces.ITBlockInterfaces;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -15,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -35,7 +39,11 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
     @Override public boolean useCustomStateMapper() { return true; }
 
     @Override @Nonnull public String getCustomStateMapping(int meta, boolean itemBlock) {
-        if (BlockType_MetalDevice.values()[meta] == BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER) { return "advanced_coke_oven_baseheater"; }
+        switch (BlockType_MetalDevice.values()[meta]) {
+            case ADVANCED_COKE_OVEN_BASEHEATER: { return "advanced_coke_oven_baseheater"; }
+            case ROTOR_CREATIVE: { return "rotor_creative"; }
+            case HEAT_CREATIVE: { return "heat_creative"; }
+        }
         return "";
     }
 
@@ -76,8 +84,21 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
 
     @Override public boolean allowHammerHarvest(IBlockState state) { return true; }
 
+    @Override @Nonnull public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
+        TileEntity te = source.getTileEntity(pos);
+        if (te instanceof ITBlockInterfaces.IBlockBounds) {
+            float[] bounds = ((ITBlockInterfaces.IBlockBounds)te).getBlockBounds();
+            return new AxisAlignedBB(bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5]);
+        }
+        return super.getBoundingBox(state, source, pos);
+    }
+
     @Override public TileEntity createBasicTE(World worldIn, BlockType_MetalDevice type) {
-        if (type == BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER) { return new TileEntityAdvancedCokeOvenBaseheater(); }
+        switch (type) {
+            case ADVANCED_COKE_OVEN_BASEHEATER: { return new TileEntityAdvancedCokeOvenBaseheater(); }
+            case ROTOR_CREATIVE: { return new TileEntityRotorCreative(); }
+            case HEAT_CREATIVE: { return new TileEntityHeatCreative(); }
+        }
         return null;
     }
 }

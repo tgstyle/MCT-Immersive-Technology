@@ -51,6 +51,8 @@ chat.immersivetech.fluid_pump.push_only_mode=泵直接输出，而不是先充�
 #TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=高级焦炉基热器
+tile.immersivetech.metal_device.rotor_creative.name=创造模式转子
+tile.immersivetech.metal_device.heat_creative.name=创造模式加热器
 tile.immersivetech.metal_trash.trash_item.name=垃圾桶
 tile.immersivetech.metal_trash.trash_fluid.name=流体垃圾桶
 tile.immersivetech.metal_trash.trash_energy.name=能量垃圾桶
@@ -149,6 +151,9 @@ gui.immersivetech.fluid_valve.limitdestination=mB 在输出罐
 gui.immersivetech.load_controller.limitpacket=IF 每包
 gui.immersivetech.load_controller.limittime=IF 每秒
 gui.immersivetech.load_controller.limitdestination=IF 在输出存储
+gui.immersivetech.apply=应用
+gui.immersivetech.rotor_creative=创造模式转子
+gui.immersivetech.rotor_creative.rpm=转速
 gui.immersivetech.stack_limiter.limitpacket=物品 每包
 gui.immersivetech.stack_limiter.limittime=物品 每秒
 gui.immersivetech.stack_limiter.limitdestination=物品 在输出存储

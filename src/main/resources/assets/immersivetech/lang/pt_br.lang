@@ -51,6 +51,8 @@ chat.immersivetech.fluid_pump.push_only_mode=A bomba apenas expulsará o conteú
 #TILE ENTITIES
 #METAL
 tile.immersivetech.metal_device.advanced_coke_oven_baseheater.name=Aquecedor de Base do Forno de Coque Avançado
+tile.immersivetech.metal_device.rotor_creative.name=Rotor criativo
+tile.immersivetech.metal_device.heat_creative.name=Aquecedor criativo
 tile.immersivetech.metal_trash.trash_item.name=Lixeira
 tile.immersivetech.metal_trash.trash_fluid.name=Lixeira de Fluidos
 tile.immersivetech.metal_trash.trash_energy.name=Lixeira de Energia
@@ -149,6 +151,9 @@ gui.immersivetech.fluid_valve.limitdestination=mB no tanque de saída
 gui.immersivetech.load_controller.limitpacket=IF por pacote
 gui.immersivetech.load_controller.limittime=IF por segundo
 gui.immersivetech.load_controller.limitdestination=IF no armazenamento de saída
+gui.immersivetech.apply=Aplicar
+gui.immersivetech.rotor_creative=Rotor criativo
+gui.immersivetech.rotor_creative.rpm=RPM
 gui.immersivetech.stack_limiter.limitpacket=Itens por pacote
 gui.immersivetech.stack_limiter.limittime=Itens por segundo
 gui.immersivetech.stack_limiter.limitdestination=Itens no armazenamento de saída
