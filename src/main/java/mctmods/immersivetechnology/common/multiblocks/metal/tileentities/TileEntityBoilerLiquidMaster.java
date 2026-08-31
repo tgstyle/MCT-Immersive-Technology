@@ -4,11 +4,17 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparat
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
+import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.particles.ParticleFlameCustom;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.particles.ParticleFlameCustom;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -17,15 +23,10 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerLiquid;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -61,14 +62,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave implements ITFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
+public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave implements ICFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
 
     private static int fuelTankSize() { return Multiblocks.boilerLiquid.boilerLiquid_fuel_tankSize; }
     private static double heatLossPerTick() { return Multiblocks.boilerLiquid.boilerLiquid_heat_lossPerTick; }
     private static double pilotHeat() { return Multiblocks.boilerLiquid.boilerLiquid_heat_pilot; }
     private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.boiler_heat_workingLevel; }
 
-    public FluidTank[] tanks = new FluidTank[] { new ITFluidTank(fuelTankSize(), this) };
+    public FluidTank[] tanks = new FluidTank[] { new ICFluidTank(fuelTankSize(), this) };
 
     public static int slotCount = 2;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
@@ -214,13 +215,13 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (pilotOnly != wasPilotOnly) {
-            ITSoundHandler.StopSound(soundPos0);
+            ICSoundHandler.stopSound(soundPos0);
             wasPilotOnly = pilotOnly;
         }
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8, 1);
         float volume = (2 * soundVolume) / attenuation;
-        if (soundVolume <= 0f || volume <= 0.01f) { ITSoundHandler.StopSound(soundPos0); }
+        if (soundVolume <= 0f || volume <= 0.01f) { ICSoundHandler.stopSound(soundPos0); }
         else if (pilotOnly) { ITSounds.pilot.PlayRepeating(soundPos0, volume, soundVolume); }
         else { ITSounds.boilerLiquid.PlayRepeating(soundPos0, volume, soundVolume); }
     }
@@ -252,18 +253,18 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
-        if (exhaustPos0 != null) ITSoundHandler.StopSound(exhaustPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
+        if (exhaustPos0 != null) ICSoundHandler.stopSound(exhaustPos0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
         if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         if (exhaustPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(exhaustPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), exhaustPos0.getX(), exhaustPos0.getY(), exhaustPos0.getZ(), 0));
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(exhaustPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), exhaustPos0.getX(), exhaustPos0.getY(), exhaustPos0.getZ(), 0));
         }
         if (!world.isRemote) {
             for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);

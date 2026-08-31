@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util;
 
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+import com.immersiveconvergence.api.client.ICSoundHandler;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -16,16 +17,16 @@ public class ITSoundEvent extends SoundEvent {
     }
 
     public void PlayOnce(BlockPos posIn, float volumeIn, float pitchIn) {
-        ITSoundHandler.PlayOnceSound(posIn, this, soundCategory, volumeIn, pitchIn);
+        ICSoundHandler.playOnce(posIn, this, soundCategory, volumeIn, pitchIn);
     }
     public void PlayOnce(BlockPos posIn, float volumeIn) {
-        ITSoundHandler.PlayOnceSound(posIn, this, soundCategory, volumeIn, 1);
+        ICSoundHandler.playOnce(posIn, this, soundCategory, volumeIn, 1);
     }
 
     public void PlayRepeating(BlockPos posIn, float volumeIn, float pitchIn) {
-        ITSoundHandler.PlayRepeatingSound(posIn, this, soundCategory, volumeIn, pitchIn);
+        ICSoundHandler.playRepeating(posIn, this, soundCategory, volumeIn, pitchIn);
     }
     public void PlayRepeating(BlockPos posIn, float volumeIn) {
-        ITSoundHandler.PlayRepeatingSound(posIn, this, soundCategory, volumeIn, 1);
+        ICSoundHandler.playRepeating(posIn, this, soundCategory, volumeIn, 1);
     }
 }

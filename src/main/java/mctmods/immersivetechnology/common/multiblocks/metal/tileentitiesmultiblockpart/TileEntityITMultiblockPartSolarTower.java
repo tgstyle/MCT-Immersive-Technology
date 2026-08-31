@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerSha
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -59,14 +58,14 @@ public class TileEntityITMultiblockPartSolarTower extends MachineTemplateMultibl
             if ("link0".equals(poi.name)) { link = poi.position; break; }
         }
         if (link == null) { return false; }
-        BlockPos basePos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - link.getX()) : link.getX(), link.getY(), link.getZ(), side);
+        BlockPos basePos = localToWorld(origin, mirror ? (width - 1 - link.getX()) : link.getX(), link.getY(), link.getZ(), side);
         SolarRegistry.RegisterResult result = SolarRegistry.canRegisterTower(world, basePos);
         if (!result.success) {
             if (result.vertical) { player.sendMessage(new TextComponentTranslation("chat.immersivetech.solar_tower_vertical_fail")); }
             else if (result.requiredMove > 0) { player.sendMessage(new TextComponentTranslation("chat.immersivetech.solar_tower_too_close", result.requiredMove)); }
             return false;
         }
-        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - masterX) : masterX, masterY, masterZ, side);
+        BlockPos masterPos = localToWorld(origin, mirror ? (width - 1 - masterX) : masterX, masterY, masterZ, side);
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
         if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
         IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
@@ -74,7 +73,7 @@ public class TileEntityITMultiblockPartSolarTower extends MachineTemplateMultibl
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
             if (template.getState(w, h, l) == null) continue;
             int position = h * (width * length) + l * width + w;
-            BlockPos pos2 = ITUtils.LocalOffsetToWorldBlockPos(origin, mirror ? (width - 1 - w) : w, h, l, side);
+            BlockPos pos2 = localToWorld(origin, mirror ? (width - 1 - w) : w, h, l, side);
             world.setBlockState(pos2, pos2.equals(masterPos) ? masterState : slaveState);
             TileEntitySolarTowerSlave tile = (TileEntitySolarTowerSlave)world.getTileEntity(pos2);
             if (tile != null) {

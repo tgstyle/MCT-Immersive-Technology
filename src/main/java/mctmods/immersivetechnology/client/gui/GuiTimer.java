@@ -1,12 +1,14 @@
 package mctmods.immersivetechnology.client.gui;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.network.MessageTileSync;
+
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
 import blusunrize.immersiveengineering.client.gui.elements.GuiButtonIE;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.gui.ContainerTimer;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +34,7 @@ public class GuiTimer extends GuiIEContainerBase {
 	@Override protected void actionPerformed(@Nonnull GuiButton button) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("buttonId", button.id);
-		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
+		ImmersiveConvergence.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 		this.initGui();
 	}
 

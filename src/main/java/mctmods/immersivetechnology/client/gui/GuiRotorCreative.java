@@ -1,9 +1,11 @@
 package mctmods.immersivetechnology.client.gui;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.network.MessageTileSync;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import net.minecraft.client.Minecraft;
@@ -59,7 +61,7 @@ public class GuiRotorCreative extends GuiScreen {
 		int rpm = text.isEmpty() || text.equals("-") ? 0 : GuiCommonValve.safeStringToInt(text);
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("rpm", rpm);
-		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
+		ImmersiveConvergence.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 		Minecraft.getMinecraft().displayGuiScreen(null);
 	}
 

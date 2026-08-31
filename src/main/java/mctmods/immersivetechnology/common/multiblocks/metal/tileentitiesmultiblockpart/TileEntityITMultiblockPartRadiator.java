@@ -12,7 +12,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -82,7 +81,7 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
         }
 
         BlockPos worldPos(int w, int h, int l, EnumFacing side) {
-            return ITUtils.LocalOffsetToWorldBlockPos(origin, transposed ? -w : w, h, l, side, transposed);
+            return localToWorld(origin, transposed ? -w : w, h, l, side, transposed);
         }
     }
 
@@ -110,7 +109,7 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
         Orientation orientation = resolveOrientation(world, pos, side);
         if (orientation == null) { return false; }
 
-        BlockPos masterPos = ITUtils.LocalOffsetToWorldBlockPos(orientation.origin, orientation.transposed ? -orientation.masterX : orientation.masterX, orientation.masterY, orientation.masterZ, side, orientation.transposed);
+        BlockPos masterPos = localToWorld(orientation.origin, orientation.transposed ? -orientation.masterX : orientation.masterX, orientation.masterY, orientation.masterZ, side, orientation.transposed);
 
         ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
         if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;

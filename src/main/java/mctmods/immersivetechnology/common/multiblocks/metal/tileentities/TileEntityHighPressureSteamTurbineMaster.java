@@ -3,10 +3,16 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -15,13 +21,8 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -45,7 +46,7 @@ import javax.annotation.Nullable;
 
 import java.util.Objects;
 
-public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPressureSteamTurbineSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
+public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPressureSteamTurbineSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
     private static int inputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_output_tankSize; }
@@ -54,7 +55,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private static int speedLossPerTick() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_lossPerTick; }
     private static float maxRotationSpeed() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxRotation; }
 
-    public FluidTank[] tanks = new FluidTank[] {new ITFluidTank(inputTankSize(), this), new ITFluidTank(outputTankSize(), this)};
+    public FluidTank[] tanks = new FluidTank[] {new ICFluidTank(inputTankSize(), this), new ICFluidTank(outputTankSize(), this)};
     public int fuelBurnRemaining = 0;
     public int speed = 0;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
@@ -108,7 +109,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (soundPos0 == null) InitializePoIs();
         float targetSoundLevel = isRunning ? (float)speed / maxSpeed() : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }else {
+        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
             float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
@@ -118,7 +119,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -126,7 +127,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         super.disassemble();
         if (soundPos0 == null) InitializePoIs();
         if (!world.isRemote) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0),
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0),
                     new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
     }

@@ -1,8 +1,10 @@
 package mctmods.immersivetechnology.client.gui;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.network.MessageTileSync;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.nbt.NBTTagCompound;
@@ -57,7 +59,7 @@ public abstract class GuiCommonValve extends GuiScreen {
 		tag.setInteger("packetLimit", !limitPacket.getText().isEmpty() ? safeStringToInt(limitPacket.getText()) : -1);
 		tag.setInteger("timeLimit", !limitTime.getText().isEmpty() ? safeStringToInt(limitTime.getText()) : -1);
 		tag.setInteger("keepSize", !destinationKeep.getText().isEmpty() ? safeStringToInt(destinationKeep.getText()) : -1);
-		ImmersiveTechnology.packetHandler.sendToServer(new MessageTileSync(tile, tag));
+		ImmersiveConvergence.packetHandler.sendToServer(new MessageTileSync(tile, tag));
 	}
 
 	@Override protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {

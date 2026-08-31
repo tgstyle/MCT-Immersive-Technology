@@ -1,5 +1,10 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageTileSync;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
@@ -10,9 +15,6 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -114,7 +116,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 			tag.setInteger("packetLimit", packetLimit);
 			tag.setInteger("timeLimit", timeLimit);
 			tag.setInteger("keepSize", keepSize);
-			ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
+			ImmersiveConvergence.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
 			return true;
 		}
 		else if (player.isSneaking() && Utils.isHammer(heldItem)) {

@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;

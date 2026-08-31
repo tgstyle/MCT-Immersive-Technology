@@ -5,10 +5,10 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITIPipe;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
@@ -26,12 +26,12 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ITFluidTank.TankListener, IComparatorOverride {
+public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ICFluidTank.TankListener, IComparatorOverride {
 
     private static int tankSize() { return Multiblocks.steelTank.steelTank_tankSize; }
     private static int transferSpeed() { return Multiblocks.steelTank.steelTank_transferSpeed; }
 
-    public ITFluidTank tank = new ITFluidTank(tankSize(), this);
+    public ICFluidTank tank = new ICFluidTank(tankSize(), this);
 
     private int oldComparatorOutput = 0;
     private final List<PoICache> fluidInputs0 = new ArrayList<>();

@@ -6,8 +6,14 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,13 +22,8 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -45,7 +46,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
+public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
 
     private static int outputTankSize() { return Multiblocks.meltingCrucible.meltingCrucible_output_tankSize; }
     private static int energyCapacity() { return Multiblocks.meltingCrucible.meltingCrucible_energy_size; }
@@ -59,7 +60,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     public static final int slotCount = 3;
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
-    public ITFluidTank[] tanks = new ITFluidTank[1];
+    public ICFluidTank[] tanks = new ICFluidTank[1];
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     public IItemHandler insertionHandler;
 
@@ -84,7 +85,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
     public TileEntityMeltingCrucibleMaster() {
-        tanks[0] = new ITFluidTank(outputTankSize(), this);
+        tanks[0] = new ICFluidTank(outputTankSize(), this);
         insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     }
 
@@ -130,14 +131,14 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         double dSq = player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5);
         if (dSq > 4096) {
-            ITSoundHandler.StopSound(soundPos0);
+            ICSoundHandler.stopSound(soundPos0);
             soundVolume = 0f;
             return;
         }
         float target = isRunning ? 1f : 0f;
         if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.02f, target); }
         else if (soundVolume > target) { soundVolume = Math.max(soundVolume - 0.02f, target); }
-        if (soundVolume <= 0f) ITSoundHandler.StopSound(soundPos0);
+        if (soundVolume <= 0f) ICSoundHandler.stopSound(soundPos0);
         else {
             float distance = (float)Math.sqrt(dSq);
             float attenuation = Math.max(distance / 16f, 1f);
@@ -147,7 +148,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -155,7 +156,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         if (soundPos0 == null) InitializePoIs();
         if (!world.isRemote && soundPos0 != null) {
             NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0);
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), tp);
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), tp);
         }
         if (!world.isRemote) {
             for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
@@ -169,7 +170,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     @Override public void update() {
         super.update();
         if (!formed) {
-            if (world.isRemote && soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+            if (world.isRemote && soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
             return;
         }
         if (needsPoIInit || energyInputPos0 == null) {

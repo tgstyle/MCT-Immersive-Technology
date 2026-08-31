@@ -14,6 +14,9 @@ import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 
+import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.client.split.SplitModelHandler;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.event.ClientEventHandler;
 import mctmods.immersivetechnology.client.gui.*;
@@ -66,10 +69,6 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -120,13 +119,30 @@ public class ClientProxy extends CommonProxy {
         IEOBJLoader.instance.addDomain(ImmersiveTechnology.MODID);
         MinecraftForge.EVENT_BUS.register(this);
         ModelLoaderRegistry.registerLoader(new ModelConfigurableSides.Loader());
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_alternator", () -> TileEntityITMultiblockPartAlternator.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_boiler_tank", () -> TileEntityITMultiblockPartBoilerTank.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_boiler_liquid", () -> TileEntityITMultiblockPartBoilerLiquid.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock2_boiler_solid", () -> TileEntityITMultiblockPartBoilerSolid.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "stone_multiblock_cooling_tower", () -> TileEntityITMultiblockPartCoolingTower.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_distiller", () -> TileEntityITMultiblockPartDistiller.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_solar_tower", () -> TileEntityITMultiblockPartSolarTower.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_steam_turbine", () -> TileEntityITMultiblockPartSteamTurbine.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_steel_tank", () -> TileEntityITMultiblockPartSteelSheetmetalTank.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_electrolytic_crucible_battery", () -> TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_gas_turbine", () -> TileEntityITMultiblockPartGasTurbine.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_heat_exchanger", () -> TileEntityITMultiblockPartHeatExchanger.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_high_pressure_steam_turbine", () -> TileEntityITMultiblockPartHighPressureSteamTurbine.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_melting_crucible", () -> TileEntityITMultiblockPartMeltingCrucible.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_radiator", () -> TileEntityITMultiblockPartRadiator.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_solar_melter", () -> TileEntityITMultiblockPartSolarMelter.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "stone_multiblock_advanced_coke_oven", () -> TileEntityITMultiblockPartAdvancedCokeOven.instance);
     }
 
-    @SubscribeEvent public void PlayerChangedDimensions(PlayerEvent.PlayerChangedDimensionEvent e) { ITSoundHandler.DeleteAllSounds(); }
+    @SubscribeEvent public void PlayerChangedDimensions(PlayerEvent.PlayerChangedDimensionEvent e) { ICSoundHandler.deleteAllSounds(); }
 
-    @SubscribeEvent public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) { ITSoundHandler.DeleteAllSounds(); }
+    @SubscribeEvent public void PlayerLeftSession(PlayerEvent.PlayerLoggedOutEvent e) { ICSoundHandler.deleteAllSounds(); }
 
-    @SubscribeEvent public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ITSoundHandler.DeleteAllSounds(); }
+    @SubscribeEvent public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ICSoundHandler.deleteAllSounds(); }
 
     @SubscribeEvent public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
@@ -148,24 +164,19 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    public static float volumeAdjustment = 1;
-
     public void calculateVolume() {
-        float prevVolume = volumeAdjustment;
         EntityPlayerSP player = ClientUtils.mc().player;
         if (player == null) { return; }
+        float volumeAdjustment = 1;
         ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
         if (!stack.isEmpty()) {
             if (IEContent.itemEarmuffs.equals(stack.getItem())) { volumeAdjustment = ItemEarmuffs.getVolumeMod(stack); }
             else if (ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
                 stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
                 if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) { volumeAdjustment = ItemEarmuffs.getVolumeMod(stack); }
-                else { volumeAdjustment = 1; }
             }
-            else { volumeAdjustment = 1; }
         }
-        else { volumeAdjustment = 1; }
-        if (prevVolume != volumeAdjustment) { ITSoundHandler.UpdateAllVolumes(); }
+        ICSoundHandler.setVolumeAdjustment(volumeAdjustment);
     }
 
     @SuppressWarnings({"deprecation", "ConstantConditions"})
@@ -235,11 +246,6 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamTurbineMaster.class, new TileRenderSteamTurbine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteelSheetmetalTankMaster.class, new TileRenderSteelSheetmetalTank());
 
-        ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerClient.class, MessageTileSync.class, 0, Side.CLIENT);
-        ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
-        ImmersiveTechnology.packetHandler.registerMessage(MessageStopSound.HandlerClient.class, MessageStopSound.class, 1, Side.CLIENT);
-        ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerClient.class, BinaryMessageTileSync.class, 3, Side.CLIENT);
-        ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
     }
 
     @Override public void postInit() {

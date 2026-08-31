@@ -17,8 +17,9 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.ITSounds;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.network.MessageStopSound;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -134,7 +135,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
                 ((TileEntityAdvancedCokeOvenBaseheater)tile).breakDummies(masterPos, world.getBlockState(masterPos));
             }
         } else {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(getPos()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 0));
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(getPos()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 0));
             BlockPos dummyPos0 = getPos().offset(facing.rotateY());
             TileEntityAdvancedCokeOvenBaseheater dummy0 = (TileEntityAdvancedCokeOvenBaseheater)world.getTileEntity(dummyPos0);
             BlockPos dummyPos1 = getPos().offset(facing.rotateYCCW());
@@ -253,7 +254,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
     public void handleSounds() {
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); } else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ITSoundHandler.StopSound(getPos()); }
+        if (soundVolume <= 0f) { ICSoundHandler.stopSound(getPos()); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(getPos().getX() + .5, getPos().getY() + .5, getPos().getZ() + .5) / 8, 1);
@@ -263,7 +264,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
     }
 
     @Override public void onChunkUnload() {
-        if (world.isRemote) { ITSoundHandler.StopSound(getPos()); }
+        if (world.isRemote) { ICSoundHandler.stopSound(getPos()); }
         super.onChunkUnload();
     }
 }

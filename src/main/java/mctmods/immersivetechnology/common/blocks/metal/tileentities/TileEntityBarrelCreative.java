@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -13,7 +15,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITIPipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;

@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common;
 
 import com.immersiveconvergence.api.multiblock.QueueProcessor;
-import mctmods.immersivetechnology.common.Config.ITConfig;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
@@ -14,8 +14,6 @@ import mctmods.immersivetechnology.common.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -60,10 +58,7 @@ public class CommonProxy implements IGuiHandler {
 
 	public void preInitEnd() {}
 
-	public void init() {
-		ImmersiveTechnology.packetHandler.registerMessage(MessageTileSync.HandlerServer.class, MessageTileSync.class, 0, Side.SERVER);
-		ImmersiveTechnology.packetHandler.registerMessage(BinaryMessageTileSync.HandlerServer.class, BinaryMessageTileSync.class, 3, Side.SERVER);
-	}
+	public void init() {}
 
 	public void initEnd() {}
 

@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.api.util.ICFluidTank;
+
 import javax.annotation.Nonnull;
 
 import java.util.Random;
@@ -10,7 +12,6 @@ import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,7 +37,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     public TileEntityBarrelOpen() {}
 
     @Override
-    public void createTank() { tank = new ITFluidTank(tankSize(), this); }
+    public void createTank() { tank = new ICFluidTank(tankSize(), this); }
 
     @Override
     public void update() {

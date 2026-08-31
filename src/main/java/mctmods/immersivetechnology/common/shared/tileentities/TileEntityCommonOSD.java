@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 
@@ -8,8 +11,6 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

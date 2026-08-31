@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.api.util.ICFluidTank;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -12,7 +14,6 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
 import net.minecraft.block.state.IBlockState;
@@ -32,14 +33,14 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfigurableSides, IPlayerInteraction, ITileDrop, IComparatorOverride, ITFluidTank.TankListener {
+public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfigurableSides, IPlayerInteraction, ITileDrop, IComparatorOverride, ICFluidTank.TankListener {
 
     private static int tankSize() { return Blocks.barrels.barrel_steel_tankSize; }
     private static int transferSpeed() { return Blocks.barrels.barrel_steel_transferSpeed; }
 
     public int[] sideConfig = {1, 0};
 
-    public ITFluidTank tank;
+    public ICFluidTank tank;
 
     private int sleep = 0;
 
@@ -48,7 +49,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
 
     public TileEntityBarrelSteel() { createTank(); }
 
-    public void createTank() { tank = new ITFluidTank(tankSize(), this); }
+    public void createTank() { tank = new ICFluidTank(tankSize(), this); }
 
     @Override
     public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {

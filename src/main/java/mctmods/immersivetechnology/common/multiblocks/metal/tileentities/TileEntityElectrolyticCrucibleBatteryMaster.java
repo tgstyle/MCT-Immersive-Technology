@@ -5,8 +5,14 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -15,13 +21,8 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -51,7 +52,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IEBlockInterfaces.IComparatorOverride {
 
     private static int inputTankSize() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_output_tankSize; }
@@ -60,10 +61,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public FluidTank[] tanks = new FluidTank[]{
-            new ITFluidTank(inputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this)
+            new ICFluidTank(inputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this)
     };
 
     private float soundVolume = 0f;
@@ -124,7 +125,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
+        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
@@ -145,14 +146,14 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
         if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         super.disassemble();
     }

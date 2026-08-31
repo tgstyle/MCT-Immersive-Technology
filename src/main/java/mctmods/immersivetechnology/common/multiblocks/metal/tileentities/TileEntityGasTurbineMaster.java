@@ -5,29 +5,31 @@ import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICFluxStorage;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
-import mctmods.immersivetechnology.common.util.ITFluxStorage;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -57,7 +59,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Random;
 
-public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
+public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
     private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
     private static float maxRotationSpeed() { return Multiblocks.gasTurbine.gasTurbine_speed_maxRotation; }
@@ -70,11 +72,11 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private static int electricStarterSize() { return Multiblocks.gasTurbine.gasTurbine_electric_starter_size; }
     private static int sparkplugSize() { return Multiblocks.gasTurbine.gasTurbine_sparkplug_size; }
 
-    public ITFluxStorage starterStorage = new ITFluxStorage(electricStarterSize(), false, true);
-    public ITFluxStorage sparkplugStorage = new ITFluxStorage(sparkplugSize(), false, true);
+    public ICFluxStorage starterStorage = new ICFluxStorage(electricStarterSize(), false, true);
+    public ICFluxStorage sparkplugStorage = new ICFluxStorage(sparkplugSize(), false, true);
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this)
+            new ICFluidTank(inputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this)
     };
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
@@ -196,32 +198,32 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         float att = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 64, 1);
         float level = ITUtils.remapRange(0, 1, 0.5f, 1.5f, soundVolume);
-        if (speed == 0) ITSoundHandler.StopSound(soundPos0);
+        if (speed == 0) ICSoundHandler.stopSound(soundPos0);
         else ITSounds.gasTurbineRunning.PlayRepeating(soundPos0, (level - 0.5f) / att, level);
         if (starterRunning) {
             ITSounds.gasTurbineStarter.PlayRepeating(soundPos3, Math.min((level - .5f) / att, .2f), 1);
             if (speed >= maxSpeed() / 4) ITSounds.gasTurbineArc.PlayRepeating(soundPos1, Math.min((level - .5f) / att, .2f), 1);
         } else {
-            ITSoundHandler.StopSound(soundPos3);
-            ITSoundHandler.StopSound(soundPos1);
+            ICSoundHandler.stopSound(soundPos3);
+            ICSoundHandler.stopSound(soundPos1);
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        ITSoundHandler.StopSound(soundPos0);
-        ITSoundHandler.StopSound(soundPos1);
-        ITSoundHandler.StopSound(soundPos2);
-        ITSoundHandler.StopSound(soundPos3);
+        ICSoundHandler.stopSound(soundPos0);
+        ICSoundHandler.stopSound(soundPos1);
+        ICSoundHandler.stopSound(soundPos2);
+        ICSoundHandler.stopSound(soundPos3);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         super.disassemble();
-        if (soundPos0 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        if (soundPos1 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos1.getX(), soundPos1.getY(), soundPos1.getZ(), 0));
-        if (soundPos2 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos2.getX(), soundPos2.getY(), soundPos2.getZ(), 0));
-        if (soundPos3 != null) ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos3.getX(), soundPos3.getY(), soundPos3.getZ(), 0));
+        if (soundPos0 != null) ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        if (soundPos1 != null) ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos1.getX(), soundPos1.getY(), soundPos1.getZ(), 0));
+        if (soundPos2 != null) ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos2), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos2.getX(), soundPos2.getY(), soundPos2.getZ(), 0));
+        if (soundPos3 != null) ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos3), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos3.getX(), soundPos3.getY(), soundPos3.getZ(), 0));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
@@ -390,7 +392,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private boolean canIgnite() {
         boolean canFuelCombust = true;
-        if (ITCompatModule.isAdvancedRocketryLoaded) canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, ITUtils.LocalOffsetToWorldBlockPos(getPos(), 0, 0, -1, facing, mirrored));
+        if (ITCompatModule.isAdvancedRocketryLoaded) canFuelCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, TemplateMultiblock.localToWorld(getPos(), 0, 0, -1, facing, mirrored));
         return sparkplugConsumption() <= sparkplugStorage.getEnergyStored() && canFuelCombust;
     }
 

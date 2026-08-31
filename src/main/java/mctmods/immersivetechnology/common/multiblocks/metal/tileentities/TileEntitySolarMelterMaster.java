@@ -5,9 +5,15 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparat
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -16,16 +22,11 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -58,7 +59,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
+public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
 
     private static int outputTankSize() { return Multiblocks.solarMelter.solarMelter_output_tankSize; }
     private static int solarMaxRange() { return Multiblocks.solarReflector.solarReflector_maxRange; }
@@ -69,7 +70,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private static double maximumReflectorStrength() { return Multiblocks.solarMelter.solarMelter_maximum_reflector_strength; }
     private static final int progressResolution = 64;
 
-    public FluidTank[] tanks = new FluidTank[] { new ITFluidTank(outputTankSize(), this) };
+    public FluidTank[] tanks = new FluidTank[] { new ICFluidTank(outputTankSize(), this) };
 
     public static int slotCount = 3;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
@@ -159,13 +160,13 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     public void handleSounds() {
         if (needsPoIInit) InitializePoIs();
         if (distanceSqToTE > 4096) {
-            ITSoundHandler.StopSound(soundPos0);
+            ICSoundHandler.stopSound(soundPos0);
             soundVolume = 0f;
             return;
         }
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }else {
+        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }else {
             double distance = Math.sqrt(distanceSqToTE);
             float attenuation = Math.max((float)distance / 16f, 1f);
             ITSounds.solarMelter.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
@@ -174,14 +175,14 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
         if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         if (!world.isRemote) {
             for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack.copy());
@@ -193,7 +194,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     public void requestUpdate() {
-        ImmersiveTechnology.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer()));
+        ImmersiveConvergence.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer()));
     }
 
     public void notifyNearbyClients() {
@@ -201,7 +202,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         buf.writeDouble(heatLevel);
         buf.writeInt(solarIncidenceAngleSection);
         buf.writeBoolean(isRunning);
-        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
+        ImmersiveConvergence.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {
@@ -215,7 +216,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         buf.writeDouble(heatLevel);
         buf.writeInt(solarIncidenceAngleSection);
         buf.writeBoolean(isRunning);
-        ImmersiveTechnology.packetHandler.sendTo(new BinaryMessageTileSync(getPos(), buf), player);
+        ImmersiveConvergence.packetHandler.sendTo(new BinaryMessageTileSync(getPos(), buf), player);
     }
 
     private void InitializePoIs() {

@@ -5,9 +5,15 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparat
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleSmokeCustom;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,16 +24,11 @@ import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.conversion.CoolingTowerLegacyConverter;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
-import mctmods.immersivetechnology.common.util.ITFluidTank.TankListener;
+import com.immersiveconvergence.api.util.ICFluidTank.TankListener;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -59,11 +60,11 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     private static int outputTankSize() { return Multiblocks.coolingTower.coolingTower_output_tankSize; }
 
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputTankSize(), this),
-            new ITFluidTank(inputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this)
+            new ICFluidTank(inputTankSize(), this),
+            new ICFluidTank(inputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this)
     };
 
     private CoolingTowerRecipe cachedCoolingRecipe;
@@ -132,7 +133,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ITSoundHandler.StopSound(soundPos0); }
+        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
@@ -142,13 +143,13 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         super.disassemble();
     }
 

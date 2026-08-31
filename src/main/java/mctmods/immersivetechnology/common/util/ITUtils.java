@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -23,72 +22,6 @@ public class ITUtils {
     public static void RemoveDummyFromTicking(TileEntity te) { REMOVE_FROM_TICKING.add(te); }
 
     public static float remapRange(float inMin, float inMax, float outMin, float outMax, float value) { return outMin + ((value - inMin) / inMax) * (outMax - outMin); }
-
-    public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing) { return LocalOffsetToWorldBlockPos(origin, x, y, z, facing, EnumFacing.UP); }
-
-    public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, boolean mirrored) { return LocalOffsetToWorldBlockPos(origin, mirrored ? -x : x, y, z, facing, EnumFacing.UP); }
-
-    @SuppressWarnings("SuspiciousNameCombination")
-    public static BlockPos LocalOffsetToWorldBlockPos(BlockPos origin, int x, int y, int z, EnumFacing facing, EnumFacing up) {
-        if (facing.getAxis() == up.getAxis()) { throw new IllegalArgumentException("'facing' and 'up' must be perpendicular to each other!"); }
-        switch (up) {
-            case UP:
-                switch (facing) {
-                    case SOUTH: return origin.add(-x, y, z);
-                    case NORTH: return origin.add(x, y, -z);
-                    case EAST: return origin.add(z, y, x);
-                    case WEST: return origin.add(-z, y, -x);
-                    default: break;
-                }
-                break;
-            case DOWN:
-                switch (facing) {
-                    case SOUTH: return origin.add(x, -y, z);
-                    case NORTH: return origin.add(-x, -y, -z);
-                    case EAST: return origin.add(z, -y, -x);
-                    case WEST: return origin.add(-z, -y, x);
-                    default: break;
-                }
-                break;
-            case NORTH:
-                switch (facing) {
-                    case UP: return origin.add(-x, z, -y);
-                    case DOWN: return origin.add(x, -z, -y);
-                    case EAST: return origin.add(z, x, -y);
-                    case WEST: return origin.add(-z, -x, -y);
-                    default: break;
-                }
-                break;
-            case SOUTH:
-                switch (facing) {
-                    case UP: return origin.add(x, z, y);
-                    case DOWN: return origin.add(-x, -z, y);
-                    case EAST: return origin.add(z, -x, y);
-                    case WEST: return origin.add(-z, x, y);
-                    default: break;
-                }
-                break;
-            case EAST:
-                switch (facing) {
-                    case UP: return origin.add(y, z, -x);
-                    case DOWN: return origin.add(y, -z, x);
-                    case SOUTH: return origin.add(y, x, z);
-                    case NORTH: return origin.add(y, -x, -z);
-                    default: break;
-                }
-                break;
-            case WEST:
-                switch (facing) {
-                    case UP: return origin.add(-y, z, x);
-                    case DOWN: return origin.add(-y, -z, -x);
-                    case SOUTH: return origin.add(-y, -x, z);
-                    case NORTH: return origin.add(-y, x, -z);
-                    default: break;
-                }
-                break;
-        }
-        throw new IllegalArgumentException("This part of the code should never be reached! Has EnumFacing changed?");
-    }
 
     public static void improvedMarkBlockForUpdate(World world, BlockPos pos, @Nullable IBlockState newState, EnumSet<EnumFacing> directions) {
         IBlockState state = world.getBlockState(pos);

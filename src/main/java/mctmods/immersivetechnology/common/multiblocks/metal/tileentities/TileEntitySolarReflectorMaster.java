@@ -1,15 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -76,7 +77,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         buf.writeFloat(animationRotations[0]);
         buf.writeFloat(animationRotations[1]);
         NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 64);
-        ImmersiveTechnology.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), tp);
+        ImmersiveConvergence.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), tp);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {

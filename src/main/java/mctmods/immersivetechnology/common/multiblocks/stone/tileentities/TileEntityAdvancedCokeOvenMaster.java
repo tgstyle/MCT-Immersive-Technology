@@ -7,20 +7,21 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-
+import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.network.MessageTileSync;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
+import com.immersiveconvergence.api.util.ICFluidTank;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -52,7 +53,7 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ITFluidTank.TankListener, IIEInventory, IComparatorOverride {
+public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ICFluidTank.TankListener, IIEInventory, IComparatorOverride {
 
     private static int tankSize() { return Multiblocks.advancedCokeOven.advancedCokeOven_tankSize; }
     public static float baseSpeed = Multiblocks.advancedCokeOven.advancedCokeOven_speed_base;
@@ -60,7 +61,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     public static float baseheaterMult = Multiblocks.advancedCokeOven.advancedCokeOven_baseheater_speed_multiplier;
     public static int slotCount = 4;
 
-    public ITFluidTank tank = new ITFluidTank(tankSize(), this);
+    public ICFluidTank tank = new ICFluidTank(tankSize(), this);
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     public int processTimeRemaining = 0;
     public int processTimeMax = 0;
@@ -132,7 +133,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0) {
-            ITSoundHandler.StopSound(soundPos0);
+            ICSoundHandler.stopSound(soundPos0);
             soundVolume = 0;
         } else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -143,7 +144,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -157,7 +158,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             inventory.clear();
         }
         if (soundPos0 == null) InitializePoIs();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         super.disassemble();
     }
 
@@ -166,7 +167,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         tag.setBoolean("active", active);
         tag.setBoolean("isRunning", isRunning);
         BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     private void notifyProcessUpdate() {
@@ -174,7 +175,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         tag.setInteger("processTimeRemaining", processTimeRemaining);
         tag.setInteger("processTimeMax", processTimeMax);
         BlockPos center = getPos();
-        ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     @Override public void receiveMessageFromServer(NBTTagCompound message) {
@@ -468,7 +469,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     @Override public TileEntity getGuiMaster() { return this; }
 
     public static class AdvancedCokeOvenFluidHandler implements IFluidHandler {
-        private final ITFluidTank tank;
+        private final ICFluidTank tank;
         private final TileEntityAdvancedCokeOvenMaster master;
 
         public AdvancedCokeOvenFluidHandler(TileEntityAdvancedCokeOvenMaster master) {

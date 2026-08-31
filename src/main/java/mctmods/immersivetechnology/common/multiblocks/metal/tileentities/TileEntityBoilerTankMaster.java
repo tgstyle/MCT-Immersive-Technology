@@ -7,6 +7,9 @@ import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -14,10 +17,7 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.api.crafting.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerTank;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
 import mctmods.immersivetechnology.conversion.BoilerLegacyConverter;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -45,15 +45,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implements ITFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
+public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implements ICFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
 
     private static int tankSize() { return Multiblocks.boilerTank.boilerTank_tankSize; }
     private static int progressLossPerTick() { return Multiblocks.boilerTank.boilerTank_progress_lossInTicks; }
     private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.boiler_heat_workingLevel; }
 
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(tankSize(), this),
-            new ITFluidTank(tankSize(), this)
+            new ICFluidTank(tankSize(), this),
+            new ICFluidTank(tankSize(), this)
     };
 
     public static int slotCount = 4;

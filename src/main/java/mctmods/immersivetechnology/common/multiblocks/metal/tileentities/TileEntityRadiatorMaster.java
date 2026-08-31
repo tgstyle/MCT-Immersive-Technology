@@ -2,8 +2,15 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
+import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.util.ICFluidTank;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,15 +19,10 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
-import mctmods.immersivetechnology.common.util.ITFluidTank;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
-import mctmods.immersivetechnology.common.util.network.MessageStopSound;
-import mctmods.immersivetechnology.common.util.network.BinaryMessageTileSync;
-import mctmods.immersivetechnology.common.util.network.IBinaryMessageReceiver;
-import mctmods.immersivetechnology.common.util.sound.ITSoundHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -49,7 +51,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements ITFluidTank.TankListener, IBinaryMessageReceiver {
+public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver {
 
     protected long onlyLocalDissassembly = -1;
 
@@ -58,8 +60,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private static float speedMult() { return Multiblocks.radiator.radiator_speed_multiplier; }
 
     public FluidTank[] tanks = new FluidTank[] {
-            new ITFluidTank(inputTankSize(), this),
-            new ITFluidTank(outputTankSize(), this)
+            new ICFluidTank(inputTankSize(), this),
+            new ICFluidTank(outputTankSize(), this)
     };
 
     public int processTimeRemaining = 0;
@@ -200,7 +202,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume == 0) ITSoundHandler.StopSound(soundPos0);
+        if (soundVolume == 0) ICSoundHandler.stopSound(soundPos0);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
             float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
@@ -210,7 +212,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @SideOnly(Side.CLIENT)
     @Override public void onChunkUnload() {
-        if (soundPos0 != null) ITSoundHandler.StopSound(soundPos0);
+        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
         super.onChunkUnload();
     }
 
@@ -228,7 +230,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         onlyLocalDissassembly = time;
 
         if (soundPos0 != null) {
-            ImmersiveTechnology.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
+            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
             soundPos0 = null;
         }
 
@@ -268,7 +270,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         for (int eff_h = 0; eff_h < eff_height; eff_h++) {
             for (int l = 0; l < TileEntityITMultiblockPartRadiator.instance.length; l++) {
                 for (int eff_w = 0; eff_w < eff_width; eff_w++) {
-                    BlockPos pos2 = ITUtils.LocalOffsetToWorldBlockPos(
+                    BlockPos pos2 = TemplateMultiblock.localToWorld(
                             origin,
                             mirrored ? -eff_w : eff_w,
                             eff_h,

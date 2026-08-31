@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
+import com.immersiveconvergence.api.network.MessageTileSync;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.gui.GuiRotorCreative;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
-import mctmods.immersivetechnology.common.util.network.MessageTileSync;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
@@ -65,7 +66,7 @@ public class TileEntityRotorCreative extends TileEntityIEBase implements ITickab
         if (!world.isRemote && !Utils.isHammer(heldItem)) {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setInteger("rpm", rpm);
-            ImmersiveTechnology.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
+            ImmersiveConvergence.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
             return true;
         }
         return false;
