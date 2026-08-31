@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, DistillerRecipeWrapper> {
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_distiller.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/distiller.png");
 	private final IDrawable tankOverlay;
 
 	public DistillerRecipeCategory(IGuiHelper helper) {

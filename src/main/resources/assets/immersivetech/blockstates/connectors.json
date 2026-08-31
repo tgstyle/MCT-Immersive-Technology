@@ -8,7 +8,7 @@
   "variants": {
     "inventory,type=connectors_timer": [
       {
-        "model": "immersivetech:connector/connectors_timer.obj.ie",
+        "model": "immersivetech:connector/connector_timer/connector_timer.obj.ie",
         "transform": {
           "scale": [0.5, 0.5, 0.5],
           "firstperson_righthand": { "translation": [0, 0.25, 0.125] },

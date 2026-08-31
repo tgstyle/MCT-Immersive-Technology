@@ -154,7 +154,7 @@ public class ModelConfigurableSides implements IBakedModel {
 							for (SideConfig cfg : SideConfig.values()) {
 								String key = f.getName() + "_" + cfg.getTextureName();
 								String tex = name + "_" + e.getValue().getTextureName(f, cfg);
-								builder.put(key, new ResourceLocation(ImmersiveTechnology.MODID, "blocks/" + tex));
+								builder.put(key, new ResourceLocation(ImmersiveTechnology.MODID, "block/" + tex));
 							}
 						}
 					}

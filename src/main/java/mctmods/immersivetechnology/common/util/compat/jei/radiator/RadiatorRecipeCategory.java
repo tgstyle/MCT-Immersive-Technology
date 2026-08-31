@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, RadiatorRecipeWrapper> {
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_radiator_jei.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/radiator_jei.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated arrow;
 	private final IDrawableAnimated drops;

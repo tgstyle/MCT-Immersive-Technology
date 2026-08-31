@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class SolarTowerRecipeCategory extends ITRecipeCategory<SolarTowerRecipe, SolarTowerRecipeWrapper> {
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_solar_tower_jei.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/solar_tower_jei.png");
 	private final IDrawable tankOverlay;
 	private final IDrawable reflectorOverlay;
 	private final ITickTimer timer;

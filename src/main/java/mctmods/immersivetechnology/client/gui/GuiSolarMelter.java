@@ -27,7 +27,7 @@ public class GuiSolarMelter extends GuiIEContainerBase {
         super.drawScreen(mx, my, partial);
 
         ArrayList<String> tooltip = new ArrayList<>();
-        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_solar_melter.png", tooltip);
+        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar_melter.png", tooltip);
         if (mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
             DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");
@@ -41,7 +41,7 @@ public class GuiSolarMelter extends GuiIEContainerBase {
 
     @Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        ClientUtils.bindTexture("immersivetech:textures/gui/gui_solar_melter.png");
+        ClientUtils.bindTexture("immersivetech:textures/gui/solar_melter.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         int heatBarSize = (int)Math.round(42 * Math.min(1, tile.heatLevel / tile.targetTemperature()));
@@ -51,6 +51,6 @@ public class GuiSolarMelter extends GuiIEContainerBase {
         if (tile.solarIncidenceAngleSection > 1) { this.drawTexturedModalRect(guiLeft + 16, guiTop + 40, 198, 31, 10, 10); }
         if (tile.solarIncidenceAngleSection > 3) { this.drawTexturedModalRect(guiLeft + 32, guiTop + 56, 198, 31, 10, 10); }
         if (tile.solarIncidenceAngleSection > 2) { this.drawTexturedModalRect(guiLeft + 48, guiTop + 40, 198, 31, 10, 10); }
-        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_solar_melter.png", null);
+        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar_melter.png", null);
     }
 }

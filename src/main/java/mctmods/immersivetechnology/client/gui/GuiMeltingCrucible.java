@@ -28,7 +28,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
 
         ArrayList<String> tooltip = new ArrayList<>();
 
-        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 15, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_melting_crucible.png", tooltip);
+        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 15, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", tooltip);
 
         if (mx > guiLeft + 16 && mx < guiLeft + 23 && my > guiTop + 21 && my < guiTop + 68)
             tooltip.add(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF");
@@ -45,7 +45,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
 
     @Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        ClientUtils.bindTexture("immersivetech:textures/gui/gui_melting_crucible.png");
+        ClientUtils.bindTexture("immersivetech:textures/gui/melting_crucible.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         int stored = (int)(46 * (tile.getEnergyStored(null) / (float)tile.getMaxEnergyStored(null)));
@@ -54,6 +54,6 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
         int heatBarSize = (int)(51 * Math.min(1, tile.heatLevel / tile.targetTemperature()));
         this.drawTexturedModalRect(guiLeft + 30, guiTop + 9, 176, 0, heatBarSize, 9);
 
-        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/gui_melting_crucible.png", null);
+        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", null);
     }
 }

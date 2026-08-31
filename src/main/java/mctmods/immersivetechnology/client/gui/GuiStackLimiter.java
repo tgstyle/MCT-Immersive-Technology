@@ -28,7 +28,7 @@ public class GuiStackLimiter extends GuiCommonValve {
 	@Override public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
 		drawDefaultBackground();
-		ClientUtils.bindTexture("immersivetech:textures/gui/gui_fluid_valve.png");
+		ClientUtils.bindTexture("immersivetech:textures/gui/valve.png");
 		drawModalRectWithCustomSizedTexture((resolution.getScaledWidth() - 216) / 2, (resolution.getScaledHeight() - 82) / 2, 0, 0, 216, 88, 216, 88);
 		drawString(this.fontRenderer, TranslationKey.GUI_FLUID_VALVE_FIRSTLINE.text(), width / 2 - 85, height / 2 - 28, Color.WHITE.getRGB());
 		limitPacket.drawTextBox();

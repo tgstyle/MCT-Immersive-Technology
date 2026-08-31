@@ -18,7 +18,7 @@ import java.util.List;
 
 public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerRecipe, HeatExchangerRecipeWrapper> {
 
-    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_heat_exchanger_jei.png");
+    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/heat_exchanger_jei.png");
     private final IDrawable tankOverlay;
     private final IDrawableAnimated arrow;
     private final IDrawableAnimated drops;

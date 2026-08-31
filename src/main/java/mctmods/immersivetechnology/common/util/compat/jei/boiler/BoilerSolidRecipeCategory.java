@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BoilerSolidRecipeCategory extends ITRecipeCategory<BoilerSolidRecipe, BoilerSolidRecipeWrapper> {
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_solid.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/boiler_solid.png");
 
 	public BoilerSolidRecipeCategory(IGuiHelper helper) {
 		super("boilerSolid", "tile.immersivetech.metal_multiblock2.boiler_solid.name", helper.createDrawable(background, 0, 0, 176, 77), BoilerSolidRecipe.class, GenericMultiblockIngredient.BOILER_SOLID);

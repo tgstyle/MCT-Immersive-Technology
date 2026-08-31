@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BoilerTankRecipeCategory extends ITRecipeCategory<BoilerTankRecipe, BoilerTankRecipeWrapper> {
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_boiler_tank.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/boiler_tank.png");
 	private final IDrawable tankOverlay;
 
 	public BoilerTankRecipeCategory(IGuiHelper helper) {

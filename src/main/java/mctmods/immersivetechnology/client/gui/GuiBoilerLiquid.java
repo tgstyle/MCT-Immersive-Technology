@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 
 public class GuiBoilerLiquid extends GuiIEContainerBase {
-	private static final String TEXTURE = "immersivetech:textures/gui/gui_boiler_liquid.png";
+	private static final String TEXTURE = "immersivetech:textures/gui/boiler_liquid.png";
 	TileEntityBoilerLiquidMaster tile;
 
 	public GuiBoilerLiquid(InventoryPlayer inventoryPlayer, TileEntityBoilerLiquidMaster tile) {

@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MeltingCrucibleRecipeCategory extends ITRecipeCategory<MeltingCrucibleRecipe, MeltingCrucibleRecipeWrapper> {
-	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_melting_crucible_jei.png");
+	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/melting_crucible_jei.png");
 	private final IDrawable tankOverlay;
 	private final IDrawableAnimated arrow;
 

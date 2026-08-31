@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<ElectrolyticCrucibleBatteryRecipe, ElectrolyticCrucibleBatteryWrapper> {
-    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_electrolytic_crucible_battery_jei.png");
+    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/electrolytic_crucible_battery_jei.png");
     private final IDrawable tankOverlay;
     private final IDrawableAnimated arrow;
 

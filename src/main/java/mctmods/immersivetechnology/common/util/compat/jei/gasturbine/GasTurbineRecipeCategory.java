@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class GasTurbineRecipeCategory extends ITRecipeCategory<GasTurbineRecipe, GasTurbineRecipeWrapper> {
-    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/gui_steam_turbine_jei.png");
+    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/turbine_jei.png");
     private final IDrawable tankOverlay;
     private final IDrawableAnimated turbineAndArrow;
 

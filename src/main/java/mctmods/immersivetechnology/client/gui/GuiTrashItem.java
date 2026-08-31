@@ -15,7 +15,7 @@ public class GuiTrashItem extends GuiIEContainerBase {
 	}
 
 	@Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my) {
-		ClientUtils.bindTexture("immersivetech:textures/gui/gui_single_item.png");
+		ClientUtils.bindTexture("immersivetech:textures/gui/single_item.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 	}
 }

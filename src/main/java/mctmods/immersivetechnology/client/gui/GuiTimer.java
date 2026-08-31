@@ -25,8 +25,8 @@ public class GuiTimer extends GuiIEContainerBase {
 	@Override public void initGui() {
 		super.initGui();
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButtonIE(0, guiLeft + 39, guiTop + 35, 16, 16, "+", "immersivetech:textures/gui/gui_timer.png", 176, 0));
-		this.buttonList.add(new GuiButtonIE(1, guiLeft + 120, guiTop + 35, 16, 16, "-", "immersivetech:textures/gui/gui_timer.png", 176, 16));
+		this.buttonList.add(new GuiButtonIE(0, guiLeft + 39, guiTop + 35, 16, 16, "+", "immersivetech:textures/gui/timer.png", 176, 0));
+		this.buttonList.add(new GuiButtonIE(1, guiLeft + 120, guiTop + 35, 16, 16, "-", "immersivetech:textures/gui/timer.png", 176, 16));
 	}
 
 	@Override protected void actionPerformed(@Nonnull GuiButton button) {
@@ -38,7 +38,7 @@ public class GuiTimer extends GuiIEContainerBase {
 
 	@Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture("immersivetech:textures/gui/gui_timer.png");
+		ClientUtils.bindTexture("immersivetech:textures/gui/timer.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		float time = (float)tile.getTarget() / 20;
