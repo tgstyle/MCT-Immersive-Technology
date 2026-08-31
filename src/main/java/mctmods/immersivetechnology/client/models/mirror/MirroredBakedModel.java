@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.models.mirror;
 
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import mctmods.immersivetechnology.client.models.util.ICacheKeyProvider;
+import com.immersiveconvergence.api.client.ICacheKeyProvider;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

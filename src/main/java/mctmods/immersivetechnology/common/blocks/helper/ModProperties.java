@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.helper;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -31,6 +30,5 @@ public class ModProperties {
     }
     public static class Model {
         public static final ModelProperty<Map<Direction, Enums.IOSideConfig>> SIDECONFIG = new ModelProperty<>();
-        public static final ModelProperty<BlockPos> SUBMODEL_OFFSET = new ModelProperty<>();
     }
 }

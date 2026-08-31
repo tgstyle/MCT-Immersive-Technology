@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.helper.*;
+import com.immersiveconvergence.api.client.split.IModelOffsetProvider;
+import com.immersiveconvergence.api.client.split.SplitModelProperties;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.ModSound;
@@ -266,7 +268,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
 
     @Override @NotNull public ModelData getModelData() {
         BlockPos offset = getModelOffset(getBlockState(), null);
-        return ModelData.builder().with(blusunrize.immersiveengineering.api.IEProperties.Model.SUBMODEL_OFFSET, offset).build();
+        return ModelData.builder().with(SplitModelProperties.SUBMODEL_OFFSET, offset).build();
     }
 
     @SuppressWarnings("unused")

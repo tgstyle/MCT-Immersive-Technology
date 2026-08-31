@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.models;
 
-import mctmods.immersivetechnology.client.models.util.ModelUtils;
+import com.immersiveconvergence.api.client.ModelUtils;
 import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.helper.Enums;
 import mctmods.immersivetechnology.common.blocks.helper.ModProperties;

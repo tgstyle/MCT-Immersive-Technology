@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.client.models.util.ModelUtils;
+import com.immersiveconvergence.api.client.ModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;

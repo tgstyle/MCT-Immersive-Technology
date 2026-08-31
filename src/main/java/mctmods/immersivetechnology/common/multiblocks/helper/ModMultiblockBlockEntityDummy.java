@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistra
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityDummy;
 import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.IModelOffsetProvider;
+import com.immersiveconvergence.api.client.split.IModelOffsetProvider;
 import mctmods.immersivetechnology.core.util.inventory.IDropInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

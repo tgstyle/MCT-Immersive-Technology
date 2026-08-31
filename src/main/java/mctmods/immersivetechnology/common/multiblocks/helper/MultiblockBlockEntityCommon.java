@@ -6,7 +6,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEH
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.IModelOffsetProvider;
+import com.immersiveconvergence.api.client.split.IModelOffsetProvider;
+import com.immersiveconvergence.api.client.split.SplitModelProperties;
 import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
 import mctmods.immersivetechnology.core.util.inventory.IDropInventory;
 import net.minecraft.core.BlockPos;
@@ -84,7 +85,7 @@ public class MultiblockBlockEntityCommon<State extends IMultiblockState> impleme
 
     public ModelData getModelData() {
         BlockPos offset = getModelOffset(null, Vec3i.ZERO);
-        if (offset != null) { return ModelData.builder().with(ModProperties.Model.SUBMODEL_OFFSET, offset).build(); }
+        if (offset != null) { return ModelData.builder().with(SplitModelProperties.SUBMODEL_OFFSET, offset).build(); }
         return ModelData.EMPTY;
     }
 }
