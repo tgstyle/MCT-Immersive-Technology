@@ -191,6 +191,9 @@ ie.manual.entry.technologistsWrench.name=技術扳手
 ie.manual.entry.technologistsWrench.subtext=擰緊擰鬆
 ie.manual.entry.technologistsWrench0=§6技術扳手§r用於形成和配置Immersive Technology的多方塊結構。工程師槌能做的它都能做：形成結構、旋轉方塊，以及在正常與反轉紅石訊號之間切換控制面板。
 ie.manual.entry.technologistsWrench1=流體輸入口會接受任何輸入的流體，若機器中進了錯誤的流體，它會一直停機，直到該儲罐被清空。潛行並對流體輸入口使用扳手即可清空儲罐。<br>流體會被丟棄而不是返還，因此儲罐可以立刻接收正確的流體。這適用於所有帶流體輸入的Immersive Technology機器，也可以用工程師槌代替。
+ie.manual.entry.multiblockDisassembly.name=多方塊結構拆解
+ie.manual.entry.multiblockDisassembly.subtext=拆而不散
+ie.manual.entry.multiblockDisassembly0=破壞成型機器的任意方塊會拆解整個結構。機器會在片刻間逐塊拆除，所有建築材料都會掉落在被破壞的方塊處。潛行時破壞則改用經典行為：結構立即變回原先放置的方塊。在配置中關閉disassembly_queue可讓經典行為成為預設。
 
 ie.manual.entry.advancedCokeOven.name=高級焦爐
 ie.manual.entry.advancedCokeOven.subtext=現在更快了

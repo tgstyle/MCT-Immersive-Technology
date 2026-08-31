@@ -120,6 +120,9 @@ ie.manual.entry.technologistsWrench.name=Techniker-Schlüssel
 ie.manual.entry.technologistsWrench.subtext=Fest ist fest
 ie.manual.entry.technologistsWrench0=Der §6Techniker-Schlüssel§r formt und konfiguriert Multiblöcke von Immersive Technology. Er kann alles, was auch der Ingenieurshammer kann. Er formt Strukturen, dreht Blöcke und schaltet Bedienfelder zwischen normalem und invertiertem Redstone-Signal um.
 ie.manual.entry.technologistsWrench1=Eingänge nehmen jede Flüssigkeit an, die hineingeleitet wird, und eine Maschine mit der falschen Flüssigkeit steht still, bis der Tank geleert ist. Schleiche und benutze den Schlüssel an einem Flüssigkeitseingang, um ihn zu leeren.<br>Die Flüssigkeit wird verworfen und nicht zurückgegeben, sodass der Tank sofort für die richtige Flüssigkeit frei ist. Das funktioniert bei jeder Maschine von Immersive Technology mit Flüssigkeitseingang, und der Ingenieurshammer kann ebenso verwendet werden.
+ie.manual.entry.multiblockDisassembly.name=Zerlegen von Multiblöcken
+ie.manual.entry.multiblockDisassembly.subtext=In Einzelteile zerlegt
+ie.manual.entry.multiblockDisassembly0=Wird ein Block einer geformten Maschine abgebaut, wird die gesamte Struktur zerlegt. Sie wird über einige Augenblicke Block für Block abgetragen, und alle Baumaterialien fallen an dem Block, der abgebaut wurde. Schleiche beim Abbauen, um stattdessen das klassische Verhalten zu nutzen: Die Struktur verwandelt sich sofort zurück in ihre gesetzten Blöcke. Wird disassembly_queue in der Konfiguration deaktiviert, ist das klassische Verhalten der Standard.
 
 ie.manual.entry.advancedCokeOven.name=Verbesserter Koksofen
 ie.manual.entry.alternator.name=Alternator

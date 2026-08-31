@@ -120,6 +120,9 @@ ie.manual.entry.technologistsWrench.name=Klíč technologa
 ie.manual.entry.technologistsWrench.subtext=Utáhni a povol
 ie.manual.entry.technologistsWrench0=§6Klíč technologa§r formuje a nastavuje multibloky Immersive Technology. Zvládne vše, co Engineer's Hammer. Formuje struktury, otáčí bloky a přepíná ovládací panely mezi normálním a obráceným signálem redstonu.
 ie.manual.entry.technologistsWrench1=Vstupní otvory přijmou jakoukoli kapalinu, která do nich přiteče, a stroj s nesprávnou kapalinou stojí, dokud se nádrž nevyprázdní. Přikrčte se a použijte Klíč na vstupní otvor pro kapaliny, čímž nádrž vyprázdníte.<br>Kapalina se zahodí, nevrací se, takže je nádrž ihned volná pro správnou kapalinu. Funguje to na každém stroji Immersive Technology se vstupem kapalin a místo Klíče lze použít i Engineer's Hammer.
+ie.manual.entry.multiblockDisassembly.name=Rozebírání multibloků
+ie.manual.entry.multiblockDisassembly.subtext=Rozložit a posbírat
+ie.manual.entry.multiblockDisassembly0=Rozbitím kteréhokoli bloku sestaveného stroje se rozebere celá struktura. Stroj se během několika okamžiků rozloží blok po bloku a veškerý stavební materiál vypadne u rozbitého bloku. Přikrčte se při rozbíjení, chcete-li místo toho klasické chování: struktura se okamžitě promění zpět v položené bloky. Vypnutím disassembly_queue v konfiguraci se klasické chování stane výchozím.
 
 ie.manual.entry.advancedCokeOven.name=Pokročilá koksárna
 ie.manual.entry.alternator.name=Alternátor

@@ -120,6 +120,9 @@ ie.manual.entry.technologistsWrench.name=技術者のレンチ
 ie.manual.entry.technologistsWrench.subtext=締めて緩めて
 ie.manual.entry.technologistsWrench0=§6技術者のレンチ§rはImmersive Technologyのマルチブロックを形成し、設定します。エンジニア・ハンマーにできることはすべて行えます。構造物を形成し、ブロックを回転させ、制御パネルのレッドストーン信号を通常と反転で切り替えます。
 ie.manual.entry.technologistsWrench1=液体の入力口は流し込まれた液体を何でも受け入れるため、誤った液体が入ったマシンはそのタンクを空にするまで停止したままになります。スニークしながらレンチを液体の入力口に使うと、タンクを空にできます。<br>液体は回収されずに破棄されるので、タンクはすぐに正しい液体を受け入れられます。これは液体入力を持つすべてのImmersive Technologyのマシンで機能し、エンジニア・ハンマーでも代用できます。
+ie.manual.entry.multiblockDisassembly.name=マルチブロックの解体
+ie.manual.entry.multiblockDisassembly.subtext=ばらしても部品はそのまま
+ie.manual.entry.multiblockDisassembly0=組み上がったマシンのブロックをどれか壊すと、構造物全体が解体されます。マシンは数瞬かけてブロックごとに崩され、建材はすべて壊したブロックの位置にドロップします。スニークしながら壊すと従来の挙動に戻り、構造物は即座に設置したブロックへと戻ります。コンフィグでdisassembly_queueを無効にすると、従来の挙動が既定になります。
 
 ie.manual.entry.advancedCokeOven.name=改良型コークス炉
 ie.manual.entry.alternator.name=オルタネーター

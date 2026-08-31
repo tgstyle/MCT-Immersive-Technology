@@ -191,6 +191,9 @@ ie.manual.entry.technologistsWrench.name=Technologist's Wrench
 ie.manual.entry.technologistsWrench.subtext=Righty tighty
 ie.manual.entry.technologistsWrench0=The §6Technologist's Wrench§r forms and configures Immersive Technology multiblocks. Anything the Engineer's Hammer does, it does too. It forms structures, rotates blocks, and switches control panels between normal and inverted redstone.
 ie.manual.entry.technologistsWrench1=Input hatches accept any fluid piped into them, and a machine holding the wrong fluid will sit idle until that tank is emptied. Sneak and use the Wrench on a fluid input hatch to empty it.<br>The fluid is discarded rather than returned, so the tank is free for the correct fluid immediately. This works on every Immersive Technology machine with a fluid input, and the Engineer's Hammer can be used in its place.
+ie.manual.entry.multiblockDisassembly.name=Multiblocks Disassembly
+ie.manual.entry.multiblockDisassembly.subtext=Take it apart, keep the parts
+ie.manual.entry.multiblockDisassembly0=Breaking any block of a formed machine dismantles the whole structure. It comes apart block by block over a few moments, and all of its construction materials drop at the block that was broken. Sneak while breaking to revert to the classic behavior instead, where the structure instantly turns back into its placed blocks. Disabling disassembly_queue in the config makes the classic behavior the default.
 
 ie.manual.entry.advancedCokeOven.name=Advanced Coke Oven
 ie.manual.entry.advancedCokeOven.subtext=It's fast now
