@@ -16,8 +16,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
@@ -43,7 +43,7 @@ public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
         drops = helper.createAnimatedDrawable(dropsStatic, 200, IDrawableAnimated.StartDirection.TOP, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull RadiatorRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull RadiatorRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
@@ -71,11 +71,11 @@ public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
                         FluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull RadiatorRecipe recipe) {
+    private int getTankCapacity(@Nonnull RadiatorRecipe recipe) {
         return Math.max(recipe.input.getAmount(), recipe.fluidOutput.getAmount());
     }
 
-    @Override public void draw(@NotNull RadiatorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull RadiatorRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 11, 11);

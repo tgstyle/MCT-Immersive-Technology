@@ -16,8 +16,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> {
@@ -43,7 +43,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
         drops = helper.createAnimatedDrawable(dropsStatic, 200, IDrawableAnimated.StartDirection.TOP, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull CoolingTowerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull CoolingTowerRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs0 = recipe.input0.getMatchingFluidStacks().stream()
@@ -106,7 +106,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
                         FluidInfoArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull CoolingTowerRecipe recipe) {
+    private int getTankCapacity(@Nonnull CoolingTowerRecipe recipe) {
         int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.input1.getAmount());
         if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput0.getAmount()); }
         if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput1.getAmount()); }
@@ -114,7 +114,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull CoolingTowerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull CoolingTowerRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 11, 11);

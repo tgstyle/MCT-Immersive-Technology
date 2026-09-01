@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.core.util.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +13,8 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+
+import javax.annotation.Nonnull;
 
 public class BEDropLootEntry extends LootPoolSingletonContainer {
     protected BEDropLootEntry(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) { super(weightIn, qualityIn, conditionsIn, functionsIn); }

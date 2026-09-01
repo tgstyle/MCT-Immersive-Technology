@@ -11,8 +11,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TrashItemMenu extends ContainerMenu {
@@ -46,7 +46,7 @@ public class TrashItemMenu extends ContainerMenu {
         for (int x = 0; x < 9; x++) addSlot(new Slot(inv, x, 8 + x * 18, 142));
     }
 
-    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
+    @Override @Nonnull public ItemStack quickMoveStack(@Nonnull Player pPlayer, int pIndex) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(pIndex);
         if (slot.hasItem()) {
@@ -64,23 +64,23 @@ public class TrashItemMenu extends ContainerMenu {
         return itemstack;
     }
 
-    @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
+    @Override public boolean stillValid(@Nonnull Player player) { return tile == null || tile.stillValid(player); }
 
     @Override public void receiveSync(List<Pair<Integer, GenericDataSerializers.DataPair<?>>> synced) {}
 
     private static class DummyHandler implements IItemHandlerModifiable {
         @Override public int getSlots() { return 1; }
 
-        @Override @NotNull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
+        @Override @Nonnull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
 
-        @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return ItemStack.EMPTY; }
+        @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return ItemStack.EMPTY; }
 
-        @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
+        @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
 
         @Override public int getSlotLimit(int slot) { return Integer.MAX_VALUE; }
 
-        @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return true; }
+        @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
 
-        @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) {}
+        @Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) {}
     }
 }

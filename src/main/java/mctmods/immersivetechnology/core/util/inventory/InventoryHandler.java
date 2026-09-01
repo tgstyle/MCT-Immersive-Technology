@@ -3,10 +3,9 @@ package mctmods.immersivetechnology.core.util.inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class InventoryHandler implements IItemHandlerModifiable {
     int slots;
@@ -19,9 +18,9 @@ public class InventoryHandler implements IItemHandlerModifiable {
 
     public int getSlots() { return this.slots; }
 
-    @NotNull public ItemStack getStackInSlot(int slot) { return Objects.requireNonNull(this.inv.getInventory()).get(this.slotOffset + slot); }
+    @Nonnull public ItemStack getStackInSlot(int slot) { return Objects.requireNonNull(this.inv.getInventory()).get(this.slotOffset + slot); }
 
-    @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (this.canInsert[slot] && !stack.isEmpty()) {
             if (!this.inv.isStackValid(this.slotOffset + slot, stack)) { return stack; }
             else {
@@ -53,7 +52,7 @@ public class InventoryHandler implements IItemHandlerModifiable {
         } else { return stack; }
     }
 
-    @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
+    @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (this.canExtract[slot] && amount != 0) {
             int offsetSlot = this.slotOffset + slot;
             ItemStack currentStack = Objects.requireNonNull(this.inv.getInventory()).get(offsetSlot);

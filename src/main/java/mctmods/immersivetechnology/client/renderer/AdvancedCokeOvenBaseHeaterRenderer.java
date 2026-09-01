@@ -15,9 +15,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class AdvancedCokeOvenBaseHeaterRenderer extends BaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterBlockEntity> {
@@ -27,7 +27,7 @@ public class AdvancedCokeOvenBaseHeaterRenderer extends BaseBlockEntityRenderer<
 
     public AdvancedCokeOvenBaseHeaterRenderer() {}
 
-    @Override public void render(@NotNull AdvancedCokeOvenBaseHeaterBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@Nonnull AdvancedCokeOvenBaseHeaterBlockEntity tile, float partialTicks, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (tile.dummy || tile.getLevel() == null || FAN_MODEL == null) { return; }
         Level level = tile.getLevel();
         BlockPos pos = tile.getBlockPos();

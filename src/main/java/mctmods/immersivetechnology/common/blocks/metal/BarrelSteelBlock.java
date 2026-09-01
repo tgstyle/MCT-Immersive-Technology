@@ -12,9 +12,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
-import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 import com.immersiveconvergence.api.block.Enums;
+
+import javax.annotation.Nonnull;
 
 public class BarrelSteelBlock extends ModEntityBlock<BarrelSteelBlockEntity> {
     public static final EnumProperty<IOSideConfig> TOP_CONFIG = EnumProperty.create("top_config", IOSideConfig.class);
@@ -26,11 +27,11 @@ public class BarrelSteelBlock extends ModEntityBlock<BarrelSteelBlockEntity> {
         registerDefaultState(stateDefinition.any().setValue(TOP_CONFIG, IOSideConfig.INPUT).setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));
     }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(TOP_CONFIG, BOTTOM_CONFIG);
     }
 
     @SuppressWarnings("deprecation")
-    @Override @NotNull public RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
+    @Override @Nonnull public RenderShape getRenderShape(@Nonnull BlockState state) { return RenderShape.MODEL; }
 }

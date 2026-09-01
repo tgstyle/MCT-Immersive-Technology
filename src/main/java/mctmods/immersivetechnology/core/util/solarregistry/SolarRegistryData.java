@@ -5,7 +5,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.core.BlockPos;
+
+import javax.annotation.Nonnull;
 
 public class SolarRegistryData extends SavedData {
     public final Map<Integer, Set<BlockPos>> towerBasesByY = new HashMap<>();
@@ -64,7 +65,7 @@ public class SolarRegistryData extends SavedData {
         return data;
     }
 
-    @Override @NotNull public CompoundTag save(@NotNull CompoundTag nbt) {
+    @Override @Nonnull public CompoundTag save(@Nonnull CompoundTag nbt) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
             ListTag list = new ListTag();

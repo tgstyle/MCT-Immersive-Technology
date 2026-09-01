@@ -10,8 +10,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class ModRecipeCategory<T> implements IRecipeCategory<T> {
@@ -37,9 +37,9 @@ public abstract class ModRecipeCategory<T> implements IRecipeCategory<T> {
 
     protected void setIcon(IDrawable icon) { this.icon = icon; }
 
-    @Override public @NotNull Component getTitle() { return this.title; }
+    @Override public @Nonnull Component getTitle() { return this.title; }
 
-    @Override public final @NotNull RecipeType<T> getRecipeType() { return type; }
+    @Override public final @Nonnull RecipeType<T> getRecipeType() { return type; }
 
     @Override public int getWidth() { return recipeBackground.getWidth(); }
 

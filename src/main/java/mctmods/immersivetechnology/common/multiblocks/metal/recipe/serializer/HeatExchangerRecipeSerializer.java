@@ -12,7 +12,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchangerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.HEAT_EXCHANGER.iconStack(); }
@@ -28,7 +29,7 @@ public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchan
                 .modifyTimeAndEnergy(t -> t * HeatExchangerRecipe.timeModifier, e -> e * HeatExchangerRecipe.energyModifier);
     }
 
-    @Override public HeatExchangerRecipe fromNetwork(@NotNull ResourceLocation id, @NotNull FriendlyByteBuf buffer) {
+    @Override public HeatExchangerRecipe fromNetwork(@Nonnull ResourceLocation id, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input0 = FluidTagInput.read(buffer);
         boolean hasInput1 = buffer.readBoolean();
         FluidTagInput input1 = hasInput1 ? FluidTagInput.read(buffer) : null;
@@ -40,7 +41,7 @@ public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchan
         return new HeatExchangerRecipe(id, input0, input1, output0, output1, energy, time);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, HeatExchangerRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, HeatExchangerRecipe recipe) {
         recipe.input0.write(buffer);
         buffer.writeBoolean(recipe.input1 != null);
         if (recipe.input1 != null) recipe.input1.write(buffer);

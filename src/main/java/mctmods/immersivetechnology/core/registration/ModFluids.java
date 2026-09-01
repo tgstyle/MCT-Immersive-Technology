@@ -33,14 +33,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static mctmods.immersivetechnology.core.lib.Reference.rl;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ModFluids {
     public static final DeferredRegister<Fluid> REGISTER = DeferredRegister.create(ForgeRegistries.FLUIDS, Reference.MODID);
@@ -178,7 +179,7 @@ public class ModFluids {
 
         private static BucketItem makeBucket(RegistryObject<ModFluid> still, int burnTime) {
             return new BucketItem(still, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)) {
-                @Override public @NotNull ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt) {return new FluidBucketWrapper(stack);}
+                @Override public @Nonnull ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable CompoundTag nbt) {return new FluidBucketWrapper(stack);}
 
                 @Override public int getBurnTime(ItemStack itemStack, RecipeType<?> type) {return burnTime;}
 

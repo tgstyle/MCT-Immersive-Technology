@@ -12,8 +12,9 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.SOLAR_TOWER.iconStack(); }
@@ -26,7 +27,7 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         return new SolarTowerRecipe(recipeID, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override @Nullable public SolarTowerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public SolarTowerRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
@@ -34,7 +35,7 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
         return new SolarTowerRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, SolarTowerRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, SolarTowerRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());

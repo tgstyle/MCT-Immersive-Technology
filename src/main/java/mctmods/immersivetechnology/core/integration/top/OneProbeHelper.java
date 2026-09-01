@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.core.integration.top;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import javax.annotation.Nullable;
 import mcjty.theoneprobe.api.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
@@ -22,6 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+
+import javax.annotation.Nullable;
 
 public class OneProbeHelper {
     private static double solarWorkingHeatLevel() { return CommonConfig.solarTowerWorkingHeatLevel; }

@@ -13,8 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.DISTILLER.iconStack(); }
@@ -34,7 +35,7 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
         return new DistillerRecipe(recipeID, input, fluidOutput, itemOutput, chance, time, energy);
     }
 
-    @Override @Nullable public DistillerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public DistillerRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         boolean hasItem = buffer.readBoolean();
@@ -45,7 +46,7 @@ public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecip
         return new DistillerRecipe(recipeId, input, fluidOutput, itemOutput, chance, time, energy);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, DistillerRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, DistillerRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         boolean hasItem = !recipe.itemOutput.isEmpty();

@@ -19,15 +19,16 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+
+import javax.annotation.Nonnull;
 
 public class OpenBarrelRenderer extends BaseBlockEntityRenderer<BarrelOpenBlockEntity> {
 
     public OpenBarrelRenderer() {}
 
-    @Override public void render(BarrelOpenBlockEntity be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
+    @Override public void render(BarrelOpenBlockEntity be, float partialTicks, @Nonnull PoseStack matrixStack, @Nonnull MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         Level level = be.getLevel();
         if (level == null) { return; }
         FluidStack fluidStack = be.tank.getFluid();

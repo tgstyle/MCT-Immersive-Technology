@@ -11,8 +11,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.util.Lazy;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
@@ -30,7 +30,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
 
     @Nullable
     @Override
-    public AdvancedCokeOvenRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    public AdvancedCokeOvenRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         IngredientWithSize input = IngredientWithSize.read(buffer);
         Lazy<ItemStack> itemOutput = readLazyStack(buffer);
         int time = buffer.readInt();
@@ -39,7 +39,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
     }
 
     @Override
-    public void toNetwork(@NotNull FriendlyByteBuf buffer, AdvancedCokeOvenRecipe recipe) {
+    public void toNetwork(@Nonnull FriendlyByteBuf buffer, AdvancedCokeOvenRecipe recipe) {
         recipe.input.write(buffer);
         writeLazyStack(buffer, recipe.itemOutput);
         buffer.writeInt(recipe.time);

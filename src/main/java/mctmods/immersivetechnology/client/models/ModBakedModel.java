@@ -14,21 +14,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.extensions.IForgeBakedModel;
 import net.minecraftforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class ModBakedModel implements BakedModel, IForgeBakedModel {
     private static final ChunkRenderTypeSet SOLID_ONLY = ChunkRenderTypeSet.of(RenderType.solid());
 
-    @NotNull public abstract List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType);
+    @Nonnull public abstract List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData data, @Nullable RenderType renderType);
 
-    @Override @NotNull public final List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) { return getQuads(state, side, rand, ModelData.EMPTY, null); }
+    @Override @Nonnull public final List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand) { return getQuads(state, side, rand, ModelData.EMPTY, null); }
 
-    @NotNull public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) { return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(MissingTextureAtlasSprite.getLocation()); }
+    @Nonnull public TextureAtlasSprite getParticleIcon(@Nonnull ModelData data) { return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(MissingTextureAtlasSprite.getLocation()); }
 
-    @Override @NotNull public TextureAtlasSprite getParticleIcon() { return getParticleIcon(ModelData.EMPTY); }
+    @Override @Nonnull public TextureAtlasSprite getParticleIcon() { return getParticleIcon(ModelData.EMPTY); }
 
     @Override public boolean useAmbientOcclusion() { return true; }
 
@@ -38,7 +38,7 @@ public abstract class ModBakedModel implements BakedModel, IForgeBakedModel {
 
     @Override public boolean isCustomRenderer() { return false; }
 
-    @Override @NotNull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
+    @Override @Nonnull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
 
-    @NotNull public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) { return SOLID_ONLY; }
+    @Nonnull public ChunkRenderTypeSet getRenderTypes(@Nonnull BlockState state, @Nonnull RandomSource rand, @Nonnull ModelData data) { return SOLID_ONLY; }
 }

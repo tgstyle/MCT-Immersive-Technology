@@ -20,11 +20,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.DyeColor;
-import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimerMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("timer");
@@ -78,12 +79,12 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         else if ("redstoneChannel".equals(key)) { tile.redstoneChannel = DyeColor.byId(value); }
     }
 
-    @Override protected void renderBg(@NotNull GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+    @Override protected void renderBg(@Nonnull GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         this.renderBackground(graphics);
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
-    @Override public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    @Override public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         float time = (float) menu.getTarget() / 20f;
         graphics.drawString(font, String.format("%.1f Sec.", time), leftPos + 68, topPos + 40, 0xFFFFFF, false);
@@ -115,7 +116,7 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         }) {
             @Override protected boolean isValidClickButton(int button) { return button == 0 && !this.getState(); }
 
-            @Override public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+            @Override public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
                 super.render(graphics, mouseX, mouseY, partialTicks);
                 if (this.visible) {
                     int col = color.getTextColor();
@@ -127,5 +128,5 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         };
     }
 
-    @Override protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {}
+    @Override protected void renderLabels(@Nonnull GuiGraphics graphics, int mouseX, int mouseY) {}
 }

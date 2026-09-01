@@ -13,8 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
 
@@ -31,7 +32,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSeriali
         return new ElectrolyticCrucibleBatteryRecipe(recipeID, input, fluidOutput0, fluidOutput1, fluidOutput2, itemOutput, energy, time);
     }
 
-    @Override @Nullable public ElectrolyticCrucibleBatteryRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public ElectrolyticCrucibleBatteryRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         boolean hasOut0 = buffer.readBoolean();
         FluidStack out0 = hasOut0 ? buffer.readFluidStack() : null;
@@ -46,7 +47,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSeriali
         return new ElectrolyticCrucibleBatteryRecipe(recipeId, input, out0, out1, out2, itemOut, energy, time);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, ElectrolyticCrucibleBatteryRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, ElectrolyticCrucibleBatteryRecipe recipe) {
         recipe.fluidInput0.write(buffer);
         buffer.writeBoolean(recipe.fluidOutput0 != null);
         if (recipe.fluidOutput0 != null) buffer.writeFluidStack(recipe.fluidOutput0);

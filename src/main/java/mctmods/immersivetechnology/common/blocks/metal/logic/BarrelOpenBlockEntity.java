@@ -11,10 +11,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 import com.immersiveconvergence.api.block.Enums;
+
+import javax.annotation.Nonnull;
 
 public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
     private static final Random RANDOM = new Random();
@@ -57,7 +58,7 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
         if (update) { setChanged(); markContainingBlockForUpdate(null); }
     }
 
-    @Override protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
+    @Override protected boolean isFluidValid(@Nonnull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
 
     @Override protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
 

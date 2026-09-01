@@ -16,8 +16,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class SteamTurbineCategory extends ModRecipeCategory<SteamTurbineRecipe> {
@@ -36,7 +36,7 @@ public class SteamTurbineCategory extends ModRecipeCategory<SteamTurbineRecipe> 
         this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SteamTurbineRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull SteamTurbineRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.input.getMatchingFluidStacks().stream()
@@ -61,13 +61,13 @@ public class SteamTurbineCategory extends ModRecipeCategory<SteamTurbineRecipe> 
                 FluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull SteamTurbineRecipe recipe) {
+    private int getTankCapacity(@Nonnull SteamTurbineRecipe recipe) {
         int tankCapacity = recipe.input.getAmount();
         if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount());
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull SteamTurbineRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull SteamTurbineRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 11, 11);
         tankOverlay.draw(guiGraphics, 89, 11);

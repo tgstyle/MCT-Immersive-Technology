@@ -16,8 +16,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe> {
@@ -42,7 +42,7 @@ public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe
                 .buildAnimated(200, IDrawableAnimated.StartDirection.BOTTOM, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull HeatExchangerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull HeatExchangerRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> in0 = recipe.input0.getMatchingFluidStacks().stream()
@@ -95,14 +95,14 @@ public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe
                         .ifPresent(fs -> FluidInfoArea.fillTooltip(fs, recipe.output1 != null ? recipe.output1.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull HeatExchangerRecipe recipe) {
+    private int getTankCapacity(@Nonnull HeatExchangerRecipe recipe) {
         int tankCapacity = Math.max(recipe.input0.getAmount(), recipe.output0.getAmount());
         if (recipe.input1 != null) tankCapacity = Math.max(tankCapacity, recipe.input1.getAmount());
         if (recipe.output1 != null && !recipe.output1.isEmpty()) tankCapacity = Math.max(tankCapacity, recipe.output1.getAmount());
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull HeatExchangerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull HeatExchangerRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics graphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(graphics, 0, 0);
         tankOverlay.draw(graphics, 35, 12);
         tankOverlay.draw(graphics, 12, 12);

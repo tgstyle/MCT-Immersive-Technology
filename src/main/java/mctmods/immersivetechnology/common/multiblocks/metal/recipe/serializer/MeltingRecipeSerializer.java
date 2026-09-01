@@ -12,8 +12,9 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.SOLAR_MELTER.iconStack(); }
@@ -26,7 +27,7 @@ public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
         return new MeltingRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override @Nullable public MeltingRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public MeltingRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
@@ -34,7 +35,7 @@ public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
         return new MeltingRecipe(recipeId, input, fluidOutput, time, requiredTemp);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull MeltingRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull MeltingRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());

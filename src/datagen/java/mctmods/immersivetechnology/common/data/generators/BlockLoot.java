@@ -11,8 +11,8 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,5 +73,5 @@ public class BlockLoot extends BlockLootSubProvider {
 
     private LootPool.Builder createPoolBuilder() { return LootPool.lootPool().when(ExplosionCondition.survivesExplosion()); }
 
-    @Override @NotNull protected Set<Block> getKnownBlocks() { return ModBlocks.REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet()); }
+    @Override @Nonnull protected Set<Block> getKnownBlocks() { return ModBlocks.REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toSet()); }
 }

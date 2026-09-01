@@ -11,13 +11,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
 
 public abstract class ContainerScreen<C extends AbstractContainerMenu> extends AbstractContainerScreen<C> {
     private final ResettableLazy<List<InfoArea>> infoAreas;
@@ -42,7 +42,7 @@ public abstract class ContainerScreen<C extends AbstractContainerMenu> extends A
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, -557004, true);
     }
 
-    @Override public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    @Override public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTicks);
         List<Component> tooltip = new ArrayList<>();

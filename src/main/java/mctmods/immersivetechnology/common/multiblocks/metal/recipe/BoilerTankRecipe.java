@@ -13,7 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerTankRecipe extends MultiblockRecipe {
@@ -38,7 +39,7 @@ public class BoilerTankRecipe extends MultiblockRecipe {
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override @NotNull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
     public boolean matches(FluidStack fluid) { return input.test(fluid); }
 

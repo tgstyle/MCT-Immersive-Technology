@@ -38,14 +38,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.block.FacingLimitation;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
@@ -156,7 +155,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         rsDirty = false;
     }
 
-    @Override @NotNull public InteractionResult screwdriverUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hitVec) {
+    @Override @Nonnull public InteractionResult screwdriverUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hitVec) {
         if (level != null && level.isClientSide) { return InteractionResult.SUCCESS; }
         if (player.isShiftKeyDown()) { redstoneChannel = DyeColor.byId((redstoneChannel.getId() + 1) % 16); }
         else { ioMode = (ioMode == 0) ? 1 : 0; }
@@ -220,7 +219,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         }
     }
 
-    @Override public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
         nbt.putInt("target", target);
         nbt.putInt("rotation", rotation);
@@ -306,15 +305,15 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         return WireType.REDSTONE_CATEGORY.equals(cableType.getCategory());
     }
 
-    @Override @NotNull public Property<Direction> getFacingProperty() { return ModProperties.FACING_ALL; }
+    @Override @Nonnull public Property<Direction> getFacingProperty() { return ModProperties.FACING_ALL; }
 
-    @Override @NotNull public blusunrize.immersiveengineering.common.blocks.PlacementLimitation getFacingLimitation() {
+    @Override @Nonnull public blusunrize.immersiveengineering.common.blocks.PlacementLimitation getFacingLimitation() {
         return blusunrize.immersiveengineering.common.blocks.PlacementLimitation.SIDE_CLICKED;
     }
 
-    @Override public boolean mirrorFacingOnPlacement(@NotNull net.minecraft.world.entity.LivingEntity placer) { return true; }
+    @Override public boolean mirrorFacingOnPlacement(@Nonnull net.minecraft.world.entity.LivingEntity placer) { return true; }
 
-    @Override public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, @NotNull net.minecraft.world.entity.LivingEntity entity) { return false; }
+    @Override public boolean canHammerRotate(@Nonnull Direction side, @Nonnull Vec3 hit, @Nonnull net.minecraft.world.entity.LivingEntity entity) { return false; }
 
     @Override public void onChange(ConnectionPoint cp, RedstoneNetworkHandler handler) {
         if (level != null && !level.isClientSide && SafeChunkUtils.isChunkSafe(level, worldPosition)) {
@@ -337,11 +336,11 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         return player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D;
     }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) {
         return ConnectorTimerMenu.makeServer(MenuTypes.CONNECTOR_TIMER.getType(), id, inv, this);
     }
 
-    @Override @NotNull public Component getDisplayName() {
+    @Override @Nonnull public Component getDisplayName() {
         return Component.translatable(TranslationKey.GUI_TIMER.location);
     }
 }

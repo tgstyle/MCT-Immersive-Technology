@@ -43,11 +43,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import javax.annotation.Nonnull;
 
 public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.State>, IServerTickableComponent<HeatExchangerLogic.State>, IClientTickableComponent<HeatExchangerLogic.State>, IFluidOutputPump<HeatExchangerLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(HeatExchangerShape.DATA.pointsOfInterest);
@@ -216,12 +217,12 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         private static final IItemHandlerModifiable EMPTY_INVENTORY = new IItemHandlerModifiable() {
             @Override public int getSlots() { return 0; }
-            @Override @NotNull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
-            @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return stack; }
-            @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
+            @Override @Nonnull public ItemStack getStackInSlot(int slot) { return ItemStack.EMPTY; }
+            @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return stack; }
+            @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
             @Override public int getSlotLimit(int slot) { return 0; }
-            @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return false; }
-            @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) {}
+            @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return false; }
+            @Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) {}
         };
 
         public State(IInitialMultiblockContext<State> ctx) {

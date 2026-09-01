@@ -27,8 +27,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
@@ -37,14 +37,14 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
 
     public ValveLoadBlock(BiFunction<BlockPos, BlockState, ValveLoadBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ModProperties.MIRRORED, false).setValue(ROTATION, 0)); }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
 
-    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
+    @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
-    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
+    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
     @SuppressWarnings("deprecation")
-    @Override @NotNull public VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
+    @Override @Nonnull public VoxelShape getOcclusionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
         Direction facing = state.getValue(ModProperties.FACING_ALL);
@@ -113,14 +113,14 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
 
     @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
 
-    @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block fromBlock, @Nonnull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
-    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override @Nonnull public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
         if (heldItem.is(ModTags.formationTools)) return super.use(state, level, pos, player, hand, hit);
         if (level.isClientSide) return InteractionResult.SUCCESS;

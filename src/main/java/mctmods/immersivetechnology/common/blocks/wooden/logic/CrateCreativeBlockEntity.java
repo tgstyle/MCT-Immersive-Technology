@@ -26,7 +26,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements MenuProvider, IItemHandlerModifiable, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction {
 
@@ -37,7 +38,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
         super(BlockEntities.CRATE_CREATIVE.get(), pos, state);
     }
 
-    @Override public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
+    @Override public <T> @Nonnull LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) { return itemHandler.cast(); }
         return super.getCapability(cap, side);
     }
@@ -47,7 +48,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
         itemHandler.invalidate();
     }
 
-    @Override public void writeCustomNBT(@NotNull CompoundTag tag, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull CompoundTag tag, boolean descPacket) {
         super.writeCustomNBT(tag, descPacket);
         if (!template.isEmpty()) {
             CompoundTag itemTag = new CompoundTag();
@@ -56,7 +57,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
         }
     }
 
-    @Override public void readCustomNBT(@NotNull CompoundTag tag, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull CompoundTag tag, boolean descPacket) {
         super.readCustomNBT(tag, descPacket);
         if (tag.contains("template")) { template = ItemStack.of(tag.getCompound("template")); }
     }
@@ -69,14 +70,14 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
 
     @Override public TranslationKey text() { return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE; }
 
-    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
+    @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) { return null; }
         requestOverlaySync();
         if (template.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.getLocation())}; }
         return new Component[]{Component.translatable(text().getLocation(), template.getHoverName(), formattedAmount())};
     }
 
-    @Override public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
+    @Override public void getBlockEntityDrop(@Nonnull LootContext context, @Nonnull Consumer<ItemStack> drop) {
         ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
         CompoundTag tag = new CompoundTag();
         writeCustomNBT(tag, false);
@@ -86,7 +87,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
 
     @Override public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
 
-    @Override public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+    @Override public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         if (player.isShiftKeyDown()) {
             setTemplate(ItemStack.EMPTY);
             return true;
@@ -108,9 +109,9 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
         }
     }
 
-    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation()); }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation()); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
 
     public boolean stillValid(Player player) {
         if (level != null && !level.isClientSide) {
@@ -121,16 +122,16 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
 
     @Override public int getSlots() { return 1; }
 
-    @Override @NotNull public ItemStack getStackInSlot(int slot) { return slot == 0 ? template.copy() : ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getStackInSlot(int slot) { return slot == 0 ? template.copy() : ItemStack.EMPTY; }
 
-    @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (slot != 0 || stack.isEmpty()) { return stack; }
         if (simulate) { return ItemStack.EMPTY; }
         setTemplate(stack);
         return ItemStack.EMPTY;
     }
 
-    @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
+    @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (slot != 0 || template.isEmpty() || amount <= 0) { return ItemStack.EMPTY; }
         ItemStack out = template.copy();
         out.setCount(Math.min(amount, template.getMaxStackSize()));
@@ -140,9 +141,9 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
 
     @Override public int getSlotLimit(int slot) { return slot == 0 ? (template.isEmpty() ? 64 : template.getMaxStackSize()) : 0; }
 
-    @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return slot == 0 && !stack.isEmpty(); }
+    @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return slot == 0 && !stack.isEmpty(); }
 
-    @Override public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+    @Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         if (slot == 0) { setTemplate(stack); }
     }
 }

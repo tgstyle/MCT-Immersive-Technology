@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RadiatorRecipeSerializer extends IERecipeSerializer<RadiatorRecipe> {
     @Override public net.minecraft.world.item.ItemStack getIcon() { return MultiblockRegistry.RADIATOR.iconStack(); }
@@ -24,14 +25,14 @@ public class RadiatorRecipeSerializer extends IERecipeSerializer<RadiatorRecipe>
         return new RadiatorRecipe(recipeID, output, input, time);
     }
 
-    @Override @Nullable public RadiatorRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public RadiatorRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack output = buffer.readFluidStack();
         int time = buffer.readInt();
         return new RadiatorRecipe(recipeId, output, input, time);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull RadiatorRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull RadiatorRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
         buffer.writeInt(recipe.getTotalProcessTime());

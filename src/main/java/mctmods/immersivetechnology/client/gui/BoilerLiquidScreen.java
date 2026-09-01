@@ -15,8 +15,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import com.google.common.collect.ImmutableList;
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class BoilerLiquidScreen extends ContainerScreen<BoilerLiquidMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("boiler_liquid");

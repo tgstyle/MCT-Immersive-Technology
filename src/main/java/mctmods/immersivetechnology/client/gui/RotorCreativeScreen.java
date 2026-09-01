@@ -15,7 +15,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("rotor");
@@ -71,15 +72,15 @@ public class RotorCreativeScreen extends AbstractContainerScreen<RotorCreativeMe
 
     @Override public void onClose() { super.onClose(); }
 
-    @Override protected void renderBg(@NotNull GuiGraphics graphics, float pt, int mx, int my) {
+    @Override protected void renderBg(@Nonnull GuiGraphics graphics, float pt, int mx, int my) {
         this.renderBackground(graphics);
         graphics.blit(TEXTURE, leftPos, topPos, 0.0F, 0.0F, imageWidth, 48, 96, 48);
     }
 
-    @Override public void render(@NotNull GuiGraphics graphics, int mx, int my, float pt) {
+    @Override public void render(@Nonnull GuiGraphics graphics, int mx, int my, float pt) {
         super.render(graphics, mx, my, pt);
         graphics.drawString(font, Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE_RPM.getLocation()), rpmField.getX() + rpmField.getWidth() + 4, rpmField.getY(), 0xFFFFFF, false);
     }
 
-    @Override protected void renderLabels(@NotNull GuiGraphics graphics, int mx, int my) {}
+    @Override protected void renderLabels(@Nonnull GuiGraphics graphics, int mx, int my) {}
 }

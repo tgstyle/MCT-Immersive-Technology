@@ -31,8 +31,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +42,9 @@ public class FormationTool extends Item {
 
     @Override public int getMaxStackSize(ItemStack stack) { return 1; }
 
-    @Override @NotNull public Component getName(@NotNull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
+    @Override @Nonnull public Component getName(@Nonnull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
 
-    @Override public void appendHoverText(@NotNull ItemStack stack, @Nullable Level worldIn, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
+    @Override public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
         addInfo(tooltip, Lib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
         addInfo(tooltip, Lib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
@@ -137,20 +137,20 @@ public class FormationTool extends Item {
 
     @Override public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) { return true; }
 
-    @Override @NotNull public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
+    @Override @Nonnull public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity entity, @Nonnull InteractionHand hand) {
         if (!player.level().isClientSide && RotationUtil.rotateEntity(entity)) { return InteractionResult.SUCCESS; }
         return InteractionResult.PASS;
     }
 
-    @Override public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) { return true; }
+    @Override public boolean hasCraftingRemainingItem(@Nonnull ItemStack stack) { return true; }
 
-    @Override @NotNull public ItemStack getCraftingRemainingItem(@NotNull ItemStack stack) {
+    @Override @Nonnull public ItemStack getCraftingRemainingItem(@Nonnull ItemStack stack) {
         ItemStack container = stack.copy();
         if (container.hurt(1, ApiUtils.RANDOM_SOURCE, null)) { return ItemStack.EMPTY; }
         else { return container; }
     }
 
-    @Override public boolean isEnchantable(@NotNull ItemStack stack) { return false; }
+    @Override public boolean isEnchantable(@Nonnull ItemStack stack) { return false; }
 
     @Override public int getEnchantmentValue(ItemStack stack) { return 0; }
 

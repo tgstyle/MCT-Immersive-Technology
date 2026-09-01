@@ -10,10 +10,11 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
-import javax.annotation.Nonnull;
 import java.util.function.Function;
 import com.immersiveconvergence.api.network.MessageTileSync;
 import com.immersiveconvergence.api.network.INetworkMessage;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class PacketHandler {

@@ -16,7 +16,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText {
     public long acceptedAmount = 0;
@@ -48,7 +49,7 @@ public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IS
 
     abstract public TranslationKey text();
 
-    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
+    @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult mop, boolean hammer) {
         if (level == null) { return new Component[0]; }
         requestOverlaySync();
         return new Component[] { Component.translatable(text().getLocation(), formattedAmount()) };

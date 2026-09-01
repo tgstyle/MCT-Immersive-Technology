@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 import com.immersiveconvergence.api.block.BlockInterfaces;
@@ -28,6 +27,8 @@ import com.immersiveconvergence.api.block.FacingLimitation;
 import com.immersiveconvergence.api.block.BaseBlockEntity;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+
+import javax.annotation.Nonnull;
 
 public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
@@ -104,7 +105,7 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
         facing = getBlockState().getValue(ModProperties.FACING_ALL);
     }
 
-    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
+    @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult mop, boolean hammer) {
         if (level == null) { return new Component[0]; }
         if (level.isClientSide && requestCooldown == 0) {
             PacketHandler.sendToServer(new OSDRequestMessage(worldPosition));
@@ -168,9 +169,9 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
         }
     }
 
-    @Override @NotNull public Direction getFacing() { return this.facing; }
+    @Override @Nonnull public Direction getFacing() { return this.facing; }
 
-    @Override public void setFacing(@NotNull Direction facing) {
+    @Override public void setFacing(@Nonnull Direction facing) {
         this.facing = facing;
         invalidateCaps();
         if (level != null && !level.isClientSide) {
@@ -182,13 +183,13 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
         efficientSetChanged();
     }
 
-    @Override @NotNull public FacingLimitation getFacingLimitation() { return FacingLimitation.SIDE_CLICKED; }
+    @Override @Nonnull public FacingLimitation getFacingLimitation() { return FacingLimitation.SIDE_CLICKED; }
 
-    @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
+    @Override public boolean mirrorFacingOnPlacement(@Nonnull LivingEntity placer) { return false; }
 
-    @Override public boolean canHammerRotate(@NotNull Direction side, @NotNull Vec3 hit, LivingEntity entity) { return false; }
+    @Override public boolean canHammerRotate(@Nonnull Direction side, @Nonnull Vec3 hit, LivingEntity entity) { return false; }
 
-    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
         if (level == null || level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;
@@ -223,9 +224,9 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
 
     public static int longToInt(long value) { return value > Integer.MAX_VALUE ? Integer.MAX_VALUE : value < Integer.MIN_VALUE ? Integer.MIN_VALUE : (int) value; }
 
-    public abstract AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player player);
+    public abstract AbstractContainerMenu createMenu(int id, @Nonnull Inventory playerInventory, @Nonnull Player player);
 
-    @NotNull public abstract Component getDisplayName();
+    @Nonnull public abstract Component getDisplayName();
 
     public abstract boolean stillValid(Player player);
 }

@@ -11,9 +11,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 import com.immersiveconvergence.api.block.Enums;
+
+import javax.annotation.Nonnull;
 
 public class BarrelOpenBlock extends ModEntityBlock<BarrelOpenBlockEntity> {
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);
@@ -23,11 +24,11 @@ public class BarrelOpenBlock extends ModEntityBlock<BarrelOpenBlockEntity> {
         registerDefaultState(stateDefinition.any().setValue(BOTTOM_CONFIG, IOSideConfig.OUTPUT));
     }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(BOTTOM_CONFIG);
     }
 
     @SuppressWarnings("deprecation")
-    @Override @NotNull public RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.MODEL; }
+    @Override @Nonnull public RenderShape getRenderShape(@Nonnull BlockState state) { return RenderShape.MODEL; }
 }

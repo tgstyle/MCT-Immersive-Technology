@@ -11,13 +11,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage, ITrashCanShape {
     public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ENERGY.get(), pos, state); }
 
-    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
+    @Override @Nonnull public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
         if (capability == ForgeCapabilities.ENERGY) { return LazyOptional.of(() -> this).cast(); }
         return super.getCapability(capability, facing);
     }

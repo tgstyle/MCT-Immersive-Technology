@@ -26,7 +26,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public abstract class ContainerMenu extends AbstractContainerMenu {
         }
     }
 
-    @Override public void clicked(int id, int dragType, @NotNull ClickType clickType, @NotNull Player player) {
+    @Override public void clicked(int id, int dragType, @Nonnull ClickType clickType, @Nonnull Player player) {
         Slot slot = id < 0 ? null : this.slots.get(id);
         if (!(slot instanceof ModSlot.ItemHandlerGhost)) { super.clicked(id, dragType, clickType, player); return; }
         ItemStack stackSlot = slot.getItem();
@@ -100,7 +99,7 @@ public abstract class ContainerMenu extends AbstractContainerMenu {
         }
     }
 
-    @Override @Nonnull public ItemStack quickMoveStack(@NotNull Player player, int slot) {
+    @Override @Nonnull public ItemStack quickMoveStack(@Nonnull Player player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slotObject = this.slots.get(slot);
         if (slotObject.hasItem()) {

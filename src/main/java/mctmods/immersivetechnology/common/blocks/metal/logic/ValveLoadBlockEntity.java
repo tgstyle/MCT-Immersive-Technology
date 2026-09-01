@@ -28,16 +28,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.OPEN;
 import static net.minecraftforge.common.capabilities.ForgeCapabilities.ENERGY;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IImmersiveConnectable, EnergyConnector, BlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
@@ -221,7 +221,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         return null;
     }
 
-    @NotNull protected LocalWireNetwork getLocalNet(int cpIndex) {
+    @Nonnull protected LocalWireNetwork getLocalNet(int cpIndex) {
         if (level == null) throw new IllegalStateException("Level null in getLocalNet");
         return GlobalWireNetwork.getNetwork(level).getLocalNet(new ConnectionPoint(worldPosition, cpIndex));
     }
@@ -338,7 +338,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override public Collection<ResourceLocation> getRequestedHandlers() { return ImmutableList.of(EnergyTransferHandler.ID); }
 
-    @Override public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         if (nbt.contains("leftType")) leftType = WireType.getValue(nbt.getString("leftType")); else leftType = null;
         if (nbt.contains("rightType")) rightType = WireType.getValue(nbt.getString("rightType")); else rightType = null;
@@ -364,13 +364,13 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override public boolean getIsMirrored() { return getBlockState().getValue(ModProperties.MIRRORED); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLoadMenu.makeServer(MenuTypes.VALVE_LOAD.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveLoadMenu.makeServer(MenuTypes.VALVE_LOAD.getType(), id, inv, this); }
 
-    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
 
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
-    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
         if (level == null || level.isClientSide) return false;
         if (leftType != null || rightType != null) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);

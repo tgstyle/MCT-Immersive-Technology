@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.core.util.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.util.IItemDropProvider;
@@ -18,6 +17,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
+
+import javax.annotation.Nonnull;
 
 public class DropInventoryLootEntry extends LootPoolSingletonContainer {
     protected DropInventoryLootEntry(int weightIn, int qualityIn, LootItemCondition[] conditionsIn, LootItemFunction[] functionsIn) { super(weightIn, qualityIn, conditionsIn, functionsIn); }

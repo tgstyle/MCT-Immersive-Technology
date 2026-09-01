@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowerRecipe> {
     @Override public net.minecraft.world.item.ItemStack getIcon() { return MultiblockRegistry.COOLING_TOWER.iconStack(); }
@@ -27,7 +28,7 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
         return new CoolingTowerRecipe(recipeID, output0, output1, output2, input0, input1, time);
     }
 
-    @Override @Nullable public CoolingTowerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public CoolingTowerRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input0 = FluidTagInput.read(buffer);
         FluidTagInput input1 = FluidTagInput.read(buffer);
         FluidStack output0 = buffer.readBoolean() ? buffer.readFluidStack() : null;
@@ -37,7 +38,7 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
         return new CoolingTowerRecipe(recipeId, output0, output1, output2, input0, input1, time);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, @NotNull CoolingTowerRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull CoolingTowerRecipe recipe) {
         recipe.input0.write(buffer);
         recipe.input1.write(buffer);
         buffer.writeBoolean(recipe.fluidOutput0 != null);

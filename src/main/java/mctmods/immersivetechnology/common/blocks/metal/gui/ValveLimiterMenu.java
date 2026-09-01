@@ -9,7 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class ValveLimiterMenu extends ContainerMenu {
@@ -42,9 +43,9 @@ public class ValveLimiterMenu extends ContainerMenu {
 
     public static ValveLimiterMenu makeClient(MenuType<ValveLimiterMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) { return new ValveLimiterMenu(type, id, inv, buffer); }
 
-    @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
+    @Override public boolean stillValid(@Nonnull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack quickMoveStack(@Nonnull Player pPlayer, int pIndex) { return ItemStack.EMPTY; }
 
     public int getPacketLimit() { return packetLimit; }
 

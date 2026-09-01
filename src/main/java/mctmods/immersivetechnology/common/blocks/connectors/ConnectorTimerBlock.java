@@ -25,8 +25,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntity> {
@@ -37,14 +38,14 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
         registerDefaultState(stateDefinition.any().setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ROTATION, 0));
     }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ModProperties.FACING_ALL, ROTATION);
     }
 
-    @Override public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) { return BlockEntities.CONNECTOR_TIMER.get().create(pos, state); }
+    @Override public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return BlockEntities.CONNECTOR_TIMER.get().create(pos, state); }
 
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
+    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type) {
         if (level.isClientSide) return null;
         return type == BlockEntities.CONNECTOR_TIMER.get() ? (l, p, s, be) -> ((ConnectorTimerBlockEntity) be).tickServer() : null;
     }
@@ -56,7 +57,7 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
         return defaultBlockState().setValue(ModProperties.FACING_ALL, facing).setValue(ROTATION, rotation);
     }
 
-    @Override public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity placer, @NotNull net.minecraft.world.item.ItemStack stack) {
+    @Override public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, @Nonnull net.minecraft.world.item.ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) {
@@ -67,35 +68,35 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
         }
     }
 
-    @Override public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Direction side) {
+    @Override public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction side) {
         if (side == null) { return false; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) { return timer.canConnectRedstone(side); }
         return super.canConnectRedstone(state, level, pos, side);
     }
 
-    @Override public int getSignal(@NotNull BlockState state, BlockGetter level, @NotNull BlockPos pos, @NotNull Direction direction) {
+    @Override public int getSignal(@Nonnull BlockState state, BlockGetter level, @Nonnull BlockPos pos, @Nonnull Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) { return timer.getWeakRSOutput(direction); }
         return 0;
     }
 
-    @Override public int getDirectSignal(@NotNull BlockState state, BlockGetter level, @NotNull BlockPos pos, @NotNull Direction direction) {
+    @Override public int getDirectSignal(@Nonnull BlockState state, BlockGetter level, @Nonnull BlockPos pos, @Nonnull Direction direction) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) { return timer.getStrongRSOutput(direction); }
         return 0;
     }
 
-    @Override public boolean isSignalSource(@NotNull BlockState state) { return true; }
+    @Override public boolean isSignalSource(@Nonnull BlockState state) { return true; }
 
-    @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block block, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         if (level.isClientSide) return;
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) { timer.rsDirty = true; }
     }
 
-    @Override @NotNull public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    @Override @Nonnull public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         ItemStack held = player.getItemInHand(hand);
 
         if (!held.isEmpty() && held.getItem() instanceof WireCoilItem) { return InteractionResult.PASS; }

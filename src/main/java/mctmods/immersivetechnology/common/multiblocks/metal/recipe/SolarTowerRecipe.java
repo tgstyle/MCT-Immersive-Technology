@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
+
 import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends MultiblockRecipe {

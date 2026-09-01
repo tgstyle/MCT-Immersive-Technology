@@ -16,9 +16,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCokeOvenBaseHeaterBlockEntity> {
@@ -47,7 +47,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
                 .setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ModProperties.FACING_HORIZONTAL, ModProperties.MULTIBLOCKSLAVE, ModProperties.ACTIVE, BlockStateProperties.WATERLOGGED);
     }
@@ -111,13 +111,13 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
         }
     }
 
-    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter world, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         if (state.getValue(ModProperties.MULTIBLOCKSLAVE)) return EMPTY_SHAPE;
         Direction facing = state.getValue(ModProperties.FACING_HORIZONTAL);
         return (facing.getAxis() == Direction.Axis.X) ? SHAPE_Z : SHAPE_X;
     }
 
-    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter world, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SINGLE_SHAPE;
     }
 }

@@ -19,8 +19,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RotorCreativeBlockEntity extends BaseBlockEntity implements MenuProvider, IClientTickableBE {
     public int rpm;
@@ -37,7 +38,7 @@ public class RotorCreativeBlockEntity extends BaseBlockEntity implements MenuPro
         animation_rotation %= 360;
     }
 
-    @Override @NotNull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    @Override @Nonnull public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         Direction facing = getBlockState().getValue(RotorCreativeBlock.FACING);
         if ((side == facing || side == facing.getOpposite()) && cap == MechanicalCapabilities.MECHANICAL_PROVIDER_CAPABILITY) { return providerCap.cast(); }
         return super.getCapability(cap, side);
@@ -79,7 +80,7 @@ public class RotorCreativeBlockEntity extends BaseBlockEntity implements MenuPro
 
     public boolean stillValid(Player player) { return player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) < 64; }
 
-    @Override @Nullable public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return MenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
+    @Override @Nullable public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return MenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
 
-    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
 }

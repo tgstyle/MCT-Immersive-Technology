@@ -13,7 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
 
@@ -21,7 +22,7 @@ public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlock
 
     private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
 
-    @Override public void render(MultiblockBlockEntityMaster<SolarMelterLogic.State> be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    @Override public void render(MultiblockBlockEntityMaster<SolarMelterLogic.State> be, float partialTicks, @Nonnull PoseStack matrixStack, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         SolarMelterLogic.State state = be.getHelper().getState();
         IMultiblockContext<SolarMelterLogic.State> ctx = be.getHelper().getContext();
         IMultiblockLevel mLevel = ctx.getLevel();
@@ -57,5 +58,5 @@ public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlock
         matrixStack.popPose();
     }
 
-    @Override public boolean shouldRenderOffScreen(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) { return true; }
+    @Override public boolean shouldRenderOffScreen(@Nonnull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) { return true; }
 }

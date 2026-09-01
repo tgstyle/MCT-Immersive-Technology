@@ -41,7 +41,6 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -115,15 +114,15 @@ public class ModelConfigurableSides extends ModBakedModel {
         out.put(side, BakedQuadUtils.createBakedQuad(vertices, side, sprites.get(side), uv, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, side.getAxisDirection() == Direction.AxisDirection.NEGATIVE));
     }
 
-    @Override @NotNull public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) { return this.textures.get(Direction.DOWN).get(Enums.IOSideConfig.NONE); }
+    @Override @Nonnull public TextureAtlasSprite getParticleIcon(@Nonnull ModelData data) { return this.textures.get(Direction.DOWN).get(Enums.IOSideConfig.NONE); }
 
     @Override @Nonnull public ItemOverrides getOverrides() { return ItemOverrides.EMPTY; }
 
-    @NotNull public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) { return ChunkRenderTypeSet.of(this.renderTypes.block()); }
+    @Nonnull public ChunkRenderTypeSet getRenderTypes(@Nonnull BlockState state, @Nonnull RandomSource rand, @Nonnull ModelData data) { return ChunkRenderTypeSet.of(this.renderTypes.block()); }
 
-    @NotNull public List<RenderType> getRenderTypes(@NotNull ItemStack itemStack, boolean fabulous) { return List.of(fabulous ? this.renderTypes.entityFabulous() : this.renderTypes.entity()); }
+    @Nonnull public List<RenderType> getRenderTypes(@Nonnull ItemStack itemStack, boolean fabulous) { return List.of(fabulous ? this.renderTypes.entityFabulous() : this.renderTypes.entity()); }
 
-    @Override @NotNull public BakedModel applyTransform(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, boolean applyLeftHandTransform) {
+    @Override @Nonnull public BakedModel applyTransform(@Nonnull ItemDisplayContext transformType, @Nonnull PoseStack poseStack, boolean applyLeftHandTransform) {
         defaultTransforms.getTransform(transformType).apply(applyLeftHandTransform, poseStack);
         return this;
     }

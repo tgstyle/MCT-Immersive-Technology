@@ -32,7 +32,6 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public class Recipes extends RecipeProvider {
 
     public Recipes(PackOutput pOutput) { super(pOutput); }
 
-    @Override protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
+    @Override protected void buildRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
         itemRecipes(consumer);
         recipesBoilerLiquid(consumer);

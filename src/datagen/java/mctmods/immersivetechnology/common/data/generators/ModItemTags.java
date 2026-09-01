@@ -11,8 +11,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 public class ModItemTags extends ItemTagsProvider {
@@ -20,7 +20,7 @@ public class ModItemTags extends ItemTagsProvider {
         super(output, lookupProvider, blocks, Reference.MODID, existingFileHelper);
     }
 
-    @Override protected void addTags(@NotNull Provider provider) {
+    @Override protected void addTags(@Nonnull Provider provider) {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "salts"))).add(ModItems.SALT.get());
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "dusts/salt"))).add(ModItems.SALT.get());
         tag(ModTags.igniters).add(Items.TORCH, Items.FLINT_AND_STEEL);

@@ -9,8 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class ConnectorTimerMenu extends ContainerMenu {
@@ -36,7 +36,7 @@ public class ConnectorTimerMenu extends ContainerMenu {
 
     public int getTarget() { return tile != null ? tile.getTarget() : 40; }
 
-    @Override public boolean stillValid(@NotNull Player player) { return tile == null || tile.stillValid(player); }
+    @Override public boolean stillValid(@Nonnull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player player, int index) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack quickMoveStack(@Nonnull Player player, int index) { return ItemStack.EMPTY; }
 }

@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_SOLID.iconStack(); }
@@ -24,14 +25,14 @@ public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidR
         return new BoilerSolidRecipe(recipeId, input, heatPerTick, targetHeat);
     }
 
-    @Override @Nullable public BoilerSolidRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public BoilerSolidRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         IngredientWithSize input = IngredientWithSize.read(buffer);
         double heatPerTick = buffer.readDouble();
         double targetHeat = buffer.readDouble();
         return new BoilerSolidRecipe(recipeId, input, heatPerTick, targetHeat);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerSolidRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, BoilerSolidRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeDouble(recipe.getHeatPerTick());
         buffer.writeDouble(recipe.getTargetHeat());

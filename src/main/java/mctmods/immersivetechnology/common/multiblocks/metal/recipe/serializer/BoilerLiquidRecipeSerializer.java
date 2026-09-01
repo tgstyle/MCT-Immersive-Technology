@@ -11,8 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiquidRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_LIQUID.iconStack(); }
@@ -25,7 +26,7 @@ public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiqui
         return new BoilerLiquidRecipe(recipeId, input, time, heatPerTick, targetHeat);
     }
 
-    @Override @Nullable public BoilerLiquidRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public BoilerLiquidRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         int time = buffer.readInt();
         double heatPerTick = buffer.readDouble();
@@ -33,7 +34,7 @@ public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiqui
         return new BoilerLiquidRecipe(recipeId, input, time, heatPerTick, targetHeat);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerLiquidRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, BoilerLiquidRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeInt(recipe.getTotalProcessTime());
         buffer.writeDouble(recipe.getHeatPerTick());

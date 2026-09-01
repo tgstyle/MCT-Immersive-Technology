@@ -25,10 +25,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.ModProperties;
@@ -36,6 +33,9 @@ import com.immersiveconvergence.api.block.FacingLimitation;
 import com.immersiveconvergence.api.block.BaseBlockEntity;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IDirectionalBE, BlockInterfaces.IHasDummyBlocks, IEnergyStorage, ISubmodelOffsetProvider {
 
@@ -263,7 +263,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
         };
     }
 
-    @Override @Nonnull public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
+    @Override @Nonnull public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction side) {
         if (capability == ForgeCapabilities.ENERGY) {
             if (side == null || side == Direction.UP) {
                 if (!dummy) return energyHandler.cast();

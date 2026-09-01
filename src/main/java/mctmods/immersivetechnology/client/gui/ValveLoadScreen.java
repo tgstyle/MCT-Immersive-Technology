@@ -15,7 +15,8 @@ import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("valve");
@@ -103,12 +104,12 @@ public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
 
     @Override public void onClose() { super.onClose(); }
 
-    @Override protected void renderBg(@NotNull GuiGraphics graphics, float pt, int mx, int my) {
+    @Override protected void renderBg(@Nonnull GuiGraphics graphics, float pt, int mx, int my) {
         this.renderBackground(graphics);
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0.0F, 0.0F, imageWidth, 88, imageWidth, 88);
     }
 
-    @Override public void render(@NotNull GuiGraphics graphics, int mx, int my, float pt) {
+    @Override public void render(@Nonnull GuiGraphics graphics, int mx, int my, float pt) {
         super.render(graphics, mx, my, pt);
         graphics.drawString(font, Component.translatable(TranslationKey.GUI_VALVE_FIRST_LINE.location), leftPos + 23, topPos + 14, 0xFFFFFF, false);
         graphics.drawString(font, Component.translatable(TranslationKey.GUI_VALVE_LOAD_LIMIT_PACKET.location), packetLimitField.getX() + 54, packetLimitField.getY(), 0xFFFFFF, false);
@@ -116,5 +117,5 @@ public class ValveLoadScreen extends AbstractContainerScreen<ValveLoadMenu> {
         graphics.drawString(font, Component.translatable(TranslationKey.GUI_VALVE_LOAD_LIMIT_DESTINATION.location), keepSizeField.getX() + 54, keepSizeField.getY(), 0xFFFFFF, false);
     }
 
-    @Override protected void renderLabels(@NotNull GuiGraphics graphics, int mx, int my) {}
+    @Override protected void renderLabels(@Nonnull GuiGraphics graphics, int mx, int my) {}
 }

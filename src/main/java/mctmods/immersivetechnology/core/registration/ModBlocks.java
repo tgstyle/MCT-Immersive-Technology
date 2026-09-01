@@ -25,8 +25,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -218,7 +218,7 @@ public class ModBlocks {
         @Override public T get() { return regObject.get(); }
         public ResourceLocation getId() { return regObject.getId(); }
         public BlockBehaviour.Properties getProperties() { return properties.get(); }
-        @Override public @NotNull Item asItem() { return get().asItem(); }
+        @Override public @Nonnull Item asItem() { return get().asItem(); }
         public RegistryObject<? extends Block> getRegObject() { return regObject; }
     }
 }

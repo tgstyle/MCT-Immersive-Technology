@@ -3,7 +3,8 @@ package mctmods.immersivetechnology.common.fluids.helper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public record ArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boolean allowFill, Runnable afterTransfer) implements IFluidHandler {
 
@@ -21,11 +22,11 @@ public record ArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boole
 
     public int getTanks() { return this.internal.length; }
 
-    @NotNull public FluidStack getFluidInTank(int tank) { return this.internal[tank].getFluid(); }
+    @Nonnull public FluidStack getFluidInTank(int tank) { return this.internal[tank].getFluid(); }
 
     public int getTankCapacity(int tank) { return this.internal[tank].getCapacity(); }
 
-    public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return this.internal[tank].isFluidValid(stack); }
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return this.internal[tank].isFluidValid(stack); }
 
     public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
         if (!this.allowFill || resource.isEmpty()) { return 0; }
@@ -51,7 +52,7 @@ public record ArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boole
         return filled;
     }
 
-    @NotNull public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
+    @Nonnull public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
         if (!this.allowDrain) { return FluidStack.EMPTY; }
         for (IFluidTank tank : this.internal) {
             FluidStack drainedHere = tank.drain(resource, action);
@@ -63,7 +64,7 @@ public record ArrayFluidHandler(IFluidTank[] internal, boolean allowDrain, boole
         return FluidStack.EMPTY;
     }
 
-    @NotNull public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
+    @Nonnull public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
         if (!this.allowDrain) { return FluidStack.EMPTY; }
         for (IFluidTank tank : this.internal) {
             FluidStack drainedHere = tank.drain(maxDrain, action);

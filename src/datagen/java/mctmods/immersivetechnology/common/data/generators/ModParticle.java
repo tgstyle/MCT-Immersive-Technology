@@ -7,8 +7,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ModParticle implements DataProvider {
         descriptions.put(Particles.COLORED_SMOKE.getId(), bigSmokeTextures);
     }
 
-    @Override @NotNull public CompletableFuture<?> run(@NotNull CachedOutput cache) {
+    @Override @Nonnull public CompletableFuture<?> run(@Nonnull CachedOutput cache) {
         addDescriptions();
         return CompletableFuture.allOf(descriptions.entrySet().stream().map(entry -> {
             JsonArray textures = new JsonArray();
@@ -40,5 +40,5 @@ public class ModParticle implements DataProvider {
         }).toArray(CompletableFuture[]::new));
     }
 
-    @Override @NotNull public String getName() { return "Particle Descriptions"; }
+    @Override @Nonnull public String getName() { return "Particle Descriptions"; }
 }

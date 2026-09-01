@@ -18,8 +18,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public class AdvancedCokeOvenCategory extends ModRecipeCategory<AdvancedCokeOvenRecipe> {
@@ -41,7 +41,7 @@ public class AdvancedCokeOvenCategory extends ModRecipeCategory<AdvancedCokeOven
         flame = helper.createAnimatedDrawable(flameStatic, 500, IDrawableAnimated.StartDirection.TOP, true);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull AdvancedCokeOvenRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull AdvancedCokeOvenRecipe recipe, @Nonnull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 4, 19).addItemStacks(Arrays.asList(recipe.input.getMatchingStacks()));
 
         ItemStack itemOut = recipe.itemOutput.get();
@@ -59,7 +59,7 @@ public class AdvancedCokeOvenCategory extends ModRecipeCategory<AdvancedCokeOven
                         FluidInfoArea.fillTooltip(fs, recipe.creosoteOutput, tooltip::add)));
     }
 
-    @Override public void draw(@NotNull AdvancedCokeOvenRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull AdvancedCokeOvenRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 103, 4);
         flame.draw(guiGraphics, 31, 20);

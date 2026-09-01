@@ -18,8 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_TANK.iconStack(); }
@@ -32,7 +32,7 @@ public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRec
         return new BoilerTankRecipe(recipeID, input, output, time, requiredHeat);
     }
 
-    @Override @Nullable public BoilerTankRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public BoilerTankRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         FluidStack output = buffer.readFluidStack();
         int time = buffer.readInt();
@@ -40,7 +40,7 @@ public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRec
         return new BoilerTankRecipe(recipeId, input, output, time, requiredHeat);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, BoilerTankRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, BoilerTankRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.output);
         buffer.writeInt(recipe.getTotalProcessTime());

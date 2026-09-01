@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+
 import javax.annotation.Nonnull;
 
 public class TRSRModelBuilder extends ModelBuilder<TRSRModelBuilder> {

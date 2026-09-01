@@ -48,13 +48,14 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.BiFunction;
+
+import javax.annotation.Nonnull;
 
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     public static final int INPUT_FUEL_SLOT = 0;
@@ -251,7 +252,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             this.levelSupplier = levelSupplier;
         }
 
-        @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
             if (slot != INPUT_FUEL_SLOT || stack.isEmpty()) { return false; }
             ItemStack single = stack.copy(); single.setCount(1);
             Level l = levelSupplier != null ? levelSupplier.get() : null;
@@ -261,7 +262,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             } else { return true; }
         }
 
-        @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
             if (!simulate && !isItemValid(slot, stack)) { return stack; }
             return super.insertItem(slot, stack, simulate);
         }

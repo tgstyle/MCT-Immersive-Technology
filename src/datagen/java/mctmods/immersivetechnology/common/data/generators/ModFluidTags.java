@@ -7,8 +7,8 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 public class ModFluidTags extends FluidTagsProvider {
@@ -16,7 +16,7 @@ public class ModFluidTags extends FluidTagsProvider {
         super(output, lookupProvider, Reference.MODID, existingFileHelper);
     }
 
-    @Override protected void addTags(@NotNull Provider provider) {
+    @Override protected void addTags(@Nonnull Provider provider) {
         tag(ModTags.fluidChlorine).add(ModFluids.CHLORINE.getStill());
         tag(ModTags.fluidDistilledWater).add(ModFluids.DISTILLED_WATER.getStill());
         tag(ModTags.fluidDistilledWaterForge).add(ModFluids.DISTILLED_WATER.getStill());

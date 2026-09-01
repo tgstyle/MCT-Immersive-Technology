@@ -15,8 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
 
     @Override protected IERecipeSerializer<AdvancedCokeOvenRecipe> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override public @NotNull ItemStack getResultItem(RegistryAccess access) { return this.itemOutput.get(); }
+    @Override public @Nonnull ItemStack getResultItem(RegistryAccess access) { return this.itemOutput.get(); }
 
     public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input, @Nullable AdvancedCokeOvenRecipe hint) {
         if (input.isEmpty()) return null;

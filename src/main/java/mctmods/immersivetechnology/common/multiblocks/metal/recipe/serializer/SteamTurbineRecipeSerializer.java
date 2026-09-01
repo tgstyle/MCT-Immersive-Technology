@@ -12,8 +12,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SteamTurbineRecipeSerializer extends IERecipeSerializer<SteamTurbineRecipe> {
@@ -28,7 +28,7 @@ public class SteamTurbineRecipeSerializer extends IERecipeSerializer<SteamTurbin
         return new SteamTurbineRecipe(recipeId, input, fluidOutput, time, torque);
     }
 
-    @Override @Nullable public SteamTurbineRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
+    @Override @Nullable public SteamTurbineRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         FluidTagInput input = FluidTagInput.read(buffer);
         boolean hasOutput = buffer.readBoolean();
         FluidStack fluidOutput = hasOutput ? buffer.readFluidStack() : null;
@@ -37,7 +37,7 @@ public class SteamTurbineRecipeSerializer extends IERecipeSerializer<SteamTurbin
         return new SteamTurbineRecipe(recipeId, input, fluidOutput, time, torque);
     }
 
-    @Override public void toNetwork(@NotNull FriendlyByteBuf buffer, SteamTurbineRecipe recipe) {
+    @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, SteamTurbineRecipe recipe) {
         recipe.input.write(buffer);
         boolean hasOutput = recipe.fluidOutput != null;
         buffer.writeBoolean(hasOutput);

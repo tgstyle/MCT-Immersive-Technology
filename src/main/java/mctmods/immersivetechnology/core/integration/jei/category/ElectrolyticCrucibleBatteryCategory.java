@@ -16,8 +16,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<ElectrolyticCrucibleBatteryRecipe> {
@@ -38,7 +38,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
         arrow = helper.createAnimatedDrawable(arrowStatic, 200, IDrawableAnimated.StartDirection.LEFT, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull ElectrolyticCrucibleBatteryRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull ElectrolyticCrucibleBatteryRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = recipe.fluidInput0.getMatchingFluidStacks().stream()
@@ -85,7 +85,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
                         FluidInfoArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull ElectrolyticCrucibleBatteryRecipe recipe) {
+    private int getTankCapacity(@Nonnull ElectrolyticCrucibleBatteryRecipe recipe) {
         int tankCapacity = recipe.fluidInput0.getAmount();
         if (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput0.getAmount()); }
         if (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput1.getAmount()); }
@@ -93,7 +93,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull ElectrolyticCrucibleBatteryRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull ElectrolyticCrucibleBatteryRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 11, 11);

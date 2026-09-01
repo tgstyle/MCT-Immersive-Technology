@@ -39,7 +39,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidType;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -71,13 +70,13 @@ public class ModFluid extends FlowingFluid {
 
     @Nonnull @Override public Item getBucket() { return entry.getBucket(); }
 
-    @Override protected boolean canBeReplacedWith(@NotNull FluidState fluidState, @NotNull BlockGetter blockReader, @NotNull BlockPos pos, @NotNull Fluid fluidIn, @NotNull Direction direction) {
+    @Override protected boolean canBeReplacedWith(@Nonnull FluidState fluidState, @Nonnull BlockGetter blockReader, @Nonnull BlockPos pos, @Nonnull Fluid fluidIn, @Nonnull Direction direction) {
         return (isGaseous() ? direction == Direction.UP : direction == Direction.DOWN) && !isSame(fluidIn);
     }
 
     @Override public boolean isSame(@Nonnull Fluid fluidIn) { return fluidIn == entry.getStill() || fluidIn == entry.getFlowing(); }
 
-    @Override public int getTickDelay(@NotNull LevelReader p_205569_1_) {
+    @Override public int getTickDelay(@Nonnull LevelReader p_205569_1_) {
         int dW = this.getFlowing().getFluidType().getViscosity() - Fluids.WATER.getFluidType().getViscosity();
         double v = Math.round(5 + dW * 0.005);
         return Math.max(2, (int)v);
@@ -85,12 +84,12 @@ public class ModFluid extends FlowingFluid {
 
     @Override protected float getExplosionResistance() { return 100; }
 
-    @Override protected void createFluidStateDefinition(@NotNull StateDefinition.Builder<Fluid, FluidState> builder) {
+    @Override protected void createFluidStateDefinition(@Nonnull StateDefinition.Builder<Fluid, FluidState> builder) {
         super.createFluidStateDefinition(builder);
         for (Property<?> p : (entry == null ? entryStatic : entry).properties()) { builder.add(p); }
     }
 
-    @Override @NotNull protected BlockState createLegacyBlock(@NotNull FluidState state) {
+    @Override @Nonnull protected BlockState createLegacyBlock(@Nonnull FluidState state) {
         BlockState result = entry.getBlock().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
         for (Property<?> prop : entry.properties()) { result = FluidBlock.withCopiedValue(prop, result, state); }
         return result;
@@ -98,31 +97,31 @@ public class ModFluid extends FlowingFluid {
 
     @Override public boolean isSource(FluidState state) { return state.getType() == entry.getStill(); }
 
-    @Override public int getAmount(@NotNull FluidState state) {
+    @Override public int getAmount(@Nonnull FluidState state) {
         if (isSource(state)) { return 8; }
         else { return state.getValue(LEVEL); }
     }
 
-    @Override @NotNull public FluidType getFluidType() { return entry.type().get(); }
+    @Override @Nonnull public FluidType getFluidType() { return entry.type().get(); }
 
     @Override@ Nonnull public Fluid getFlowing() { return entry.getFlowing(); }
 
     @Override @Nonnull public Fluid getSource() { return entry.getStill(); }
 
-    @Override public boolean canConvertToSource(@NotNull Level level) { return false; }
+    @Override public boolean canConvertToSource(@Nonnull Level level) { return false; }
 
-    @Override protected void beforeDestroyingBlock(@NotNull LevelAccessor iWorld, @NotNull BlockPos blockPos, @NotNull BlockState blockState) { }
+    @Override protected void beforeDestroyingBlock(@Nonnull LevelAccessor iWorld, @Nonnull BlockPos blockPos, @Nonnull BlockState blockState) { }
 
-    @Override protected int getSlopeFindDistance(@NotNull LevelReader iWorldReader) { return 4; }
+    @Override protected int getSlopeFindDistance(@Nonnull LevelReader iWorldReader) { return 4; }
 
-    @Override protected int getDropOff(@NotNull LevelReader iWorldReader) { return 1; }
+    @Override protected int getDropOff(@Nonnull LevelReader iWorldReader) { return 1; }
 
-    @Override public void tick(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull FluidState pState) {
+    @Override public void tick(@Nonnull Level pLevel, @Nonnull BlockPos pPos, @Nonnull FluidState pState) {
         super.tick(pLevel, pPos, pState);
         if (!pLevel.isClientSide && isGaseous() && pState.isSource()) { pLevel.setBlock(pPos, Blocks.AIR.defaultBlockState(), 3); }
     }
 
-    @Override protected void spread(@NotNull Level pLevel, @NotNull BlockPos pPos, FluidState pState) {
+    @Override protected void spread(@Nonnull Level pLevel, @Nonnull BlockPos pPos, FluidState pState) {
         if (!pState.isEmpty()) {
             BlockState blockstate = pLevel.getBlockState(pPos);
             Direction gravityDir = isGaseous() ? Direction.UP : Direction.DOWN;
@@ -156,7 +155,7 @@ public class ModFluid extends FlowingFluid {
         }
     }
 
-    @Override @NotNull protected FluidState getNewLiquid(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pBlockState) {
+    @Override @Nonnull protected FluidState getNewLiquid(@Nonnull Level pLevel, @Nonnull BlockPos pPos, @Nonnull BlockState pBlockState) {
         boolean isGaseous = isGaseous();
         Direction gravityDir = isGaseous ? Direction.UP : Direction.DOWN;
         Direction antiGravityDir = isGaseous ? Direction.DOWN : Direction.UP;
@@ -189,7 +188,7 @@ public class ModFluid extends FlowingFluid {
         }
     }
 
-    @Override @NotNull public Vec3 getFlow(@NotNull BlockGetter pBlockReader, @NotNull BlockPos pPos, @NotNull FluidState pFluidState) {
+    @Override @Nonnull public Vec3 getFlow(@Nonnull BlockGetter pBlockReader, @Nonnull BlockPos pPos, @Nonnull FluidState pFluidState) {
         double d0 = 0.0D;
         double d1 = 0.0D;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
@@ -309,7 +308,7 @@ public class ModFluid extends FlowingFluid {
         return i;
     }
 
-    @Override @NotNull protected Map<Direction, FluidState> getSpread(@NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pState) {
+    @Override @Nonnull protected Map<Direction, FluidState> getSpread(@Nonnull Level pLevel, @Nonnull BlockPos pPos, @Nonnull BlockState pState) {
         int i = 1000;
         Map<Direction, FluidState> map = Maps.newEnumMap(Direction.class);
         Short2ObjectMap<Pair<BlockState, FluidState>> short2objectmap = new Short2ObjectOpenHashMap<>();
@@ -380,7 +379,7 @@ public class ModFluid extends FlowingFluid {
     public static class Flowing extends ModFluid {
         public Flowing(ModFluids.FluidEntry entry) { super(entry); }
 
-        @Override protected void createFluidStateDefinition(@NotNull StateDefinition.Builder<Fluid, FluidState> builder) {
+        @Override protected void createFluidStateDefinition(@Nonnull StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }
@@ -389,7 +388,7 @@ public class ModFluid extends FlowingFluid {
     public static final DispenseItemBehavior BUCKET_DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior() {
         private final DefaultDispenseItemBehavior defaultBehavior = new DefaultDispenseItemBehavior();
 
-        @NotNull public ItemStack execute(BlockSource source, ItemStack stack) {
+        @Nonnull public ItemStack execute(BlockSource source, ItemStack stack) {
             BucketItem bucketitem = (BucketItem)stack.getItem();
             BlockPos blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
             Level world = source.getLevel();
