@@ -141,7 +141,7 @@ def main():
     main_path = None
     directory = '.'
     if args.path:
-        if os.path.isfile(args.path) and args.path.lower().endswith('.bbmodel'):
+        if os.path.isfile(args.path) and args.path.lower().endswith(('.bbmodel', '.obj')):
             main_path = args.path
             directory = os.path.dirname(main_path) or '.'
         elif os.path.isdir(args.path):

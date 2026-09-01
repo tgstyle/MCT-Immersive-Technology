@@ -16,6 +16,23 @@ Script setup:
 		e.g. "C:\SteamTurbine\steam_turbine.bbmodel"
 		     "C:\SteamTurbine\rotor.bbmodel"
 
+	Wavefront OBJ is accepted alongside .bbmodel, as a path or in the
+	listed folder. Voxelization consumes a triangle soup, which both
+	formats reduce to, so no conversion step is involved.
+
+	OBJ notes:
+		- Vertex units are blocks, not sixteenths; coordinates are scaled
+		  by 16 on load to match the 1/16 voxel grid.
+		- Faces are fan-triangulated. Quads and n-gons are accepted,
+		  v/vt/vn indices are split, negative indices resolve from the
+		  end of the vertex list.
+		- IE machine models are authored about the master cell, so a
+		  3x3x3 spans -1..2 per axis. Pass --target-grid with the
+		  machine dimensions to pin the output grid, and --mc-version
+		  1.12.2 for the Z flip. Source:
+		  assets/immersiveengineering/models/block/metal_multiblock/
+		  inside the IE jar.
+
 	Model notes:
 		- Mesh vertices must lie on the 1/16 grid (Blockbench default snapping).
 		- Models do NOT need to be watertight or stitched. Touching faces,
@@ -120,6 +137,7 @@ Script arguments:
     --low-res-merge	Default: False	Description: Enable low-res merge for angled faces.
 
     # Minecraft version option
+
     --mc-version {1.12.2,default}	Default: 'default'	Description: Minecraft version for output adjustment. The script runs by default with the northeast corner 0,0,0. For 1.12.2, it builds the shape from the northwest corner 0,0,0 by flipping the Z-axis after post-processing. Post-processing coordinates (--rpp, --solid-blocks, etc.) need to account for this flip when entered for 1.12.2 mode.
 
     # Debug option

@@ -13,7 +13,31 @@ def log(message):
         print(message, file=f, flush=True)
 
 
+
+def load_triangles_obj(file_path, scale=16.0, debug=False):
+    verts, tris = [], []
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if line.startswith('v '):
+                parts = line.split()
+                verts.append([float(parts[1]) * scale, float(parts[2]) * scale, float(parts[3]) * scale])
+            elif line.startswith('f '):
+                idx = []
+                for token in line.split()[1:]:
+                    n = int(token.split('/')[0])
+                    idx.append(n - 1 if n > 0 else len(verts) + n)
+                for k in range(1, len(idx) - 1):
+                    tris.append([verts[idx[0]], verts[idx[k]], verts[idx[k + 1]]])
+    if not tris:
+        raise ValueError(f"No faces found in {file_path}")
+    if debug:
+        log(f"{os.path.basename(file_path)}: {len(tris)} triangles from OBJ, {len(verts)} vertices")
+    return np.array(tris, dtype=np.float64)
+
+
 def load_triangles(file_path, debug=False):
+    if file_path.lower().endswith('.obj'):
+        return load_triangles_obj(file_path, debug=debug)
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
     tris = []
@@ -137,7 +161,7 @@ def parse_bbmodel(file_path, gap_thresholds=(-1, -1, -1), gap_passes=3, axis_ord
 
 
 def list_bbmodel_files(directory):
-    return [f for f in os.listdir(directory) if f.lower().endswith('.bbmodel')]
+    return [f for f in os.listdir(directory) if f.lower().endswith(('.bbmodel', '.obj'))]
 
 
 def select_file(bbmodel_files, prompt="Select a file by number: "):
