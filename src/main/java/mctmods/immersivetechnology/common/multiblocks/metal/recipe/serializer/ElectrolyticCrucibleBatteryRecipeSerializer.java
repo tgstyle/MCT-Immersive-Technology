@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(); }
@@ -47,7 +48,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSeriali
 
         StreamCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull ElectrolyticCrucibleBatteryRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull ElectrolyticCrucibleBatteryRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amount = buf.readVarInt();
                 FluidStack out0 = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -60,7 +61,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSeriali
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, ElectrolyticCrucibleBatteryRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, ElectrolyticCrucibleBatteryRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput0(), FluidStack.EMPTY));

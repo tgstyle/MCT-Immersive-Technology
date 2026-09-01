@@ -23,8 +23,8 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MeltingCategory extends ModRecipeCategory<MeltingRecipe> {
@@ -47,7 +47,7 @@ public class MeltingCategory extends ModRecipeCategory<MeltingRecipe> {
                 .build();
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull MeltingRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull MeltingRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = BuiltInRegistries.FLUID.getTag(recipe.inputTag())
@@ -80,13 +80,13 @@ public class MeltingCategory extends ModRecipeCategory<MeltingRecipe> {
                         FluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull MeltingRecipe recipe) {
+    private int getTankCapacity(@Nonnull MeltingRecipe recipe) {
         int tankCapacity = recipe.inputAmount();
         if (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) { tankCapacity = Math.max(tankCapacity, recipe.fluidOutput.getAmount()); }
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull MeltingRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull MeltingRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 100, 19);

@@ -12,7 +12,8 @@ import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
     @Override
@@ -29,7 +30,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
 
         StreamCodec<RegistryFriendlyByteBuf, AdvancedCokeOvenRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull AdvancedCokeOvenRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull AdvancedCokeOvenRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 IngredientWithSize input = IngredientWithSize.CODECS.streamCodec().decode(buf);
                 TagOutput itemOutput = TagOutput.CODECS.streamCodec().decode(buf);
                 int time = buf.readVarInt();
@@ -38,7 +39,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, AdvancedCokeOvenRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, AdvancedCokeOvenRecipe recipe) {
                 IngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
                 TagOutput.CODECS.streamCodec().encode(buf, recipe.itemOutput());
                 buf.writeVarInt(recipe.time());

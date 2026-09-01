@@ -16,8 +16,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, ElectrolyticCrucibleBatteryRecipeSerializer> SERIALIZER;
@@ -71,7 +72,7 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 

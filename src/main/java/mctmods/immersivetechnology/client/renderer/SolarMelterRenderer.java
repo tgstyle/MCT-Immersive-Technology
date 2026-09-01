@@ -15,19 +15,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {
     public SolarMelterRenderer() {}
 
-    @Override public @NotNull AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) {
+    @Override public @Nonnull AABB getRenderBoundingBox(@Nonnull MultiblockBlockEntityMaster<SolarMelterLogic.State> be) {
         BlockPos beamPos = be.getHelper().getContext().getLevel().toAbsolute(SolarMelterLogic.PARTICLE_POI);
         return new AABB(be.getBlockPos()).minmax(new AABB(beamPos)).inflate(2).expandTowards(0, 20, 0);
     }
 
     private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
 
-    @Override public void render(MultiblockBlockEntityMaster<SolarMelterLogic.State> be, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    @Override public void render(MultiblockBlockEntityMaster<SolarMelterLogic.State> be, float partialTicks, @Nonnull PoseStack matrixStack, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         SolarMelterLogic.State state = be.getHelper().getState();
         IMultiblockContext<SolarMelterLogic.State> ctx = be.getHelper().getContext();
         IMultiblockLevel mLevel = ctx.getLevel();

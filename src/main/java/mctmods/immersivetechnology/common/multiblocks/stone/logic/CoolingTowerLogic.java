@@ -41,12 +41,13 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import javax.annotation.Nonnull;
 
 public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, IFluidOutputPump<CoolingTowerLogic.State> {
     public static int inputTankCapacity() { return ServerConfig.coolingTowerInputTankCapacity; }
@@ -211,13 +212,13 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     private record CombinedInputFluidHandler(MarkableFluidTank tankA, MarkableFluidTank tankB, Runnable onChange) implements IFluidHandler {
         @Override public int getTanks() { return 2; }
 
-        @Override @NotNull public FluidStack getFluidInTank(int tank) { return tank == 0 ? tankA.getFluid() : tankB.getFluid(); }
+        @Override @Nonnull public FluidStack getFluidInTank(int tank) { return tank == 0 ? tankA.getFluid() : tankB.getFluid(); }
 
         @Override public int getTankCapacity(int tank) { return tank == 0 ? tankA.getCapacity() : tankB.getCapacity(); }
 
-        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return tank == 0 ? tankA.isFluidValid(stack) : tankB.isFluidValid(stack); }
+        @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return tank == 0 ? tankA.isFluidValid(stack) : tankB.isFluidValid(stack); }
 
-        @Override public int fill(@NotNull FluidStack resource, @NotNull FluidAction action) {
+        @Override public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
             if (resource.isEmpty()) { return 0; }
             MarkableFluidTank target;
             if (!tankA.isEmpty() && tankA.getFluid().getFluid() == resource.getFluid()) { target = tankA; }
@@ -230,9 +231,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             return filled;
         }
 
-        @Override @NotNull public FluidStack drain(@NotNull FluidStack resource, @NotNull FluidAction action) { return FluidStack.EMPTY; }
+        @Override @Nonnull public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) { return FluidStack.EMPTY; }
 
-        @Override @NotNull public FluidStack drain(int maxDrain, @NotNull FluidAction action) { return FluidStack.EMPTY; }
+        @Override @Nonnull public FluidStack drain(int maxDrain, @Nonnull FluidAction action) { return FluidStack.EMPTY; }
     }
 
     public static class State implements IMultiblockState, IDisplayContext {

@@ -12,9 +12,9 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.client.model.generators.loaders.CompositeModelBuilder;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
     public ComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) { super(output, Reference.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper); }
 
-    @Override @NotNull public String getName() { return getClass().getSimpleName(); }
+    @Override @Nonnull public String getName() { return getClass().getSimpleName(); }
 
     @Override protected void registerModels() {
         generateMultiblockModel("advanced_coke_oven", "stone", MultiblockRegistry.ADVANCED_COKE_OVEN.block(), new Vector3f(4.0f, -3.5f, -1.0f), 0.1875f, 0.0625f, 0.0625f);

@@ -20,8 +20,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
@@ -38,7 +38,7 @@ public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
         tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull DistillerRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull DistillerRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = BuiltInRegistries.FLUID.getTag(recipe.fluidTag())
@@ -80,7 +80,7 @@ public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
         return tankCapacity;
     }
 
-    @Override public void draw(@NotNull DistillerRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull DistillerRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 55, 19);
         tankOverlay.draw(guiGraphics, 109, 19);

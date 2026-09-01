@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.SOLAR_TOWER.iconStack(); }
@@ -44,7 +45,7 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
 
         StreamCodec<RegistryFriendlyByteBuf, SolarTowerRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull SolarTowerRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull SolarTowerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> inputTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int inputAmount = buf.readVarInt();
                 FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -55,7 +56,7 @@ public class SolarTowerRecipeSerializer extends IERecipeSerializer<SolarTowerRec
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, SolarTowerRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, SolarTowerRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag());
                 buf.writeVarInt(recipe.inputAmount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);

@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class RadiatorRecipeSerializer extends IERecipeSerializer<RadiatorRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.RADIATOR.iconStack(); }
@@ -44,7 +45,7 @@ public class RadiatorRecipeSerializer extends IERecipeSerializer<RadiatorRecipe>
 
         StreamCodec<RegistryFriendlyByteBuf, RadiatorRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull RadiatorRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull RadiatorRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amount = buf.readVarInt();
                 FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -54,7 +55,7 @@ public class RadiatorRecipeSerializer extends IERecipeSerializer<RadiatorRecipe>
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, RadiatorRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, RadiatorRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);

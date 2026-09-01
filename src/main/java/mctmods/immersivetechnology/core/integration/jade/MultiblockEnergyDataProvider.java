@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.view.*;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

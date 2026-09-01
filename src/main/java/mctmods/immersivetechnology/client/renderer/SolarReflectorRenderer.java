@@ -22,10 +22,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarReflectorLogic.State>> {
     private static final Quaternionf IDENTITY = new Quaternionf();
@@ -36,9 +37,9 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
 
     public SolarReflectorRenderer() {}
 
-    @Override @NotNull public AABB getRenderBoundingBox(MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile) { return new AABB(tile.getBlockPos()).inflate(6); }
+    @Override @Nonnull public AABB getRenderBoundingBox(MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile) { return new AABB(tile.getBlockPos()).inflate(6); }
 
-    @Override public void render(@NotNull MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@Nonnull MultiblockBlockEntityMaster<SolarReflectorLogic.State> tile, float partialTicks, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         IMultiblockBEHelperMaster<SolarReflectorLogic.State> helper = tile.getHelper();
         IMultiblockContext<SolarReflectorLogic.State> context = helper.getContext();
         SolarReflectorLogic.State state = context.getState();

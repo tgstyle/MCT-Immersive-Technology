@@ -40,8 +40,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
@@ -53,7 +53,7 @@ public class Recipes extends RecipeProvider {
         super(output, registries);
     }
 
-    @Override protected void buildRecipes(@NotNull RecipeOutput output) {
+    @Override protected void buildRecipes(@Nonnull RecipeOutput output) {
         itemRecipes(output);
         materialRecipes(output);
         nuclearRecipes(output);

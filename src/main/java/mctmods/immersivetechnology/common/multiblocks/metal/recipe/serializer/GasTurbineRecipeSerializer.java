@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.GAS_TURBINE.iconStack(); }
@@ -41,7 +42,7 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
 
         StreamCodec<RegistryFriendlyByteBuf, GasTurbineRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull GasTurbineRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull GasTurbineRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amount = buf.readVarInt();
                 FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -51,7 +52,7 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, GasTurbineRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, GasTurbineRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY));

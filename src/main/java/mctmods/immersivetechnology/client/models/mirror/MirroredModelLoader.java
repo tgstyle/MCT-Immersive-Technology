@@ -16,7 +16,6 @@ import net.minecraft.util.RandomSource;
 import net.neoforged.neoforge.client.model.ExtendedBlockModelDeserializer;
 import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +27,7 @@ public class MirroredModelLoader implements IGeometryLoader<MirroredGeometry> {
     public static final String INNER_MODEL = "inner_model";
     public static final ResourceLocation ID = Reference.rl("mirror");
 
-    @Override @Nonnull public MirroredGeometry read(JsonObject modelContents, @NotNull JsonDeserializationContext deserializationContext) throws JsonParseException {
+    @Override @Nonnull public MirroredGeometry read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) throws JsonParseException {
         JsonElement innerJson = modelContents.get(INNER_MODEL);
         BlockModel baseModel = ExtendedBlockModelDeserializer.INSTANCE.fromJson(innerJson, BlockModel.class);
         return new MirroredGeometry(baseModel);

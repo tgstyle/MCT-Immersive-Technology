@@ -31,13 +31,14 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.block.Enums;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IComparatorOverride, BlockInterfaces.IPlacementInteraction, BlockInterfaces.IConfigurableSides {
     public final MarkableFluidTank tank;
@@ -56,7 +57,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
     @Override public abstract void tickServer();
 
-    @Override public void readCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
+    @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         sideConfig.clear();
         int[] sideCfgArray = nbt.getIntArray("sideConfig");
         if (sideCfgArray.length >= 2) {
@@ -76,7 +77,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
     protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
 
-    @Override public void writeCustomNBT(@NotNull CompoundTag nbt, boolean descPacket) {
+    @Override public void writeCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         int[] sideCfgArray = new int[2];
         sideCfgArray[0] = sideConfig.getOrDefault(Direction.DOWN, IOSideConfig.OUTPUT).ordinal();
         sideCfgArray[1] = sideConfig.getOrDefault(Direction.UP, IOSideConfig.INPUT).ordinal();
@@ -97,7 +98,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         return (facing == Direction.UP ? new SidedFluidHandler(this, Direction.UP) : new SidedFluidHandler(this, Direction.DOWN));
     }
 
-    @Override public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+    @Override public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
         if (!contained.isEmpty() && !isFluidValid(contained)) {
             if (level != null && !level.isClientSide) player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false);
@@ -107,7 +108,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         return false;
     }
 
-    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
+    @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) return null;
         if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
@@ -119,7 +120,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
     @Override public int getComparatorInputOverride() { return (15 * tank.getFluidAmount()) / tank.getCapacity(); }
 
-    @Override public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
+    @Override public void getBlockEntityDrop(@Nonnull LootContext context, @Nonnull Consumer<ItemStack> drop) {
         ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
         CompoundTag tag = new CompoundTag();
         writeTank(tag, true);
@@ -160,11 +161,11 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         }
     }
 
-    protected abstract boolean isFluidValid(@NotNull FluidStack fluid);
+    protected abstract boolean isFluidValid(@Nonnull FluidStack fluid);
 
-    @Override @NotNull public IOSideConfig getSideConfig(@NotNull Direction side) { return sideConfig.getOrDefault(side, IOSideConfig.NONE); }
+    @Override @Nonnull public IOSideConfig getSideConfig(@Nonnull Direction side) { return sideConfig.getOrDefault(side, IOSideConfig.NONE); }
 
-    @Override public boolean toggleSide(Direction side, @NotNull Player p) {
+    @Override public boolean toggleSide(Direction side, @Nonnull Player p) {
         if (side.getAxis() != Direction.Axis.Y) return false;
         if (!canConfigureSide(side)) return false;
         IOSideConfig next = IOSideConfig.next(sideConfig.getOrDefault(side, IOSideConfig.NONE));
@@ -180,18 +181,18 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
     protected abstract void updateState();
 
-    @Override @NotNull public CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+    @Override @Nonnull public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         writeCustomNBT(tag, true);
         return tag;
     }
 
-    @Override public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+    @Override public void handleUpdateTag(@Nonnull CompoundTag tag, @Nonnull HolderLookup.Provider registries) {
         super.handleUpdateTag(tag, registries);
         readCustomNBT(tag, true);
     }
 
-    @Override public void onDataPacket(@NotNull Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider registries) {
+    @Override public void onDataPacket(@Nonnull Connection net, ClientboundBlockEntityDataPacket pkt, @Nonnull HolderLookup.Provider registries) {
         super.onDataPacket(net, pkt, registries);
         readCustomNBT(pkt.getTag(), true);
     }
@@ -204,13 +205,13 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
         @Override public int getTanks() { return barrel.tank.getTanks(); }
 
-        @Override @NotNull public FluidStack getFluidInTank(int tank) { return barrel.tank.getFluidInTank(tank); }
+        @Override @Nonnull public FluidStack getFluidInTank(int tank) { return barrel.tank.getFluidInTank(tank); }
 
         @Override public int getTankCapacity(int tank) { return barrel.tank.getTankCapacity(tank); }
 
-        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return barrel.isFluidValid(stack); }
+        @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return barrel.isFluidValid(stack); }
 
-        @Override public int fill(FluidStack resource, @NotNull FluidAction action) {
+        @Override public int fill(FluidStack resource, @Nonnull FluidAction action) {
             if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.INPUT)) return 0;
             int filled = barrel.tank.fill(resource, action);
             if (filled > 0 && action.execute()) {
@@ -220,7 +221,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
             return filled;
         }
 
-        @Override @NotNull public FluidStack drain(FluidStack resource, @NotNull FluidAction action) {
+        @Override @Nonnull public FluidStack drain(FluidStack resource, @Nonnull FluidAction action) {
             if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT)) return FluidStack.EMPTY;
             FluidStack drained = barrel.tank.drain(resource, action);
             if (!drained.isEmpty() && action.execute()) {
@@ -230,7 +231,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
             return drained;
         }
 
-        @Override @NotNull public FluidStack drain(int maxDrain, @NotNull FluidAction action) {
+        @Override @Nonnull public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
             if (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT) return FluidStack.EMPTY;
             FluidStack drained = barrel.tank.drain(maxDrain, action);
             if (!drained.isEmpty() && action.execute()) {

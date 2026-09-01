@@ -18,8 +18,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
@@ -45,7 +45,7 @@ public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
         drops = helper.createAnimatedDrawable(dropsStatic, 200, IDrawableAnimated.StartDirection.TOP, false);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull RadiatorRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull RadiatorRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = BuiltInRegistries.FLUID.getTag(recipe.fluidTag())
@@ -73,12 +73,12 @@ public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
                         FluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull RadiatorRecipe recipe) {
+    private int getTankCapacity(@Nonnull RadiatorRecipe recipe) {
         int outAmount = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput.getAmount() : 0;
         return Math.max(recipe.amount(), outAmount);
     }
 
-    @Override public void draw(@NotNull RadiatorRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull RadiatorRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
 
         tankOverlay.draw(guiGraphics, 11, 11);

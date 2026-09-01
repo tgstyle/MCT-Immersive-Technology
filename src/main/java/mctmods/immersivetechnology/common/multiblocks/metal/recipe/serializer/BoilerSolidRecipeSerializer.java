@@ -11,7 +11,8 @@ import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_SOLID.iconStack(); }
@@ -28,7 +29,7 @@ public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidR
 
         StreamCodec<RegistryFriendlyByteBuf, BoilerSolidRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull BoilerSolidRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull BoilerSolidRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 IngredientWithSize input = IngredientWithSize.STREAM_CODEC.decode(buf);
                 double heatPerTick = buf.readDouble();
                 double targetHeat = buf.readDouble();
@@ -36,7 +37,7 @@ public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidR
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, BoilerSolidRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, BoilerSolidRecipe recipe) {
                 IngredientWithSize.STREAM_CODEC.encode(buf, recipe.input());
                 buf.writeDouble(recipe.heatPerTick());
                 buf.writeDouble(recipe.targetHeat());

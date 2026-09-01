@@ -20,8 +20,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public class RotorCreativeBlock extends ModEntityBlock<RotorCreativeBlockEntity> {
@@ -29,13 +29,13 @@ public class RotorCreativeBlock extends ModEntityBlock<RotorCreativeBlockEntity>
 
     public RotorCreativeBlock(BiFunction<BlockPos, BlockState, RotorCreativeBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH)); }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(FACING); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(FACING); }
 
-    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getRotorShape(state); }
+    @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getRotorShape(state); }
 
-    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getRotorShape(state); }
+    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getRotorShape(state); }
 
-    @Override public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getRotorShape(state); }
+    @Override public @Nonnull VoxelShape getOcclusionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) { return getRotorShape(state); }
 
     private VoxelShape getRotorShape(BlockState state) {
         Direction facing = state.getValue(FACING);
@@ -49,12 +49,12 @@ public class RotorCreativeBlock extends ModEntityBlock<RotorCreativeBlockEntity>
 
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()); }
 
-    @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+    @Override @Nonnull public InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull BlockHitResult hit) {
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof MenuProvider menuProvider) { player.openMenu(menuProvider, buf -> buf.writeBlockPos(pos)); }
         return InteractionResult.CONSUME;
     }
 
-    @Override public @NotNull RenderShape getRenderShape(@NotNull BlockState state) { return RenderShape.ENTITYBLOCK_ANIMATED; }
+    @Override public @Nonnull RenderShape getRenderShape(@Nonnull BlockState state) { return RenderShape.ENTITYBLOCK_ANIMATED; }
 }

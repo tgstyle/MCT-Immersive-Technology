@@ -10,7 +10,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public record MessageContainerUpdate(int windowId, CompoundTag nbt) implements CustomPacketPayload {
@@ -25,7 +26,7 @@ public record MessageContainerUpdate(int windowId, CompoundTag nbt) implements C
             MessageContainerUpdate::new
     );
 
-    @Override public CustomPacketPayload.@NotNull Type<? extends CustomPacketPayload> type() {
+    @Override public @Nonnull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 

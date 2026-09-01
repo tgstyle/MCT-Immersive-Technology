@@ -15,8 +15,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -55,23 +55,23 @@ public class BoilerSolidRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public @NotNull BoilerSolidRecipeBuilder unlockedBy(@NotNull String name, @NotNull Criterion<?> criterion) {
+    public @Nonnull BoilerSolidRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
     }
 
     @Override
-    public @NotNull BoilerSolidRecipeBuilder group(@Nullable String group) {
+    public @Nonnull BoilerSolidRecipeBuilder group(@Nullable String group) {
         return this;
     }
 
     @Override
-    public @NotNull Item getResult() {
+    public @Nonnull Item getResult() {
         return Items.AIR;
     }
 
     @Override
-    public void save(RecipeOutput output, @NotNull ResourceLocation id) {
+    public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
         Advancement.Builder advancement = output.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id))

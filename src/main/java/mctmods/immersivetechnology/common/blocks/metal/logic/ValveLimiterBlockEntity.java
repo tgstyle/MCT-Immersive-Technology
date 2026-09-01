@@ -19,20 +19,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock.ROTATION;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IItemHandler {
     public record OutputItemHandler(ValveLimiterBlockEntity be) implements IItemHandler {
         @Override public int getSlots() { return be.getSource() != null ? be.getSource().getSlots() : 0; }
 
-        @Override @NotNull public ItemStack getStackInSlot(int slot) { return be.getSource() != null ? be.getSource().getStackInSlot(slot) : ItemStack.EMPTY; }
+        @Override @Nonnull public ItemStack getStackInSlot(int slot) { return be.getSource() != null ? be.getSource().getStackInSlot(slot) : ItemStack.EMPTY; }
 
-        @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) { return stack; }
+        @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) { return stack; }
 
-        @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (be.level == null || be.level.isClientSide) return ItemStack.EMPTY;
             if (be.busy) return ItemStack.EMPTY;
             BlockState state = be.getBlockState();
@@ -56,7 +57,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
         @Override public int getSlotLimit(int slot) { return be.getSource() != null ? be.getSource().getSlotLimit(slot) : 0; }
 
-        @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) { return false; }
+        @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return false; }
     }
 
     public int rotation = 0;
@@ -95,7 +96,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         return null;
     }
 
-    @Override public void setFacing(@NotNull Direction facing) {
+    @Override public void setFacing(@Nonnull Direction facing) {
         super.setFacing(facing);
     }
 
@@ -104,14 +105,14 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         return dest != null ? dest.getSlots() : 0;
     }
 
-    @Override public @NotNull ItemStack getStackInSlot(int slot) {
+    @Override public @Nonnull ItemStack getStackInSlot(int slot) {
         IItemHandler dest = getDestination();
         return dest != null ? dest.getStackInSlot(slot) : ItemStack.EMPTY;
     }
 
     boolean busy = false;
 
-    @Override @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (level == null || level.isClientSide || busy || stack.isEmpty()) return stack;
         BlockState state = getBlockState();
         if (!state.getValue(ValveCommonBlockEntity.OPEN)) return stack;
@@ -144,14 +145,14 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         return toReturn;
     }
 
-    @Override @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) { return ItemStack.EMPTY; }
 
     @Override public int getSlotLimit(int slot) {
         IItemHandler dest = getDestination();
         return dest != null ? dest.getSlotLimit(slot) : 0;
     }
 
-    @Override public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+    @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         IItemHandler dest = getDestination();
         return dest != null && dest.isItemValid(slot, stack);
     }
@@ -172,9 +173,9 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         return level.getCapability(Capabilities.ItemHandler.BLOCK, srcPos, blockFacing.getOpposite());
     }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveLimiterMenu.makeServer(MenuTypes.VALVE_LIMITER.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveLimiterMenu.makeServer(MenuTypes.VALVE_LIMITER.getType(), id, inv, this); }
 
-    @Override public @NotNull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LIMITER.location); }
+    @Override public @Nonnull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LIMITER.location); }
 
     @Override public void receiveMessageFromServer(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
@@ -191,7 +192,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
-    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
         if (level == null || level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;

@@ -12,7 +12,7 @@ import snownee.jade.api.fluid.JadeFluidObject;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

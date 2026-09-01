@@ -22,8 +22,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class StyleNOXCategory extends ModRecipeCategory<StyleNOXRecipe> {
         tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);
     }
 
-    @Override public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull StyleNOXRecipe recipe, @NotNull IFocusGroup focuses) {
+    @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull StyleNOXRecipe recipe, @Nonnull IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 71, 17)
                 .addItemStacks(Arrays.asList(recipe.input().getMatchingStacks()));
 
@@ -79,7 +79,7 @@ public class StyleNOXCategory extends ModRecipeCategory<StyleNOXRecipe> {
                 .orElse(List.of());
     }
 
-    @Override public void draw(@NotNull StyleNOXRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull StyleNOXRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 5, 15);
         tankOverlay.draw(guiGraphics, 24, 15);

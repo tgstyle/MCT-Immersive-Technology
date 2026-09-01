@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_TANK.iconStack(); }
@@ -38,7 +39,7 @@ public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRec
 
         StreamCodec<RegistryFriendlyByteBuf, BoilerTankRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull BoilerTankRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull BoilerTankRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amount = buf.readVarInt();
                 FluidStack output = FluidStack.STREAM_CODEC.decode(buf);
@@ -48,7 +49,7 @@ public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRec
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, BoilerTankRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, BoilerTankRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.STREAM_CODEC.encode(buf, recipe.output());

@@ -31,8 +31,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +40,12 @@ import java.util.List;
 public class FormationTool extends Item {
     public FormationTool() { super(new Properties()); }
 
-    @Override public int getMaxStackSize(@NotNull ItemStack stack) { return 1; }
+    @Override public int getMaxStackSize(@Nonnull ItemStack stack) { return 1; }
 
-    @Override @NotNull public Component getName(@NotNull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
+    @Override @Nonnull public Component getName(@Nonnull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
         addInfo(tooltipComponents, Lib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
         addInfo(tooltipComponents, Lib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
@@ -73,7 +73,7 @@ public class FormationTool extends Item {
         }
     }
 
-    @Override @NotNull public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+    @Override @Nonnull public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
@@ -156,16 +156,16 @@ public class FormationTool extends Item {
         return result;
     }
 
-    @Override public boolean doesSneakBypassUse(@NotNull ItemStack stack, @NotNull LevelReader world, @NotNull BlockPos pos, @NotNull Player player) { return true; }
+    @Override public boolean doesSneakBypassUse(@Nonnull ItemStack stack, @Nonnull LevelReader world, @Nonnull BlockPos pos, @Nonnull Player player) { return true; }
 
-    @Override @NotNull public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
+    @Override @Nonnull public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity entity, @Nonnull InteractionHand hand) {
         if (!player.level().isClientSide && RotationUtil.rotateEntity(entity)) return InteractionResult.SUCCESS;
         return InteractionResult.PASS;
     }
 
-    @Override public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) { return true; }
+    @Override public boolean hasCraftingRemainingItem(@Nonnull ItemStack stack) { return true; }
 
-    @Override @NotNull public ItemStack getCraftingRemainingItem(@NotNull ItemStack stack) {
+    @Override @Nonnull public ItemStack getCraftingRemainingItem(@Nonnull ItemStack stack) {
         ItemStack container = stack.copy();
         int newDamage = container.getDamageValue() + 1;
         if (newDamage >= container.getMaxDamage()) {
@@ -175,9 +175,9 @@ public class FormationTool extends Item {
         return container;
     }
 
-    @Override public boolean isEnchantable(@NotNull ItemStack stack) { return false; }
+    @Override public boolean isEnchantable(@Nonnull ItemStack stack) { return false; }
 
-    @Override public int getEnchantmentValue(@NotNull ItemStack stack) { return 0; }
+    @Override public int getEnchantmentValue(@Nonnull ItemStack stack) { return 0; }
 
-    @Override public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) { return false; }
+    @Override public boolean isBookEnchantable(@Nonnull ItemStack stack, @Nonnull ItemStack book) { return false; }
 }

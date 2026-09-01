@@ -7,8 +7,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class SolarRegistryData extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag nbt, HolderLookup.@NotNull Provider provider) {
+    public @Nonnull CompoundTag save(@Nonnull CompoundTag nbt, @Nonnull HolderLookup.Provider provider) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
             if (entry.getValue().isEmpty()) continue;
             ListTag list = new ListTag();

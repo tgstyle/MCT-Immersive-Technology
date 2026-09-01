@@ -15,8 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchangerRecipe> {
@@ -61,7 +61,7 @@ public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchan
 
         StreamCodec<RegistryFriendlyByteBuf, HeatExchangerRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull HeatExchangerRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull HeatExchangerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> input0Tag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int input0Amount = buf.readVarInt();
                 boolean hasInput1 = buf.readBoolean();
@@ -76,7 +76,7 @@ public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchan
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, HeatExchangerRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, HeatExchangerRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.input0Tag());
                 buf.writeVarInt(recipe.input0Amount());
                 boolean hasInput1 = recipe.input1Tag() != null;

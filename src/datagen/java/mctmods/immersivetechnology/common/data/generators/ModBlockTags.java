@@ -12,8 +12,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -44,7 +44,7 @@ public class ModBlockTags extends BlockTagsProvider {
 
     public ModBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, Reference.MODID, existingFileHelper); }
 
-    @Override protected void addTags(@NotNull Provider provider) {
+    @Override protected void addTags(@Nonnull Provider provider) {
         Reference.IT_LOGGER.info("IT Block Tags");
 
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tagAxe = this.tag(BlockTags.MINEABLE_WITH_AXE);

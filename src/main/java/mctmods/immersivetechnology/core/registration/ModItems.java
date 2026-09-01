@@ -10,8 +10,8 @@ import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;

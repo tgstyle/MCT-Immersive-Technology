@@ -35,14 +35,14 @@ import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import com.immersiveconvergence.api.block.Enums;
+
+import javax.annotation.Nullable;
 
 public class BasicStateGenerator {
 

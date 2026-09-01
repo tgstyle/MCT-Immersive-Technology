@@ -24,8 +24,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
 import com.immersiveconvergence.api.block.BlockInterfaces;
@@ -34,6 +32,9 @@ import com.immersiveconvergence.api.block.FacingLimitation;
 import com.immersiveconvergence.api.block.BaseBlockEntity;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IDirectionalBE, BlockInterfaces.IHasDummyBlocks, IEnergyStorage, ISubmodelOffsetProvider {
 
@@ -272,7 +273,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
         };
     }
 
-    @Override @NotNull public ModelData getModelData() {
+    @Override @Nonnull public ModelData getModelData() {
         BlockPos offset = getModelOffset(getBlockState(), null);
         return ModelData.builder().with(SplitModelProperties.SUBMODEL_OFFSET, offset).build();
     }

@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
@@ -33,21 +33,21 @@ public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
                 .setValue(ROTATION, 0));
     }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
     }
 
-    @Override public boolean canConnectRedstone(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos, Direction side) { return true; }
+    @Override public boolean canConnectRedstone(@Nonnull BlockState state, BlockGetter world, @Nonnull BlockPos pos, Direction side) { return true; }
 
-    @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block fromBlock, @Nonnull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) { return; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
-    @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+    @Override @Nonnull public InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull BlockHitResult hit) {
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {

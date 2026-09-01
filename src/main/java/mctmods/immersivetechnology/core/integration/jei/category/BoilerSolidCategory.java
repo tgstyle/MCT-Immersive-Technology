@@ -14,8 +14,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class BoilerSolidCategory extends ModRecipeCategory<BoilerSolidRecipe> {
     }
 
     @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerSolidRecipe recipe, @NotNull IFocusGroup focuses) {
+    public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull BoilerSolidRecipe recipe, @Nonnull IFocusGroup focuses) {
         List<ItemStack> inputs = Arrays.stream(recipe.input.getMatchingStacks())
                 .map(stack -> {
                     ItemStack copy = stack.copy();
@@ -47,7 +47,7 @@ public class BoilerSolidCategory extends ModRecipeCategory<BoilerSolidRecipe> {
                 .addIngredients(VanillaTypes.ITEM_STACK, inputs);
     }
 
-    @Override public void draw(@NotNull BoilerSolidRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    @Override public void draw(@Nonnull BoilerSolidRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
     }
 }

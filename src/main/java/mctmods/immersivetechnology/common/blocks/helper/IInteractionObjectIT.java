@@ -8,14 +8,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public interface IInteractionObjectIT<T extends BlockEntity & IInteractionObjectIT<T>> extends IMasterMenuProvider<T> {
     MenuTypes.ArgContainer<? super T, ?> getContainerType();
 
-    @Nonnull default AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
+    @Nonnull default AbstractContainerMenu createMenu(int id, @Nonnull Inventory playerInventory, @Nonnull Player playerEntity) {
         T master = getGuiMaster();
         Preconditions.checkNotNull(master);
         MenuTypes.ArgContainer<? super T, ?> type = getContainerType();

@@ -10,7 +10,8 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class RotorCreativeMenu extends ContainerMenu {
@@ -34,9 +35,9 @@ public class RotorCreativeMenu extends ContainerMenu {
 
     public static RotorCreativeMenu makeClient(MenuType<RotorCreativeMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) { return new RotorCreativeMenu(type, id, inv, buffer); }
 
-    @Override public boolean stillValid(@NotNull Player player) { return tile.stillValid(player); }
+    @Override public boolean stillValid(@Nonnull Player player) { return tile.stillValid(player); }
 
-    @Override @NotNull public ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
+    @Override @Nonnull public ItemStack quickMoveStack(@Nonnull Player pPlayer, int pIndex) {
         if (pIndex < 0 || pIndex >= slots.size()) { return ItemStack.EMPTY; }
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(pIndex);

@@ -17,8 +17,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RotorCreativeBlockEntity extends BaseBlockEntity implements MenuProvider, IClientTickableBE {
     public int rpm;
@@ -77,7 +78,7 @@ public class RotorCreativeBlockEntity extends BaseBlockEntity implements MenuPro
 
     public boolean stillValid(Player player) { return player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) < 64; }
 
-    @Override @Nullable public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return MenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
+    @Override @Nullable public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return MenuTypes.ROTOR_CREATIVE.create(id, inv, this); }
 
-    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_ROTOR_CREATIVE.getLocation()); }
 }

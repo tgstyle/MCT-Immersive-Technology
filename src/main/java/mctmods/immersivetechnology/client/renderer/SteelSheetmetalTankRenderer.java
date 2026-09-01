@@ -15,16 +15,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+
+import javax.annotation.Nonnull;
 
 public class SteelSheetmetalTankRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<State>> {
 
     public SteelSheetmetalTankRenderer() {}
 
-    @Override @NotNull public AABB getRenderBoundingBox(@NotNull MultiblockBlockEntityMaster<State> tile) { return new AABB(tile.getBlockPos()).inflate(9); }
+    @Override @Nonnull public AABB getRenderBoundingBox(@Nonnull MultiblockBlockEntityMaster<State> tile) { return new AABB(tile.getBlockPos()).inflate(9); }
 
-    @Override public void render(MultiblockBlockEntityMaster<State> tile, float partialTicks, PoseStack matrixStack, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    @Override public void render(MultiblockBlockEntityMaster<State> tile, float partialTicks, PoseStack matrixStack, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         final State state = tile.getHelper().getState();
         matrixStack.pushPose();
         Vec3 center = Vec3.atLowerCornerOf(tile.getHelper().getContext().getLevel().toAbsolute(new BlockPos(2, 0, 2)).subtract(tile.getBlockPos()));

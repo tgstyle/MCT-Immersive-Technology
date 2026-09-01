@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.core.util.loot;
 
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,6 +14,8 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+
+import javax.annotation.Nonnull;
 
 public class DropInventoryLootEntry extends LootPoolSingletonContainer {
 

@@ -22,20 +22,21 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.ROTATION;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IFluidHandler, IFluidPipe {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
-        @Override @NotNull public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
+        @Override @Nonnull public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
         @Override public int getTankCapacity(int tank) { return 0; }
-        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return false; }
-        @Override public int fill(@NotNull FluidStack fluidStack, @NotNull FluidAction b) { return 0; }
-        @Override @NotNull public FluidStack drain(@NotNull FluidStack fluidStack, @NotNull FluidAction b) { return FluidStack.EMPTY; }
-        @Override @NotNull public FluidStack drain(int i, @NotNull FluidAction b) { return FluidStack.EMPTY; }
+        @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return false; }
+        @Override public int fill(@Nonnull FluidStack fluidStack, @Nonnull FluidAction b) { return 0; }
+        @Override @Nonnull public FluidStack drain(@Nonnull FluidStack fluidStack, @Nonnull FluidAction b) { return FluidStack.EMPTY; }
+        @Override @Nonnull public FluidStack drain(int i, @Nonnull FluidAction b) { return FluidStack.EMPTY; }
     }
 
     public int rotation = 0;
@@ -79,7 +80,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         return null;
     }
 
-    @Override public void setFacing(@NotNull Direction facing) {
+    @Override public void setFacing(@Nonnull Direction facing) {
         this.facing = facing;
         if (level == null || level.isClientSide) {
             efficientSetChanged();
@@ -119,15 +120,15 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
 
     @Override public int getTanks() { return 1; }
 
-    @Override public @NotNull FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
+    @Override public @Nonnull FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
 
     @Override public int getTankCapacity(int tank) { return Integer.MAX_VALUE; }
 
-    @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return true; }
+    @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return true; }
 
     boolean busy = false;
 
-    @Override public int fill(@NotNull FluidStack fluidStack, @NotNull FluidAction doFill) {
+    @Override public int fill(@Nonnull FluidStack fluidStack, @Nonnull FluidAction doFill) {
         if (level == null || level.isClientSide || busy || fluidStack.isEmpty()) return 0;
         BlockState state = getBlockState();
         if (!state.getValue(ValveCommonBlockEntity.OPEN)) return 0;
@@ -157,9 +158,9 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         return toReturn;
     }
 
-    @Override @NotNull public FluidStack drain(@NotNull FluidStack fluidStack, @NotNull FluidAction b) { return FluidStack.EMPTY; }
+    @Override @Nonnull public FluidStack drain(@Nonnull FluidStack fluidStack, @Nonnull FluidAction b) { return FluidStack.EMPTY; }
 
-    @Override @NotNull public FluidStack drain(int i, @NotNull FluidAction b) { return FluidStack.EMPTY; }
+    @Override @Nonnull public FluidStack drain(int i, @Nonnull FluidAction b) { return FluidStack.EMPTY; }
 
     public IFluidHandler getDestination() {
         if (level == null) return null;
@@ -169,9 +170,9 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         return level.getCapability(Capabilities.FluidHandler.BLOCK, dstPos, blockFacing);
     }
 
-    @Override public AbstractContainerMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) { return ValveFluidMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveFluidMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
 
-    @Override @NotNull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
 
     @Override public void receiveMessageFromServer(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
@@ -188,7 +189,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
 
     @Override public boolean stillValid(Player player) { return !isRemoved() && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D; }
 
-    @Override public boolean hammerUseSide(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull Vec3 hit) {
+    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
         if (level == null || level.isClientSide) return false;
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction newFacing = counter ? facing.getCounterClockWise(side.getAxis()) : facing.getClockWise(side.getAxis());

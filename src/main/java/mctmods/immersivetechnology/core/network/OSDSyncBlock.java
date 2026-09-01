@@ -9,7 +9,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public record OSDSyncBlock(String key, int distance) implements CustomPacketPayload {
@@ -24,7 +25,7 @@ public record OSDSyncBlock(String key, int distance) implements CustomPacketPayl
             OSDSyncBlock::new
     );
 
-    @Override public CustomPacketPayload.@NotNull Type<? extends CustomPacketPayload> type() {
+    @Override public @Nonnull CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 

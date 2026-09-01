@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.MELTING_CRUCIBLE.iconStack(); }
@@ -46,7 +47,7 @@ public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
 
         StreamCodec<RegistryFriendlyByteBuf, MeltingRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull MeltingRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull MeltingRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> inputTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int inputAmount = buf.readVarInt();
                 FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -57,7 +58,7 @@ public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, MeltingRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, MeltingRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag());
                 buf.writeVarInt(recipe.inputAmount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);

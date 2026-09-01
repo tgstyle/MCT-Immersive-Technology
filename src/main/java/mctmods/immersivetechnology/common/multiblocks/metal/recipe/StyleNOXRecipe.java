@@ -17,8 +17,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class StyleNOXRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, StyleNOXRecipeSerializer> SERIALIZER;
@@ -64,7 +65,7 @@ public class StyleNOXRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider access) { return this.output.get(); }
+    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider access) { return this.output.get(); }
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 

@@ -23,24 +23,25 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
 import static mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity.OPEN;
+
+import javax.annotation.Nonnull;
 
 public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
     public ValveLoadBlock(BiFunction<BlockPos, BlockState, ValveLoadBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ModProperties.MIRRORED, false).setValue(ROTATION, 0)); }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
 
-    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
+    @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
-    @Override @NotNull public VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return getValveShape(state); }
+    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
-    @Override @NotNull public VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) { return getValveShape(state); }
+    @Override @Nonnull public VoxelShape getOcclusionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
         Direction facing = state.getValue(ModProperties.FACING_ALL);
@@ -107,16 +108,16 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
         return Shapes.or(baseShape, connector1, connector2);
     }
 
-    @Override public boolean canConnectRedstone(@NotNull BlockState state, BlockGetter world, @NotNull BlockPos pos, Direction side) { return true; }
+    @Override public boolean canConnectRedstone(@Nonnull BlockState state, BlockGetter world, @Nonnull BlockPos pos, Direction side) { return true; }
 
-    @Override public void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block fromBlock, @NotNull BlockPos fromPos, boolean isMoving) {
+    @Override public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block fromBlock, @Nonnull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
         if (level.isClientSide) { return; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
-    @Override @NotNull public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+    @Override @Nonnull public InteractionResult useWithoutItem(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull BlockHitResult hit) {
         ItemStack heldItem = player.getMainHandItem();
         if (heldItem.is(ModTags.formationTools)) { return InteractionResult.PASS; }
         if (level.isClientSide) { return InteractionResult.SUCCESS; }

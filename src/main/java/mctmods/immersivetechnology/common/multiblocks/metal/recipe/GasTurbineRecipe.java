@@ -15,8 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class GasTurbineRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, GasTurbineRecipeSerializer> SERIALIZER;
@@ -59,7 +60,7 @@ public class GasTurbineRecipe extends MultiblockRecipe {
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 
-    @Override @NotNull public ItemStack getResultItem(@NotNull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override public int getTotalProcessTime() { return time; }
 

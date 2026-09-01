@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.core.util.inventory;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -18,9 +18,9 @@ public class InventoryHandler implements IItemHandlerModifiable {
 
     public int getSlots() { return this.slots; }
 
-    @NotNull public ItemStack getStackInSlot(int slot) { return Objects.requireNonNull(this.inv.getInventory()).get(this.slotOffset + slot); }
+    @Nonnull public ItemStack getStackInSlot(int slot) { return Objects.requireNonNull(this.inv.getInventory()).get(this.slotOffset + slot); }
 
-    @NotNull public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (this.canInsert[slot] && !stack.isEmpty()) {
             if (!this.inv.isStackValid(this.slotOffset + slot, stack)) { return stack; }
             else {
@@ -52,7 +52,7 @@ public class InventoryHandler implements IItemHandlerModifiable {
         } else { return stack; }
     }
 
-    @NotNull public ItemStack extractItem(int slot, int amount, boolean simulate) {
+    @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (this.canExtract[slot] && amount != 0) {
             int offsetSlot = this.slotOffset + slot;
             ItemStack currentStack = Objects.requireNonNull(this.inv.getInventory()).get(offsetSlot);
@@ -73,7 +73,7 @@ public class InventoryHandler implements IItemHandlerModifiable {
 
     public int getSlotLimit(int slot) { return 64; }
 
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) { return this.canInsert[slot] && this.inv.isStackValid(slot, stack); }
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return this.canInsert[slot] && this.inv.isStackValid(slot, stack); }
 
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) { Objects.requireNonNull(this.inv.getInventory()).set(this.slotOffset + slot, stack); this.inv.doGraphicalUpdates(); }
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) { Objects.requireNonNull(this.inv.getInventory()).set(this.slotOffset + slot, stack); this.inv.doGraphicalUpdates(); }
 }

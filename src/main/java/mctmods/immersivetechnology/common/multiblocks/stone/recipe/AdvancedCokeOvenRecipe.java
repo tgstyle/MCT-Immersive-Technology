@@ -17,8 +17,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
         return SERIALIZER.get();
     }
 
-    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider access) {
+    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider access) {
         return this.itemOutput.get();
     }
 

@@ -17,8 +17,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
@@ -40,7 +40,7 @@ public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
     }
 
     @Override
-    public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull BoilerTankRecipe recipe, @NotNull IFocusGroup focuses) {
+    public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull BoilerTankRecipe recipe, @Nonnull IFocusGroup focuses) {
         int tankCapacity = getTankCapacity(recipe);
 
         List<FluidStack> inputs = BuiltInRegistries.FLUID.getTag(recipe.fluidTag())
@@ -67,12 +67,12 @@ public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
                         FluidInfoArea.fillTooltip(fs, recipe.output.getAmount(), tooltip::add)));
     }
 
-    private int getTankCapacity(@NotNull BoilerTankRecipe recipe) {
+    private int getTankCapacity(@Nonnull BoilerTankRecipe recipe) {
         return Math.max(recipe.amount(), recipe.output.getAmount());
     }
 
     @Override
-    public void draw(@NotNull BoilerTankRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
+    public void draw(@Nonnull BoilerTankRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 65, 18);
         tankOverlay.draw(guiGraphics, 90, 18);

@@ -12,8 +12,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class StyleNOXMenu extends ContainerMenu {
         addGenericData(GenericContainerData.int32(() -> state != null ? state.burnTotal : burnTotal, v -> this.burnTotal = v));
     }
 
-    @Override public boolean clickMenuButton(@NotNull Player player, int id) {
+    @Override public boolean clickMenuButton(@Nonnull Player player, int id) {
         if (mbContext == null || id < 0 || id > StyleNOXLogic.MAX_ROD_LEVEL) { return false; }
         StyleNOXLogic.State state = mbContext.getState();
         state.rodLevel = id;

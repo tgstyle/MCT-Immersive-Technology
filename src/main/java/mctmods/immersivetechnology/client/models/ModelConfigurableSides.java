@@ -43,12 +43,13 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
 import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ModelConfigurableSides extends ModBakedModel {
     private static final HashMap<String, ITextureNamer> TYPES = new HashMap<>();
@@ -77,7 +78,7 @@ public class ModelConfigurableSides extends ModBakedModel {
         this.renderTypes = renderTypes != null ? renderTypes : RenderTypeGroup.EMPTY;
     }
 
-    @Override @NotNull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType renderType) {
+    @Override @Nonnull public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData, @Nullable RenderType renderType) {
         if (side == null) { return ImmutableList.of(); }
         Map<Direction, Enums.IOSideConfig> key = extraData.get(ModProperties.Model.SIDECONFIG);
         if (key == null && state != null && state.getBlock() instanceof BarrelSteelBlock) {
@@ -100,7 +101,7 @@ public class ModelConfigurableSides extends ModBakedModel {
         return ImmutableMap.copyOf(normalized);
     }
 
-    @Override @NotNull public ModelData getModelData(@NotNull BlockAndTintGetter world, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData tileData) {
+    @Override @Nonnull public ModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ModelData tileData) {
         ModelData.Builder data = super.getModelData(world, pos, state, tileData).derive();
         BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof BlockInterfaces.IConfigurableSides confBE) {
@@ -140,13 +141,13 @@ public class ModelConfigurableSides extends ModBakedModel {
         out.put(side, BakedQuadUtils.createBakedQuad(vertices, side, sprite, uv, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, side.getAxisDirection() == Direction.AxisDirection.NEGATIVE));
     }
 
-    @Override @NotNull public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) { return this.textures.get(Direction.DOWN).get(Enums.IOSideConfig.NONE); }
+    @Override @Nonnull public TextureAtlasSprite getParticleIcon(@Nonnull ModelData data) { return this.textures.get(Direction.DOWN).get(Enums.IOSideConfig.NONE); }
 
-    @NotNull public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) { return ChunkRenderTypeSet.of(this.renderTypes.block()); }
+    @Nonnull public ChunkRenderTypeSet getRenderTypes(@Nonnull BlockState state, @Nonnull RandomSource rand, @Nonnull ModelData data) { return ChunkRenderTypeSet.of(this.renderTypes.block()); }
 
-    @NotNull public List<RenderType> getRenderTypes(@NotNull ItemStack itemStack, boolean fabulous) { return List.of(fabulous ? this.renderTypes.entityFabulous() : this.renderTypes.entity()); }
+    @Nonnull public List<RenderType> getRenderTypes(@Nonnull ItemStack itemStack, boolean fabulous) { return List.of(fabulous ? this.renderTypes.entityFabulous() : this.renderTypes.entity()); }
 
-    @Override @NotNull public BakedModel applyTransform(@NotNull ItemDisplayContext transformType, @NotNull PoseStack poseStack, boolean applyLeftHandTransform) {
+    @Override @Nonnull public BakedModel applyTransform(@Nonnull ItemDisplayContext transformType, @Nonnull PoseStack poseStack, boolean applyLeftHandTransform) {
         defaultTransforms.getTransform(transformType).apply(applyLeftHandTransform, poseStack);
         return this;
     }
@@ -180,7 +181,7 @@ public class ModelConfigurableSides extends ModBakedModel {
         public static final ResourceLocation NAME = Reference.rl("conf_sides");
         public static final Loader INSTANCE = new Loader();
         private Loader() {}
-        @NotNull public ConfigSidesModelBase read(JsonObject modelContents, @NotNull JsonDeserializationContext deserializationContext) {
+        @Nonnull public ConfigSidesModelBase read(JsonObject modelContents, @Nonnull JsonDeserializationContext deserializationContext) {
             String name = modelContents.has("base_name") ? modelContents.get("base_name").getAsString() : "unknown";
             String type = modelContents.get("type").getAsString();
             Map<String, Material> texMap = new HashMap<>();
@@ -210,7 +211,7 @@ public class ModelConfigurableSides extends ModBakedModel {
     }
 
     public record ConfigSidesModelBase(String name, String type, Map<String, Material> textures) implements IUnbakedGeometry<ConfigSidesModelBase> {
-        public @NotNull BakedModel bake(@NotNull IGeometryBakingContext owner, @NotNull ModelBaker bakery, @NotNull Function<Material, TextureAtlasSprite> spriteGetter, @NotNull ModelState modelTransform, @NotNull ItemOverrides overrides) {
+        public @Nonnull BakedModel bake(@Nonnull IGeometryBakingContext owner, @Nonnull ModelBaker bakery, @Nonnull Function<Material, TextureAtlasSprite> spriteGetter, @Nonnull ModelState modelTransform, @Nonnull ItemOverrides overrides) {
             Map<Direction, Map<Enums.IOSideConfig, TextureAtlasSprite>> tex = new EnumMap<>(Direction.class);
             for (Direction f : DirectionUtils.VALUES) {
                 Map<Enums.IOSideConfig, TextureAtlasSprite> forSide = new EnumMap<>(Enums.IOSideConfig.class);

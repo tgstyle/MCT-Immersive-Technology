@@ -10,8 +10,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.NotNull;
 import com.immersiveconvergence.api.block.Enums;
+
+import javax.annotation.Nonnull;
 
 public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
     private static final int tankSize = 24 * FluidType.BUCKET_VOLUME;
@@ -41,7 +42,7 @@ public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
         if (update) { setChanged(); markContainingBlockForUpdate(null); }
     }
 
-    @Override protected boolean isFluidValid(@NotNull FluidStack fluid) { return !fluid.isEmpty(); }
+    @Override protected boolean isFluidValid(@Nonnull FluidStack fluid) { return !fluid.isEmpty(); }
 
     @Override protected void postRead(boolean descPacket) {
         if (descPacket) {

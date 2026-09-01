@@ -15,7 +15,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.COOLING_TOWER.iconStack(); }
@@ -56,7 +57,7 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
 
         StreamCodec<RegistryFriendlyByteBuf, CoolingTowerRecipe> streamCodec = new StreamCodec<>() {
             @Override
-            public @NotNull CoolingTowerRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            public @Nonnull CoolingTowerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> tag0 = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amt0 = buf.readVarInt();
                 TagKey<Fluid> tag1 = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
@@ -72,7 +73,7 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
             }
 
             @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, CoolingTowerRecipe recipe) {
+            public void encode(@Nonnull RegistryFriendlyByteBuf buf, CoolingTowerRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag0());
                 buf.writeVarInt(recipe.amount0());
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag1());

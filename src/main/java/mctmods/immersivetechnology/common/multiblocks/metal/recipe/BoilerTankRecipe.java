@@ -17,7 +17,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerTankRecipe extends MultiblockRecipe {
@@ -65,7 +66,7 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override public @NotNull ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override public @Nonnull ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 

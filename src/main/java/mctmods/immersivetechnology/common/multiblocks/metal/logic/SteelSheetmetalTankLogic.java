@@ -39,8 +39,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -50,6 +48,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 import com.immersiveconvergence.api.util.ICFluidUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State>, BlockInterfaces.ILadderPositionProvider {
 
@@ -91,13 +92,13 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     private record ConditionalFluidHandler(MarkableFluidTank tank, boolean canFill, boolean canDrain, Runnable onChange, Supplier<Boolean> allowDrain) implements IFluidHandler {
         @Override public int getTanks() { return 1; }
 
-        @Override @NotNull public FluidStack getFluidInTank(int tank) { return this.tank.getFluid(); }
+        @Override @Nonnull public FluidStack getFluidInTank(int tank) { return this.tank.getFluid(); }
 
         @Override public int getTankCapacity(int tank) { return this.tank.getCapacity(); }
 
-        @Override public boolean isFluidValid(int tank, @NotNull FluidStack stack) { return this.tank.isFluidValid(stack); }
+        @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return this.tank.isFluidValid(stack); }
 
-        @Override public int fill(@NotNull FluidStack resource, @NotNull FluidAction action) {
+        @Override public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
             if (!canFill || resource.isEmpty()) return 0;
             if (action == FluidAction.SIMULATE) return this.tank.fill(resource, FluidAction.SIMULATE);
             int filled = this.tank.fill(resource, FluidAction.EXECUTE);
@@ -105,14 +106,14 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
             return filled;
         }
 
-        @Override @NotNull public FluidStack drain(@NotNull FluidStack resource, @NotNull FluidAction action) {
+        @Override @Nonnull public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
             if (!canDrain || !allowDrain.get() || resource.isEmpty()) return FluidStack.EMPTY;
             FluidStack drained = this.tank.drain(resource, action);
             if (!drained.isEmpty() && action == FluidAction.EXECUTE) onChange.run();
             return drained;
         }
 
-        @Override @NotNull public FluidStack drain(int maxDrain, @NotNull FluidAction action) {
+        @Override @Nonnull public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
             if (!canDrain || !allowDrain.get() || maxDrain <= 0) return FluidStack.EMPTY;
             FluidStack drained = this.tank.drain(maxDrain, action);
             if (!drained.isEmpty() && action == FluidAction.EXECUTE) onChange.run();

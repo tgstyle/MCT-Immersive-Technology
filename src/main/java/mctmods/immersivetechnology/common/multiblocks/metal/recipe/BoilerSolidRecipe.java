@@ -16,7 +16,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerSolidRecipe extends MultiblockRecipe {
@@ -52,7 +53,7 @@ public class BoilerSolidRecipe extends MultiblockRecipe {
     }
 
     @Override
-    @NotNull
+    @Nonnull
     public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
         return ItemStack.EMPTY;
     }

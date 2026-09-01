@@ -17,8 +17,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class HeatExchangerRecipe extends MultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, HeatExchangerRecipeSerializer> SERIALIZER;
@@ -92,7 +93,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         return (int) (baseProcessEnergy * energyModifier);
     }
 
-    @Override @NotNull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
 

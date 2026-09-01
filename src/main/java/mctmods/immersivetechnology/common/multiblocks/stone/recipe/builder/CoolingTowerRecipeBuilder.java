@@ -15,8 +15,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -71,23 +71,23 @@ public class CoolingTowerRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public @NotNull CoolingTowerRecipeBuilder unlockedBy(@NotNull String name, @NotNull Criterion<?> criterion) {
+    public @Nonnull CoolingTowerRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
     }
 
     @Override
-    public @NotNull CoolingTowerRecipeBuilder group(@Nullable String group) {
+    public @Nonnull CoolingTowerRecipeBuilder group(@Nullable String group) {
         return this;
     }
 
     @Override
-    public @NotNull Item getResult() {
+    public @Nonnull Item getResult() {
         return Items.AIR;
     }
 
     @Override
-    public void save(RecipeOutput output, @NotNull ResourceLocation id) {
+    public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
         Advancement.Builder advancement = output.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id))

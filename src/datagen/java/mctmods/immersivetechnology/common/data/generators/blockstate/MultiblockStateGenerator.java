@@ -24,10 +24,11 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 public class MultiblockStateGenerator {
     private final ModBlockState main;

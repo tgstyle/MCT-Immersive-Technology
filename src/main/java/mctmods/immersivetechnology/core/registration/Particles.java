@@ -10,8 +10,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 public class Particles {
@@ -19,13 +19,13 @@ public class Particles {
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<ColoredSmoke>> COLORED_SMOKE = REGISTER.register("colored_smoke", () -> new ParticleType<>(false) {
         @Override
-        @NotNull
+        @Nonnull
         public MapCodec<ColoredSmoke> codec() {
             return ColoredSmoke.CODEC;
         }
 
         @Override
-        public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, ColoredSmoke> streamCodec() {
+        public @Nonnull StreamCodec<? super RegistryFriendlyByteBuf, ColoredSmoke> streamCodec() {
             return ColoredSmoke.STREAM_CODEC;
         }
     });

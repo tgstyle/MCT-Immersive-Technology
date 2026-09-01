@@ -22,8 +22,8 @@ import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -73,15 +73,15 @@ public class ModBlockState extends BlockStateProvider {
 
     public PackOutput getPackOutput() { return packOutput; }
 
-    public @NotNull ResourceLocation modLoc(@NotNull String name) { return super.modLoc(name); }
+    public @Nonnull ResourceLocation modLoc(@Nonnull String name) { return super.modLoc(name); }
 
-    public @NotNull ResourceLocation mcLoc(@NotNull String name) { return super.mcLoc(name); }
+    public @Nonnull ResourceLocation mcLoc(@Nonnull String name) { return super.mcLoc(name); }
 
-    @Override @NotNull public BlockModelProvider models() { return blockModels; }
+    @Override @Nonnull public BlockModelProvider models() { return blockModels; }
 
-    @Override @NotNull public ItemModelProvider itemModels() { return itemModels; }
+    @Override @Nonnull public ItemModelProvider itemModels() { return itemModels; }
 
-    @Override @NotNull public CompletableFuture<?> run(@NotNull CachedOutput cache) {
+    @Override @Nonnull public CompletableFuture<?> run(@Nonnull CachedOutput cache) {
         blockModels.clearModels();
         itemModels.clearModels();
         registeredBlocks.clear();

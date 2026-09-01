@@ -30,9 +30,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -40,6 +38,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static mctmods.immersivetechnology.core.lib.Reference.rl;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ModFluids {
     public static final DeferredRegister<Fluid> REGISTER = DeferredRegister.create(BuiltInRegistries.FLUID, Reference.MODID);
@@ -193,10 +194,10 @@ public class ModFluids {
 
         private static FluidType makeTypeWithTextures(FluidType.Properties builder, ResourceLocation stillTex, ResourceLocation flowingTex, int tintColor) { return new FluidType(builder) {
             @SuppressWarnings("removal")
-            @Override public void initializeClient(@NotNull Consumer<IClientFluidTypeExtensions> consumer) { consumer.accept(new IClientFluidTypeExtensions() {
-                @Override public @NotNull ResourceLocation getStillTexture() { return stillTex; }
+            @Override public void initializeClient(@Nonnull Consumer<IClientFluidTypeExtensions> consumer) { consumer.accept(new IClientFluidTypeExtensions() {
+                @Override public @Nonnull ResourceLocation getStillTexture() { return stillTex; }
 
-                @Override public @NotNull ResourceLocation getFlowingTexture() { return flowingTex; }
+                @Override public @Nonnull ResourceLocation getFlowingTexture() { return flowingTex; }
 
                 @Override public int getTintColor() { return tintColor; }
             });
@@ -214,7 +215,7 @@ public class ModFluids {
 
         private static BucketItem makeBucket(Supplier<ModFluid> still, int burnTime) {
             return new BucketItem(still.get(), new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET)) {
-                @Override public int getBurnTime(@NotNull ItemStack itemStack, RecipeType<?> type) {return burnTime;}
+                @Override public int getBurnTime(@Nonnull ItemStack itemStack, RecipeType<?> type) {return burnTime;}
 
                 @SuppressWarnings("unused")
                 public boolean emptyContents(@Nullable Player player, Level level, BlockPos pos, @Nullable HitResult target) {

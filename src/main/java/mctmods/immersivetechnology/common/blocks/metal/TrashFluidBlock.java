@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
 public class TrashFluidBlock extends ModEntityBlock<TrashFluidBlockEntity> {
@@ -27,9 +27,9 @@ public class TrashFluidBlock extends ModEntityBlock<TrashFluidBlockEntity> {
 
     public TrashFluidBlock(BiFunction<BlockPos, BlockState, TrashFluidBlockEntity> makeEntity, Properties blockProps) { super(makeEntity, blockProps); }
 
-    @Override @NotNull public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) { return BOUNDS; }
+    @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return BOUNDS; }
 
-    @Override protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+    @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ModProperties.FACING_HORIZONTAL, BlockStateProperties.WATERLOGGED);
     }

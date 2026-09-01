@@ -20,18 +20,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 public class RotorCreativeRenderer implements BlockEntityRenderer<RotorCreativeBlockEntity> {
     private static final Quaternionf ROTATION = new Quaternionf();
 
     public RotorCreativeRenderer() {}
 
-    @Override @NotNull public AABB getRenderBoundingBox(RotorCreativeBlockEntity tile) { return new AABB(tile.getBlockPos()).inflate(4); }
+    @Override @Nonnull public AABB getRenderBoundingBox(RotorCreativeBlockEntity tile) { return new AABB(tile.getBlockPos()).inflate(4); }
 
-    @Override public void render(@NotNull RotorCreativeBlockEntity tile, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    @Override public void render(@Nonnull RotorCreativeBlockEntity tile, float partialTicks, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         BlockState state = tile.getBlockState();
         Direction dir = state.getValue(RotorCreativeBlock.FACING);
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());

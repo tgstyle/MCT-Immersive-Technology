@@ -8,7 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage, ITrashCanShape {
     public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ENERGY.get(), pos, state); }

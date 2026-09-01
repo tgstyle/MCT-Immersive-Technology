@@ -18,7 +18,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.STYLENOX.iconStack(); }
@@ -44,7 +45,7 @@ public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe>
         ).apply(instance, StyleNOXRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, StyleNOXRecipe> streamCodec = new StreamCodec<>() {
-            @Override public @NotNull StyleNOXRecipe decode(@NotNull RegistryFriendlyByteBuf buf) {
+            @Override public @Nonnull StyleNOXRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 IngredientWithSize input = IngredientWithSize.CODECS.streamCodec().decode(buf);
                 TagOutput output = TagOutput.CODECS.streamCodec().decode(buf);
                 TagKey<Fluid> waterTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
@@ -57,7 +58,7 @@ public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe>
                 return new StyleNOXRecipe(input, output, waterTag, waterAmount, co2Tag, co2Amount, steamOutput, time, energy);
             }
 
-            @Override public void encode(@NotNull RegistryFriendlyByteBuf buf, StyleNOXRecipe recipe) {
+            @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, StyleNOXRecipe recipe) {
                 IngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
                 TagOutput.CODECS.streamCodec().encode(buf, recipe.output());
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.waterTag());
