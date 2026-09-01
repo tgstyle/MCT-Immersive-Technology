@@ -386,3 +386,21 @@ subtitle.immersivetech.pressureRelease=압력 배출음
 subtitle.immersivetech.solarMelter=태양 용융 도가니 용융음
 subtitle.immersivetech.solarTower=태양열 타워 끓는 소리
 subtitle.immersivetech.steamTurbine=증기 터빈 회전음
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=교류 발전기
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=액체 연료 보일러 연소기
+desc.engineered_schematics.multiblock.IT:BoilerSolid=고체 연료 보일러 연소기
+desc.engineered_schematics.multiblock.IT:BoilerTank=보일러 탱크
+desc.engineered_schematics.multiblock.IT:Distiller=증류기
+desc.engineered_schematics.multiblock.IT:GasTurbine=가스 터빈
+desc.engineered_schematics.multiblock.IT:HeatExchanger=열 교환기
+desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=고압 증기 터빈
+desc.engineered_schematics.multiblock.IT:Radiator=방열기
+desc.engineered_schematics.multiblock.IT:SolarMelter=태양 용융 도가니
+desc.engineered_schematics.multiblock.IT:SolarReflector=태양광 반사기
+desc.engineered_schematics.multiblock.IT:SolarTower=태양탑
+desc.engineered_schematics.multiblock.IT:SteamTurbine=증기 터빈
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=강철 유체 탱크
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=전해 도가니 배터리
+desc.engineered_schematics.multiblock.IT:meltingCrucible=용융 도가니

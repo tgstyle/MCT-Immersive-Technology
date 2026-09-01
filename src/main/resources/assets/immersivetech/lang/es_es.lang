@@ -174,3 +174,20 @@ subtitle.immersivetech.pressureRelease=La presión se libera
 subtitle.immersivetech.solarMelter=El crisol solar funde
 subtitle.immersivetech.solarTower=La torre solar hierve
 subtitle.immersivetech.steamTurbine=La turbina de vapor gira
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=Alternador
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=Quemador de combustible líquido (caldera)
+desc.engineered_schematics.multiblock.IT:BoilerSolid=Quemador de combustible sólido (caldera)
+desc.engineered_schematics.multiblock.IT:BoilerTank=Tanque de caldera
+desc.engineered_schematics.multiblock.IT:Distiller=Destilador
+desc.engineered_schematics.multiblock.IT:GasTurbine=Turbina de gas
+desc.engineered_schematics.multiblock.IT:HeatExchanger=Intercambiador de calor
+desc.engineered_schematics.multiblock.IT:Radiator=Radiador
+desc.engineered_schematics.multiblock.IT:SolarMelter=Crisol de fundición solar
+desc.engineered_schematics.multiblock.IT:SolarReflector=Reflector solar
+desc.engineered_schematics.multiblock.IT:SolarTower=Torre solar
+desc.engineered_schematics.multiblock.IT:SteamTurbine=Turbina de vapor
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Tanque de fluidos de chapa de acero
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Batería de crisol electrolítico
+desc.engineered_schematics.multiblock.IT:meltingCrucible=Crisol de fundición

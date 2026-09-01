@@ -174,3 +174,20 @@ subtitle.immersivetech.pressureRelease=Pressão a ser libertada
 subtitle.immersivetech.solarMelter=Cadinho solar a derreter
 subtitle.immersivetech.solarTower=A torre solar a ferver
 subtitle.immersivetech.steamTurbine=A turbina a vapor a girar
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=Alternador
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=Queimador de Combustível Líquido da Caldeira
+desc.engineered_schematics.multiblock.IT:BoilerSolid=Queimador de Combustível Sólido da Caldeira
+desc.engineered_schematics.multiblock.IT:BoilerTank=Tanque da Caldeira
+desc.engineered_schematics.multiblock.IT:Distiller=Destilador
+desc.engineered_schematics.multiblock.IT:GasTurbine=Turbina a Gás
+desc.engineered_schematics.multiblock.IT:HeatExchanger=Trocador de Calor
+desc.engineered_schematics.multiblock.IT:Radiator=Radiador
+desc.engineered_schematics.multiblock.IT:SolarMelter=Cadinho de Fusão Solar
+desc.engineered_schematics.multiblock.IT:SolarReflector=Refletor Solar
+desc.engineered_schematics.multiblock.IT:SolarTower=Torre Solar
+desc.engineered_schematics.multiblock.IT:SteamTurbine=Turbina a Vapor
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Tanque de Fluidos em Chapa de Aço
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Bateria de Crisol Eletrolítico
+desc.engineered_schematics.multiblock.IT:meltingCrucible=Cadinho de Fusão

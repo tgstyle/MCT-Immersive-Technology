@@ -174,3 +174,20 @@ subtitle.immersivetech.pressureRelease=Tlak se uvolňuje
 subtitle.immersivetech.solarMelter=Solární tavicí pec taví
 subtitle.immersivetech.solarTower=Solární věž vaří
 subtitle.immersivetech.steamTurbine=Parní turbína se otáčí
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=Alternátor
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=Boiler Liquid Fuel Burner
+desc.engineered_schematics.multiblock.IT:BoilerSolid=Boiler Solid Fuel Burner
+desc.engineered_schematics.multiblock.IT:BoilerTank=Boiler Tank
+desc.engineered_schematics.multiblock.IT:Distiller=Destilační zařízení
+desc.engineered_schematics.multiblock.IT:GasTurbine=Plynová turbína
+desc.engineered_schematics.multiblock.IT:HeatExchanger=Výměník tepla
+desc.engineered_schematics.multiblock.IT:Radiator=Radiátor
+desc.engineered_schematics.multiblock.IT:SolarMelter=Solární tavicí pec
+desc.engineered_schematics.multiblock.IT:SolarReflector=Solární reflektor
+desc.engineered_schematics.multiblock.IT:SolarTower=Solární věž
+desc.engineered_schematics.multiblock.IT:SteamTurbine=Parní turbína
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Ocelová nádrž na tekutiny
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Elektrolytická kelímková baterie
+desc.engineered_schematics.multiblock.IT:meltingCrucible=Tavicí kelímek

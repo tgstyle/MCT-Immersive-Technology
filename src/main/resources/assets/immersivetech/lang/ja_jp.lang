@@ -174,3 +174,20 @@ subtitle.immersivetech.pressureRelease=圧力解放音
 subtitle.immersivetech.solarMelter=太陽溶解炉の溶解音
 subtitle.immersivetech.solarTower=太陽熱タワーの沸騰音
 subtitle.immersivetech.steamTurbine=蒸気タービンの回転音
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=オルタネーター
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=液体燃料ボイラー燃焼器
+desc.engineered_schematics.multiblock.IT:BoilerSolid=固体燃料ボイラー燃焼器
+desc.engineered_schematics.multiblock.IT:BoilerTank=ボイラータンク
+desc.engineered_schematics.multiblock.IT:Distiller=蒸留装置
+desc.engineered_schematics.multiblock.IT:GasTurbine=ガスタービン
+desc.engineered_schematics.multiblock.IT:HeatExchanger=熱交換器
+desc.engineered_schematics.multiblock.IT:Radiator=ラジエーター
+desc.engineered_schematics.multiblock.IT:SolarMelter=太陽溶解炉
+desc.engineered_schematics.multiblock.IT:SolarReflector=太陽光反射板
+desc.engineered_schematics.multiblock.IT:SolarTower=太陽熱タワー
+desc.engineered_schematics.multiblock.IT:SteamTurbine=蒸気タービン
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=鋼板製液体タンク
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=電解坩堝電池
+desc.engineered_schematics.multiblock.IT:meltingCrucible=溶解坩堝

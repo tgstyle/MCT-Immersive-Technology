@@ -174,3 +174,20 @@ subtitle.immersivetech.pressureRelease=Druck entweicht
 subtitle.immersivetech.solarMelter=Solar-Schmelztiegel schmilzt
 subtitle.immersivetech.solarTower=Solarturm kocht
 subtitle.immersivetech.steamTurbine=Dampfturbine dreht sich
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=Alternator
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=Flüssigbrennkammer (Kessel)
+desc.engineered_schematics.multiblock.IT:BoilerSolid=Festbrennkammer (Kessel)
+desc.engineered_schematics.multiblock.IT:BoilerTank=Kesseltank
+desc.engineered_schematics.multiblock.IT:Distiller=Destillierer
+desc.engineered_schematics.multiblock.IT:GasTurbine=Gasturbine
+desc.engineered_schematics.multiblock.IT:HeatExchanger=Wärmetauscher
+desc.engineered_schematics.multiblock.IT:Radiator=Radiator
+desc.engineered_schematics.multiblock.IT:SolarMelter=Solar-Schmelztiegel
+desc.engineered_schematics.multiblock.IT:SolarReflector=Solarreflektor
+desc.engineered_schematics.multiblock.IT:SolarTower=Solarturm
+desc.engineered_schematics.multiblock.IT:SteamTurbine=Dampfturbine
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Stahl-Flüssigkeitstank
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Elektrolytische Tiegelbatterie
+desc.engineered_schematics.multiblock.IT:meltingCrucible=Schmelztiegel

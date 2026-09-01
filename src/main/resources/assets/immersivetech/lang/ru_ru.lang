@@ -386,3 +386,21 @@ subtitle.immersivetech.pressureRelease=Сброс давления
 subtitle.immersivetech.solarMelter=Солнечная плавильня плавит
 subtitle.immersivetech.solarTower=Солнечная башня кипит
 subtitle.immersivetech.steamTurbine=Паровая турбина вращается
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=Альтернатор
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=Горелка котла на жидком топливе
+desc.engineered_schematics.multiblock.IT:BoilerSolid=Топка котла на твёрдом топливе
+desc.engineered_schematics.multiblock.IT:BoilerTank=Резервуар котла
+desc.engineered_schematics.multiblock.IT:Distiller=Дистиллятор
+desc.engineered_schematics.multiblock.IT:GasTurbine=Газовая турбина
+desc.engineered_schematics.multiblock.IT:HeatExchanger=Теплообменник
+desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=Паровая турбина высокого давления
+desc.engineered_schematics.multiblock.IT:Radiator=Радиатор
+desc.engineered_schematics.multiblock.IT:SolarMelter=Солнечный тигель плавления
+desc.engineered_schematics.multiblock.IT:SolarReflector=Солнечный отражатель
+desc.engineered_schematics.multiblock.IT:SolarTower=Солнечная башня
+desc.engineered_schematics.multiblock.IT:SteamTurbine=Паровая турбина
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Стальной резервуар жидкости
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Электролитическая тигельная батарея
+desc.engineered_schematics.multiblock.IT:meltingCrucible=Тигель плавления

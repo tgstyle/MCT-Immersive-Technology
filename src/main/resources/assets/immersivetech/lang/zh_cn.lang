@@ -386,3 +386,21 @@ subtitle.immersivetech.pressureRelease=压力释放
 subtitle.immersivetech.solarMelter=太阳能熔炼坩埚熔炼中
 subtitle.immersivetech.solarTower=太阳能塔沸腾
 subtitle.immersivetech.steamTurbine=蒸汽轮机旋转
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=交流发电机
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=液体燃料锅炉燃烧室
+desc.engineered_schematics.multiblock.IT:BoilerSolid=固体燃料锅炉燃烧室
+desc.engineered_schematics.multiblock.IT:BoilerTank=锅炉储罐
+desc.engineered_schematics.multiblock.IT:Distiller=蒸馏器
+desc.engineered_schematics.multiblock.IT:GasTurbine=燃气轮机
+desc.engineered_schematics.multiblock.IT:HeatExchanger=热交换器
+desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=高压蒸汽轮机
+desc.engineered_schematics.multiblock.IT:Radiator=散热板
+desc.engineered_schematics.multiblock.IT:SolarMelter=太阳能熔炼塔
+desc.engineered_schematics.multiblock.IT:SolarReflector=太阳能反射镜
+desc.engineered_schematics.multiblock.IT:SolarTower=太阳能集热塔
+desc.engineered_schematics.multiblock.IT:SteamTurbine=蒸汽轮机
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=钢制流体储罐
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=电解池
+desc.engineered_schematics.multiblock.IT:meltingCrucible=电熔炼炉

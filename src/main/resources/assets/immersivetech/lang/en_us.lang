@@ -387,3 +387,21 @@ subtitle.immersivetech.pressureRelease=Pressure releasing
 subtitle.immersivetech.solarMelter=Solar Melting Crucible melting
 subtitle.immersivetech.solarTower=Solar Tower boiling
 subtitle.immersivetech.steamTurbine=Steam Turbine spinning
+
+#ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:Alternator=Alternator
+desc.engineered_schematics.multiblock.IT:BoilerLiquid=Boiler Liquid Fuel Burner
+desc.engineered_schematics.multiblock.IT:BoilerSolid=Boiler Solid Fuel Burner
+desc.engineered_schematics.multiblock.IT:BoilerTank=Boiler Tank
+desc.engineered_schematics.multiblock.IT:Distiller=Distiller
+desc.engineered_schematics.multiblock.IT:GasTurbine=Gas Turbine
+desc.engineered_schematics.multiblock.IT:HeatExchanger=Heat Exchanger
+desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
+desc.engineered_schematics.multiblock.IT:Radiator=Radiator
+desc.engineered_schematics.multiblock.IT:SolarMelter=Solar Melting Crucible
+desc.engineered_schematics.multiblock.IT:SolarReflector=Solar Reflector
+desc.engineered_schematics.multiblock.IT:SolarTower=Solar Tower
+desc.engineered_schematics.multiblock.IT:SteamTurbine=Steam Turbine
+desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
+desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
+desc.engineered_schematics.multiblock.IT:meltingCrucible=Melting Crucible
