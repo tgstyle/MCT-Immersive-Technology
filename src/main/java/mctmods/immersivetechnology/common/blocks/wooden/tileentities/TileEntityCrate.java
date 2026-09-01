@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
@@ -149,7 +149,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 	@Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
 		ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
 		ByteBufUtils.writeItemStack(message, interactiveItemStack);
-		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+		BinaryTileSyncMessage.sendToPlayer(player, getPos(), message);
 	}
 
 	@Override public void receiveMessageFromServer(ByteBuf buf) {

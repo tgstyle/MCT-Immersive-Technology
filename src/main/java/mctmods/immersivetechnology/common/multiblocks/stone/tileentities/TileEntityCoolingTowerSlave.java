@@ -23,7 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityCoolingTowerSlave extends TileEntityTemplateMultiblock<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityCoolingTowerSlave extends TileEntityTemplateMultiblock<TileEntityCoolingTowerSlave, CoolingTowerRecipe, TileEntityCoolingTowerMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
     private TileEntityCoolingTowerMaster master;
     private int loadGrace;

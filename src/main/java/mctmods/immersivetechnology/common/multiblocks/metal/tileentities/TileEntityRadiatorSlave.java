@@ -24,7 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
     protected long onlyLocalDissassembly = -1;
 

@@ -34,7 +34,7 @@ import net.minecraftforge.fluids.IFluidTank;
 
 public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<TileEntityAlternatorSlave, IMultiblockRecipe, TileEntityAlternatorMaster>
         implements IMechanicalEnergyConsumer, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds,
-        ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IComparatorOverride {
+        ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
 
     private int loadGrace = 0;
     private TileEntityAlternatorMaster master;

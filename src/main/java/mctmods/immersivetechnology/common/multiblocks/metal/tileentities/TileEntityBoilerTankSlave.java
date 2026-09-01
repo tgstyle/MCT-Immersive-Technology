@@ -7,8 +7,8 @@ import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerTank;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedCollisionBounds;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedSelectionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -29,7 +29,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<TileEntityBoilerTankSlave, DummyRecipe, TileEntityBoilerTankMaster>
-        implements IEBlockInterfaces.IGuiTile, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds,
+        implements IEBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
         IIEInventory, IEBlockInterfaces.IComparatorOverride, IHeatConsumer {
 
     private TileEntityBoilerTankMaster cachedMaster;

@@ -28,7 +28,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IGuiTile, IIEInventory {
+public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IEBlockInterfaces.IGuiTile, IIEInventory {
 
     private int loadGrace = 0;
 

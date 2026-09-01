@@ -32,7 +32,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTemplateMultiblock<TileEntityElectrolyticCrucibleBatterySlave, ElectrolyticCrucibleBatteryRecipe, TileEntityElectrolyticCrucibleBatteryMaster> implements IFluxReceiver, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTemplateMultiblock<TileEntityElectrolyticCrucibleBatterySlave, ElectrolyticCrucibleBatteryRecipe, TileEntityElectrolyticCrucibleBatteryMaster> implements IFluxReceiver, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IEBlockInterfaces.IComparatorOverride {
 
     TileEntityElectrolyticCrucibleBatteryMaster master;
     private int loadGrace;

@@ -9,7 +9,7 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
@@ -195,7 +195,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     public void requestUpdate() {
-        ImmersiveConvergence.packetHandler.sendToServer(new BinaryMessageTileSync(getPos(), Unpooled.buffer()));
+        ImmersiveConvergence.packetHandler.sendToServer(new BinaryTileSyncMessage(getPos(), Unpooled.buffer()));
     }
 
     public void notifyNearbyClients() {
@@ -203,7 +203,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         buf.writeDouble(heatLevel);
         buf.writeInt(solarIncidenceAngleSection);
         buf.writeBoolean(isRunning);
-        ImmersiveConvergence.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
+        ImmersiveConvergence.packetHandler.sendToAllAround(new BinaryTileSyncMessage(getPos(), buf), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 40));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {
@@ -217,7 +217,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         buf.writeDouble(heatLevel);
         buf.writeInt(solarIncidenceAngleSection);
         buf.writeBoolean(isRunning);
-        ImmersiveConvergence.packetHandler.sendTo(new BinaryMessageTileSync(getPos(), buf), player);
+        ImmersiveConvergence.packetHandler.sendTo(new BinaryTileSyncMessage(getPos(), buf), player);
     }
 
     private void InitializePoIs() {

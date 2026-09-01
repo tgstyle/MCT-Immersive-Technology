@@ -30,7 +30,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds {
+public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
     private int loadGrace = 0;
 

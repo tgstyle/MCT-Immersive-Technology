@@ -9,7 +9,7 @@ import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
@@ -136,7 +136,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(speed);
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
@@ -215,7 +215,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (pressureReleaseCooldown > 0) { pressureReleaseCooldown--; }
         boolean triggerRelease = (!wasActive && active) || (!wasEnabled && currentlyEnabled);
         if (triggerRelease && pressureReleaseCooldown <= 0) {
-            BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1));
+            BinaryTileSyncMessage.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1));
             pressureReleaseCooldown = 200;
         }
         wasEnabled = currentlyEnabled;

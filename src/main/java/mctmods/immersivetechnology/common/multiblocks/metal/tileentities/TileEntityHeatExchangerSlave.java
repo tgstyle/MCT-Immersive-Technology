@@ -31,7 +31,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IFluxReceiver, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IComparatorOverride {
+public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IFluxReceiver, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
 
     TileEntityHeatExchangerMaster master;
     private int loadGrace;

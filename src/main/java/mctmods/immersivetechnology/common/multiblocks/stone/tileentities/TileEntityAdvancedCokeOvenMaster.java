@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.MessageStopSound;
-import com.immersiveconvergence.api.network.MessageTileSync;
+import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
@@ -169,7 +169,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         tag.setBoolean("active", active);
         tag.setBoolean("isRunning", isRunning);
         BlockPos center = getPos();
-        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new TileSyncMessage(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     private void notifyProcessUpdate() {
@@ -177,7 +177,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         tag.setInteger("processTimeRemaining", processTimeRemaining);
         tag.setInteger("processTimeMax", processTimeMax);
         BlockPos center = getPos();
-        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new TileSyncMessage(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), center.getX(), center.getY(), center.getZ(), 0));
     }
 
     @Override public void receiveMessageFromServer(NBTTagCompound message) {

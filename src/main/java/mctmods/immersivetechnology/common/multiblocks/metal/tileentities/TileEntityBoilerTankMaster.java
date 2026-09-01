@@ -7,7 +7,7 @@ import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
@@ -160,7 +160,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
         buf.writeInt(processTimeRemaining);
         buf.writeInt(processTimeMax);
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {

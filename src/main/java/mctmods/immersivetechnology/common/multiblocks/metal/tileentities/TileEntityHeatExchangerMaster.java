@@ -10,7 +10,7 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
@@ -168,13 +168,13 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         super.disassemble();
     }
 
-    public void requestUpdate() { BinaryMessageTileSync.sendToServer(getPos(), Unpooled.buffer()); }
+    public void requestUpdate() { BinaryTileSyncMessage.sendToServer(getPos(), Unpooled.buffer()); }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(energyStorage.getEnergyStored());
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
+        BinaryTileSyncMessage.sendToPlayer(player, getPos(), buf);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {
@@ -275,7 +275,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(currentEnergy);
             buf.writeBoolean(isRunning);
-            BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+            BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
             world.markChunkDirty(getPos(), this);
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }

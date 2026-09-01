@@ -9,7 +9,7 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
@@ -159,7 +159,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     }
 
     public void requestUpdate() {
-        BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true));
+        BinaryTileSyncMessage.sendToServer(getPos(), Unpooled.copyBoolean(true));
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
@@ -168,7 +168,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(energyStorage.getEnergyStored());
             buf.writeBoolean(isRunning);
-            BinaryMessageTileSync.sendToPlayer(player, getPos(), buf);
+            BinaryTileSyncMessage.sendToPlayer(player, getPos(), buf);
         }
     }
 
@@ -218,7 +218,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(currentEnergy);
             buf.writeBoolean(isRunning);
-            BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+            BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
             world.markChunkDirty(getPos(), this);
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }

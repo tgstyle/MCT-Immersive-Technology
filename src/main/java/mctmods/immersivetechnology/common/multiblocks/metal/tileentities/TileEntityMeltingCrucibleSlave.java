@@ -33,7 +33,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IGuiTile, IIEInventory, IFluxReceiver, IIEInternalFluxHandler {
+public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IGuiTile, IIEInventory, IFluxReceiver, IIEInternalFluxHandler {
 
     protected TileEntityMeltingCrucibleMaster master;
     private int loadGrace = 0;

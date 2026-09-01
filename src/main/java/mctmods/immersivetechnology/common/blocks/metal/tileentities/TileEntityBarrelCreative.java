@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -248,7 +248,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         message.writeLong(lastAcceptedAmount);
         message.writeBoolean(selectedFluid != null);
         if (selectedFluid != null) { ByteBufUtils.writeUTF8String(message, selectedFluid.getFluid().getName()); }
-        BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+        BinaryTileSyncMessage.sendToPlayer(player, getPos(), message);
     }
 
     @Override

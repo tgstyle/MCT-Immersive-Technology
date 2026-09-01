@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
-import com.immersiveconvergence.api.network.MessageTileSync;
+import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
@@ -116,7 +116,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 			tag.setInteger("packetLimit", packetLimit);
 			tag.setInteger("timeLimit", timeLimit);
 			tag.setInteger("keepSize", keepSize);
-			ImmersiveConvergence.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
+			ImmersiveConvergence.packetHandler.sendTo(new TileSyncMessage(this, tag), (EntityPlayerMP)player);
 			return true;
 		}
 		else if (player.isSneaking() && Utils.isHammer(heldItem)) {
@@ -145,7 +145,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	@Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
 		if (requestCooldown == 0) {
 			ByteBuf message = Unpooled.copyBoolean(true);
-			BinaryMessageTileSync.sendToServer(getPos(), message);
+			BinaryTileSyncMessage.sendToServer(getPos(), message);
 			requestCooldown = 20;
 		}
 		if (player.isSneaking()) {
@@ -161,7 +161,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		ByteBuf message = Unpooled.copyInt(Math.max(packets, packetAverage));
 		message.writeLong(average);
 		message.writeLong(lastAcceptedAmount);
-		BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+		BinaryTileSyncMessage.sendToPlayer(player, getPos(), message);
 	}
 
 	@Override public void receiveMessageFromServer(ByteBuf buf) {

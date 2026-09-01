@@ -32,7 +32,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IFluxReceiver, IIEInternalFluxHandler, IMechanicalEnergyProvider, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.IAdvancedCollisionBounds, ICBlockInterfaces.IAdvancedSelectionBounds, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IFluxReceiver, IIEInternalFluxHandler, IMechanicalEnergyProvider, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IEBlockInterfaces.IComparatorOverride {
 
     protected int loadGrace = 0;
     protected TileEntityGasTurbineMaster master;

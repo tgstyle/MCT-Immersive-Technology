@@ -8,8 +8,8 @@ import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HighPressureSteamTurbineShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedCollisionBounds;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedSelectionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -33,7 +33,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateMultiblock<TileEntityHighPressureSteamTurbineSlave, HighPressureSteamTurbineRecipe, TileEntityHighPressureSteamTurbineMaster>
-        implements IMechanicalEnergyProvider, IBlockBounds, IAdvancedCollisionBounds, IAdvancedSelectionBounds {
+        implements IMechanicalEnergyProvider, IBlockBounds, ICollisionBounds, ISelectionBounds {
 
     private static float outputTorque() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque; }
 

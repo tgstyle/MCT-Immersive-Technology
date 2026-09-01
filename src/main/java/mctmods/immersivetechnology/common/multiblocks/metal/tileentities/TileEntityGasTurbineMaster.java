@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
@@ -254,7 +254,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         buf.writeInt(speed);
         buf.writeBoolean(starterRunning);
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
     }
 
     @Override public void update() {
@@ -316,7 +316,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
         if (igniteSoundDelay > 0) {
             igniteSoundDelay--;
-            if (igniteSoundDelay == 0 && starterRunning) { BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1)); }
+            if (igniteSoundDelay == 0 && starterRunning) { BinaryTileSyncMessage.sendToAllTracking(world, getPos(), Unpooled.buffer(1).writeByte(1)); }
         }
 
         boolean didWork = speed > 0;
@@ -381,7 +381,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         sparkplugStorage.modifyEnergyStored(-sparkplugConsumption());
         ignited = true;
         ignitionGracePeriod = 60;
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.buffer());
+        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), Unpooled.buffer());
         igniteSoundDelay = 3;
     }
 

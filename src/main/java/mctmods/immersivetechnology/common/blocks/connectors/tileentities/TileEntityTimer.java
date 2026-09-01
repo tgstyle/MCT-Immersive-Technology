@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.connectors.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
-import com.immersiveconvergence.api.network.MessageTileSync;
+import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.Lib;
@@ -162,7 +162,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
         markDirty();
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("target", target);
-        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageTileSync(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new TileSyncMessage(this, tag), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
     }
 
     @Override public void receiveMessageFromServer(@Nonnull NBTTagCompound message) {

@@ -79,8 +79,8 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
     @SideOnly(Side.CLIENT)
     @Override @Nonnull public AxisAlignedBB getSelectedBoundingBox(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ICBlockInterfaces.IAdvancedSelectionBounds) {
-            List<AxisAlignedBB> list = ((ICBlockInterfaces.IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
+        if (te instanceof ICBlockInterfaces.ISelectionBounds) {
+            List<AxisAlignedBB> list = ((ICBlockInterfaces.ISelectionBounds) te).getAdvancedSelectionBounds();
             if (!list.isEmpty()) { return new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D); }
         }
         return getBoundingBox(state, world, pos).offset(pos);
@@ -88,8 +88,8 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
 
     @Override public RayTraceResult collisionRayTrace(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ICBlockInterfaces.IAdvancedSelectionBounds) {
-            List<AxisAlignedBB> list = ((ICBlockInterfaces.IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
+        if (te instanceof ICBlockInterfaces.ISelectionBounds) {
+            List<AxisAlignedBB> list = ((ICBlockInterfaces.ISelectionBounds) te).getAdvancedSelectionBounds();
             RayTraceResult minMOP = null;
             double minDist = Double.POSITIVE_INFINITY;
             int subHit = 0;
@@ -114,8 +114,8 @@ public class BlockMetalMultiblock1 extends BlockITMultiblock<BlockType_MetalMult
     @Override public void addCollisionBoxToList(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
         TileEntity te = world.getTileEntity(pos);
         boolean hasAdvanced = false;
-        if (te instanceof ICBlockInterfaces.IAdvancedCollisionBounds) {
-            List<AxisAlignedBB> list = ((ICBlockInterfaces.IAdvancedCollisionBounds) te).getAdvancedCollisionBounds();
+        if (te instanceof ICBlockInterfaces.ICollisionBounds) {
+            List<AxisAlignedBB> list = ((ICBlockInterfaces.ICollisionBounds) te).getAdvancedCollisionBounds();
             for (AxisAlignedBB aabb : list) {
                 AxisAlignedBB worldAABB = aabb.offset(pos);
                 if (worldAABB.intersects(entityBox)) { collidingBoxes.add(worldAABB); }

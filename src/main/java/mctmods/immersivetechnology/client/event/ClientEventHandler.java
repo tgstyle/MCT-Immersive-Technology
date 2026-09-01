@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.shapes.VoxelShape;
 
 import java.util.List;
 
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAdvancedSelectionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -42,8 +42,8 @@ public class ClientEventHandler {
         TileEntity tile = event.getPlayer().world.getTileEntity(pos);
         if (tile == null) return;
 
-        if (tile instanceof IAdvancedSelectionBounds) {
-            IAdvancedSelectionBounds asb = (IAdvancedSelectionBounds) tile;
+        if (tile instanceof ISelectionBounds) {
+            ISelectionBounds asb = (ISelectionBounds) tile;
             List<AxisAlignedBB> bounds = asb.getAdvancedSelectionBounds();
             if (!bounds.isEmpty()) {
                 event.setCanceled(true);
@@ -84,7 +84,7 @@ public class ClientEventHandler {
         }
     }
 
-    private static VoxelShape getSelectionShape(IAdvancedSelectionBounds asb, List<AxisAlignedBB> bounds, BlockPos pos, EntityPlayer player, RayTraceResult target) {
+    private static VoxelShape getSelectionShape(ISelectionBounds asb, List<AxisAlignedBB> bounds, BlockPos pos, EntityPlayer player, RayTraceResult target) {
         long mask = 0;
         int boundsHash = 1;
         for (int i = 0; i < bounds.size(); i++) {

@@ -9,7 +9,7 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleSmokeCustom;
@@ -161,7 +161,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     public void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBoolean(isRunning);
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
     }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }

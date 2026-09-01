@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.particles.BeamParticles;
 
@@ -82,7 +82,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         buf.writeFloat(animationRotations[0]);
         buf.writeFloat(animationRotations[1]);
         NetworkRegistry.TargetPoint tp = new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 64);
-        ImmersiveConvergence.packetHandler.sendToAllAround(new BinaryMessageTileSync(getPos(), buf), tp);
+        ImmersiveConvergence.packetHandler.sendToAllAround(new BinaryTileSyncMessage(getPos(), buf), tp);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {

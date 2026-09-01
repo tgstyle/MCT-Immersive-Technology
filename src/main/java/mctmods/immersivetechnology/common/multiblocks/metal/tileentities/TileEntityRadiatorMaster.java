@@ -7,7 +7,7 @@ import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
@@ -335,15 +335,15 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     public void requestUpdate() {
-        BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true));
+        BinaryTileSyncMessage.sendToServer(getPos(), Unpooled.copyBoolean(true));
     }
 
     public void notifyNearbyClients() {
-        BinaryMessageTileSync.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(isRunning));
+        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), Unpooled.copyBoolean(isRunning));
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {
-        BinaryMessageTileSync.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning));
+        BinaryTileSyncMessage.sendToPlayer(player, getPos(), Unpooled.copyBoolean(isRunning));
     }
 
     @Override public void receiveMessageFromServer(ByteBuf message) {

@@ -4,7 +4,7 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
-import com.immersiveconvergence.api.network.MessageTileSync;
+import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.gui.GuiRotorCreative;
@@ -66,7 +66,7 @@ public class TileEntityRotorCreative extends TileEntityIEBase implements ITickab
         if (!world.isRemote && !Utils.isHammer(heldItem)) {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setInteger("rpm", rpm);
-            ImmersiveConvergence.packetHandler.sendTo(new MessageTileSync(this, tag), (EntityPlayerMP)player);
+            ImmersiveConvergence.packetHandler.sendTo(new TileSyncMessage(this, tag), (EntityPlayerMP)player);
             return true;
         }
         return false;

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
@@ -64,7 +64,7 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
     protected void requestOverlaySync() {
         if (requestCooldown > 0) { return; }
-        BinaryMessageTileSync.sendToServer(getPos(), Unpooled.copyBoolean(true));
+        BinaryTileSyncMessage.sendToServer(getPos(), Unpooled.copyBoolean(true));
         requestCooldown = 20;
     }
 
@@ -77,7 +77,7 @@ public abstract class TileEntityCommonOSD extends TileEntityIEBase implements IT
 
     @Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
         ByteBuf message = Unpooled.copyLong(lastAcceptedAmount);
-        BinaryMessageTileSync.sendToPlayer(player, getPos(), message);
+        BinaryTileSyncMessage.sendToPlayer(player, getPos(), message);
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) { lastAcceptedAmount = buf.readLong(); }

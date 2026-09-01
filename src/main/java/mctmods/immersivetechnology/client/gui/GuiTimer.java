@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.gui;
 
 import com.immersiveconvergence.ImmersiveConvergence;
-import com.immersiveconvergence.api.network.MessageTileSync;
+import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
@@ -34,7 +34,7 @@ public class GuiTimer extends GuiIEContainerBase {
 	@Override protected void actionPerformed(@Nonnull GuiButton button) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("buttonId", button.id);
-		ImmersiveConvergence.packetHandler.sendToServer(new MessageTileSync(tile, tag));
+		ImmersiveConvergence.packetHandler.sendToServer(new TileSyncMessage(tile, tag));
 		this.initGui();
 	}
 

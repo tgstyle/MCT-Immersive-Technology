@@ -11,7 +11,7 @@ import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.network.BinaryMessageTileSync;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 
@@ -183,7 +183,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             buf.writeInt(energyStorage.getEnergyStored());
             buf.writeInt(speed);
             buf.writeBoolean(isRunning);
-            BinaryMessageTileSync.sendToAllTracking(world, getPos(), buf);
+            BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
             world.markChunkDirty(getPos(), this);
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
