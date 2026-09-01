@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = "mct_mixin", name = "MCT Mixin", version = "1.0", acceptedMinecraftVersions = "[1.12.2]")
+@Mod(modid = "mct_mixin", name = "MCT Mixin", version = "1.0", acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:mixinbooter@[10.7,);")
 @IFMLLoadingPlugin.Name("MCTMixin")
 @IFMLLoadingPlugin.SortingIndex(1001)
 public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {

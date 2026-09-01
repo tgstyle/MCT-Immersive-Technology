@@ -21,6 +21,7 @@ import java.util.Map;
 public abstract class MixinIEConveyorHandler {
 
     @Unique private static final Map<String, Class<? extends IConveyorBelt>> REPLACEMENT_CLASSES = Maps.newHashMap();
+    @Unique private static final Map<Class<? extends IConveyorBelt>, IConveyorBelt> SHARED_INSTANCES = Maps.newConcurrentMap();
 
     static {
         REPLACEMENT_CLASSES.put("conveyor",         ConveyorBasicAlternative.class);
@@ -58,9 +59,13 @@ public abstract class MixinIEConveyorHandler {
             }
 
             try {
-                IConveyorBelt freshInstance = clazz.newInstance();
-                MCTMixin.LOGGER.debug("IT created fresh conveyor instance: {}", key);
-                cir.setReturnValue(freshInstance);
+                IConveyorBelt instance = tile == null ? SHARED_INSTANCES.get(clazz) : null;
+                if (instance == null) {
+                    instance = clazz.newInstance();
+                    MCTMixin.LOGGER.debug("IT created fresh conveyor instance: {}", key);
+                    if (tile == null) { SHARED_INSTANCES.put(clazz, instance); }
+                }
+                cir.setReturnValue(instance);
             } catch (Exception e) {
                 MCTMixin.LOGGER.error("Failed to instantiate conveyor replacement for {}", key, e);
             }
