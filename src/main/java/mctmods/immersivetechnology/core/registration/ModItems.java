@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.items.helper.BaseItem;
+import com.immersiveconvergence.api.block.BaseItem;
 import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.Util;

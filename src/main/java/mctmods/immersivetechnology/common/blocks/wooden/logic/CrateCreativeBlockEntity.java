@@ -1,29 +1,36 @@
 package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
-public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvider, IItemHandlerModifiable {
+public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements MenuProvider, IItemHandlerModifiable, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction {
 
     private ItemStack template = ItemStack.EMPTY;
 
@@ -31,35 +38,56 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
         super(BlockEntities.CRATE_CREATIVE.get(), pos, state);
     }
 
-    @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        if (!template.isEmpty()) {
-            CompoundTag itemTag = new CompoundTag();
-            template.save(registries, itemTag);
-            tag.put("template", itemTag);
-        }
+    private HolderLookup.Provider registries() { return level != null ? level.registryAccess() : HolderLookup.Provider.create(Stream.empty()); }
+
+    @Override public void writeCustomNBT(@NotNull CompoundTag tag, boolean descPacket) {
+        super.writeCustomNBT(tag, descPacket);
+        if (!template.isEmpty()) { tag.put("template", template.save(registries())); }
     }
 
-    @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+    @Override protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("template")) {
-            template = ItemStack.parse(registries, tag.getCompound("template")).orElse(ItemStack.EMPTY);
+        if (tag.contains("template")) { template = ItemStack.parse(registries, tag.getCompound("template")).orElse(ItemStack.EMPTY); }
+    }
+
+    @Override public void readCustomNBT(@NotNull CompoundTag tag, boolean descPacket) {
+        super.readCustomNBT(tag, descPacket);
+        if (tag.contains("template")) { template = ItemStack.parse(registries(), tag.getCompound("template")).orElse(ItemStack.EMPTY); }
+    }
+
+    private void setTemplate(ItemStack stack) {
+        template = stack.isEmpty() ? ItemStack.EMPTY : stack.copy();
+        setChanged();
+        markContainingBlockForUpdate(null);
+        if (level != null) { level.invalidateCapabilities(worldPosition); }
+    }
+
+    @Override public TranslationKey text() { return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE; }
+
+    @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
+        if (rtr.getType() == HitResult.Type.MISS) { return null; }
+        if (template.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.getLocation())}; }
+        return new Component[]{Component.translatable(text().getLocation(), template.getHoverName(), formattedAmount())};
+    }
+
+    @Override public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {
+        ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
+        CompoundTag tag = new CompoundTag();
+        writeCustomNBT(tag, false);
+        if (!tag.isEmpty()) { stack.set(DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag)); }
+        drop.accept(stack);
+    }
+
+    @Override public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
+
+    @Override public boolean interact(@NotNull Direction side, @NotNull Player player, @NotNull InteractionHand hand, @NotNull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+        if (player.isShiftKeyDown()) {
+            setTemplate(ItemStack.EMPTY);
+            return true;
         }
-    }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        saveAdditional(tag, registries);
-        return tag;
-    }
-
-    @Override
-    public void handleUpdateTag(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.handleUpdateTag(tag, registries);
-        loadAdditional(tag, registries);
+        if (heldItem.isEmpty()) { return false; }
+        setTemplate(heldItem);
+        return true;
     }
 
     public void onBEPlaced(ItemStack stack) {
@@ -68,8 +96,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
             if (tag.contains("template")) {
                 CompoundTag templateTag = tag.getCompound("template");
                 if (!templateTag.isEmpty()) {
-                    template = ItemStack.CODEC.parse(NbtOps.INSTANCE, templateTag).result().orElse(ItemStack.EMPTY);
-                    setChanged();
+                    setTemplate(ItemStack.parse(registries(), templateTag).orElse(ItemStack.EMPTY));
                     if (level != null) {
                         level.invalidateCapabilities(worldPosition);
                     }
@@ -110,11 +137,7 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
         if (slot != 0 || stack.isEmpty()) { return stack; }
         if (simulate) { return ItemStack.EMPTY; }
-        template = stack.copy();
-        setChanged();
-        if (level != null) {
-            level.invalidateCapabilities(worldPosition);
-        }
+        setTemplate(stack);
         return ItemStack.EMPTY;
     }
 
@@ -139,12 +162,6 @@ public class CrateCreativeBlockEntity extends BlockEntity implements MenuProvide
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-        if (slot == 0) {
-            template = stack.copy();
-            setChanged();
-            if (level != null) {
-                level.invalidateCapabilities(worldPosition);
-            }
-        }
+        if (slot == 0) { setTemplate(stack); }
     }
 }

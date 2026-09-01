@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.client.gui;
 
 import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
-import mctmods.immersivetechnology.core.network.MessageTileSync;
+import com.immersiveconvergence.api.network.MessageTileSync;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;

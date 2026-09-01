@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
@@ -38,6 +38,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 
 public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
@@ -59,7 +60,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
             if (handler == null) { continue; }
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
-            FluidStack toFill = Utils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = ICFluidUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }
@@ -98,11 +99,13 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
 
             @Override @NotNull public FluidStack drain(@NotNull FluidStack resource, @NotNull FluidAction action) {
                 if (selectedFluid.isEmpty() || !FluidStack.isSameFluidSameComponents(selectedFluid, resource)) { return FluidStack.EMPTY; }
+                if (action.execute()) { acceptedAmount += resource.getAmount(); }
                 return pressurizedCopy(selectedFluid, resource.getAmount());
             }
 
             @Override public @NotNull FluidStack drain(int maxDrain, @NotNull FluidAction action) {
                 if (selectedFluid.isEmpty()) { return FluidStack.EMPTY; }
+                if (action.execute()) { acceptedAmount += maxDrain; }
                 return pressurizedCopy(selectedFluid, maxDrain);
             }
         };

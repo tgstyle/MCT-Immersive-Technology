@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
 import mctmods.immersivetechnology.core.registration.ModTags;

@@ -14,11 +14,11 @@ import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.models.mirror.MirroredModelLoader;
 import com.immersiveconvergence.api.client.split.SplitModelHandler;
-import mctmods.immersivetechnology.client.particles.helper.ColoredSmokeProvider;
-import mctmods.immersivetechnology.client.particles.helper.SmokeCustomProvider;
+import com.immersiveconvergence.api.particles.ColoredSmokeProvider;
+import com.immersiveconvergence.api.particles.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
-import mctmods.immersivetechnology.common.items.helper.IFlagItem;
-import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
+import com.immersiveconvergence.api.block.IFlagItem;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.CommonConfig;
@@ -56,6 +56,9 @@ import net.neoforged.api.distmarker.Dist;
 
 import java.util.List;
 import java.util.function.Supplier;
+import com.immersiveconvergence.api.particles.ParticleSettings;
+import com.immersiveconvergence.api.particles.ColoredSmoke;
+import mctmods.immersivetechnology.core.ClientConfig;
 
 @EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -63,6 +66,10 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        ParticleSettings.particleCollide = () -> ClientConfig.particleCollide;
+        ParticleSettings.coloredSmokeHeight = () -> ClientConfig.coloredSmokeHeight;
+        ParticleSettings.customSmokeHeight = () -> ClientConfig.customSmokeHeight;
+        ColoredSmoke.typeSupplier = () -> Particles.COLORED_SMOKE.get();
         event.enqueueWork(() -> {
             for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) {
                 ItemBlockRenderTypes.setRenderLayer(entry.getStill(), RenderType.translucent());
@@ -258,7 +265,7 @@ public class ClientProxy extends CommonProxy {
 
     private static void registerSplitModels() {
         for (TemplateMultiblock template : MultiblockRegistry.MB_TEMPLATE_MAP.values()) {
-            if (template instanceof ModTemplateMultiblock multiblock) { SplitModelHandler.register(multiblock.getBlock(), multiblock.getUniqueName()); }
+            if (template instanceof MachineTemplateMultiblock multiblock) { SplitModelHandler.register(multiblock.getBlock(), multiblock.getUniqueName()); }
         }
         SplitModelHandler.register(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), BASEHEATER_PARTS, Direction.SOUTH);
     }

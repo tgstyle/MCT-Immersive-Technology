@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 public class SteamTurbineShape {
     public static final MultiblockData DATA = MultiblockDataLoader.loadMultiblockData(Reference.class, Reference.MODID, "steam_turbine");
-    private static final ShapeData SHAPE = ShapeData.load(Reference.class, Reference.MODID, "steam_turbine", "metal");
+    private static final ShapeData SHAPE = ShapeData.load(Reference.class, Reference.MODID, "steam_turbine");
     public static final Function<BlockPos, VoxelShape> GETTER = SHAPE.getter;
     public static final int WIDTH = SHAPE.width, HEIGHT = SHAPE.height, LENGTH = SHAPE.length;
     public static final BlockPos MASTER_POS = SHAPE.masterPos;

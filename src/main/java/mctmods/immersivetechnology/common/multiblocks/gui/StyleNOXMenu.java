@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
@@ -36,7 +36,7 @@ public class StyleNOXMenu extends ContainerMenu {
         return new StyleNOXMenu(
                 ContainerMenu.clientCtx(type, id),
                 invPlayer,
-                new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}),
+                new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), () -> {}),
                 StyleNOXLogic.StyleNOXTank.makeClient(),
                 null,
                 null

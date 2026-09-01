@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import net.minecraft.core.BlockPos;
@@ -15,6 +15,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
+import com.immersiveconvergence.api.block.Enums;
 
 public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
     private static final Random RANDOM = new Random();

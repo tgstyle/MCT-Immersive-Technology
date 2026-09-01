@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import java.text.DecimalFormat;
-import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ClientConfig;
 import net.minecraft.core.BlockPos;
@@ -44,8 +44,11 @@ public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IS
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         if (level == null) { return new Component[0]; }
+        return new Component[] { Component.translatable(text().getLocation(), formattedAmount()) };
+    }
+
+    protected String formattedAmount() {
         double rawValue = ClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
-        String valueStr = NUMBER_FORMAT.format(rawValue);
-        return new Component[] { Component.translatable(text().getLocation(), valueStr) };
+        return NUMBER_FORMAT.format(rawValue);
     }
 }

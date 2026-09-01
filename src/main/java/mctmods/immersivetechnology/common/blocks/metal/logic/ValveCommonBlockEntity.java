@@ -19,6 +19,11 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.block.FacingLimitation;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 
 public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
@@ -167,7 +172,7 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
         efficientSetChanged();
     }
 
-    @Override @NotNull public PlacementLimitation getFacingLimitation() { return PlacementLimitation.SIDE_CLICKED; }
+    @Override @NotNull public FacingLimitation getFacingLimitation() { return FacingLimitation.SIDE_CLICKED; }
 
     @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
 

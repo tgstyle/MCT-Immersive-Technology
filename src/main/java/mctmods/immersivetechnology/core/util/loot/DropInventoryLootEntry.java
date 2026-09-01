@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.core.util.inventory.IDropInventory;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.util.IItemDropProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -33,7 +33,7 @@ public class DropInventoryLootEntry extends LootPoolSingletonContainer {
             if (te instanceof BlockInterfaces.IGeneralMultiblock dummyBE) {
                 te = (BlockEntity) dummyBE.master();
             }
-            if (te instanceof IDropInventory itInvBE) {
+            if (te instanceof IItemDropProvider itInvBE) {
                 if (itInvBE.getDroppedItems() != null) {
                     itInvBE.getDroppedItems().forEach(output);
                 }

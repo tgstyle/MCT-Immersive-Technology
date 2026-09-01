@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import blusunrize.immersiveengineering.common.items.WireCoilItem;
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.core.registration.ModTags;

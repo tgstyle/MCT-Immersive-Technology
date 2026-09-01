@@ -10,6 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import com.immersiveconvergence.api.network.MessageTileSync;
 
 @SuppressWarnings("unused")
 @EventBusSubscriber(modid = Reference.MODID)

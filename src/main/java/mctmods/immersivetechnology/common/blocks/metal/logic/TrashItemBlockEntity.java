@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.metal.shapes.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ClientConfig;
@@ -15,8 +15,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import mctmods.immersivetechnology.common.blocks.helper.IInteractionObjectIT;
 
-public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, BlockInterfaces.IInteractionObjectIT<TrashItemBlockEntity>, ITrashCanShape, Container {
+public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, IInteractionObjectIT<TrashItemBlockEntity>, ITrashCanShape, Container {
     public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ITEM.get(), pos, state); }
 
     @SuppressWarnings("unused")

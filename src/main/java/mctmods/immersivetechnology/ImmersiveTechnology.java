@@ -1,10 +1,6 @@
 package mctmods.immersivetechnology;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.QueueProcessor;
-import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
@@ -16,6 +12,8 @@ import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import mctmods.immersivetechnology.core.util.loot.LootFunctions;
+
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -27,7 +25,6 @@ import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -35,6 +32,11 @@ import net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import static mctmods.immersivetechnology.common.fluids.ModFluid.BUCKET_DISPENSE_BEHAVIOR;
 import static mctmods.immersivetechnology.core.lib.Reference.MODID;
+import com.immersiveconvergence.api.multiblock.ClearTank;
+import mctmods.immersivetechnology.common.items.FormationTool;
+import com.immersiveconvergence.api.multiblock.MultiblockBuilder;
+import com.immersiveconvergence.api.block.BlockToolGates;
+import mctmods.immersivetechnology.core.registration.ModTags;
 
 @SuppressWarnings("unused")
 @Mod(MODID)
@@ -49,6 +51,7 @@ public class ImmersiveTechnology {
     public ImmersiveTechnology(ModContainer container, Dist dist, IEventBus modBus) {
         Reference.IT_LOGGER.info("IT Starting");
         Reference.MOD_BUS = modBus;
+        MultiblockBuilder.modBus = modBus;
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::enqueueIMC);
         modBus.addListener(RegisterCapabilitiesEvent.class, this::registerCapabilities);
@@ -64,6 +67,12 @@ public class ImmersiveTechnology {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         Reference.IT_LOGGER.info("HELLO FROM COMMON SETUP");
+        MachineTemplateMultiblock.templateModeGate = () -> ServerConfig.DISASSEMBLY_MODE.get() == ServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
+        ClearTank.additionalTool = stack -> stack.getItem() instanceof FormationTool;
+        BlockToolGates.isFormationTool = stack -> stack.is(ModTags.formationTools);
+        BlockToolGates.isScrewdriver = stack -> stack.is(ModTags.screwdrivers);
+        BlockToolGates.descFlavour = Reference.DESC_FLAVOUR;
+        BlockToolGates.descInfo = Reference.DESC_INFO;
         for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) { DispenserBlock.registerBehavior(entry.getBucket(), BUCKET_DISPENSE_BEHAVIOR); }
     }
 
@@ -71,11 +80,6 @@ public class ImmersiveTechnology {
         if (net.neoforged.fml.ModList.get().isLoaded("theoneprobe")) { OneProbeIMCHelper.register(); }
     }
 
-    @SubscribeEvent public static void onServerTick(ServerTickEvent.Post event) {
-        List<QueueProcessor> copy = new ArrayList<>(ModTemplateMultiblock.pendingQueues);
-        copy.forEach(QueueProcessor::tick);
-        ModTemplateMultiblock.pendingQueues.removeIf(QueueProcessor::isEmpty);
-    }
 
     @SubscribeEvent public static void onServerStarted(ServerStartedEvent event) {
         Reference.IT_LOGGER.info("HELLO FROM SERVER STARTING");

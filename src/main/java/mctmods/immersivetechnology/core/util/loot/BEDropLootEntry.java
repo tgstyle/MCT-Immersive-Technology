@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;

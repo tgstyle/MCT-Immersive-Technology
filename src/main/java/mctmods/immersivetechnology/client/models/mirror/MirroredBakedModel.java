@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.models.mirror;
 
 import blusunrize.immersiveengineering.api.utils.DirectionUtils;
-import com.immersiveconvergence.api.client.ICacheKeyProvider;
+import com.immersiveconvergence.api.client.IModelCacheKeyProvider;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -30,13 +30,13 @@ public class MirroredBakedModel<T extends BakedModel> extends BakedModelWrapper<
     private final List<BakedQuad> unculledQuads;
     private final Map<Direction, List<BakedQuad>> culledQuads;
     private final LoadingCache<Object, List<BakedQuad>> quadCache;
-    private final ICacheKeyProvider<Object> keyProvider;
+    private final IModelCacheKeyProvider<Object> keyProvider;
 
     public MirroredBakedModel(T base) {
         super(base);
-        this.isDynamic = base instanceof ICacheKeyProvider;
+        this.isDynamic = base instanceof IModelCacheKeyProvider;
         if (isDynamic) {
-            @SuppressWarnings("unchecked") ICacheKeyProvider<Object> kp = (ICacheKeyProvider<Object>) base;
+            @SuppressWarnings("unchecked") IModelCacheKeyProvider<Object> kp = (IModelCacheKeyProvider<Object>) base;
             this.keyProvider = kp;
             this.quadCache = CacheBuilder.newBuilder().maximumSize(1024).expireAfterAccess(10, TimeUnit.MINUTES).build(CacheLoader.from(k -> MirroredModelLoader.reversedQuads(kp.getQuads(k))));
             this.unculledQuads = null;

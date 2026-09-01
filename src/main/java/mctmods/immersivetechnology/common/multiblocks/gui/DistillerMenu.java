@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -26,13 +26,13 @@ public class DistillerMenu extends ContainerMenu {
         return new DistillerMenu(
                 clientCtx(type, id),
                 invPlayer,
-                new SlotwiseItemHandler(
+                new ConstrainedItemHandler(
                         List.of(
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT,
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT
+                                ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                                ConstrainedItemHandler.IOConstraint.OUTPUT,
+                                ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                                ConstrainedItemHandler.IOConstraint.OUTPUT,
+                                ConstrainedItemHandler.IOConstraint.OUTPUT
                         ),
                         () -> {}
                 ),

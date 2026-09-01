@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.common.fluids.helper.DelegatingFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.client.util.ClientUtils;
@@ -49,8 +49,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 
-public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IPressurizedFluidOutput<SteelSheetmetalTankLogic.State>, BlockInterfaces.ILadderPositionProvider {
+public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State>, BlockInterfaces.ILadderPositionProvider {
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DATA.pointsOfInterest);
     private static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
@@ -217,7 +218,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     @Override public void dropExtraItems(State state, java.util.function.Consumer<net.minecraft.world.item.ItemStack> drop) { }
 
     @Override @Nullable public List<Component> getOverlayText(State state, BlockPos pos, BlockHitResult hit, Player player, boolean hammer) {
-        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ClientUtils.formatFluidStack(state.tank.getFluid()));
+        if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ClientUtils.formatFluidStack(state.tank.getFluid()));
         return null;
     }
 

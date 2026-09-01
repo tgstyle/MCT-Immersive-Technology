@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.gui.helper.GenericDataSerializers;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerLiquidLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -26,10 +26,10 @@ public class BoilerLiquidMenu extends ContainerMenu {
         return new BoilerLiquidMenu(
                 ContainerMenu.clientCtx(type, id),
                 invPlayer,
-                new SlotwiseItemHandler(
+                new ConstrainedItemHandler(
                         List.of(
-                                SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                                SlotwiseItemHandler.IOConstraint.OUTPUT
+                                ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                                ConstrainedItemHandler.IOConstraint.OUTPUT
                         ),
                         () -> {}
                 ),

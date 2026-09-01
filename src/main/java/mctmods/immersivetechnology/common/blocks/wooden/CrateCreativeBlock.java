@@ -1,16 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.wooden;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModEntityBlock;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 
@@ -19,14 +15,5 @@ public class CrateCreativeBlock extends ModEntityBlock<CrateCreativeBlockEntity>
 
     @Override public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack); if (!level.isClientSide) { CrateCreativeBlockEntity be = (CrateCreativeBlockEntity) level.getBlockEntity(pos); if (be != null) be.onBEPlaced(stack); }
-    }
-
-    @Override public @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
-        CrateCreativeBlockEntity tile = (CrateCreativeBlockEntity) level.getBlockEntity(pos);
-        if (tile != null && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(tile, b -> b.writeBlockPos(pos));
-        }
-        return InteractionResult.SUCCESS;
     }
 }

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.shapes;
 
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;

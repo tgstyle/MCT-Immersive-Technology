@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import mctmods.immersivetechnology.common.blocks.helper.*;
-import com.immersiveconvergence.api.client.split.IModelOffsetProvider;
+import com.immersiveconvergence.api.client.split.ISubmodelOffsetProvider;
 import com.immersiveconvergence.api.client.split.SplitModelProperties;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.Sounds;
@@ -28,8 +28,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BooleanSupplier;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.block.FacingLimitation;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.IClientTickableBE;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 
-public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IDirectionalBE, BlockInterfaces.IHasDummyBlocks, IEnergyStorage, IModelOffsetProvider {
+public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IDirectionalBE, BlockInterfaces.IHasDummyBlocks, IEnergyStorage, ISubmodelOffsetProvider {
 
     private static int maxEnergy() { return ServerConfig.advancedCokeOvenBaseheaterMaxEnergy; }
     private static int energyConsumption() { return ServerConfig.advancedCokeOvenBaseheaterEnergyConsumption; }
@@ -165,7 +171,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
             float att = (float) Math.max(player.distanceToSqr(soundPosCache) / 8, 1);
             float vol = Math.max(5f * soundVolume, 0.01f) / att;
             if (vol > 0.01f && !soundHandle.getAsBoolean()) {
-                soundHandle = ModSound.startSound(
+                soundHandle = MachineSound.startSound(
                         () -> active || fanSpeed > 0.01f,
                         () -> level != null && !isRemoved(),
                         soundPosCache,
@@ -244,7 +250,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
 
     @Override public void setFacing(Direction f) { this.facing = f; }
 
-    @Override public PlacementLimitation getFacingLimitation() { return PlacementLimitation.HORIZONTAL; }
+    @Override public FacingLimitation getFacingLimitation() { return FacingLimitation.HORIZONTAL; }
 
     @Override public Direction getFacingForPlacement(BlockPlaceContext ctx) { return ctx.getHorizontalDirection().getOpposite(); }
 

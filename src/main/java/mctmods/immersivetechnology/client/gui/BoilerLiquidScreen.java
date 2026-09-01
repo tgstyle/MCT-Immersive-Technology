@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.client.TextUtils;
 import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
 import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
 import mctmods.immersivetechnology.client.gui.helper.InfoArea;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerLiquidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;

@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
-import mctmods.immersivetechnology.common.fluids.helper.SolarTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.ISolarMultiblockState;
+import com.immersiveconvergence.api.util.TankPair;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.ISolarMultiblockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
@@ -33,7 +33,7 @@ public class SolarMenu extends ContainerMenu {
     }
 
     public static SolarMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new SolarMenu(clientCtx(type, id), invPlayer, new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT, SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(SolarTank.TANK_CAPACITY), new FluidTank(SolarTank.TANK_CAPACITY), () -> null);
+        return new SolarMenu(clientCtx(type, id), invPlayer, new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(TankPair.TANK_CAPACITY), new FluidTank(TankPair.TANK_CAPACITY), () -> null);
     }
 
     private SolarMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, Supplier<ISolarMultiblockState> mbStateSupplier) {

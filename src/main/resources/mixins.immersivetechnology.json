@@ -10,8 +10,7 @@
     "common.InitializationTrackerMixin",
     "common.MixerLogicMixin",
     "common.MixerRecipeMixin",
-    "common.MixerLogicStateMixin",
-    "common.MultiblockBEHelperCommonMixin"
+    "common.MixerLogicStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
-import mctmods.immersivetechnology.core.network.MessageTileSync;
+import com.immersiveconvergence.api.network.MessageTileSync;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.client.Minecraft;

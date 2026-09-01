@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.fluids.helper;
 
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 
 public class DelegatingFluidTank extends MarkableFluidTank {
     private final MarkableFluidTank delegate;

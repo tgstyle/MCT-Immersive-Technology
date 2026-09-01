@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -34,7 +34,7 @@ public class MeltingCrucibleMenu extends ContainerMenu {
     }
 
     public static MeltingCrucibleMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT, SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.inputTankCapacity()), new FluidTank(MeltingCrucibleLogic.outputTankCapacity()), new MutableEnergyStorage(MeltingCrucibleLogic.energyCapacity()), () -> null);
+        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.inputTankCapacity()), new FluidTank(MeltingCrucibleLogic.outputTankCapacity()), new MutableEnergyStorage(MeltingCrucibleLogic.energyCapacity()), () -> null);
     }
 
     private MeltingCrucibleMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, IMutableEnergyStorage energy, Supplier<MeltingCrucibleLogic.State> mbStateSupplier) {

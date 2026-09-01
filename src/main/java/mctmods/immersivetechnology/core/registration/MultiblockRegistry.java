@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
-import mctmods.immersivetechnology.common.items.helper.ModBlockItem;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import com.immersiveconvergence.api.block.ModBlockItem;
+import com.immersiveconvergence.api.multiblock.ClearTank;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerLiquidProcess;
@@ -23,6 +23,13 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.MultiblockPartBlockNonMirror;
+import com.immersiveconvergence.api.multiblock.MultiblockPartBlockWithMirror;
+import com.immersiveconvergence.api.multiblock.MultiblockPartBlockNonMirrorActive;
+import com.immersiveconvergence.api.multiblock.MultiblockBuilder;
+import mctmods.immersivetechnology.common.multiblocks.gui.helper.MultiblockGui;
+import mctmods.immersivetechnology.core.lib.Reference;
 
 public class MultiblockRegistry {
     public static HashMap<String, MultiblockRegistration<?>> MB_REGISTRY_MAP = new HashMap<>();
@@ -30,9 +37,9 @@ public class MultiblockRegistry {
     public static Function<String, TemplateMultiblock> getMBTemplate = MB_TEMPLATE_MAP::get;
     private static volatile boolean INITIALIZED = false;
 
-    private static <T extends MultiblockHandler.IMultiblock> T registerMultiblock(T multiblock) { MultiblockHandler.registerMultiblock(multiblock); return multiblock; }
+    private static <T extends MultiblockHandler.IMultiblock> T registerMultiblock(T multiblock) { return com.immersiveconvergence.api.multiblock.MultiblockRegistry.register(multiblock); }
 
-    private static void registerMB(String registry_name, ModTemplateMultiblock block, MultiblockRegistration<?> registration) {
+    private static void registerMB(String registry_name, MachineTemplateMultiblock block, MultiblockRegistration<?> registration) {
         block.setLogic(registration);
         registerMultiblockTemplate(registry_name, block);
         MB_REGISTRY_MAP.put(registry_name, registration);
@@ -41,7 +48,7 @@ public class MultiblockRegistry {
     public static void registerMultiblockTemplate(String registry_name, TemplateMultiblock template) { MB_TEMPLATE_MAP.put(registry_name, registerMultiblock(template)); }
 
     private static <S extends IMultiblockState> MultiblockBuilder<S> base(IMultiblockLogic<S> logic, String name) {
-        return new MultiblockBuilder<>(logic, name);
+        return new MultiblockBuilder<>(logic, Reference.rl(name));
     }
 
     private static <S extends IMultiblockState> MultiblockBuilder<S> complete(MultiblockBuilder<S> builder) {
@@ -71,7 +78,7 @@ public class MultiblockRegistry {
     public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
             stoneNoMirror(new AdvancedCokeOvenLogic(), "advanced_coke_oven")
                     .structure(() -> AdvancedCokeOven.INSTANCE)
-                    .gui(MenuTypes.ADVANCED_COKE_OVEN_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.ADVANCED_COKE_OVEN_MENU))
                     .withComparator()
                     .build();
 
@@ -87,7 +94,7 @@ public class MultiblockRegistry {
                     .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
                     .component(new BoilerLiquidProcess())
                     .component(new ClearTank<>(BoilerLiquidLogic.INPUT_FLUID_POIS, s -> s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.BOILER_LIQUID_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.BOILER_LIQUID_MENU))
                     .withComparator()
                     .build();
 
@@ -96,7 +103,7 @@ public class MultiblockRegistry {
                     .structure(() -> BoilerSolid.INSTANCE)
                     .redstone(s -> s.rsState, BoilerSolidLogic.REDSTONE_POI)
                     .component(new BoilerSolidProcess())
-                    .gui(MenuTypes.BOILER_SOLID_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.BOILER_SOLID_MENU))
                     .withComparator()
                     .build();
 
@@ -104,7 +111,7 @@ public class MultiblockRegistry {
             metalNoMirror(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> BoilerTank.INSTANCE)
                     .component(new ClearTank<>(BoilerTankLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.BOILER_TANK_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.BOILER_TANK_MENU))
                     .withComparator()
                     .build();
 
@@ -120,7 +127,7 @@ public class MultiblockRegistry {
                     .structure(() -> Distiller.INSTANCE)
                     .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POI)
                     .component(new ClearTank<>(DistillerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.DISTILLER_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.DISTILLER_MENU))
                     .withComparator()
                     .build();
 
@@ -153,7 +160,7 @@ public class MultiblockRegistry {
                     .structure(() -> MeltingCrucible.INSTANCE)
                     .redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
                     .component(new ClearTank<>(MeltingCrucibleLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.MELTING_CRUCIBLE_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.MELTING_CRUCIBLE_MENU))
                     .withComparator()
                     .build();
 
@@ -176,7 +183,7 @@ public class MultiblockRegistry {
                     .structure(() -> SolarMelter.INSTANCE)
                     .redstone(s -> s.rsState, SolarMelterLogic.REDSTONE_POI)
                     .component(new ClearTank<>(SolarMelterLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.SOLAR_MELTER_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.SOLAR_MELTER_MENU))
                     .withComparator()
                     .build();
 
@@ -190,7 +197,7 @@ public class MultiblockRegistry {
                     .structure(() -> SolarTower.INSTANCE)
                     .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
                     .component(new ClearTank<>(SolarTowerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.SOLAR_TOWER_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.SOLAR_TOWER_MENU))
                     .withComparator()
                     .build();
 
@@ -213,7 +220,7 @@ public class MultiblockRegistry {
                     .structure(() -> StyleNOX.INSTANCE)
                     .redstone(s -> s.rsState, StyleNOXLogic.REDSTONE_POI)
                     .component(new ClearTank<>(StyleNOXLogic.WATER_INPUT_POS_LIST, s -> s.tanks.water().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
-                    .gui(MenuTypes.STYLENOX_MENU)
+                    .component(new MultiblockGui<>(MenuTypes.STYLENOX_MENU))
                     .withComparator()
                     .build();
 

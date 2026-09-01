@@ -2,16 +2,16 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.StyleNOXShape;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
 import mctmods.immersivetechnology.core.util.Utils;
@@ -54,7 +54,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, IServerTickableComponent<StyleNOXLogic.State>, IClientTickableComponent<StyleNOXLogic.State>, IPressurizedFluidOutput<StyleNOXLogic.State> {
+public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, IServerTickableComponent<StyleNOXLogic.State>, IClientTickableComponent<StyleNOXLogic.State>, IFluidOutputPump<StyleNOXLogic.State> {
     public static final int SLOT_FUEL = 0;
     public static final int SLOT_SPENT = 1;
     public static final int MAX_ROD_LEVEL = 4;
@@ -252,7 +252,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
         float volume = 1 / attenuation;
         if (state.reactorState == ReactorState.CRITICAL && volume > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(
+            state.isSoundPlaying = MachineSound.startSound(
                     () -> state.reactorState == ReactorState.CRITICAL, ctx.isValid(), soundPos, Sounds.stylenox,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
@@ -306,7 +306,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
     public static class State implements IMultiblockState, IDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final StyleNOXTank tanks;
-        public final SlotwiseItemHandler inventory;
+        public final ConstrainedItemHandler inventory;
         public final IFluidHandler waterInputCap;
         public final IFluidHandler steamOutputCap;
         public final IFluidHandler co2InputCap;
@@ -341,7 +341,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
                 this.inventoryDirty = true;
             };
             this.tanks = new StyleNOXTank(v -> onChanged.run(), waterTankCapacity(), steamTankCapacity(), co2TankCapacity());
-            this.inventory = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
+            this.inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), onChanged);
             this.waterInputCap = new ArrayFluidHandler(tanks.water(), false, true, onChanged);
             this.steamOutputCap = new ArrayFluidHandler(tanks.steam(), true, false, onChanged);
             this.co2InputCap = new ArrayFluidHandler(tanks.co2(), false, true, onChanged);
