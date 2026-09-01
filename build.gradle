@@ -57,7 +57,7 @@ minecraft {
     mcpMappingVersion = common.mcp_mappings.toString().split('-')[0]
     username = 'tgstyle'
     extraRunJvmArguments.addAll(
-            '-Dfml.coreMods.load=mctmods.immersivetechnology.core.MCTMixin',
+            '-Dfml.coreMods.load=mctmods.immersivetechnology.core.MCTMixin,com.immersiveconvergence.core.ICMixin',
             '-Dforge.logging.console.level=debug'
     )
 }

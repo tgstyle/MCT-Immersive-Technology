@@ -16,5 +16,5 @@ public enum BlockType_MetalDevice implements IStringSerializable, BlockITBase.IB
 
     @Override public int getMeta() { return ordinal(); }
 
-    @Override public boolean listForCreative() { return true; }
+    @Override public boolean listForCreative() { return this == ADVANCED_COKE_OVEN_BASEHEATER; }
 }

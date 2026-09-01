@@ -4,7 +4,9 @@ import blusunrize.immersiveengineering.api.IEProperties;
 
 import com.immersiveconvergence.api.multiblock.TemplateData;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
+import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidMaster;
@@ -24,6 +26,31 @@ public class BoilerLegacyConverter {
     private static final int LEGACY_WIDTH = 5, LEGACY_HEIGHT = 3, LEGACY_MASTER_X = 2, LEGACY_MASTER_Y = 1, LEGACY_BURNER_X = 4;
     private static final double LEGACY_WORKING_HEAT = 12000.0;
     private static final double TARGET_HEAT = 600.0;
+
+    public static final String MISSING_ENTRY_NOTICE =
+            "Immersive Technology: this is expected.\n"
+            + "The Boiler is now a Boiler Tank plus a separate Liquid Boiler,\n"
+            + "so the old entry no longer exists.\n"
+            + "Boilers already placed in this world become a Liquid Boiler\n"
+            + "the first time each one loads, keeping their fluids,\n"
+            + "inventory and heat. Nothing needs to be rebuilt.\n\n";
+
+    public static void logMissingEntries(String forgeText) {
+        if (ITLogger.logger == null) { return; }
+        StringBuilder entries = new StringBuilder();
+        for (String line : forgeText.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.startsWith(ImmersiveTechnology.MODID + ":")) { entries.append(entries.length() == 0 ? "" : ", ").append(trimmed); }
+        }
+        ITLogger.warn("This save reports missing registry entries for Immersive Technology" + (entries.length() == 0 ? "" : ": " + entries) + ".");
+        ITLogger.warn("This is expected. The Boiler is now a Boiler Tank plus a separate Liquid Boiler, so the old entry no longer exists.");
+        ITLogger.warn("Boilers already placed in this world become a Liquid Boiler the first time each one loads, keeping their fluids, inventory and heat. Nothing needs to be rebuilt.");
+    }
+
+    public static String annotate(String forgeText) {
+        int listStart = forgeText.indexOf("Missing ");
+        return listStart < 0 ? forgeText + "\n" + MISSING_ENTRY_NOTICE : forgeText.substring(0, listStart) + MISSING_ENTRY_NOTICE + forgeText.substring(listStart);
+    }
 
     public static void convert(TileEntityBoilerTankMaster master, NBTTagCompound legacyNbt) {
         World world = master.getWorld();

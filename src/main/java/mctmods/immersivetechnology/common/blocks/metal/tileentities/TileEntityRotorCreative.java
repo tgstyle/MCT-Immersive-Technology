@@ -1,45 +1,33 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import com.immersiveconvergence.ImmersiveConvergence;
-import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
-import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
-import com.immersiveconvergence.api.network.TileSyncMessage;
+import com.immersiveconvergence.common.ICContent;
+import com.immersiveconvergence.common.blocks.types.ICBlockType_Device;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.client.gui.GuiRotorCreative;
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.Utils;
-import javax.annotation.Nonnull;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileEntityRotorCreative extends TileEntityIEBase implements ITickable, IMechanicalEnergyProvider, IDirectionalTile, IPlayerInteraction, IBlockBounds {
-    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+import javax.annotation.Nonnull;
 
-    public EnumFacing facing = EnumFacing.NORTH;
-    public int rpm = maxSpeed();
-    private final MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
+public class TileEntityRotorCreative extends TileEntityIEBase implements ITickable {
+    private int rpm;
+    private EnumFacing facing = EnumFacing.NORTH;
 
     @Override public void update() {
-        if (!world.isRemote) return;
-        float step = Math.abs(rpm) / (float)maxSpeed() * 72f * Math.signum(rpm);
-        animation.setAnimationMomentum(step);
-        animation.setAnimationRotation((animation.getAnimationRotation() + step) % 360f);
+        if (world.isRemote) { return; }
+        IBlockState state = ICContent.blockDevice.getStateFromMeta(ICBlockType_Device.ROTOR_CREATIVE.getMeta());
+        world.setBlockState(pos, state, 3);
+        TileEntity converted = world.getTileEntity(pos);
+        if (converted instanceof com.immersiveconvergence.common.blocks.tileentities.TileEntityRotorCreative) {
+            com.immersiveconvergence.common.blocks.tileentities.TileEntityRotorCreative rotor = (com.immersiveconvergence.common.blocks.tileentities.TileEntityRotorCreative)converted;
+            rotor.rpm = rpm;
+            rotor.facing = facing;
+            rotor.markDirty();
+            rotor.markContainingBlockForUpdate(null);
+        }
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -51,66 +39,4 @@ public class TileEntityRotorCreative extends TileEntityIEBase implements ITickab
         nbt.setInteger("rpm", rpm);
         nbt.setInteger("facing", facing.ordinal());
     }
-
-    @Override public boolean isValid() { return true; }
-
-    @Override public boolean isMechanicalEnergyTransmitter(EnumFacing side) { return side.getAxis() == facing.getAxis(); }
-
-    @Override public int getSpeed() { return rpm; }
-
-    @Override public int getMaxSpeed() { return maxSpeed(); }
-
-    @Override public float getTorqueMultiplier() { return 1f; }
-
-    @Override public double getBaseMass() { return 0; }
-
-    @Override public double getDriveTorque() { return 0; }
-
-    @Override public double getFriction() { return 0; }
-
-    @Override public MechanicalEnergyAnimation getAnimation() { return animation; }
-
-    @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote && !Utils.isHammer(heldItem)) {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("rpm", rpm);
-            ImmersiveConvergence.packetHandler.sendTo(new TileSyncMessage(this, tag), (EntityPlayerMP)player);
-            return true;
-        }
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void receiveMessageFromServer(@Nonnull NBTTagCompound message) {
-        if (message.hasKey("rpm")) {
-            rpm = message.getInteger("rpm");
-            Minecraft.getMinecraft().displayGuiScreen(new GuiRotorCreative(this));
-        }
-    }
-
-    @Override public void receiveMessageFromClient(@Nonnull NBTTagCompound message) {
-        if (!message.hasKey("rpm")) return;
-        rpm = Math.max(Math.min(message.getInteger("rpm"), maxSpeed()), -maxSpeed());
-        markDirty();
-        markContainingBlockForUpdate(null);
-    }
-
-    @Override public float[] getBlockBounds() {
-        if (facing.getAxis() == EnumFacing.Axis.X) { return new float[]{0, .125f, .125f, 1, .875f, .875f}; }
-        return new float[]{.125f, .125f, 0, .875f, .875f, 1};
-    }
-
-    @Override @Nonnull public EnumFacing getFacing() { return facing; }
-
-    @Override public void setFacing(@Nonnull EnumFacing facing) { this.facing = facing; }
-
-    @Override public int getFacingLimitation() { return 2; }
-
-    @Override public boolean mirrorFacingOnPlacement(@Nonnull EntityLivingBase placer) { return false; }
-
-    @Override public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) { return true; }
-
-    @Override public boolean canRotate(@Nonnull EnumFacing axis) { return true; }
-
-    @Override @Nonnull public EnumFacing getFacingForPlacement(@Nonnull EntityLivingBase placer, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) { return placer.getHorizontalFacing(); }
 }
