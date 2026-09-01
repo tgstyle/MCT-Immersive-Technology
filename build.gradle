@@ -93,9 +93,26 @@ if (!icJars.isEmpty()) {
     logger.warn('No Immersive Convergence dev JAR found in ../ImmersiveConvergence-Legacy/build/libs, build one there first')
 }
 
+def ifJar = null
+def ifDir = file('../Immersive-Fixes-Legacy/build/libs')
+def ifJars = ifDir.exists() ? fileTree(ifDir) {
+    include '*-dev.jar'
+    exclude '**/*-sources.jar'
+}.files : []
+
+if (!ifJars.isEmpty()) {
+    ifJar = ifJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
+    logger.lifecycle("Found Immersive Fixes dev JAR: ${ifJar.name}")
+} else {
+    logger.warn('No Immersive Fixes dev JAR found in ../Immersive-Fixes-Legacy/build/libs, build one there first')
+}
+
 dependencies {
     if (icJar != null) {
         implementation files(icJar)
+    }
+    if (ifJar != null) {
+        implementation files(ifJar)
     }
     implementation rfg.deobf("${common.mjei_version}")
     implementation rfg.deobf("curse.maven:${common.imme_version}")
