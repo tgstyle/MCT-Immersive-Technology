@@ -20,15 +20,10 @@ public class ItemModel extends ItemModelProvider {
     public ItemModel(DataGenerator generator, ExistingFileHelper existingFileHelper) { super(generator.getPackOutput(), Reference.MODID, existingFileHelper); }
 
     private void generateBlockItem(String item_name, String parent_loc) {
-        generateBlockItem(item_name, parent_loc, true, 0, 0, 0.625f);
-    }
-
-    private void generateBlockItem(String item_name, String parent_loc, boolean useBlockPrefix, float guiTransX, float guiTransY, float guiScale) {
-        String prefix = useBlockPrefix ? "block/" : "";
-        ModelFile parentModel = new ModelFile.UncheckedModelFile(modLoc(prefix + parent_loc));
+        ModelFile parentModel = new ModelFile.UncheckedModelFile(modLoc("block/" + parent_loc));
         getBuilder(item_name).parent(parentModel)
                 .transforms()
-                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(guiTransX, guiTransY, 0).scale(guiScale, guiScale, guiScale).end()
+                .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, 0, 0).scale(0.625f, 0.625f, 0.625f).end()
                 .transform(ItemDisplayContext.FIXED).rotation(0, 180, 0).scale(0.5f, 0.5f, 0.5f).end()
                 .transform(ItemDisplayContext.GROUND).translation(0, 3, 0).scale(0.25f, 0.25f, 0.25f).end()
                 .transform(ItemDisplayContext.HEAD).rotation(0, 180, 0).translation(0, 0, 0).scale(1f, 1f, 1f).end()
@@ -80,9 +75,7 @@ public class ItemModel extends ItemModelProvider {
         generateBlockItem("barrel_open", "metal/barrel_open");
         generateBlockItem("barrel_steel", "metal/barrel_steel");
         generateBlockItem("crate_creative", "wooden/crate_creative");
-        generateBlockItem("heat_creative", "metal/heat_creative");
         generateBlockItem("reinforced_coke_brick", "stone/reinforced_coke_brick");
-        generateBlockItem("rotor_creative", "dynamic/rotor", false, -8, 4, 0.7f);
         generateBlockItem("slab_reinforced_coke_brick", "stone/slab_reinforced_coke_brick");
         generateBlockItem("technology_engineering", "metal/technology_engineering");
         generateBlockItem("trash_energy", "metal/trash_energy");

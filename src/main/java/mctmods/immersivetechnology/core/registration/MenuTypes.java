@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.*;
-import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
@@ -48,7 +47,6 @@ public class MenuTypes {
     public static final MultiblockContainer<SolarMelterLogic.State, SolarMenu> SOLAR_MELTER_MENU = registerMultiblock("gui_solar_melter", SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
     public static final MultiblockContainer<SolarTowerLogic.State, SolarMenu> SOLAR_TOWER_MENU = registerMultiblock("gui_solar_tower", SolarMenu::makeServer, (type, id, inv, buffer) -> SolarMenu.makeClient(type, id, inv));
 
-    public static final ArgContainer<RotorCreativeBlockEntity, RotorCreativeMenu> ROTOR_CREATIVE = registerArg("rotor_creative", RotorCreativeMenu::makeServer, RotorCreativeMenu::makeClient);
     public static final ArgContainer<CrateCreativeBlockEntity, CrateCreativeMenu> CRATE_CREATIVE = registerArg("crate_creative", CrateCreativeMenu::makeServer, (type, id, inv, buffer) -> CrateCreativeMenu.makeClient(type, id, inv));
     public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, (type, id, inv, buffer) -> TrashItemMenu.makeClient(type, id, inv));
 

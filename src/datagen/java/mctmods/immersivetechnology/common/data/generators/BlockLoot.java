@@ -27,8 +27,6 @@ public class BlockLoot extends BlockLootSubProvider {
 
         dropSelf(ModBlocks.Connector.CONNECTOR_TIMER.get());
         dropSelf(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
-        dropSelf(ModBlocks.Metal.HEAT_CREATIVE.get());
-        dropSelf(ModBlocks.Metal.ROTOR_CREATIVE.get());
         dropSelf(ModBlocks.Metal.TRASH_ENERGY.get());
         dropSelf(ModBlocks.Metal.TRASH_FLUID.get());
         dropSelf(ModBlocks.Metal.TRASH_ITEM.get());

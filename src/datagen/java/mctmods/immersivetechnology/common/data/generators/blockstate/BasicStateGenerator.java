@@ -83,7 +83,6 @@ public class BasicStateGenerator {
         ResourceLocation reinforcedTexture = main.modLoc("block/stone/reinforced_coke_brick");
         createSlabModels(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
         createSimpleBlock(ModBlocks.getBlock.apply("barrel_creative"), main.models().cubeAll("block/metal/barrel_creative", main.modLoc("block/metal/barrel_creative")));
-        createSimpleBlock(ModBlocks.getBlock.apply("heat_creative"), main.models().cubeAll("block/metal/heat_creative", main.modLoc("block/metal/heat_creative")));
 
         VariantBlockStateBuilder steelBuilder = main.getVariantBuilder(ModBlocks.getBlock.apply("barrel_steel"));
         BlockModelBuilder steelModel = main.models().getBuilder("block/metal/barrel_steel").customLoader(SideConfigBuilder::begin).type(ModelConfigurableSides.Type.VERTICAL).baseName(main.modLoc("block/metal/barrel_steel")).end();
@@ -127,16 +126,6 @@ public class BasicStateGenerator {
         createValveVariants();
         createBaseHeaterVariants();
 
-        VariantBlockStateBuilder rotorBuilder = main.getVariantBuilder(ModBlocks.Metal.ROTOR_CREATIVE.get());
-        ModelFile rotorNS = new ModelFile.UncheckedModelFile(main.modLoc("dynamic/rotor"));
-        ModelFile rotorEW = new ModelFile.UncheckedModelFile(main.modLoc("dynamic/rotor_east_west"));
-        rotorBuilder.forAllStates(state -> {
-            Direction facing = state.getValue(ModProperties.FACING_HORIZONTAL);
-            ModelFile modelFile = (facing == Direction.NORTH || facing == Direction.SOUTH) ? rotorNS : rotorEW;
-            int yRot = 0;
-            if (facing == Direction.SOUTH || facing == Direction.WEST) yRot = 180;
-            return ConfiguredModel.builder().modelFile(modelFile).rotationY(yRot).build();
-        });
     }
 
     private void createValveVariants() {
@@ -265,13 +254,6 @@ public class BasicStateGenerator {
 
     private void createSimpleBlock(Block block, ModelFile model) { main.getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
-    protected void addParticleTextureFrom(BlockModelBuilder result, ModelBuilder<?> model) {
-        String particles = ModBlockState.generatedParticleTextures.get(model.getLocation());
-        if (particles != null) {
-            result.texture("particle", particles);
-            ModBlockState.generatedParticleTextures.put(result.getLocation(), particles);
-        }
-    }
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
 

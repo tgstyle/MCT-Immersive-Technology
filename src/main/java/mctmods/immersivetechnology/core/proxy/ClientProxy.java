@@ -21,7 +21,6 @@ import net.minecraft.core.Vec3i;
 import com.immersiveconvergence.api.particles.ColoredSmokeProvider;
 import com.immersiveconvergence.api.particles.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
-import mctmods.immersivetechnology.common.blocks.metal.gui.RotorCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
@@ -89,7 +88,6 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypes.CRATE_CREATIVE.getType(), CrateCreativeScreen::new);
             MenuScreens.register(MenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
             MenuScreens.register(MenuTypes.MELTING_CRUCIBLE_MENU.getType(), MeltingCrucibleScreen::new);
-            MenuScreens.register(MenuTypes.ROTOR_CREATIVE.getType(), (RotorCreativeMenu menu, Inventory inv, Component title) -> new RotorCreativeScreen(menu, inv));
             MenuScreens.register(MenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
@@ -278,7 +276,6 @@ public class ClientProxy extends CommonProxy {
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
         registerBERender(event, BlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseHeaterRenderer());
         registerBERender(event, BlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
-        registerBERender(event, BlockEntities.ROTOR_CREATIVE::get, context -> new RotorCreativeRenderer());
         registerBERender(event, MultiblockRegistry.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());
         registerBERender(event, MultiblockRegistry.GAS_TURBINE.masterBE(), ctx -> new GasTurbineRenderer());
         registerBERender(event, MultiblockRegistry.SOLAR_REFLECTOR.masterBE(), ctx1 -> new SolarReflectorRenderer());
