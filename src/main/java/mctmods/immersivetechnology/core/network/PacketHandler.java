@@ -12,6 +12,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
+import com.immersiveconvergence.api.network.MessageTileSync;
+import com.immersiveconvergence.api.network.INetworkMessage;
 
 @SuppressWarnings("unused")
 public class PacketHandler {
@@ -29,7 +31,7 @@ public class PacketHandler {
 
     private static int id = 0;
 
-    public static <T extends IMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, IMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
+    public static <T extends INetworkMessage> void registerMessage(Class<T> type, Function<FriendlyByteBuf, T> decoder) { INSTANCE.registerMessage(id++, type, INetworkMessage::toBytes, decoder, (t, ctx) -> { t.process(ctx); ctx.get().setPacketHandled(true); }); }
 
     public static <MSG> void sendToPlayer(Player player, @Nonnull MSG message) { if (player instanceof ServerPlayer serverPlayer) INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), message); }
 

@@ -1,16 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.particles.ColoredSmoke;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
@@ -97,7 +97,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         float currentLevel = (float) (state.heatLevel / state.workingHeatLevel);
         float vol = (2 * currentLevel) / attenuation;
         if (state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(
+            state.isSoundPlaying = MachineSound.startSound(
                     () -> state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
@@ -243,7 +243,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerSolidShape.GETTER; }
 
-    private static class FuelItemHandler extends SlotwiseItemHandler {
+    private static class FuelItemHandler extends ConstrainedItemHandler {
         private final Supplier<Level> levelSupplier;
 
         public FuelItemHandler(Supplier<Level> levelSupplier, List<IOConstraint> constraints, Runnable onChanged) {
@@ -273,7 +273,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         public StoredCapability<IItemHandlerModifiable> inputFuelCap;
         public StoredCapability<IHeatProvider> heatSourceCap;
         public CapabilityReference<IHeatConsumer> boilerInput;
-        public SlotwiseItemHandler inventory;
+        public ConstrainedItemHandler inventory;
         public double heatLevel = 0;
         public int burnRemaining = 0;
         public int totalBurnTime = 0;
@@ -290,7 +290,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.inventoryDirty = true; };
-            inventory = new FuelItemHandler(ctx.levelSupplier(), List.of(SlotwiseItemHandler.IOConstraint.INPUT), onChanged);
+            inventory = new FuelItemHandler(ctx.levelSupplier(), List.of(ConstrainedItemHandler.IOConstraint.INPUT), onChanged);
             inputFuelCap = new StoredCapability<>(inventory);
             heatSourceCap = new StoredCapability<>(new HeatSourceImpl(this));
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_OUTPUT_FACING, HEAT_OUTPUT_POIS.get(0));

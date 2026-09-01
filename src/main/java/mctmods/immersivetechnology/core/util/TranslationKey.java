@@ -54,6 +54,7 @@ public enum TranslationKey {
     GUI_VALVE_LOAD_LIMIT_TIME("gui." + Reference.MODID + ".valve_load.limit_time"),
     NO_GAS_ALLOWED("gui." + Reference.MODID + ".no_gas_allowed"),
     OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE("overlay." + Reference.MODID + ".osd.barrel.normal.firstline"),
+    OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE("overlay." + Reference.MODID + ".osd.creative_crate.normal.firstline"),
     OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE("overlay." + Reference.MODID + ".osd.trash_energy.normal.alternative"),
     OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE("overlay." + Reference.MODID + ".osd.trash_energy.normal.firstline"),
     OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE("overlay." + Reference.MODID + ".osd.trash_fluid.normal.alternative"),

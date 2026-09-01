@@ -11,8 +11,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
+import com.immersiveconvergence.api.network.INetworkMessage;
 
-public record OSDRequestMessage(BlockPos pos) implements IMessage {
+public record OSDRequestMessage(BlockPos pos) implements INetworkMessage {
     public OSDRequestMessage(FriendlyByteBuf buf) { this(buf.readBlockPos()); }
 
     @Override public void toBytes(FriendlyByteBuf buf) { buf.writeBlockPos(pos); }

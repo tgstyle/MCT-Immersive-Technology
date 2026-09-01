@@ -13,23 +13,8 @@ import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 
 public class Utils {
-    public static void dropStackAtPos(Level world, BlockPos pos, ItemStack stack) { Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack); }
 
-    public static FluidStack copyFluidStackWithAmount(FluidStack stack, int amount, boolean stripPressure) {
-        if (stack.isEmpty()) { return FluidStack.EMPTY; }
-        FluidStack fs = new FluidStack(stack, amount);
-        if (stripPressure && fs.hasTag()) {
-            CompoundTag tag = fs.getTag();
-            tag.remove(IFluidPipe.NBT_PRESSURIZED);
-            if (tag.isEmpty()) { fs.setTag(null); }
-        }
-        return fs;
-    }
 
-    public static boolean isFluidRelatedItemStack(ItemStack stack) {
-        if (stack.isEmpty()) { return false; }
-        return FluidUtil.getFluidHandler(stack).isPresent();
-    }
 
     public static ItemStack insertStackIntoInventory(CapabilityReference<IItemHandler> to, ItemStack stack, boolean simulate) { return insertStackIntoInventory(to.getNullable(), stack, simulate); }
 

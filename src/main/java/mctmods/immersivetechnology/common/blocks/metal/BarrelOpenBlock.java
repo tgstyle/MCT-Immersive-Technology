@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
 
 import net.minecraft.core.BlockPos;
@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.block.Enums;
 
 public class BarrelOpenBlock extends ModEntityBlock<BarrelOpenBlockEntity> {
     public static final EnumProperty<IOSideConfig> BOTTOM_CONFIG = EnumProperty.create("bottom_config", IOSideConfig.class);

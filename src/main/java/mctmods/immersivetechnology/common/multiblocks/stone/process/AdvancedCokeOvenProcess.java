@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.register.IEFluids;
-import mctmods.immersivetechnology.common.multiblocks.helper.FurnaceHandler;
+import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +30,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, IMultiblockLevel level) {
         if (getRecipe(level.getRawLevel()) == null) { this.clearProcess = true; return; }
         @SuppressWarnings("unchecked")
-        FurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (FurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
+        BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
         double speed = env.getProcessSpeed(level);
         this.processTick += (float)speed;
         if (this.processTick >= this.maxProcessTime) { processFinish(context, level); this.clearProcess = true; }

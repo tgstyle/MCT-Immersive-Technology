@@ -1,16 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.particles.ColoredSmoke;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
@@ -87,7 +87,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         float currentLevel = (float) (state.heatLevel / state.workingHeatLevel);
         float vol = (2 * currentLevel) / attenuation;
         if ((!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(
+            state.isSoundPlaying = MachineSound.startSound(
                     () -> (!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
@@ -102,7 +102,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             );
         }
         if (state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) {
-            state.isPilotSoundPlaying = ModSound.startSound(
+            state.isPilotSoundPlaying = MachineSound.startSound(
                     () -> state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0,
                     ctx.isValid(),
                     soundPos,
@@ -259,7 +259,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public StoredCapability<IFluidHandler> inputFuelCap;
         public StoredCapability<IHeatProvider> heatSourceCap;
         public CapabilityReference<IHeatConsumer> boilerInput;
-        public SlotwiseItemHandler inventory;
+        public ConstrainedItemHandler inventory;
         public double heatLevel = 0;
         public int burnRemaining = 0;
         public int burnPercent = 0;
@@ -279,10 +279,10 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             tanks = new BoilerTank(v -> { onChanged.run(); this.tanksDirty = true; });
-            inventory = new SlotwiseItemHandler(
+            inventory = new ConstrainedItemHandler(
                     List.of(
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );

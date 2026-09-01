@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import java.text.DecimalFormat;
-import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
-import mctmods.immersivetechnology.common.blocks.helper.IClientTickableBE;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.block.IClientTickableBE;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.network.OSDRequestMessage;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -50,12 +50,18 @@ public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IS
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult mop, boolean hammer) {
         if (level == null) { return new Component[0]; }
-        if (level.isClientSide && requestCooldown == 0) {
-            PacketHandler.sendToServer(new OSDRequestMessage(worldPosition));
-            requestCooldown = 20;
-        }
+        requestOverlaySync();
+        return new Component[] { Component.translatable(text().getLocation(), formattedAmount()) };
+    }
+
+    protected String formattedAmount() {
         double rawValue = ClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
-        String valueStr = NUMBER_FORMAT.format(rawValue);
-        return new Component[] { Component.translatable(text().getLocation(), valueStr) };
+        return NUMBER_FORMAT.format(rawValue);
+    }
+
+    protected void requestOverlaySync() {
+        if (level == null || !level.isClientSide || requestCooldown != 0) { return; }
+        PacketHandler.sendToServer(new OSDRequestMessage(worldPosition));
+        requestCooldown = 20;
     }
 }

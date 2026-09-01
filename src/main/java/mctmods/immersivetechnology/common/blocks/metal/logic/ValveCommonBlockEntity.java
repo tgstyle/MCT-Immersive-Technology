@@ -22,6 +22,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.block.FacingLimitation;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.IClientTickableBE;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 
 public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
@@ -176,7 +182,7 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
         efficientSetChanged();
     }
 
-    @Override @NotNull public PlacementLimitation getFacingLimitation() { return PlacementLimitation.SIDE_CLICKED; }
+    @Override @NotNull public FacingLimitation getFacingLimitation() { return FacingLimitation.SIDE_CLICKED; }
 
     @Override public boolean mirrorFacingOnPlacement(@NotNull LivingEntity placer) { return false; }
 

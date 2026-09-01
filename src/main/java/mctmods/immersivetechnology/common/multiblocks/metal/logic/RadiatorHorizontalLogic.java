@@ -2,15 +2,15 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorHorizontalShape;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -47,7 +47,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 
-public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizontalLogic.State>, IServerTickableComponent<RadiatorHorizontalLogic.State>, IClientTickableComponent<RadiatorHorizontalLogic.State>, IPressurizedFluidOutput<RadiatorHorizontalLogic.State> {
+public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizontalLogic.State>, IServerTickableComponent<RadiatorHorizontalLogic.State>, IClientTickableComponent<RadiatorHorizontalLogic.State>, IFluidOutputPump<RadiatorHorizontalLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
     public static final int OUTPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
 
@@ -171,7 +171,7 @@ public class RadiatorHorizontalLogic implements IMultiblockLogic<RadiatorHorizon
             float att = (float) Math.max(player.distanceToSqr(soundVec) / 16, 1);
             float vol = 1f / att;
             if (vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-                state.isSoundPlaying = ModSound.startSound(
+                state.isSoundPlaying = MachineSound.startSound(
                         () -> state.active,
                         ctx.isValid(),
                         soundVec,

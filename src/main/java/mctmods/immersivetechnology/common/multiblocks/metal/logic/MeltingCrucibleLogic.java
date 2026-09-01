@@ -1,14 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
@@ -52,8 +52,13 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
 
-public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, IPressurizedFluidOutput<MeltingCrucibleLogic.State> {
+public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, IFluidOutputPump<MeltingCrucibleLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -96,7 +101,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.meltingCrucible, () -> {
+            state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.meltingCrucible, () -> {
                 LocalPlayer p = Minecraft.getInstance().player;
                 if (p == null) { return 0f; }
                 float a = (float) Math.max(p.distanceToSqr(soundPos) / 32f, 1f);
@@ -223,7 +228,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;
         public final StoredCapability<IItemHandler> invCap;
-        public final SlotwiseItemHandler inventory;
+        public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<MeltingRecipe> processor;
         public AveragingEnergyStorage energy;
@@ -242,12 +247,12 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new MeltingCrucibleTank(v -> onChanged.run());
             this.tankArray = new IFluidTank[]{tanks.input(), tanks.output()};
-            inventory = new SlotwiseItemHandler(
+            inventory = new ConstrainedItemHandler(
                     List.of(
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT,
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT,
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT
                     ),
                     onChanged
             );
@@ -259,7 +264,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
         }
 
-        public SlotwiseItemHandler getInventory() { return inventory; }
+        public ConstrainedItemHandler getInventory() { return inventory; }
         public MeltingCrucibleTank getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {

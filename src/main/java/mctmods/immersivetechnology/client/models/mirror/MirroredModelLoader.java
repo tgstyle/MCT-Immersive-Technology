@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import mctmods.immersivetechnology.core.lib.Reference;
-import com.immersiveconvergence.api.client.ModelUtils;
+import com.immersiveconvergence.api.client.BakedQuadUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
@@ -35,7 +35,7 @@ public class MirroredModelLoader implements IGeometryLoader<MirroredGeometry> {
     public static List<BakedQuad> reversedQuads(List<BakedQuad> quads) {
         if (quads.isEmpty()) return ImmutableList.of();
         BakedQuad[] arr = new BakedQuad[quads.size()];
-        for (int i = 0; i < quads.size(); i++) { arr[i] = ModelUtils.reverseOrder(quads.get(i)); }
+        for (int i = 0; i < quads.size(); i++) { arr[i] = BakedQuadUtils.reverseOrder(quads.get(i)); }
         return List.of(arr);
     }
 

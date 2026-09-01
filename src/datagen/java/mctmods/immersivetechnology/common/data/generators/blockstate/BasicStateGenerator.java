@@ -3,8 +3,8 @@ package mctmods.immersivetechnology.common.data.generators.blockstate;
 import com.google.common.collect.ImmutableMap;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
-import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import com.immersiveconvergence.api.block.Enums;
 
 public class BasicStateGenerator {
     private final ModBlockState main;

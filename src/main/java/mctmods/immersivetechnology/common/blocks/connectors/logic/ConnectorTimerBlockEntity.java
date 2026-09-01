@@ -10,9 +10,9 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
 import blusunrize.immersiveengineering.common.blocks.generic.ImmersiveConnectableBlockEntity;
 import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -44,8 +44,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
+import com.immersiveconvergence.api.network.ITileSyncReceiver;
+import com.immersiveconvergence.api.block.FacingLimitation;
 
-public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider {
+public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
@@ -184,7 +186,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         }
     }
 
-    public void receiveMessageFromClient(CompoundTag nbt) {
+    @Override public void receiveMessageFromClient(CompoundTag nbt) {
         boolean needsNetworkUpdate = false;
         boolean needsBlockUpdate = false;
 

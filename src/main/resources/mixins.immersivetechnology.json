@@ -11,7 +11,6 @@
     "common.MixerLogicMixin",
     "common.MixerLogicStateMixin",
     "common.MixerRecipeMixin",
-    "common.MultiblockBEHelperCommonMixin",
     "common.PipeFluidHandlerMixin"
   ],
   "injectors": {

@@ -2,14 +2,14 @@ package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 
-public class BoilerSolid extends ModTemplateMultiblock {
+public class BoilerSolid extends MachineTemplateMultiblock {
     public static final BoilerSolid INSTANCE = new BoilerSolid();
 
     public BoilerSolid() {

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;

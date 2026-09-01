@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModEntityBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.RotorCreativeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

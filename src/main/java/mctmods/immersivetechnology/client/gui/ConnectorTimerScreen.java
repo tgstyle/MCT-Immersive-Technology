@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.core.network.MessageTileSync;
+import com.immersiveconvergence.api.network.MessageTileSync;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;

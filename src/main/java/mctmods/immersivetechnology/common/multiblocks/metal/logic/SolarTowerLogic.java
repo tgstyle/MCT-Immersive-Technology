@@ -1,17 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
-import mctmods.immersivetechnology.common.fluids.helper.SolarTank;
-import mctmods.immersivetechnology.common.multiblocks.helper.ISolarMultiblockState;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.util.TankPair;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -58,8 +57,12 @@ import java.util.function.Supplier;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
 
-public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State>, IPressurizedFluidOutput<SolarTowerLogic.State> {
+public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State>, IFluidOutputPump<SolarTowerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -113,7 +116,7 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
                     if (vol > 0.01f) {
                         state.soundId++;
                         int thisId = state.soundId;
-                        state.isSoundPlaying = ModSound.startSound(() -> {
+                        state.isSoundPlaying = MachineSound.startSound(() -> {
                             FluidStack fsActive = state.tanks.input().getFluid();
                             SolarTowerRecipe recipeActive = fsActive.getAmount() > 0 ? state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsActive) : null;
                             double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : workingHeatLevel();
@@ -343,10 +346,10 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
     public static class State implements ISolarMultiblockState, IDisplayContext {
         public final BiFunction<Level, FluidStack, SolarTowerRecipe> recipeGetter = CachedRecipe.cached(SolarTowerRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
-        public final SolarTank tanks;
+        public final TankPair tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
-        public SlotwiseItemHandler inventory;
+        public ConstrainedItemHandler inventory;
         public double heatLevel = 0;
         public double reflectorStrength = 0;
         public byte reflectorCount = 0;
@@ -376,8 +379,8 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
             final Runnable markDirty = ctx.getMarkDirtyRunnable();
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new SolarTank(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
-            inventory = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT, SlotwiseItemHandler.IOConstraint.FLUID_INPUT, SlotwiseItemHandler.IOConstraint.OUTPUT), onChanged);
+            tanks = new TankPair(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
+            inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), onChanged);
             inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input(), false, true, onChanged));
             outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output(), true, false, onChanged));
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
@@ -404,9 +407,9 @@ public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>,
 
         public boolean isSunVisible() { return sunVisible; }
 
-        public SolarTank getTanks() { return tanks; }
+        public TankPair getTanks() { return tanks; }
 
-        public SlotwiseItemHandler getInventory() { return inventory; }
+        public ConstrainedItemHandler getInventory() { return inventory; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", this.tanks.toNBT());

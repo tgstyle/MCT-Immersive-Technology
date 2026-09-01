@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.core.util.inventory.IDropInventory;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.util.IItemDropProvider;
 import mctmods.immersivetechnology.core.util.inventory.InventoryHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,7 +28,7 @@ public class DropInventoryLootEntry extends LootPoolSingletonContainer {
             if (te instanceof BlockInterfaces.IGeneralMultiblock dummyBE) {
                 te = (BlockEntity)dummyBE.master();
             }
-            if (te instanceof IDropInventory itInvBE) {
+            if (te instanceof IItemDropProvider itInvBE) {
                 if (itInvBE.getDroppedItems() != null) { itInvBE.getDroppedItems().forEach(output); return; }
             }
             if (te != null) {

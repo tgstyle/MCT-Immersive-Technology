@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.gui.helper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
 import mctmods.immersivetechnology.core.network.MessageContainerData;
 import mctmods.immersivetechnology.core.network.PacketHandler;

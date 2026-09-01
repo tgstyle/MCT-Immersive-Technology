@@ -2,15 +2,15 @@ package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.StairsBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ModWallBlock;
+import com.immersiveconvergence.api.block.StairsBlock;
+import com.immersiveconvergence.api.block.ModWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.blocks.stone.slab.SlabReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.blocks.wooden.CrateCreativeBlock;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
-import mctmods.immersivetechnology.common.items.helper.ModBlockItem;
+import com.immersiveconvergence.api.block.ModBlockItem;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;

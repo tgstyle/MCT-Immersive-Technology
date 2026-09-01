@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;

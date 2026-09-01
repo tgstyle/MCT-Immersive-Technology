@@ -17,12 +17,12 @@ import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -70,7 +70,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         float att = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
         float vol = 11f / att;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(
+            state.isSoundPlaying = MachineSound.startSound(
                     () -> state.active,
                     ctx.isValid(),
                     soundPos,

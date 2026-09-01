@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.block.Enums;
 
 public class BarrelSteelBlock extends ModEntityBlock<BarrelSteelBlockEntity> {
     public static final EnumProperty<IOSideConfig> TOP_CONFIG = EnumProperty.create("top_config", IOSideConfig.class);

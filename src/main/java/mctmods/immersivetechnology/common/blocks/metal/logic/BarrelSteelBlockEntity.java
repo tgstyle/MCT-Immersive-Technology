@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelSteelBlock;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import net.minecraft.core.BlockPos;
@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
+import com.immersiveconvergence.api.block.Enums;
 
 public class BarrelSteelBlockEntity extends BarrelCommonBlockEntity {
     private static final int tankSize = 24 * FluidType.BUCKET_VOLUME;

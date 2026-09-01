@@ -9,10 +9,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.immersiveconvergence.api.client.ModelUtils;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.Enums;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import com.immersiveconvergence.api.client.BakedQuadUtils;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.Enums;
+import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -112,7 +112,7 @@ public class ModelConfigurableSides extends ModBakedModel {
     }
 
     private static void addQuad(Map<Direction, BakedQuad> out, Map<Direction, TextureAtlasSprite> sprites, Direction side, Vec3[] vertices, double[] uv) {
-        out.put(side, ModelUtils.createBakedQuad(vertices, side, sprites.get(side), uv, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, side.getAxisDirection() == Direction.AxisDirection.NEGATIVE));
+        out.put(side, BakedQuadUtils.createBakedQuad(vertices, side, sprites.get(side), uv, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, side.getAxisDirection() == Direction.AxisDirection.NEGATIVE));
     }
 
     @Override @NotNull public TextureAtlasSprite getParticleIcon(@NotNull ModelData data) { return this.textures.get(Direction.DOWN).get(Enums.IOSideConfig.NONE); }

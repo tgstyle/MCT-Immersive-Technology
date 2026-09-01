@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ModEntityBlock;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
 import blusunrize.immersiveengineering.common.items.WireCoilItem;

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.process;
 
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;

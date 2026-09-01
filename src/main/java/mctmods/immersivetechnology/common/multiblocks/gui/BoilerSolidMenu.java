@@ -4,7 +4,7 @@ import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.gui.helper.GenericDataSerializers;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -24,7 +24,7 @@ public class BoilerSolidMenu extends ContainerMenu {
     }
 
     public static BoilerSolidMenu makeClient(MenuType<BoilerSolidMenu> type, int id, Inventory invPlayer) {
-        SlotwiseItemHandler dummy = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.INPUT), () -> {});
+        ConstrainedItemHandler dummy = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.INPUT), () -> {});
         return new BoilerSolidMenu(ContainerMenu.clientCtx(type, id), invPlayer, dummy, null);
     }
 

@@ -2,19 +2,19 @@ package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.FurnaceHandler;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
-import mctmods.immersivetechnology.common.multiblocks.helper.WrappingItemHandler;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.SlotRangeItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.AdvancedCokeOvenProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.Utils;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
@@ -70,6 +70,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 
 public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenLogic.State>, IServerTickableComponent<AdvancedCokeOvenLogic.State>, IClientTickableComponent<AdvancedCokeOvenLogic.State> {
     public static final int SLOT_INPUT = 0;
@@ -120,7 +121,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             float att = (float) Math.max(player.distanceToSqr(soundPos) / 8, 1);
             float vol = 1f / att;
             if (vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-                state.isSoundPlaying = ModSound.startSound(
+                state.isSoundPlaying = MachineSound.startSound(
                         () -> state.active,
                         ctx.isValid(),
                         soundPos,
@@ -158,7 +159,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
                 FluidStack fs = state.tanks.output.getFluid().copy();
                 int accepted = output.fill(fs, FluidAction.SIMULATE);
                 if (accepted > 0) {
-                    int drained = output.fill(Utils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
+                    int drained = output.fill(ICFluidUtils.copyFluidStackWithAmount(fs, accepted, false), FluidAction.EXECUTE);
                     state.tanks.output.drain(drained, FluidAction.EXECUTE);
                 }
             }
@@ -224,7 +225,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 
-    public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, FurnaceHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, IDisplayContext {
+    public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, IDisplayContext {
         public final BiFunction<Level, ItemStack, AdvancedCokeOvenRecipe> recipeGetter = CachedRecipe.cached(AdvancedCokeOvenRecipe::findRecipe);
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
@@ -234,7 +235,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         public boolean active;
         public final AdvancedCokeOvenTank tanks;
         private final IFluidTank[] tankArray;
-        public final SlotwiseItemHandler inventory;
+        public final ConstrainedItemHandler inventory;
         private final MultiblockProcessor.InMachineProcessor<AdvancedCokeOvenRecipe> processor;
         private final StoredCapability<IItemHandler> invCap;
         private final StoredCapability<IFluidHandler> fluidCap;
@@ -253,32 +254,32 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new AdvancedCokeOvenTank(v -> onChanged.run());
             this.tankArray = new IFluidTank[]{tanks.output};
-            this.inventory = new SlotwiseItemHandler(
+            this.inventory = new ConstrainedItemHandler(
                     List.of(
-                            SlotwiseItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(ctx.levelSupplier().get(), i, null) != null),
-                            SlotwiseItemHandler.IOConstraint.OUTPUT,
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT
+                            ConstrainedItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(ctx.levelSupplier().get(), i, null) != null),
+                            ConstrainedItemHandler.IOConstraint.OUTPUT,
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT
                     ),
                     onChanged
             );
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, AdvancedCokeOvenRecipe::getById);
             this.invCap = new StoredCapability<>(this.inventory);
             this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, onChanged));
-            this.itemOutputCap = new StoredCapability<>(new WrappingItemHandler(
+            this.itemOutputCap = new StoredCapability<>(new SlotRangeItemHandler(
                     inventory,
                     false,
                     true,
                     List.of(
-                            new WrappingItemHandler.IntRange(SLOT_OUTPUT, SLOT_OUTPUT + 1),
-                            new WrappingItemHandler.IntRange(SLOT_FILLED_CONTAINER, SLOT_FILLED_CONTAINER + 1)
+                            new SlotRangeItemHandler.IntRange(SLOT_OUTPUT, SLOT_OUTPUT + 1),
+                            new SlotRangeItemHandler.IntRange(SLOT_FILLED_CONTAINER, SLOT_FILLED_CONTAINER + 1)
                     )
             ));
-            this.itemInputCap = new StoredCapability<>(new WrappingItemHandler(
+            this.itemInputCap = new StoredCapability<>(new SlotRangeItemHandler(
                     inventory,
                     true,
                     false,
-                    List.of(new WrappingItemHandler.IntRange(SLOT_INPUT, SLOT_INPUT + 1))
+                    List.of(new SlotRangeItemHandler.IntRange(SLOT_INPUT, SLOT_INPUT + 1))
             ));
             MultiblockFace outputMBFace = new MultiblockFace(OUTPUT_FLUID_POI.side(), OUTPUT_FLUID_POI.posInMultiblock());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(outputMBFace);

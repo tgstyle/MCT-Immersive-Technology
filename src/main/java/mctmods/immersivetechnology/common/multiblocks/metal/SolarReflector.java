@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
-import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
-public class SolarReflector extends ModTemplateMultiblock {
+public class SolarReflector extends MachineTemplateMultiblock {
     public static final SolarReflector INSTANCE = new SolarReflector();
 
     public SolarReflector() { super(Reference.rl("multiblocks/solar_reflector"), SolarReflectorShape.MASTER_POS, SolarReflectorShape.TRIGGER_POS, new BlockPos(SolarReflectorShape.WIDTH,SolarReflectorShape.HEIGHT,SolarReflectorShape.LENGTH), SolarReflectorShape.CLIENT_OFFSET, SolarReflectorShape.MANUAL_SCALE, MultiblockRegistry.SOLAR_REFLECTOR); }

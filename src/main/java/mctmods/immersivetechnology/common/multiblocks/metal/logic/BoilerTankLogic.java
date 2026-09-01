@@ -1,14 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiBlockInventoryUtils;
-import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
@@ -48,7 +48,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 
-public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State>, IPressurizedFluidOutput<BoilerTankLogic.State> {
+public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>, IServerTickableComponent<BoilerTankLogic.State>, IFluidOutputPump<BoilerTankLogic.State> {
     public static final int INPUT_SLOT_FILLED = 0;
     public static final int INPUT_SLOT_EMPTY = 1;
     public static final int OUTPUT_SLOT_EMPTY = 2;
@@ -185,7 +185,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
         public StoredCapability<IFluidHandler> outputCap;
         public StoredCapability<IHeatConsumer> boilerInputCap;
         public CapabilityReference<IHeatProvider> heatSource;
-        public SlotwiseItemHandler inventory;
+        public ConstrainedItemHandler inventory;
         public int recipeTimeRemaining = 0;
         public int totalProcessTime = 0;
         public BoilerTankRecipe lastRecipe;
@@ -201,12 +201,12 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             final Runnable sync = ctx.getSyncRunnable();
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             tanks = new BoilerTanks(v -> { onChanged.run(); this.tanksDirty = true; });
-            inventory = new SlotwiseItemHandler(
+            inventory = new ConstrainedItemHandler(
                     List.of(
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT,
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT,
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );

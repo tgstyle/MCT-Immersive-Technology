@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
 import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
-import mctmods.immersivetechnology.common.multiblocks.helper.SlotwiseItemHandler;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.world.entity.player.Inventory;
@@ -24,12 +24,12 @@ public class AdvancedCokeOvenMenu extends ContainerMenu {
     }
 
     public static AdvancedCokeOvenMenu makeClient(MenuType<AdvancedCokeOvenMenu> type, int id, Inventory invPlayer) {
-        SlotwiseItemHandler dummy = new SlotwiseItemHandler(
+        ConstrainedItemHandler dummy = new ConstrainedItemHandler(
                 List.of(
-                        SlotwiseItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(invPlayer.player.level(), i, null) != null),
-                        SlotwiseItemHandler.IOConstraint.OUTPUT,
-                        SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                        SlotwiseItemHandler.IOConstraint.OUTPUT
+                        ConstrainedItemHandler.IOConstraint.input(i -> AdvancedCokeOvenRecipe.findRecipe(invPlayer.player.level(), i, null) != null),
+                        ConstrainedItemHandler.IOConstraint.OUTPUT,
+                        ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                        ConstrainedItemHandler.IOConstraint.OUTPUT
                 ),
                 () -> {}
         );

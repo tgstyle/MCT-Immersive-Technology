@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.Utils;
@@ -48,8 +48,13 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
 
-public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IPressurizedFluidOutput<ElectrolyticCrucibleBatteryLogic.State> {
+public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IFluidOutputPump<ElectrolyticCrucibleBatteryLogic.State> {
 
     public static int inputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryInputTankCapacity; }
     public static int outputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity; }
@@ -95,7 +100,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.electrolyticCrucibleBattery, () -> {
+            state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.electrolyticCrucibleBattery, () -> {
                 LocalPlayer p = Minecraft.getInstance().player;
                 if (p == null) { return 0f; }
                 float a = (float) Math.max(p.distanceToSqr(soundPos) / 32f, 1f);
@@ -195,7 +200,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public final StoredCapability<IItemHandler> invCap;
         public final StoredCapability<IItemHandler> itemOutputCap;
         public final CapabilityReference<IItemHandler> outputRef;
-        public final SlotwiseItemHandler inventory;
+        public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<ElectrolyticCrucibleBatteryRecipe> processor;
         public AveragingEnergyStorage energy;
@@ -212,7 +217,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             this.tanks = new ElectrolyticCrucibleBatteryTanks(v -> { onChanged.run(); this.tanksDirty = true; });
             this.tankArray = new IFluidTank[]{tanks.input, tanks.output0, tanks.output1, tanks.output2};
-            inventory = new SlotwiseItemHandler(List.of(SlotwiseItemHandler.IOConstraint.OUTPUT), () -> { onChanged.run(); this.inventoryDirty = true; });
+            inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.OUTPUT), () -> { onChanged.run(); this.inventoryDirty = true; });
             this.inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.outputCap0 = new StoredCapability<>(new ArrayFluidHandler(tanks.output0, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.outputCap1 = new StoredCapability<>(new ArrayFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
@@ -225,7 +230,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
         }
 
-        public SlotwiseItemHandler getInventory() { return inventory; }
+        public ConstrainedItemHandler getInventory() { return inventory; }
         public ElectrolyticCrucibleBatteryTanks getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) { nbt.put("energy", energy.serializeNBT()); nbt.put("tanks", this.tanks.toNBT()); nbt.put("processor", processor.toNBT()); nbt.put("inventory", inventory.serializeNBT()); nbt.putBoolean("active", active); }

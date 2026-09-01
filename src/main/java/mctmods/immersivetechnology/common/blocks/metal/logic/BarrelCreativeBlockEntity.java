@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.network.OSDRequestMessage;
 import mctmods.immersivetechnology.core.network.PacketHandler;
@@ -11,7 +11,6 @@ import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
-import java.text.DecimalFormat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -40,6 +39,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 
 public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockOverlayText {
     private FluidStack selectedFluid = FluidStack.EMPTY;
@@ -62,16 +62,16 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
 
         @Override @NotNull public FluidStack drain(FluidStack resource, FluidAction action) {
             if (selectedFluid.isEmpty() || !selectedFluid.isFluidEqual(resource)) { return FluidStack.EMPTY; }
+            if (action.execute()) { acceptedAmount += resource.getAmount(); }
             return new FluidStack(selectedFluid, resource.getAmount());
         }
 
         @Override public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
             if (selectedFluid.isEmpty()) { return FluidStack.EMPTY; }
+            if (action.execute()) { acceptedAmount += maxDrain; }
             return new FluidStack(selectedFluid, maxDrain);
         }
     });
-
-    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
     public BarrelCreativeBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.BARREL_CREATIVE.get(), pos, state); }
 
@@ -102,7 +102,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
 
-            FluidStack toFill = Utils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = ICFluidUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }
@@ -148,15 +148,9 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) { return null; }
-        if (level != null && level.isClientSide && requestCooldown == 0) {
-            PacketHandler.sendToServer(new OSDRequestMessage(worldPosition));
-            requestCooldown = 20;
-        }
+        requestOverlaySync();
         if (selectedFluid.isEmpty()) { return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.getLocation())}; }
-        Component fluidName = selectedFluid.getDisplayName();
-        double rawValue = ClientConfig.perTickTrashCans ? (double)lastAcceptedAmount / 20.0 : lastAcceptedAmount;
-        String value = NUMBER_FORMAT.format(rawValue);
-        return new Component[]{Component.translatable(text().getLocation(), fluidName, value)};
+        return new Component[]{Component.translatable(text().getLocation(), selectedFluid.getDisplayName(), formattedAmount())};
     }
 
     @Override public void getBlockEntityDrop(@NotNull LootContext context, @NotNull Consumer<ItemStack> drop) {

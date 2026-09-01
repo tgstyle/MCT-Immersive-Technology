@@ -4,8 +4,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.stream.Stream;
+import com.immersiveconvergence.api.util.IItemDropProvider;
 
-public interface IInventory extends IDropInventory {
+public interface IInventory extends IItemDropProvider {
     NonNullList<ItemStack> getInventory();
 
     boolean isStackValid(int var1, ItemStack var2);

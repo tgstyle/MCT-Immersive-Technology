@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.core.integration.jade;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;

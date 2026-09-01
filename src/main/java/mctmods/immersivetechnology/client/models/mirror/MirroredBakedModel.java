@@ -6,7 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.immersiveconvergence.api.client.ICacheKeyProvider;
+import com.immersiveconvergence.api.client.IModelCacheKeyProvider;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -29,13 +29,13 @@ public class MirroredBakedModel<T extends BakedModel> extends BakedModelWrapper<
     private final List<BakedQuad> unculledQuads;
     private final Map<Direction, List<BakedQuad>> culledQuads;
     private final LoadingCache<Object, List<BakedQuad>> quadCache;
-    private final ICacheKeyProvider<Object> keyProvider;
+    private final IModelCacheKeyProvider<Object> keyProvider;
 
     public MirroredBakedModel(T base) {
         super(base);
-        this.isDynamic = base instanceof ICacheKeyProvider;
+        this.isDynamic = base instanceof IModelCacheKeyProvider;
         if (isDynamic) {
-            @SuppressWarnings("unchecked") ICacheKeyProvider<Object> kp = (ICacheKeyProvider<Object>) base;
+            @SuppressWarnings("unchecked") IModelCacheKeyProvider<Object> kp = (IModelCacheKeyProvider<Object>) base;
             this.keyProvider = kp;
             this.quadCache = CacheBuilder.newBuilder().maximumSize(1024).expireAfterAccess(10, TimeUnit.MINUTES).build(CacheLoader.from(k -> MirroredModelLoader.reversedQuads(kp.getQuads(k))));
             this.unculledQuads = null;

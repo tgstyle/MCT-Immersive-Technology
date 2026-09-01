@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.BaseBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
-import mctmods.immersivetechnology.common.blocks.helper.Enums.IOSideConfig;
-import mctmods.immersivetechnology.common.blocks.helper.IClientTickableBE;
-import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.IClientTickableBE;
+import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.util.Utils;
 
@@ -37,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import com.immersiveconvergence.api.util.ICFluidUtils;
+import com.immersiveconvergence.api.block.Enums;
 
 public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IComparatorOverride, BlockInterfaces.IPlacementInteraction, BlockInterfaces.IConfigurableSides {
     public final MarkableFluidTank tank;
@@ -108,7 +110,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
     @Override public Component[] getOverlayText(@NotNull Player player, @NotNull HitResult rtr, boolean hammer) {
         if (rtr.getType() == HitResult.Type.MISS) return null;
-        if (Utils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
+        if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty()) return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())};
             return new Component[]{Component.literal(TranslationKey.OVERLAY_OSD_BARREL_NORMAL_FIRST_LINE.format(fs.getDisplayName().getString(), fs.getAmount()))};

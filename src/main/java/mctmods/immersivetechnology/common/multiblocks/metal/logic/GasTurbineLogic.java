@@ -1,17 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.multiblocks.helper.IDisplayContext;
-import mctmods.immersivetechnology.common.multiblocks.helper.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.helper.IPressurizedFluidOutput;
+import com.immersiveconvergence.api.particles.ColoredSmoke;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.CachedRecipe;
 import blusunrize.immersiveengineering.api.ApiUtils;
@@ -57,7 +57,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, IPressurizedFluidOutput<GasTurbineLogic.State> {
+public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, IFluidOutputPump<GasTurbineLogic.State> {
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(GasTurbineShape.DATA.pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
@@ -146,7 +146,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         if (state.speed > 0 && ((state.everIgnited && !state.starterRunning) || (state.stall && state.ignited)) && runningVol > 0.01f && !state.runningSoundPlaying.getAsBoolean()) {
             state.runningSoundId++;
             int thisId = state.runningSoundId;
-            state.runningSoundPlaying = ModSound.startSound(
+            state.runningSoundPlaying = MachineSound.startSound(
                     () -> state.speed > 0 && ((state.everIgnited && !state.starterRunning) || (state.stall && state.ignited)) && state.runningSoundId == thisId,
                     ctx.isValid(),
                     runningPos,
@@ -166,7 +166,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             if (starterVol > 0.01f && !state.starterSoundPlaying.getAsBoolean()) {
                 state.starterSoundId++;
                 int thisId = state.starterSoundId;
-                state.starterSoundPlaying = ModSound.startSound(
+                state.starterSoundPlaying = MachineSound.startSound(
                         () -> state.starterRunning && state.starterSoundId == thisId, ctx.isValid(), starterPos, Sounds.gasStarter,
                         () -> {
                             LocalPlayer p = Minecraft.getInstance().player;
@@ -183,7 +183,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 if (arcVol > 0.01f && !state.arcSoundPlaying.getAsBoolean()) {
                     state.arcSoundId++;
                     int thisId = state.arcSoundId;
-                    state.arcSoundPlaying = ModSound.startSound(
+                    state.arcSoundPlaying = MachineSound.startSound(
                             () -> state.starterRunning && state.speed >= state.effectiveMaxSpeed / 4 && state.hasIgniter && state.arcSoundId == thisId, ctx.isValid(), arcPos, Sounds.gasArc,
                             () -> {
                                 LocalPlayer p = Minecraft.getInstance().player;

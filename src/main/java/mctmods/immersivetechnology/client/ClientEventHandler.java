@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import mctmods.immersivetechnology.common.blocks.helper.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

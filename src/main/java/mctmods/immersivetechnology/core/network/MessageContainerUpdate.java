@@ -8,8 +8,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
+import com.immersiveconvergence.api.network.INetworkMessage;
 
-public class MessageContainerUpdate implements IMessage {
+public class MessageContainerUpdate implements INetworkMessage {
     private final int windowId;
     private final CompoundTag nbt;
 

@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.common.blocks.helper.IServerTickableBE;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;

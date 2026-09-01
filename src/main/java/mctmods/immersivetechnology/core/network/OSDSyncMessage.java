@@ -12,8 +12,9 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
+import com.immersiveconvergence.api.network.INetworkMessage;
 
-public record OSDSyncMessage(BlockPos pos, long lastAccepted, long average, int packetAverage) implements IMessage {
+public record OSDSyncMessage(BlockPos pos, long lastAccepted, long average, int packetAverage) implements INetworkMessage {
     public OSDSyncMessage(FriendlyByteBuf buf) {
         this(buf.readBlockPos(), buf.readLong(), buf.readLong(), buf.readInt());
     }

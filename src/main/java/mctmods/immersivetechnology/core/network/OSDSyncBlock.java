@@ -8,8 +8,9 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
+import com.immersiveconvergence.api.network.INetworkMessage;
 
-public class OSDSyncBlock implements IMessage {
+public class OSDSyncBlock implements INetworkMessage {
     private final String key;
     private final int distance;
 

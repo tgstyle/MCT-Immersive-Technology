@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import mctmods.immersivetechnology.common.blocks.helper.ModProperties;
-import mctmods.immersivetechnology.common.multiblocks.helper.ModTemplateMultiblock;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
 import mctmods.immersivetechnology.core.network.OSDSyncBlock;
@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SolarTower extends ModTemplateMultiblock {
+public class SolarTower extends MachineTemplateMultiblock {
     public static final SolarTower INSTANCE = new SolarTower();
 
     public SolarTower() { super(Reference.rl("multiblocks/solar_tower"), SolarTowerShape.MASTER_POS, SolarTowerShape.TRIGGER_POS, new BlockPos(SolarTowerShape.WIDTH,SolarTowerShape.HEIGHT,SolarTowerShape.LENGTH), SolarTowerShape.CLIENT_OFFSET, SolarTowerShape.MANUAL_SCALE, MultiblockRegistry.SOLAR_TOWER); }

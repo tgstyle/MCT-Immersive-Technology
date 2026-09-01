@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import com.mojang.serialization.Codec;
-import mctmods.immersivetechnology.client.particles.ColoredSmoke;
+import com.immersiveconvergence.api.particles.ColoredSmoke;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.particles.ParticleType;

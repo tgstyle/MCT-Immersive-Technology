@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.multiblocks.helper.*;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.DistillerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
 import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
-import mctmods.immersivetechnology.common.fluids.helper.MarkableFluidTank;
-import mctmods.immersivetechnology.core.lib.ModSound;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.Utils;
@@ -53,8 +53,14 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
+import com.immersiveconvergence.api.util.SlotRangeItemHandler;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
 
-public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, IPressurizedFluidOutput<DistillerLogic.State> {
+public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, IFluidOutputPump<DistillerLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -93,7 +99,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         float attenuation = Math.max(distSq / 32f, 1f);
         float vol = 1f / attenuation;
         if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = ModSound.startSound(
+            state.isSoundPlaying = MachineSound.startSound(
                     () -> state.active, ctx.isValid(), soundPos, Sounds.distiller,
                     () -> {
                         LocalPlayer p = Minecraft.getInstance().player;
@@ -222,7 +228,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public final StoredCapability<IItemHandler> invCap;
         public final StoredCapability<IItemHandler> itemOutputCap;
         public final CapabilityReference<IItemHandler> outputRef;
-        public final SlotwiseItemHandler inventory;
+        public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
         public AveragingEnergyStorage energy;
@@ -240,13 +246,13 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
             this.tanks = new DistillerTank(v -> { onChanged.run(); this.tanksDirty = true; });
             this.tankArray = new IFluidTank[]{tanks.input, tanks.output};
-            inventory = new SlotwiseItemHandler(
+            inventory = new ConstrainedItemHandler(
                     List.of(
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT,
-                            SlotwiseItemHandler.IOConstraint.FLUID_INPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT,
-                            SlotwiseItemHandler.IOConstraint.OUTPUT
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT,
+                            ConstrainedItemHandler.IOConstraint.FLUID_INPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT,
+                            ConstrainedItemHandler.IOConstraint.OUTPUT
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );
@@ -257,21 +263,21 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
             this.itemOutputCap = new StoredCapability<>(
-                    new WrappingItemHandler(
+                    new SlotRangeItemHandler(
                             inventory,
                             false,
                             true,
                             List.of(
-                                    new WrappingItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
-                                    new WrappingItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1),
-                                    new WrappingItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
+                                    new SlotRangeItemHandler.IntRange(SLOT_INPUT_EMPTY, SLOT_INPUT_EMPTY + 1),
+                                    new SlotRangeItemHandler.IntRange(SLOT_OUTPUT_FILLED, SLOT_OUTPUT_FILLED + 1),
+                                    new SlotRangeItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
                             )
                     )
             );
             this.outputRef = ctx.getCapabilityAt(ForgeCapabilities.ITEM_HANDLER, ITEM_OUTPUT_POI);
         }
 
-        public SlotwiseItemHandler getInventory() { return inventory; }
+        public ConstrainedItemHandler getInventory() { return inventory; }
 
         public DistillerTank getTanks() { return tanks; }
 

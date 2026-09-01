@@ -11,8 +11,9 @@ import net.minecraftforge.network.NetworkEvent.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import com.immersiveconvergence.api.network.INetworkMessage;
 
-public record MessageContainerData(List<Pair<Integer, DataPair<?>>> synced) implements IMessage {
+public record MessageContainerData(List<Pair<Integer, DataPair<?>>> synced) implements INetworkMessage {
     public MessageContainerData(FriendlyByteBuf buf) { this(readSynced(buf)); }
 
     private static List<Pair<Integer, DataPair<?>>> readSynced(FriendlyByteBuf buf) {
