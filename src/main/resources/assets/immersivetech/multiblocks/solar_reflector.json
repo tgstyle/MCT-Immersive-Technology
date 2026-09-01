@@ -1,1 +1,1 @@
-{"manualScale":14,"pointsOfInterest":[{"name":"master","pos":[1,1,1],"facing":null},{"name":"trigger","pos":[1,1,1],"facing":null},{"name":"link0","pos":[1,0,1],"facing":null}],"shapeAABB":[]}
+{"manualScale":14,"pointsOfInterest":[{"name":"master","pos":[1,1,1],"facing":null},{"name":"trigger","pos":[1,1,1],"facing":null},{"name":"link0","pos":[1,0,1],"facing":null},{"name":"beam0","pos":[1,2,1],"facing":null}],"shapeAABB":[]}

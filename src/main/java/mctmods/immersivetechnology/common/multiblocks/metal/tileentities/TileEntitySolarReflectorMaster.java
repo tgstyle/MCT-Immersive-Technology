@@ -5,6 +5,7 @@ import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryMessageTileSync;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.particles.BeamParticles;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,8 +19,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +36,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     private boolean needsPoIInit = false;
 
     private PoICache link0;
+    private PoICache beam0;
     private BlockPos collectorPosition0;
 
     public BlockPos getCollectorPosition() { return collectorPosition0 != null ? collectorPosition0 : getPos(); }
@@ -95,7 +100,10 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     @Override public void update() {
         super.update();
         if (!formed) return;
-        if (world.isRemote) return;
+        if (world.isRemote) {
+            spawnBeamParticles();
+            return;
+        }
         if (needsPoIInit || link0 == null) {
             InitializePoIs();
             needsPoIInit = false;
@@ -121,6 +129,18 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
                 if (!valid) detachTower();
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void spawnBeamParticles() {
+        if (!isMirrorTaken || collectorPosition0 == null) { return; }
+        if (beam0 == null) { InitializePoIs(); }
+        if (beam0 == null || getSolarCollectorStrength() <= 0) { return; }
+        BlockPos origin = getBlockPosForPos(beam0.position);
+        BeamParticles.spawnAlongBeam(world,
+                new Vec3d(origin.getX() + 0.5, origin.getY() + 0.5, origin.getZ() + 0.5),
+                new Vec3d(collectorPosition0.getX() + 0.5, collectorPosition0.getY() + 0.5, collectorPosition0.getZ() + 0.5),
+                world.rand);
     }
 
     private void calculateAnimationRotations() {
@@ -183,11 +203,10 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     private void InitializePoIs() {
         link0 = null;
+        beam0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarReflector.instance.pointsOfInterest) {
-            if (poi.name.equals("link0")) {
-                link0 = new PoICache(facing, poi, mirrored);
-                break;
-            }
+            if (poi.name.equals("link0")) { link0 = new PoICache(facing, poi, mirrored); }
+            else if (poi.name.equals("beam0")) { beam0 = new PoICache(facing, poi, mirrored); }
         }
     }
 
