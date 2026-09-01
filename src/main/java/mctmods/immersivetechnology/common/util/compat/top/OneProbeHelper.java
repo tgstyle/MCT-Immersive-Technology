@@ -83,9 +83,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 .progress(stored, max, probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
     }
 
-    private static void addRPMDisplay(IProbeInfo probeInfo, int speed) {
+    private static void addRPMDisplay(IProbeInfo probeInfo, int speed, int max) {
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                .progress(speed, maxSpeed(), probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
+                .progress(speed, max <= 0 ? maxSpeed() : max, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix(" RPM"));
     }
 
     private static void addProcessPercent(IProbeInfo probeInfo, int percent) {
@@ -114,12 +114,11 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 TileEntityMultiblockPart<?> part = (TileEntityMultiblockPart<?>)te;
                 TileEntity master = part.master();
                 if (master instanceof IMechanicalEnergyProvider) {
-                    int speed = ((IMechanicalEnergyProvider)master).getSpeed();
-                    addRPMDisplay(probeInfo, speed);
+                    IMechanicalEnergyProvider mechanical = (IMechanicalEnergyProvider)master;
+                    addRPMDisplay(probeInfo, mechanical.getSpeed(), mechanical.getMaxSpeed());
                 }
                 else if (master instanceof IMechanicalEnergyConsumer) {
-                    int speed = ((IMechanicalEnergyConsumer)master).getSpeed();
-                    addRPMDisplay(probeInfo, speed);
+                    addRPMDisplay(probeInfo, ((IMechanicalEnergyConsumer)master).getSpeed(), maxSpeed());
                 }
             }
         }

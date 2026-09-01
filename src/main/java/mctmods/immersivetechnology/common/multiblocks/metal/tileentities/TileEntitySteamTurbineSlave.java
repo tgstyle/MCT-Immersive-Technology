@@ -128,6 +128,14 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
         return m == null ? 0 : m.speed;
     }
 
+    @Override public int getMaxSpeed() { return TileEntitySteamTurbineMaster.maxSpeed(); }
+
+    @Override public double getBaseMass() { return Multiblocks.steamTurbine.steamTurbine_baseMass; }
+
+    @Override public double getDriveTorque() { return Multiblocks.steamTurbine.steamTurbine_driveTorque; }
+
+    @Override public double getFriction() { return Multiblocks.steamTurbine.steamTurbine_friction; }
+
     @Override public float getTorqueMultiplier() { return outputTorque(); }
 
     @Override public MechanicalEnergyAnimation getAnimation() {

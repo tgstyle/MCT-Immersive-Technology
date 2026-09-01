@@ -26,6 +26,7 @@ import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -62,10 +63,18 @@ import java.util.Random;
 
 public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
-    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    public static int maxSpeed() { return Math.round(Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max * Multiblocks.gasTurbine.gasTurbine_speed_maxFactor); }
     private static float maxRotationSpeed() { return Multiblocks.gasTurbine.gasTurbine_speed_maxRotation; }
-    private static int speedGainPerTick() { return Multiblocks.gasTurbine.gasTurbine_speed_gainPerTick; }
-    private static int speedLossPerTick() { return Multiblocks.gasTurbine.gasTurbine_speed_lossPerTick; }
+    private RotationInertiaProcess inertia;
+    private RotationInertiaProcess inertia() {
+        if (inertia == null) {
+            inertia = new RotationInertiaProcess(Multiblocks.gasTurbine.gasTurbine_baseMass, Multiblocks.gasTurbine.gasTurbine_driveTorque, Multiblocks.gasTurbine.gasTurbine_friction, maxSpeed());
+        }
+        return inertia;
+    }
+    private int speedGainPerTick() { return inertia().getSpeedUpRate(); }
+    private int speedLossPerTick() { return inertia().getSpeedDownRate(); }
+    private int effectiveMax() { return isValidAlternator() ? Math.min(maxSpeed(), alternator.getMaxSpeed()) : maxSpeed(); }
     private static int inputTankSize() { return Multiblocks.gasTurbine.gasTurbine_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.gasTurbine.gasTurbine_output_tankSize; }
     public static int electricStarterConsumption() { return Multiblocks.gasTurbine.gasTurbine_electric_starter_consumption; }
@@ -352,10 +361,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     private void speedUp() {
         if (starterRunning) {
-            if (speed >= maxSpeed() / 4) speed = Math.max(Math.min(maxSpeed(), speed + speedGainPerTick() - speedLossPerTick()), maxSpeed() / 4);
+            if (speed >= maxSpeed() / 4) speed = Math.max(Math.min(effectiveMax(), speed + speedGainPerTick() - speedLossPerTick()), maxSpeed() / 4);
             else speed = Math.min(maxSpeed() / 4, speed + speedGainPerTick());
         } else {
-            if (speed >= maxSpeed() / 4) speed = Math.min(maxSpeed(), speed + speedGainPerTick());
+            if (speed >= maxSpeed() / 4) speed = Math.min(effectiveMax(), speed + speedGainPerTick());
             else speedDown();
         }
     }

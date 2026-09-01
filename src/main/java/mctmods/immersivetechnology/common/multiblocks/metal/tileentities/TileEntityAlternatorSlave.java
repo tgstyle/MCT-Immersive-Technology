@@ -9,6 +9,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorSha
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
@@ -126,7 +127,13 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public int getSpeed() { return master() == null ? 0 : Objects.requireNonNull(master()).speed; }
 
+    @Override public int getMaxSpeed() { return TileEntityAlternatorMaster.maxSpeed(); }
+
     @Override public float getTorqueMultiplier() { return master() == null ? 0f : Objects.requireNonNull(master()).torqueMult; }
+
+    @Override public double getMass() { return Multiblocks.alternator.alternator_baseMass; }
+
+    @Override public double getFriction() { return Multiblocks.alternator.alternator_friction; }
 
     @Override public MechanicalEnergyAnimation getAnimation() { return master() == null ? null : Objects.requireNonNull(master()).animation; }
 

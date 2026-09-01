@@ -394,9 +394,15 @@ public class ITContent {
         Config.manual_int.put("boilerTank_tankSize", ITConfig.Multiblocks.boilerTank.boilerTank_tankSize);
         Config.manual_int.put("solarTower_minRange", ITConfig.Multiblocks.solarReflector.solarReflector_minRange);
         Config.manual_int.put("solarTower_maxRange", ITConfig.Multiblocks.solarReflector.solarReflector_maxRange);
-        Config.manual_int.put("steamTurbine_timeToMax", ((ITConfig.Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max / ITConfig.Multiblocks.steamTurbine.steamTurbine_speed_gainPerTick) / 20));
-        Config.manual_int.put("highPressureSteamTurbine_timeToMax", ((ITConfig.Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max / ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_gainPerTick) / 20));
+        Config.manual_int.put("steamTurbine_timeToMax", secondsToFullSpeed(ITConfig.Multiblocks.steamTurbine.steamTurbine_baseMass, ITConfig.Multiblocks.steamTurbine.steamTurbine_driveTorque, ITConfig.Multiblocks.steamTurbine.steamTurbine_friction, TileEntitySteamTurbineMaster.maxSpeed()));
+        Config.manual_int.put("highPressureSteamTurbine_timeToMax", secondsToFullSpeed(ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_baseMass, ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_driveTorque, ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction, TileEntityHighPressureSteamTurbineMaster.maxSpeed()));
         Config.manual_int.put("steelTank_tankSize", ITConfig.Multiblocks.steelTank.steelTank_tankSize);
+    }
+
+    private static int secondsToFullSpeed(double mass, double torque, double friction, int maxSpeed) {
+        double drag = Math.max(0, torque - friction) / maxSpeed;
+        if (drag <= 0) { return 0; }
+        return (int)Math.round(Math.log(100) * (mass / drag) / 20);
     }
 
     @SuppressWarnings("unchecked")

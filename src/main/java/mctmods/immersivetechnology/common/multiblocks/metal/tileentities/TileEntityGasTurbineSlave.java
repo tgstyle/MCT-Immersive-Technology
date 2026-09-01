@@ -168,6 +168,14 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
         return m == null ? 0 : m.speed;
     }
 
+    @Override public int getMaxSpeed() { return TileEntityGasTurbineMaster.maxSpeed(); }
+
+    @Override public double getBaseMass() { return Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_baseMass; }
+
+    @Override public double getDriveTorque() { return Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_driveTorque; }
+
+    @Override public double getFriction() { return Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_friction; }
+
     @Override public float getTorqueMultiplier() { return outputtorque(); }
 
     @Override public MechanicalEnergyAnimation getAnimation() {

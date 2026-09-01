@@ -128,6 +128,14 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateM
         return m == null ? 0 : m.speed;
     }
 
+    @Override public int getMaxSpeed() { return TileEntityHighPressureSteamTurbineMaster.maxSpeed(); }
+
+    @Override public double getBaseMass() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_baseMass; }
+
+    @Override public double getDriveTorque() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_driveTorque; }
+
+    @Override public double getFriction() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction; }
+
     @Override public float getTorqueMultiplier() { return outputTorque(); }
 
     @Override public MechanicalEnergyAnimation getAnimation() {

@@ -41,17 +41,18 @@ import javax.annotation.Nullable;
 
 public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver, IComparatorOverride {
 
-    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    public static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
     private static float maxRotationSpeed() { return Multiblocks.steamTurbine.steamTurbine_speed_maxRotation; }
     private static int rfPerTick() { return Multiblocks.alternator.alternator_energy_perTick; }
     private static double rfExponent() { return Multiblocks.alternator.alternator_exponent; }
     private static double rfThreshold() { return Multiblocks.alternator.alternator_threshold; }
+    private static double rfPowerFactor() { return Math.max(0, Multiblocks.alternator.alternator_powerFactor); }
     private static final int rfPerTickPerPort = rfPerTick() / 6;
-    private static int speedLossPerTick() { return Multiblocks.steamTurbine.steamTurbine_speed_lossPerTick; }
     private static boolean soundRPM() { return Multiblocks.alternator.alternator_sound_RPM; }
 
     public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick(), rfPerTickPerPort);
     public int speed = 0;
+    public int effectiveMaxSpeed = maxSpeed();
     public float torqueMult = 1f;
     public IMechanicalEnergyProvider provider;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
@@ -61,6 +62,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private boolean isRunning = false;
     private int oldEnergy = 0;
     private int oldSpeed = 0;
+    private int oldMaxSpeed = maxSpeed();
     private int oldComparatorOutput = 0;
     private int tickCountdown = 5;
 
@@ -79,6 +81,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         energyStorage.readFromNBT(nbt);
         animation.readFromNBT(nbt);
         speed = nbt.getInteger("speed");
+        effectiveMaxSpeed = nbt.hasKey("effectiveMaxSpeed") ? nbt.getInteger("effectiveMaxSpeed") : maxSpeed();
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && formed) {
             needsPoIInit = true;
@@ -91,13 +94,14 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         energyStorage.writeToNBT(nbt);
         animation.writeToNBT(nbt);
         nbt.setInteger("speed", speed);
+        nbt.setInteger("effectiveMaxSpeed", effectiveMaxSpeed);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) return;
-        float targetSoundLevel = isRunning ? (soundRPM() ? (float)speed / maxSpeed() : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored()) : 0f;
+        float targetSoundLevel = isRunning ? (soundRPM() ? speedFraction() : (float)energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored()) : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
@@ -138,7 +142,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
         if (world.isRemote) {
             float oldMomentum = animation.getAnimationMomentum();
-            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed()) * maxRotationSpeed();
+            float rotationSpeed = speed == 0 ? 0f : speedFraction() * maxRotationSpeed();
             animation.setAnimationMomentum(rotationSpeed);
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             handleSounds();
@@ -177,11 +181,12 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         boolean wasRunning = isRunning;
         isRunning = soundGracePeriod > 0;
 
-        boolean changed = oldSpeed != speed || oldEnergy != currentEnergy || isRunning != wasRunning;
+        boolean changed = oldSpeed != speed || oldMaxSpeed != effectiveMaxSpeed || oldEnergy != currentEnergy || isRunning != wasRunning;
         if (changed && tickCountdown-- <= 0) {
             ByteBuf buf = Unpooled.buffer();
             buf.writeInt(energyStorage.getEnergyStored());
             buf.writeInt(speed);
+            buf.writeInt(effectiveMaxSpeed);
             buf.writeBoolean(isRunning);
             BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
             tickCountdown = 5;
@@ -192,6 +197,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
         oldEnergy = currentEnergy;
         oldSpeed = speed;
+        oldMaxSpeed = effectiveMaxSpeed;
 
         int comparator = getComparatorInputOverride();
         if (comparator != oldComparatorOutput) {
@@ -238,9 +244,11 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     @Override public void receiveMessageFromServer(ByteBuf buf) {
         int readEnergy = buf.readInt();
         int readSpeed = buf.readInt();
+        int readMaxSpeed = buf.readInt();
         isRunning = buf.readBoolean();
         energyStorage.modifyEnergyStored(readEnergy - energyStorage.getEnergyStored());
         speed = readSpeed;
+        effectiveMaxSpeed = readMaxSpeed;
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
@@ -251,17 +259,20 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     private int energyGenerated() {
         if ((double)speed / maxSpeed() <= rfThreshold()) return 0;
-        return (int)Math.round(Math.pow((double)speed / maxSpeed(), rfExponent()) * rfPerTick() * torqueMult);
+        return (int)Math.round(Math.pow((double)speed / maxSpeed(), rfExponent()) * rfPerTick() * torqueMult * rfPowerFactor());
     }
 
     private void checkProvider() {
         if (isValidProvider()) {
-            speed = provider.getSpeed();
+            effectiveMaxSpeed = Math.min(maxSpeed(), provider.getMaxSpeed());
+            speed = Math.min(provider.getSpeed(), effectiveMaxSpeed);
             torqueMult = provider.getTorqueMultiplier();
         } else if (speed > 0) {
-            speed = Math.max(speed - speedLossPerTick(), 0);
+            speed = Math.max(speed - 6, 0);
         }
     }
+
+    private float speedFraction() { return effectiveMaxSpeed <= 0 ? 0f : (float)speed / effectiveMaxSpeed; }
 
     private boolean isValidProvider() {
         if (mechanicalInputPos0 == null) InitializePoIs();

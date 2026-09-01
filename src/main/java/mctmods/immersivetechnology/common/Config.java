@@ -59,12 +59,18 @@ public class Config {
             public static SteelTank steelTank = new SteelTank();
 
             public static class Alternator {
-                @Comment({"Alternator generation exponent [Default=2.0]"})
-                public double alternator_exponent = 2.0;
+                @Comment({"Alternator generation exponent [Default=1.0]"})
+                public double alternator_exponent = 1.0;
                 @Comment({"The maximum energy an Alternator can store [Default=1200000]"})
                 public int alternator_energy_capacitorSize = 1200000;
                 @Comment({"Energy production when running at maximum speed and torque [Default=12288]"})
                 public int alternator_energy_perTick = 12288;
+                @Comment({"Rotating mass the Alternator adds to the turbine driving it [Default=2.0]"})
+                public double alternator_baseMass = 2.0;
+                @Comment({"Constant drag the Alternator adds to the turbine driving it [Default=0.0]"})
+                public double alternator_friction = 0.0;
+                @Comment({"Scales the Alternator's generation without changing its rated output [Default=1.0]"})
+                public double alternator_powerFactor = 1.0;
                 @Comment({"Alternator sound based RPM or Capacity [Default=true]"})
                 public boolean alternator_sound_RPM = true;
                 @Comment({"Alternator generation threshold (fraction of speed below which it will not produce power, to emulate grid syncing) [Default=0.0]"})
@@ -191,16 +197,20 @@ public class Config {
                 public int gasTurbine_output_tankSize = 10000;
                 @Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
                 public float gasTurbine_speed_maxRotation = 72;
-                @Comment({"How fast the Gas Turbine increases in speed per tick [Default=3]"})
-                public int gasTurbine_speed_gainPerTick = 3;
-                @Comment({"How fast the Gas Turbine loses speed per tick when inactive [Default=6]"})
-                public int gasTurbine_speed_lossPerTick = 6;
+                @Comment({"Rotating mass of the Gas Turbine. Higher values slow both spin-up and coast-down [Default=8.0]"})
+                public double gasTurbine_baseMass = 8.0;
+                @Comment({"Torque the Gas Turbine's drive applies [Default=30.0]"})
+                public double gasTurbine_driveTorque = 30.0;
+                @Comment({"Constant drag on the Gas Turbine [Default=60.0]"})
+                public double gasTurbine_friction = 60.0;
+                @Comment({"Fraction of the maximum tolerated RPM the Gas Turbine can reach [Default=0.5]"})
+                public float gasTurbine_speed_maxFactor = 0.5f;
                 @Comment({"The power consumption  of the spark plug for the Gas Turbine [Default=1024]"})
                 public int gasTurbine_sparkplug_consumption = 1024;
                 @Comment({"The capacity of the spark plug for the Gas Turbine [Default=1024]"})
                 public int gasTurbine_sparkplug_size = 1024;
-                @Comment({"How much of the maximum alternator output power should the Gas Turbine generate [Default=0.5]"})
-                public float gasTurbine_torque = 0.5f;
+                @Comment({"How much of the maximum alternator output power should the Gas Turbine generate [Default=1.0]"})
+                public float gasTurbine_torque = 1.0f;
             }
             public static class HeatExchanger {
                 @Comment({"The maximum energy a Heat Exchanger can store [Default=2048]"})
@@ -219,10 +229,14 @@ public class Config {
                 public int highPressureSteamTurbine_output_tankSize = 10000;
                 @Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
                 public float highPressureSteamTurbine_speed_maxRotation = 72;
-                @Comment({"How fast the Steam Turbine increases in speed per tick [Default=3]"})
-                public int highPressureSteamTurbine_speed_gainPerTick = 1;
-                @Comment({"How fast the Steam Turbine loses speed per tick when inactive [Default=6]"})
-                public int highPressureSteamTurbine_speed_lossPerTick = 6;
+                @Comment({"Rotating mass of the High Pressure Steam Turbine. Higher values slow both spin-up and coast-down [Default=30.0]"})
+                public double highPressureSteamTurbine_baseMass = 30.0;
+                @Comment({"Torque the High Pressure Steam Turbine's drive applies [Default=360.0]"})
+                public double highPressureSteamTurbine_driveTorque = 360.0;
+                @Comment({"Constant drag on the High Pressure Steam Turbine [Default=0.0]"})
+                public double highPressureSteamTurbine_friction = 0.0;
+                @Comment({"Fraction of the maximum tolerated RPM the High Pressure Steam Turbine can reach. Above 1.0 it overdrives the alternator past its rated output [Default=1.0]"})
+                public float highPressureSteamTurbine_speed_maxFactor = 1.0f;
                 @Comment({"How much of the maximum alternator output power should the Steam Turbine generate [Default=1.0]"})
                 public float highPressureSteamTurbine_torque = 1.0f;
                 @Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
@@ -233,8 +247,8 @@ public class Config {
                 public boolean enableJEIMultiblocks = true;
             }
             public static class MechanicalEnergy {
-                @Comment({"The maximum speed that machines can tolerate in RPM [Default=1800]"})
-                public int mechanicalEnergy_speed_max = 1800;
+                @Comment({"The maximum speed that machines can tolerate in RPM [Default=7200]"})
+                public int mechanicalEnergy_speed_max = 7200;
             }
             public static class MeltingCrucible {
                 @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 1.0]"})
@@ -309,10 +323,14 @@ public class Config {
                 public int steamTurbine_output_tankSize = 10000;
                 @Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
                 public float steamTurbine_speed_maxRotation = 72;
-                @Comment({"How fast the Steam Turbine increases in speed per tick [Default=3]"})
-                public int steamTurbine_speed_gainPerTick = 3;
-                @Comment({"How fast the Steam Turbine loses speed per tick when inactive [Default=6]"})
-                public int steamTurbine_speed_lossPerTick = 6;
+                @Comment({"Rotating mass of the Steam Turbine. Higher values slow both spin-up and coast-down [Default=10.0]"})
+                public double steamTurbine_baseMass = 10.0;
+                @Comment({"Torque the Steam Turbine's drive applies [Default=360.0]"})
+                public double steamTurbine_driveTorque = 360.0;
+                @Comment({"Constant drag on the Steam Turbine [Default=0.0]"})
+                public double steamTurbine_friction = 0.0;
+                @Comment({"Fraction of the maximum tolerated RPM the Steam Turbine can reach [Default=1.0]"})
+                public float steamTurbine_speed_maxFactor = 1.0f;
                 @Comment({"How much of the maximum alternator output power should the Steam Turbine generate [Default=1.0]"})
                 public float steamTurbine_torque = 1.0f;
             }

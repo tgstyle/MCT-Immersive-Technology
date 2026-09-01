@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nonnull;
 
-@Mod(modid = ImmersiveTechnology.MODID, name = ImmersiveTechnology.NAME, acceptedMinecraftVersions = "[1.12.2,1.13)", dependencies = "required-after:immersiveengineering@[0.12-92,);" + "required-after:immersiveconvergence@[1.0,);" + "required-after:forge@[14.23.3.2655,);")
+@Mod(modid = ImmersiveTechnology.MODID, name = ImmersiveTechnology.NAME, acceptedMinecraftVersions = "[1.12.2,1.13)", dependencies = "required-after:immersiveengineering@[0.12-92,);" + "required-after:immersiveconvergence@[1.0,);" + "required-after:mixinbooter@[10.7,);" + "required-after:forge@[14.23.3.2655,);")
 public class ImmersiveTechnology {
 
     public static final String MODID = "immersivetech";

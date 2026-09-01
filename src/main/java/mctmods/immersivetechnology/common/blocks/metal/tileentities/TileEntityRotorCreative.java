@@ -58,7 +58,15 @@ public class TileEntityRotorCreative extends TileEntityIEBase implements ITickab
 
     @Override public int getSpeed() { return rpm; }
 
+    @Override public int getMaxSpeed() { return maxSpeed(); }
+
     @Override public float getTorqueMultiplier() { return 1f; }
+
+    @Override public double getBaseMass() { return 0; }
+
+    @Override public double getDriveTorque() { return 0; }
+
+    @Override public double getFriction() { return 0; }
 
     @Override public MechanicalEnergyAnimation getAnimation() { return animation; }
 

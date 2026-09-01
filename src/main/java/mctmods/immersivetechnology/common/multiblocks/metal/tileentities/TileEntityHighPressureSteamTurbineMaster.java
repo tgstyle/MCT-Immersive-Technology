@@ -20,6 +20,7 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -50,9 +51,20 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
     private static int inputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_output_tankSize; }
-    private static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
-    private static int speedGainPerTick() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_gainPerTick; }
-    private static int speedLossPerTick() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_lossPerTick; }
+    public static int maxSpeed() { return Math.round(Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max * Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxFactor); }
+    private RotationInertiaProcess inertia;
+    private double connectedMass = -1;
+    private double connectedFriction = -1;
+    private int inertiaMax = -1;
+    private RotationInertiaProcess inertia(double mass, double friction, int effectiveMax) {
+        if (inertia == null || mass != connectedMass || friction != connectedFriction || effectiveMax != inertiaMax) {
+            connectedMass = mass;
+            connectedFriction = friction;
+            inertiaMax = effectiveMax;
+            inertia = new RotationInertiaProcess(Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_baseMass + mass, Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_driveTorque, Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction + friction, effectiveMax);
+        }
+        return inertia;
+    }
     private static float maxRotationSpeed() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxRotation; }
 
     public FluidTank[] tanks = new FluidTank[] {new ICFluidTank(inputTankSize(), this), new ICFluidTank(outputTankSize(), this)};
@@ -68,6 +80,8 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private boolean active = false;
     private boolean wasEnabled = false;
     private int pressureReleaseCooldown = 0;
+    private float effectiveRatio = 0f;
+    private double accumDelta = 0;
 
     public HighPressureSteamTurbineRecipe cachedTurbineRecipe;
     private IMechanicalEnergyConsumer alternator;
@@ -87,6 +101,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
+        effectiveRatio = nbt.getFloat("effectiveRatio");
         if (!descPacket && formed) {
             needsPoIInit = true;
             needsNotify = true;
@@ -102,6 +117,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
+        nbt.setFloat("effectiveRatio", effectiveRatio);
     }
 
     @SideOnly(Side.CLIENT)
@@ -184,7 +200,6 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
         if (fuelBurnRemaining > 0) {
             fuelBurnRemaining--;
-            speed = Math.min(maxSpeed(), speed + speedGainPerTick());
             changed = true;
             active = true;
         } else if (currentlyEnabled && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
@@ -202,15 +217,12 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
                 fuelBurnRemaining = recipe.getTotalProcessTime() - 1;
                 tanks[0].drain(recipe.fluidInput.amount, true);
                 if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
-                speed = Math.min(maxSpeed(), speed + speedGainPerTick());
                 changed = true;
                 active = true;
-            } else {
-                speed = Math.max(0, speed - speedLossPerTick());
             }
-        } else {
-            speed = Math.max(0, speed - speedLossPerTick());
         }
+
+        applyInertia();
 
         if (pressureReleaseCooldown > 0) { pressureReleaseCooldown--; }
         boolean triggerRelease = (!wasActive && active) || (!wasEnabled && currentlyEnabled);
@@ -262,6 +274,18 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[1].drain(drained, true);
         return drained > 0;
+    }
+
+    private void applyInertia() {
+        boolean connected = isValidAlternator();
+        double mass = connected ? alternator.getMass() : 0;
+        double friction = connected ? alternator.getFriction() : 0;
+        int effectiveMax = connected ? Math.min(maxSpeed(), alternator.getMaxSpeed()) : maxSpeed();
+        effectiveRatio = effectiveRatio * 0.9f + (active ? 1f : 0f) * 0.1f;
+        accumDelta += inertia(mass, friction, effectiveMax).getAlpha(effectiveRatio, speed);
+        int delta = (int)Math.round(accumDelta);
+        accumDelta -= delta;
+        speed = Math.max(0, Math.min(effectiveMax, speed + delta));
     }
 
     private boolean isValidAlternator() {

@@ -51,7 +51,7 @@ public class TileEntityITMultiblockPartSolarMelter extends MachineTemplateMultib
     @Override public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();
         boolean mirror = false;
-        if (isInvalid(world, pos, side, false)) { mirror = true; if (isInvalid(world, pos, side, true)) return false; }
+        if (isInvalid(world, pos, side, triggerPos, false)) { mirror = true; if (isInvalid(world, pos, side, triggerPos, true)) return false; }
         BlockPos origin = pos.offset(side, -masterZ).offset(side.rotateY(), mirror ? -(width - 1 - masterX) : -masterX).offset(EnumFacing.DOWN, masterY);
         BlockPos link = null;
         for (PoIJSONSchema poi : pointsOfInterest) {
