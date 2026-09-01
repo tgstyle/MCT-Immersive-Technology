@@ -65,9 +65,10 @@ public class SolarRegistry {
         SolarRegistryData data = getData(level);
         if (data == null) return;
         int y = base.getY();
-        if (data.towerBasesByY.containsKey(y)) {
-            data.towerBasesByY.get(y).remove(base);
-            if (data.towerBasesByY.get(y).isEmpty()) data.towerBasesByY.remove(y);
+        Set<BlockPos> towers = data.towerBasesByY.get(y);
+        if (towers != null) {
+            towers.remove(base);
+            if (towers.isEmpty()) { data.towerBasesByY.remove(y); }
             data.setDirty();
         }
     }
@@ -111,9 +112,10 @@ public class SolarRegistry {
         SolarRegistryData data = getData(level);
         if (data == null) return;
         int y = poi.getY();
-        if (data.reflectorPOIsByY.containsKey(y)) {
-            data.reflectorPOIsByY.get(y).remove(poi);
-            if (data.reflectorPOIsByY.get(y).isEmpty()) data.reflectorPOIsByY.remove(y);
+        Set<BlockPos> reflectors = data.reflectorPOIsByY.get(y);
+        if (reflectors != null) {
+            reflectors.remove(poi);
+            if (reflectors.isEmpty()) { data.reflectorPOIsByY.remove(y); }
             boolean wasUntaken = data.untakenReflectors.remove(poi);
             if (wasUntaken) {
                 if (hasNeighbor(data, poi)) { data.groupsDirty = true; }
