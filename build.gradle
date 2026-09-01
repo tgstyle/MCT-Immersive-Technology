@@ -149,11 +149,6 @@ tasks.named('runClient').configure {
     extraArgs.addAll('--width', '1920', '--height', '1080')
 }
 
-tasks.register('runClientGamescope', Exec) {
-    workingDir = projectDir
-    commandLine 'bash', '-c', 'set -o pipefail; gamescope -W 1920 -H 1080 -- ./gradlew --no-daemon runClient 2>&1 ' + '| grep --line-buffered -v "xdg_backend: Changed refresh"'
-}
-
 tasks.named('runServer').configure {
     workingDir = file('run/server')
 }
