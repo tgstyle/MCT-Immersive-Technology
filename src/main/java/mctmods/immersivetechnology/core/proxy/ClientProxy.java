@@ -197,7 +197,6 @@ public class ClientProxy extends CommonProxy {
         event.register(MenuTypes.CRATE_CREATIVE.getType(), CrateCreativeScreen::new);
         event.register(MenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
         event.register(MenuTypes.MELTING_CRUCIBLE_MENU.getType(), MeltingCrucibleScreen::new);
-        event.register(MenuTypes.ROTOR_CREATIVE.getType(), RotorCreativeScreen::new);
         event.register(MenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
         event.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
         event.register(MenuTypes.STYLENOX_MENU.getType(), StyleNOXScreen::new);
@@ -278,7 +277,6 @@ public class ClientProxy extends CommonProxy {
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
         registerBERender(event, BlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseHeaterRenderer());
         registerBERender(event, BlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
-        registerBERender(event, BlockEntities.ROTOR_CREATIVE::get, context -> new RotorCreativeRenderer());
         registerBERender(event, MultiblockRegistry.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());
         registerBERender(event, MultiblockRegistry.GAS_TURBINE.masterBE(), ctx -> new GasTurbineRenderer());
         registerBERender(event, MultiblockRegistry.SOLAR_REFLECTOR.masterBE(), ctx1 -> new SolarReflectorRenderer());

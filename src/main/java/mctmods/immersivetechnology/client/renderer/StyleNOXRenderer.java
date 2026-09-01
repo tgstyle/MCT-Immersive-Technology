@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.client.renderer;
 import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.models.multiblock.StyleNOXModels;
 import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
-import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
+import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.core.ClientConfig;
 

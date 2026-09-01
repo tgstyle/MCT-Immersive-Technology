@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.client.renderer;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.ModDynamicModel;
 import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
-import mctmods.immersivetechnology.client.renderer.helper.RenderUtils;
+import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.GasTurbineLogic;
 import mctmods.immersivetechnology.core.ClientConfig;
 

@@ -44,15 +44,7 @@ public class BlockEntities {
             () -> BlockEntityType.Builder.of(CrateCreativeBlockEntity::new, ModBlocks.Wooden.CRATE_CREATIVE.get()).build(null)
     );
 
-    public static final Supplier<BlockEntityType<HeatCreativeBlockEntity>> HEAT_CREATIVE = REGISTER.register(
-            "heat_creative",
-            () -> BlockEntityType.Builder.of(HeatCreativeBlockEntity::new, ModBlocks.Metal.HEAT_CREATIVE.get()).build(null)
-    );
 
-    public static final Supplier<BlockEntityType<RotorCreativeBlockEntity>> ROTOR_CREATIVE = REGISTER.register(
-            "rotor_creative",
-            () -> BlockEntityType.Builder.of(RotorCreativeBlockEntity::new, ModBlocks.Metal.ROTOR_CREATIVE.get()).build(null)
-    );
 
     public static final Supplier<BlockEntityType<TrashEnergyBlockEntity>> TRASH_ENERGY = REGISTER.register(
             "trash_energy",
@@ -103,9 +95,6 @@ public class BlockEntities {
             VALVE_LIMITER
     );
 
-    public static final List<Supplier<?>> MECHANICAL_BES = List.of(
-            ROTOR_CREATIVE
-    );
 
     public static void init(IEventBus event) {
         REGISTER.register(event);
@@ -142,12 +131,5 @@ public class BlockEntities {
             });
         }
 
-        for (Supplier<?> sup : MECHANICAL_BES) {
-            BlockEntityType<?> type = (BlockEntityType<?>) sup.get();
-            event.registerBlockEntity(MechanicalCapabilities.MECHANICAL_PROVIDER, type, (be, side) -> {
-                if (be instanceof RotorCreativeBlockEntity b) return b.getMechanicalProvider(side);
-                return null;
-            });
-        }
     }
 }

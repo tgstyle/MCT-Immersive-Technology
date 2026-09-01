@@ -16,9 +16,7 @@ import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.common.data.generators.ModBlockState;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -40,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nullable;
 
@@ -99,7 +96,6 @@ public class BasicStateGenerator {
         ResourceLocation reinforcedTexture = main.modLoc("block/stone/reinforced_coke_brick");
         createSlabModels(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get(), reinforcedTexture, reinforcedTexture, reinforcedTexture);
         createSimpleBlock(ModBlocks.getBlock.apply("barrel_creative"), main.models().cubeAll("block/metal/barrel_creative", main.modLoc("block/metal/barrel_creative")));
-        createSimpleBlock(ModBlocks.getBlock.apply("heat_creative"), main.models().cubeAll("block/metal/heat_creative", main.modLoc("block/metal/heat_creative")));
 
         VariantBlockStateBuilder steelBuilder = main.getVariantBuilder(ModBlocks.getBlock.apply("barrel_steel"));
         BlockModelBuilder steelModel = main.models().getBuilder("block/metal/barrel_steel")
@@ -189,10 +185,6 @@ public class BasicStateGenerator {
 
         createValveVariants();
         createBaseHeaterVariants();
-
-        VariantBlockStateBuilder rotorBuilder = main.getVariantBuilder(ModBlocks.Metal.ROTOR_CREATIVE.get());
-        ModelFile rotorNS = new ModelFile.UncheckedModelFile(main.modLoc("dynamic/rotor"));
-        rotorBuilder.partialState().setModels(new ConfiguredModel(rotorNS));
     }
 
     private void createValveVariants() {
@@ -349,13 +341,6 @@ public class BasicStateGenerator {
         main.getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model));
     }
 
-    protected void addParticleTextureFrom(BlockModelBuilder result, ModelBuilder<?> model) {
-        String particles = ModBlockState.generatedParticleTextures.get(model.getLocation());
-        if (particles != null) {
-            result.texture("particle", particles);
-            ModBlockState.generatedParticleTextures.put(result.getLocation(), particles);
-        }
-    }
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
 

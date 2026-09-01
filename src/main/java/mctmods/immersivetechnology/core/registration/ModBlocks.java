@@ -65,8 +65,6 @@ public class ModBlocks {
         public static BlockEntry<BarrelCreativeBlock> BARREL_CREATIVE;
         public static BlockEntry<BarrelSteelBlock> BARREL_STEEL;
         public static BlockEntry<BarrelOpenBlock> BARREL_OPEN;
-        public static BlockEntry<HeatCreativeBlock> HEAT_CREATIVE;
-        public static BlockEntry<RotorCreativeBlock> ROTOR_CREATIVE;
         public static BlockEntry<TechnologyEngineeringBlock> TECHNOLOGY_ENGINEERING;
         public static BlockEntry<TrashEnergyBlock> TRASH_ENERGY;
         public static BlockEntry<TrashFluidBlock> TRASH_FLUID;
@@ -100,17 +98,7 @@ public class ModBlocks {
                     p -> new BarrelOpenBlock(BarrelOpenBlockEntity::new, p)
             );
 
-            ROTOR_CREATIVE = new BlockEntry<>(
-                    "rotor_creative",
-                    METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new RotorCreativeBlock(RotorCreativeBlockEntity::new, p)
-            );
 
-            HEAT_CREATIVE = new BlockEntry<>(
-                    "heat_creative",
-                    METAL_PROPERTIES_NO_OCCLUSION,
-                    p -> new HeatCreativeBlock(HeatCreativeBlockEntity::new, p)
-            );
 
             TECHNOLOGY_ENGINEERING = new BlockEntry<>(
                     "technology_engineering",
