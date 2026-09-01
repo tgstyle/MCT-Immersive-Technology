@@ -7,11 +7,8 @@ import blusunrize.immersiveengineering.api.energy.wires.WireApi;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
-import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
-import blusunrize.immersiveengineering.common.items.ItemEarmuffs;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.lib.manual.ManualPages;
 
 import com.immersiveconvergence.api.client.ICSoundHandler;
@@ -74,14 +71,12 @@ import mctmods.immersivetechnology.common.util.ITUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -161,23 +156,7 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
             }
-            calculateVolume();
         }
-    }
-
-    public void calculateVolume() {
-        EntityPlayerSP player = ClientUtils.mc().player;
-        if (player == null) { return; }
-        float volumeAdjustment = 1;
-        ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
-        if (!stack.isEmpty()) {
-            if (IEContent.itemEarmuffs.equals(stack.getItem())) { volumeAdjustment = ItemEarmuffs.getVolumeMod(stack); }
-            else if (ItemNBTHelper.hasKey(stack, "IE:Earmuffs")) {
-                stack = ItemNBTHelper.getItemStack(stack, "IE:Earmuffs");
-                if (!stack.isEmpty() && IEContent.itemEarmuffs.equals(stack.getItem())) { volumeAdjustment = ItemEarmuffs.getVolumeMod(stack); }
-            }
-        }
-        ICSoundHandler.setVolumeAdjustment(volumeAdjustment);
     }
 
     @SuppressWarnings({"deprecation", "ConstantConditions"})
