@@ -7,15 +7,11 @@
   "mixins": [
     "common.CapacitorBlockEntityMixin",
     "common.IFluidPipeMixin",
-    "common.InitializationTrackerMixin",
     "common.MixerLogicMixin",
     "common.MixerRecipeMixin",
     "common.MixerLogicStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-    "client.BlockRenderDispatcherMixin"
-  ]
+  }
 }

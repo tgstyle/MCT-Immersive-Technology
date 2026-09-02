@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.models.multiblock;
 
-import mctmods.immersivetechnology.client.models.ModDynamicModel;
+import com.immersiveconvergence.api.client.StandaloneModel;
 
 public class RotorModels {
-    public static ModDynamicModel ROTOR;
-    public static ModDynamicModel ROTOR_EAST_WEST;
+    public static StandaloneModel ROTOR;
+    public static StandaloneModel ROTOR_EAST_WEST;
 }

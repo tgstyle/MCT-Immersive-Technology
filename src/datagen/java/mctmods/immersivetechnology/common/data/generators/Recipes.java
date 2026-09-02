@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.registration.ItemEntry;
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.EnumMetals;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
@@ -203,7 +204,7 @@ public class Recipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FUEL_ELEMENT.get(), 1).define('x', ModItems.PELLET_URANIUM.get()).define('y', cTag("plates/magnox")).pattern("xyx").pattern("x x").pattern("xyx").unlockedBy("has_pellet_uranium", has(ModItems.PELLET_URANIUM.get())).save(output, toResourceLocation("fuel_element"));
     }
 
-    private void oreMetal(RecipeOutput output, String name, ModItems.ItemRegObject<?> ingot, ModItems.ItemRegObject<?> dust, ModItems.ItemRegObject<?> raw, ModBlocks.BlockEntry<?> storage, ModBlocks.BlockEntry<?> ore, ModBlocks.BlockEntry<?> deepslateOre) {
+    private void oreMetal(RecipeOutput output, String name, ItemEntry<?> ingot, ItemEntry<?> dust, ItemEntry<?> raw, ModBlocks.BlockEntry<?> storage, ModBlocks.BlockEntry<?> ore, ModBlocks.BlockEntry<?> deepslateOre) {
         TagKey<Item> ingotTag = cTag("ingots/" + name);
         TagKey<Item> dustTag = cTag("dusts/" + name);
         TagKey<Item> rawTag = cTag("raw_materials/" + name);
@@ -222,7 +223,7 @@ public class Recipes extends RecipeProvider {
         crushAndSmeltIngot(output, name);
     }
 
-    private void alloyMetal(RecipeOutput output, String name, ModItems.ItemRegObject<?> ingot, ModItems.ItemRegObject<?> dust) {
+    private void alloyMetal(RecipeOutput output, String name, ItemEntry<?> ingot, ItemEntry<?> dust) {
         addSmeltingBlasting(dust.get(), ingot.get(), 0f, output, "ingot_" + name + "_from_dust");
         crushAndSmeltIngot(output, name);
     }
@@ -232,7 +233,7 @@ public class Recipes extends RecipeProvider {
         ArcFurnaceRecipeBuilder.builder().input(cTag("dusts/" + name)).output(cTag("ingots/" + name), 1).setTime(100).setEnergy(51200).build(output, toResourceLocation("arcfurnace/dust_" + name));
     }
 
-    private void plateAndRod(RecipeOutput output, String name, ModItems.ItemRegObject<?> ingot, ModItems.ItemRegObject<?> plate, boolean hasRod) {
+    private void plateAndRod(RecipeOutput output, String name, ItemEntry<?> ingot, ItemEntry<?> plate, boolean hasRod) {
         TagKey<Item> ingotTag = cTag("ingots/" + name);
         MetalPressRecipeBuilder.builder().input(ingotTag).mold(IEItems.Molds.MOLD_PLATE).output(cTag("plates/" + name), 1).setEnergy(2400).build(output, toResourceLocation("metalpress/plate_" + name));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, plate.get()).requires(ingotTag).requires(IETags.hammers).unlockedBy("has_ingot_" + name, has(ingot.get())).save(output, toResourceLocation("plate_" + name + "_hammering"));

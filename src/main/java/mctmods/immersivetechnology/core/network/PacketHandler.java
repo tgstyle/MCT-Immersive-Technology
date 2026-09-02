@@ -20,19 +20,6 @@ public class PacketHandler {
     @SubscribeEvent
     public static void register(final RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
-
-        registrar.playToClient(
-                MessageContainerUpdate.TYPE,
-                MessageContainerUpdate.STREAM_CODEC,
-                MessageContainerUpdate::handle
-        );
-
-        registrar.playToClient(
-                MessageContainerData.TYPE,
-                MessageContainerData.STREAM_CODEC,
-                MessageContainerData::handle
-        );
-
         registrar.playToClient(
                 OSDSyncBlock.TYPE,
                 OSDSyncBlock.STREAM_CODEC,

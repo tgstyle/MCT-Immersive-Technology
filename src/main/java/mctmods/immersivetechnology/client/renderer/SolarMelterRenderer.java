@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import com.immersiveconvergence.api.particles.ColoredBeam;
-import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 

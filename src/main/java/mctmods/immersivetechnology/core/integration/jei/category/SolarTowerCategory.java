@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -27,7 +28,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class SolarTowerCategory extends ModRecipeCategory<SolarTowerRecipe> {
+public class SolarTowerCategory extends BaseRecipeCategory<SolarTowerRecipe> {
 
     private final IDrawableStatic tankOverlay;
 
@@ -68,7 +69,7 @@ public class SolarTowerCategory extends ModRecipeCategory<SolarTowerRecipe> {
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.inputAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.inputAmount(), tooltip::add)));
 
         FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 126, 21)
@@ -77,7 +78,7 @@ public class SolarTowerCategory extends ModRecipeCategory<SolarTowerRecipe> {
 
         outputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull SolarTowerRecipe recipe) {

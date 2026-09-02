@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.client.gui;
 
-import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.EnergyInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.InfoArea;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiEnergyArea;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.MeltingCrucibleMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
@@ -19,18 +19,18 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class MeltingCrucibleScreen extends ContainerScreen<MeltingCrucibleMenu> {
+public class MeltingCrucibleScreen extends BaseContainerScreen<MeltingCrucibleMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("melting_crucible");
 
     public MeltingCrucibleScreen(MeltingCrucibleMenu container, Inventory inventoryPlayer, Component title) {
         super(container, inventoryPlayer, title, TEXTURE);
     }
 
-    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
         return List.of(
-                new EnergyInfoArea(this.leftPos + 16, this.topPos + 22, menu.energy),
-                new FluidInfoArea(menu.inputTank, new Rect2i(this.leftPos + 102, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new FluidInfoArea(menu.outputTank, new Rect2i(this.leftPos + 126, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)
+                new GuiEnergyArea(this.leftPos + 16, this.topPos + 22, menu.energy),
+                new GuiFluidArea(menu.inputTank, new Rect2i(this.leftPos + 102, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new GuiFluidArea(menu.outputTank, new Rect2i(this.leftPos + 126, this.topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)
         );
     }
 

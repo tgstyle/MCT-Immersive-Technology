@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
+import com.immersiveconvergence.api.registration.BlockEntry;
 import com.google.common.collect.ImmutableMap;
-import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
 import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
@@ -100,7 +101,7 @@ public class BasicStateGenerator {
         VariantBlockStateBuilder steelBuilder = main.getVariantBuilder(ModBlocks.getBlock.apply("barrel_steel"));
         BlockModelBuilder steelModel = main.models().getBuilder("block/metal/barrel_steel")
                 .customLoader(SideConfigBuilder::begin)
-                .type(ModelConfigurableSides.Type.VERTICAL)
+                .type(ConfigurableSidesModel.Type.VERTICAL)
                 .baseName(main.modLoc("block/metal/barrel_steel"))
                 .end();
         setRenderType(RenderType.cutout(), steelModel);
@@ -171,7 +172,7 @@ public class BasicStateGenerator {
         ModelFile emptyModel = main.models().withExistingParent("empty", main.mcLoc("block/block"))
                 .renderType("cutout")
                 .texture("particle", "#missingno");
-        for (ModBlocks.BlockEntry<?> fluidEntry : ModFluids.ALL_FLUID_BLOCKS) {
+        for (BlockEntry<?> fluidEntry : ModFluids.ALL_FLUID_BLOCKS) {
             Block fluidBlock = fluidEntry.get();
             VariantBlockStateBuilder builder = main.getVariantBuilder(fluidBlock);
             for (int level = 0; level < 16; level++) {

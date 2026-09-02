@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import mctmods.immersivetechnology.core.util.loot.BEDropLootEntry;
+import com.immersiveconvergence.api.loot.BlockEntityDropLootEntry;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -51,7 +51,7 @@ public class BlockLoot extends BlockLootSubProvider {
     }
 
     private void registerEntity(Supplier<? extends Block> block) {
-        LootPool.Builder pool = createPoolBuilder().add(BEDropLootEntry.builder());
+        LootPool.Builder pool = createPoolBuilder().add(BlockEntityDropLootEntry.builder());
         add(block.get(), LootTable.lootTable().withPool(pool));
     }
 

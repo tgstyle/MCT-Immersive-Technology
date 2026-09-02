@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import java.text.DecimalFormat;
-import mctmods.immersivetechnology.common.blocks.helper.*;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

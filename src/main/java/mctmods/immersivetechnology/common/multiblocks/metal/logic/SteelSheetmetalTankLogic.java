@@ -7,11 +7,9 @@ import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
-import mctmods.immersivetechnology.common.fluids.helper.DelegatingFluidTank;
+import com.immersiveconvergence.api.util.DelegatingFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.client.util.ClientUtils;
-import mctmods.immersivetechnology.core.util.LayeredComparatorOutput;
-import mctmods.immersivetechnology.core.util.Utils;
+import com.immersiveconvergence.api.util.LayeredComparator;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -123,7 +121,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     public static class State implements IMultiblockState, IDisplayContext {
         public final MarkableFluidTank tank;
-        private final LayeredComparatorOutput<IMultiblockContext<State>> comparatorHelper;
+        private final LayeredComparator<IMultiblockContext<State>> comparatorHelper;
         public IFluidHandler inputHandler;
         public IFluidHandler ioHandler;
         public IFluidHandler output0Handler;
@@ -145,7 +143,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
             this.output0Tank = new DelegatingFluidTank(tank);
             this.output1Tank = new DelegatingFluidTank(tank);
             this.output2Tank = new DelegatingFluidTank(tank);
-            this.comparatorHelper = new LayeredComparatorOutput<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
+            this.comparatorHelper = new LayeredComparator<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
                     (ctx, value) -> { for (BlockPos pos : COMPARATOR_BASE) { ctx.setComparatorOutputFor(pos, value); } },
                     (ctx, layer, value) -> { for (BlockPos pos : COMPARATOR_LAYERS.get(layer)) { ctx.setComparatorOutputFor(pos, value); } }
             );
@@ -219,7 +217,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     @Override public void dropExtraItems(State state, java.util.function.Consumer<net.minecraft.world.item.ItemStack> drop) { }
 
     @Override @Nullable public List<Component> getOverlayText(State state, BlockPos pos, BlockHitResult hit, Player player, boolean hammer) {
-        if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ClientUtils.formatFluidStack(state.tank.getFluid()));
+        if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ICFluidUtils.formatFluidStack(state.tank.getFluid()));
         return null;
     }
 

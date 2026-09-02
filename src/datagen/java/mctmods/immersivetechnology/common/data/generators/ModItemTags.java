@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.registration.ItemEntry;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.ModTags;
@@ -60,7 +61,7 @@ public class ModItemTags extends ItemTagsProvider {
         copy(cBlockTag("ores"), cItemTag("ores"));
     }
 
-    private void registerMaterial(String category, String material, ModItems.ItemRegObject<?> item) {
+    private void registerMaterial(String category, String material, ItemEntry<?> item) {
         tag(cItemTag(category + "/" + material)).add(item.get());
         tag(cItemTag(category)).addTag(cItemTag(category + "/" + material));
     }

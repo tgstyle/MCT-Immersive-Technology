@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.fluid.FluidEntry;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -85,7 +86,7 @@ public class ItemModel extends ItemModelProvider {
 
     private void generateFlatItem(String name, String texture) { withExistingParent(name, mcLoc("item/generated")).texture("layer0", modLoc(texture)); }
 
-    private void createBucket(ModFluids.FluidEntry entry) {
+    private void createBucket(FluidEntry entry) {
         boolean isGas = entry.type().get().getDensity() < 0;
         getBuilder(name(entry.getBucket()))
                 .parent(new ModelFile.UncheckedModelFile("neoforge:item/bucket"))

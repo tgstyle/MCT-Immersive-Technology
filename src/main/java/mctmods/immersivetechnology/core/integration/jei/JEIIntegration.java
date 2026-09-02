@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static mctmods.immersivetechnology.client.gui.helper.FluidInfoArea.fillTooltip;
+import static com.immersiveconvergence.api.client.gui.GuiFluidArea.fillTooltip;
 
 import javax.annotation.Nonnull;
 

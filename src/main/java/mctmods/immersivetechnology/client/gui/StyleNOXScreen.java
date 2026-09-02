@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.client.gui;
 
-import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.EnergyInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.InfoArea;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiEnergyArea;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.StyleNOXMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
-public class StyleNOXScreen extends ContainerScreen<StyleNOXMenu> {
+public class StyleNOXScreen extends BaseContainerScreen<StyleNOXMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("stylenox");
     private final Button[] rodButtons = new Button[StyleNOXLogic.MAX_ROD_LEVEL];
     private Button scramButton;
@@ -55,12 +55,12 @@ public class StyleNOXScreen extends ContainerScreen<StyleNOXMenu> {
         updateButtons();
     }
 
-    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
         return ImmutableList.of(
-                new FluidInfoArea(menu.tanks.water(), new Rect2i(leftPos + 8, topPos + 17, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new FluidInfoArea(menu.tanks.co2(), new Rect2i(leftPos + 27, topPos + 17, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new FluidInfoArea(menu.tanks.steam(), new Rect2i(leftPos + 134, topPos + 17, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new EnergyInfoArea(leftPos + 158, topPos + 17, menu.energy)
+                new GuiFluidArea(menu.tanks.water(), new Rect2i(leftPos + 8, topPos + 17, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new GuiFluidArea(menu.tanks.co2(), new Rect2i(leftPos + 27, topPos + 17, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new GuiFluidArea(menu.tanks.steam(), new Rect2i(leftPos + 134, topPos + 17, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new GuiEnergyArea(leftPos + 158, topPos + 17, menu.energy)
         );
     }
 

@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
@@ -13,8 +14,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.StyleNOXShape
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
-import mctmods.immersivetechnology.core.util.Utils;
+import com.immersiveconvergence.api.util.RecipeCache;
+import com.immersiveconvergence.api.util.ICItemUtils;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -114,7 +115,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         pumpOutputs(ctx);
         ItemStack spent = state.inventory.getStackInSlot(SLOT_SPENT);
         if (!spent.isEmpty()) {
-            ItemStack remaining = Utils.insertStackIntoInventory(state.outputRef, spent, false);
+            ItemStack remaining = ICItemUtils.insertStackIntoInventory(state.outputRef, spent, false);
             if (remaining.getCount() != spent.getCount()) { state.inventory.setStackInSlot(SLOT_SPENT, remaining); }
         }
         int newComparatorValue = state.tanks.steam().getCapacity() > 0 ? (15 * state.tanks.steam().getFluidAmount()) / state.tanks.steam().getCapacity() : 0;
@@ -342,12 +343,12 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             };
             this.tanks = new StyleNOXTank(v -> onChanged.run(), waterTankCapacity(), steamTankCapacity(), co2TankCapacity());
             this.inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), onChanged);
-            this.waterInputCap = new ArrayFluidHandler(tanks.water(), false, true, onChanged);
-            this.steamOutputCap = new ArrayFluidHandler(tanks.steam(), true, false, onChanged);
-            this.co2InputCap = new ArrayFluidHandler(tanks.co2(), false, true, onChanged);
+            this.waterInputCap = new MultiTankFluidHandler(tanks.water(), false, true, onChanged);
+            this.steamOutputCap = new MultiTankFluidHandler(tanks.steam(), true, false, onChanged);
+            this.co2InputCap = new MultiTankFluidHandler(tanks.co2(), false, true, onChanged);
             this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
-            this.recipeGetter = CachedRecipe.cached(StyleNOXRecipe::findRecipe);
+            this.recipeGetter = RecipeCache.cached(StyleNOXRecipe::findRecipe);
         }
 
         private RecipeHolder<StyleNOXRecipe> recipeForLoad(Level level) {
@@ -433,7 +434,14 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             energy.setStoredEnergy(nbt.getInt("energy"));
             tanksDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            lines.text(reactorState.name() + " (" + (rodLevel * 25) + "%)");
+            if (burnTotal > 0 && hasLoad()) { lines.percent((int) (100L * burnProgress / burnTotal)); }
+            if (!hasLoad() && inventory.getStackInSlot(SLOT_FUEL).isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 
     public record StyleNOXTank(MarkableFluidTank water, MarkableFluidTank steam, MarkableFluidTank co2) {
         public StyleNOXTank(Consumer<Void> markDirty, int waterCapacity, int steamCapacity, int co2Capacity) {

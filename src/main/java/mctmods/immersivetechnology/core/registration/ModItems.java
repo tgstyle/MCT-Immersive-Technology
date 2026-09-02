@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
+import com.immersiveconvergence.api.registration.ItemEntry;
 import com.immersiveconvergence.api.block.BaseItem;
 import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -25,28 +26,28 @@ public class ModItems {
 
     public static HashMap<String, Supplier<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }
 
-    public static final ItemRegObject<FormationTool> FORMATION_TOOL = register("formation_tool", FormationTool::new);
-    public static final ItemRegObject<BaseItem> SALT = simple();
-    public static final ItemRegObject<BaseItem> FUEL_ELEMENT = item("fuel_element");
-    public static final ItemRegObject<BaseItem> SPENT_ELEMENT = item("spent_element");
-    public static final ItemRegObject<BaseItem> INGOT_CHROMIUM = item("ingot_chromium");
-    public static final ItemRegObject<BaseItem> INGOT_MAGNESIUM = item("ingot_magnesium");
-    public static final ItemRegObject<BaseItem> INGOT_MAGNOX = item("ingot_magnox");
-    public static final ItemRegObject<BaseItem> INGOT_PLUTONIUM = item("ingot_plutonium");
-    public static final ItemRegObject<BaseItem> INGOT_STAINLESS_STEEL = item("ingot_stainless_steel");
-    public static final ItemRegObject<BaseItem> DUST_CHROMIUM = item("dust_chromium");
-    public static final ItemRegObject<BaseItem> DUST_MAGNESIUM = item("dust_magnesium");
-    public static final ItemRegObject<BaseItem> DUST_MAGNOX = item("dust_magnox");
-    public static final ItemRegObject<BaseItem> DUST_SPENT_FUEL = item("dust_spent_fuel");
-    public static final ItemRegObject<BaseItem> DUST_STAINLESS_STEEL = item("dust_stainless_steel");
-    public static final ItemRegObject<BaseItem> RAW_CHROMIUM = item("raw_chromium");
-    public static final ItemRegObject<BaseItem> RAW_MAGNESIUM = item("raw_magnesium");
-    public static final ItemRegObject<BaseItem> NUGGET_NUCLEAR_WASTE = item("nugget_nuclear_waste");
-    public static final ItemRegObject<BaseItem> NUGGET_STAINLESS_STEEL = item("nugget_stainless_steel");
-    public static final ItemRegObject<BaseItem> PLATE_MAGNOX = item("plate_magnox");
-    public static final ItemRegObject<BaseItem> PLATE_STAINLESS_STEEL = item("plate_stainless_steel");
-    public static final ItemRegObject<BaseItem> STICK_STAINLESS_STEEL = item("stick_stainless_steel");
-    public static final ItemRegObject<BaseItem> PELLET_URANIUM = item("pellet_uranium");
+    public static final ItemEntry<FormationTool> FORMATION_TOOL = register("formation_tool", FormationTool::new);
+    public static final ItemEntry<BaseItem> SALT = simple();
+    public static final ItemEntry<BaseItem> FUEL_ELEMENT = item("fuel_element");
+    public static final ItemEntry<BaseItem> SPENT_ELEMENT = item("spent_element");
+    public static final ItemEntry<BaseItem> INGOT_CHROMIUM = item("ingot_chromium");
+    public static final ItemEntry<BaseItem> INGOT_MAGNESIUM = item("ingot_magnesium");
+    public static final ItemEntry<BaseItem> INGOT_MAGNOX = item("ingot_magnox");
+    public static final ItemEntry<BaseItem> INGOT_PLUTONIUM = item("ingot_plutonium");
+    public static final ItemEntry<BaseItem> INGOT_STAINLESS_STEEL = item("ingot_stainless_steel");
+    public static final ItemEntry<BaseItem> DUST_CHROMIUM = item("dust_chromium");
+    public static final ItemEntry<BaseItem> DUST_MAGNESIUM = item("dust_magnesium");
+    public static final ItemEntry<BaseItem> DUST_MAGNOX = item("dust_magnox");
+    public static final ItemEntry<BaseItem> DUST_SPENT_FUEL = item("dust_spent_fuel");
+    public static final ItemEntry<BaseItem> DUST_STAINLESS_STEEL = item("dust_stainless_steel");
+    public static final ItemEntry<BaseItem> RAW_CHROMIUM = item("raw_chromium");
+    public static final ItemEntry<BaseItem> RAW_MAGNESIUM = item("raw_magnesium");
+    public static final ItemEntry<BaseItem> NUGGET_NUCLEAR_WASTE = item("nugget_nuclear_waste");
+    public static final ItemEntry<BaseItem> NUGGET_STAINLESS_STEEL = item("nugget_stainless_steel");
+    public static final ItemEntry<BaseItem> PLATE_MAGNOX = item("plate_magnox");
+    public static final ItemEntry<BaseItem> PLATE_STAINLESS_STEEL = item("plate_stainless_steel");
+    public static final ItemEntry<BaseItem> STICK_STAINLESS_STEEL = item("stick_stainless_steel");
+    public static final ItemEntry<BaseItem> PELLET_URANIUM = item("pellet_uranium");
 
     public static void initItems() { }
 
@@ -57,22 +58,15 @@ public class ModItems {
         REGISTER.register(event);
     }
 
-    private static ModItems.ItemRegObject<BaseItem> simple() { return simple($ -> { }, $ -> { }); }
+    private static ItemEntry<BaseItem> simple() { return simple($ -> { }, $ -> { }); }
 
-    private static ModItems.ItemRegObject<BaseItem> simple(Consumer<Item.Properties> makeProps, Consumer<BaseItem> processItem) { return register("salt", () -> Util.make(new BaseItem(Util.make(new Item.Properties(), makeProps)), processItem)); }
+    private static ItemEntry<BaseItem> simple(Consumer<Item.Properties> makeProps, Consumer<BaseItem> processItem) { return register("salt", () -> Util.make(new BaseItem(Util.make(new Item.Properties(), makeProps)), processItem)); }
 
-    private static ModItems.ItemRegObject<BaseItem> item(String name) { return register(name, () -> new BaseItem(new Item.Properties())); }
+    private static ItemEntry<BaseItem> item(String name) { return register(name, () -> new BaseItem(new Item.Properties())); }
 
-    static <T extends Item> ModItems.ItemRegObject<T> register(String name, Supplier<? extends T> make) {
-        ModItems.ItemRegObject<T> entry = new ModItems.ItemRegObject<>(REGISTER.register(name, make));
-        ITEM_REGISTRY_MAP.put(name, entry.regObject);
+    static <T extends Item> ItemEntry<T> register(String name, Supplier<? extends T> make) {
+        ItemEntry<T> entry = new ItemEntry<>(REGISTER.register(name, make));
+        ITEM_REGISTRY_MAP.put(name, entry.regObject());
         return entry;
-    }
-
-    public record ItemRegObject<T extends Item>(DeferredItem<T> regObject) implements Supplier<T>, ItemLike {
-        @Override @Nonnull public T get() { return regObject.get(); }
-
-        @Override @Nonnull public Item asItem() { return regObject.get(); }
-        public ResourceLocation getId() { return regObject.getId(); }
     }
 }

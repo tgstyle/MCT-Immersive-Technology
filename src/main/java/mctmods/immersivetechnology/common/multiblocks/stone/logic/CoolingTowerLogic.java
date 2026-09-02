@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
@@ -13,7 +14,7 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -237,8 +238,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     }
 
     public static class State implements IMultiblockState, IDisplayContext {
-        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = CachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
-        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = CachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
+        public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = RecipeCache.cached3(CoolingTowerRecipe::findRecipe);
+        public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = RecipeCache.cached3(CoolingTowerRecipe::findRecipe);
         public final CoolingTowerTanks tanks;
         public IFluidHandler inputCap;
         public IFluidHandler output0Cap;
@@ -259,9 +260,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
             this.tanks = new CoolingTowerTanks(v -> { onChanged.run(); this.tanksDirty = true; });
             this.inputCap = new CombinedInputFluidHandler(tanks.input0(), tanks.input1(), () -> { onChanged.run(); this.tanksDirty = true; });
-            this.output0Cap = new ArrayFluidHandler(tanks.output0(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.output1Cap = new ArrayFluidHandler(tanks.output1(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
-            this.output2Cap = new ArrayFluidHandler(tanks.output2(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.output0Cap = new MultiTankFluidHandler(tanks.output0(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.output1Cap = new MultiTankFluidHandler(tanks.output1(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
+            this.output2Cap = new MultiTankFluidHandler(tanks.output2(), true, false, () -> { onChanged.run(); this.tanksDirty = true; });
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -302,7 +303,12 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1};
             tanksDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            for (int percent : processPercents) { if (percent >= 0) { lines.percent(percent); } }
+        }
+}
 
     public record CoolingTowerTanks(MarkableFluidTank input0, MarkableFluidTank input1, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
 

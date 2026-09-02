@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.IEApiDataComponents;
 import com.mojang.datafixers.util.Unit;

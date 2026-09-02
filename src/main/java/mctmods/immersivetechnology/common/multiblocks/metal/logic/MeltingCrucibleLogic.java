@@ -1,16 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -239,8 +240,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return MeltingCrucibleShape.GETTER; }
 
     public static class State implements IMultiblockState, IProcessContext.IProcessContextInMachine<MeltingRecipe>, IDisplayContext {
-        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = CachedRecipe.cached(MeltingRecipe::findRecipe);
-        public final BiFunction<Level, FluidStack, RecipeHolder<MeltingRecipe>> recipeHolderGetter = CachedRecipe.cached(MeltingRecipe::findRecipeHolder);
+        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = RecipeCache.cached(MeltingRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, RecipeHolder<MeltingRecipe>> recipeHolderGetter = RecipeCache.cached(MeltingRecipe::findRecipeHolder);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MeltingCrucibleTank tanks;
         public IFluidHandler inputCap;
@@ -274,8 +275,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
                     ),
                     onChanged
             );
-            this.inputCap = new ArrayFluidHandler(tanks.input(), false, true, onChanged);
-            this.outputCap = new ArrayFluidHandler(tanks.output(), true, false, onChanged);
+            this.inputCap = new MultiTankFluidHandler(tanks.input(), false, true, onChanged);
+            this.outputCap = new MultiTankFluidHandler(tanks.output(), true, false, onChanged);
             this.invCap = inventory;
             this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
@@ -350,7 +351,16 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             queueSize = nbt.getInt("queueSize");
             tanksDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            FluidStack input = tanks.input().getFluid();
+            MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
+            lines.temperature(heatLevel, recipe != null ? recipe.requiredTemp : workingHeatLevel());
+            if (queueSize > 0) { lines.text("Processing (" + queueSize + " queued)"); }
+            if (input.isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 
     public record MeltingCrucibleTank(MarkableFluidTank input, MarkableFluidTank output) {
         public MeltingCrucibleTank(Consumer<Void> markDirty) {

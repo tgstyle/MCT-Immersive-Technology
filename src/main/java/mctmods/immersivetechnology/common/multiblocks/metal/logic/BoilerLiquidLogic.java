@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
@@ -13,7 +14,7 @@ import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -252,7 +253,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerLiquidShape.GETTER; }
 
     public static class State implements IMultiblockState, IDisplayContext {
-        public final BiFunction<Level, FluidStack, BoilerLiquidRecipe> recipeGetter = CachedRecipe.cached(BoilerLiquidRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, BoilerLiquidRecipe> recipeGetter = RecipeCache.cached(BoilerLiquidRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final BoilerTank tanks;
         public final IFluidHandler fluidInputHandler;
@@ -285,7 +286,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );
-            fluidInputHandler = new ArrayFluidHandler(tanks.input1(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
+            fluidInputHandler = new MultiTankFluidHandler(tanks.input1(), false, true, () -> { onChanged.run(); this.tanksDirty = true; });
             heatProvider = new HeatSourceImpl(this);
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_OUTPUT_FACING, HEAT_OUTPUT_POIS.getFirst());
             CapabilityPosition opposingCP = CapabilityPosition.opposing(heatMBFace);
@@ -352,7 +353,13 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             tanksDirty = false;
             inventoryDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            lines.temperature(heatLevel, getWorkingHeatLevel()).percent(burnPercent);
+            if (tanks.input1().getFluid().isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 
     private record HeatSourceImpl(State state) implements IHeatProvider {
         @Override public double getHeatLevel() { return state.heatLevel; }
