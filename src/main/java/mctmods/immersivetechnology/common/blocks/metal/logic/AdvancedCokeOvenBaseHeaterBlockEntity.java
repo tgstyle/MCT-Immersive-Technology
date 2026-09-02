@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.helper.*;
 import com.immersiveconvergence.api.client.split.ISubmodelOffsetProvider;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.ServerConfig;

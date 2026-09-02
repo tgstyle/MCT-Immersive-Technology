@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
+import com.immersiveconvergence.api.gui.MenuSyncData;
+import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
@@ -13,14 +13,14 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class AdvancedCokeOvenMenu extends ContainerMenu {
+public class AdvancedCokeOvenMenu extends BaseContainerMenu {
     public final AdvancedCokeOvenLogic.AdvancedCokeOvenTank tanks;
     private int maxProcessTime = 0;
     private int remainingProcessTime = 0;
 
-    public static AdvancedCokeOvenMenu makeServer(MenuType<AdvancedCokeOvenMenu> type, int id, Inventory invPlayer, ContainerMenu.MultiblockMenuContext<AdvancedCokeOvenLogic.State> ctx) {
+    public static AdvancedCokeOvenMenu makeServer(MenuType<AdvancedCokeOvenMenu> type, int id, Inventory invPlayer, BaseContainerMenu.MultiblockMenuContext<AdvancedCokeOvenLogic.State> ctx) {
         final AdvancedCokeOvenLogic.State state = ctx.mbContext().getState();
-        return new AdvancedCokeOvenMenu(ContainerMenu.multiblockCtx(type, id, ctx), invPlayer, state.inventory, state.tanks, state);
+        return new AdvancedCokeOvenMenu(BaseContainerMenu.multiblockCtx(type, id, ctx), invPlayer, state.inventory, state.tanks, state);
     }
 
     public static AdvancedCokeOvenMenu makeClient(MenuType<AdvancedCokeOvenMenu> type, int id, Inventory invPlayer) {
@@ -33,10 +33,10 @@ public class AdvancedCokeOvenMenu extends ContainerMenu {
                 ),
                 () -> {}
         );
-        return new AdvancedCokeOvenMenu(ContainerMenu.clientCtx(type, id), invPlayer, dummy, AdvancedCokeOvenLogic.AdvancedCokeOvenTank.makeClient(), null);
+        return new AdvancedCokeOvenMenu(BaseContainerMenu.clientCtx(type, id), invPlayer, dummy, AdvancedCokeOvenLogic.AdvancedCokeOvenTank.makeClient(), null);
     }
 
-    protected AdvancedCokeOvenMenu(ContainerMenu.MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, AdvancedCokeOvenLogic.AdvancedCokeOvenTank tanks, @Nullable AdvancedCokeOvenLogic.State state) {
+    protected AdvancedCokeOvenMenu(BaseContainerMenu.MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, AdvancedCokeOvenLogic.AdvancedCokeOvenTank tanks, @Nullable AdvancedCokeOvenLogic.State state) {
         super(ctx);
         this.tanks = tanks;
         this.addSlot(new ModSlot.Input(inv, AdvancedCokeOvenLogic.SLOT_INPUT, 30, 35));
@@ -45,9 +45,9 @@ public class AdvancedCokeOvenMenu extends ContainerMenu {
         this.addSlot(new ModSlot.Output(inv, AdvancedCokeOvenLogic.SLOT_FILLED_CONTAINER, 152, 53));
         this.ownSlotCount = 4;
         addPlayerInventorySlots(inventoryPlayer);
-        addGenericData(GenericContainerData.fluid(tanks.output()));
-        addGenericData(GenericContainerData.int32(() -> state != null ? state.get(AdvancedCokeOvenLogic.State.MAX_PROCESS_TIME) : maxProcessTime, i -> this.maxProcessTime = i));
-        addGenericData(GenericContainerData.int32(() -> state != null ? state.get(AdvancedCokeOvenLogic.State.REMAINING_PROCESS_TIME) : remainingProcessTime, i -> this.remainingProcessTime = i));
+        addGenericData(MenuSyncData.fluid(tanks.output()));
+        addGenericData(MenuSyncData.int32(() -> state != null ? state.get(AdvancedCokeOvenLogic.State.MAX_PROCESS_TIME) : maxProcessTime, i -> this.maxProcessTime = i));
+        addGenericData(MenuSyncData.int32(() -> state != null ? state.get(AdvancedCokeOvenLogic.State.REMAINING_PROCESS_TIME) : remainingProcessTime, i -> this.remainingProcessTime = i));
     }
 
     public int getMaxProcessTime() { return maxProcessTime; }

@@ -6,8 +6,6 @@
   "refmap": "immersivetechnology.refmap.json",
   "mixins": [
     "common.CapacitorBlockEntityMixin",
-    "common.FluidPipeBlockEntityMixin",
-    "common.InitializationTrackerMixin",
     "common.MixerLogicMixin",
     "common.MixerLogicStateMixin",
     "common.MixerRecipeMixin",
@@ -15,8 +13,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "client": [
-    "client.BlockRenderDispatcherMixin"
-  ]
+  }
 }

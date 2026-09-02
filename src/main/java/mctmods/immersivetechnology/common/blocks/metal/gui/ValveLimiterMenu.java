@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
-public class ValveLimiterMenu extends ContainerMenu {
+public class ValveLimiterMenu extends BaseContainerMenu {
     public ValveLimiterBlockEntity tile;
 
     private int packetLimit;
@@ -23,7 +23,7 @@ public class ValveLimiterMenu extends ContainerMenu {
     private int keepSize;
 
     public ValveLimiterMenu(MenuType<ValveLimiterMenu> type, int id, Inventory inv, ValveLimiterBlockEntity tile) {
-        super(ContainerMenu.blockCtx(type, id, tile));
+        super(BaseContainerMenu.blockCtx(type, id, tile));
         this.tile = tile;
         addDataSlot(new DataSlot() { public int get() { return tile.packetLimit; } public void set(int v) { packetLimit = v; } });
         addDataSlot(new DataSlot() { public int get() { return tile.timeLimit; } public void set(int v) { timeLimit = v; } });
@@ -31,7 +31,7 @@ public class ValveLimiterMenu extends ContainerMenu {
     }
 
     public ValveLimiterMenu(MenuType<ValveLimiterMenu> type, int id, Inventory inv, FriendlyByteBuf buffer) {
-        super(ContainerMenu.clientCtx(type, id));
+        super(BaseContainerMenu.clientCtx(type, id));
         BlockPos pos = buffer.readBlockPos();
         this.tile = (ValveLimiterBlockEntity) inv.player.level().getBlockEntity(pos);
         addDataSlot(new DataSlot() { public int get() { return 0; } public void set(int v) { packetLimit = v; } });

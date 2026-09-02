@@ -22,8 +22,6 @@ public class PacketHandler {
     public static final SimpleChannel INSTANCE = NetworkRegistry.ChannelBuilder.named(Reference.rl("main")).networkProtocolVersion(() -> NET_VERSION).serverAcceptedVersions(NET_VERSION::equals).clientAcceptedVersions(NET_VERSION::equals).simpleChannel();
 
     public static void initialize() {
-        registerMessage(MessageContainerUpdate.class, MessageContainerUpdate::new);
-        registerMessage(MessageContainerData.class, MessageContainerData::new);
         registerMessage(OSDRequestMessage.class, OSDRequestMessage::new);
         registerMessage(OSDSyncMessage.class, OSDSyncMessage::new);
         registerMessage(OSDSyncBlock.class, OSDSyncBlock::new);

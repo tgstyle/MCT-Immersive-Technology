@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
-import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.InfoArea;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerLiquidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-public class BoilerLiquidScreen extends ContainerScreen<BoilerLiquidMenu> {
+public class BoilerLiquidScreen extends BaseContainerScreen<BoilerLiquidMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("boiler_liquid");
 
     public BoilerLiquidScreen(BoilerLiquidMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
@@ -31,10 +31,10 @@ public class BoilerLiquidScreen extends ContainerScreen<BoilerLiquidMenu> {
         graphics.blit(TEXTURE, leftPos + 119, topPos + 38, 176, 0, barWidth, 9);
     }
 
-    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
         return ImmutableList.of(
-                new FluidInfoArea(menu.tanks.input1(), new Rect2i(leftPos + 80, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
-                new InfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
+                new GuiFluidArea(menu.tanks.input1(), new Rect2i(leftPos + 80, topPos + 20, 16, 47), 177, 31, 20, 51, TEXTURE),
+                new GuiInfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
                     @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();

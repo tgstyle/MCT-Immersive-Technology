@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -292,7 +293,10 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         @Override public boolean isActive() { return active; }
         @Override public AveragingEnergyStorage getEnergy() { return energy; }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) { lines.rpm(speed, effectiveMaxSpeed); }
+}
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
         private final Runnable onChanged;

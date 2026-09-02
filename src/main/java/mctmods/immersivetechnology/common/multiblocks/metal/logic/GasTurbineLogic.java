@@ -1,19 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.capability.RotationInertiaProcess;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -450,13 +451,13 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new GasTurbineTank(v -> { onChanged.run(); this.tanksDirty = true; }, inputTankCapacity(), outputTankCapacity());
-            this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.fluidCapExhaust = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.fluidCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.fluidCapExhaust = new StoredCapability<>(new MultiTankFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.energyStorageHV = new AveragingEnergyStorage(energyCapacityHv());
             this.energyStorageMV = new AveragingEnergyStorage(energyCapacityMv());
             this.energyCapHV = new StoredCapability<>(energyStorageHV);
             this.energyCapMV = new StoredCapability<>(energyStorageMV);
-            this.recipeGetter = CachedRecipe.cached(GasTurbineRecipe::findRecipe);
+            this.recipeGetter = RecipeCache.cached(GasTurbineRecipe::findRecipe);
             MultiblockFace mvInputMBFace = new MultiblockFace(ENERGY_INPUT_MV_FACING, ENERGY_INPUT_MV_POIS.get(0));
             CapabilityPosition mvOpposingCP = CapabilityPosition.opposing(mvInputMBFace);
             MultiblockFace mvOpposingMBFace = new MultiblockFace(mvOpposingCP.side(), mvOpposingCP.posInMultiblock());
@@ -542,7 +543,13 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             tanksDirty = false;
             if (active && !oldActive && speed < effectiveMaxSpeed / 4) { animation_fanFadeIn = 80; }
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            lines.rpm(speed, effectiveMaxSpeed);
+            if (tanks.input().getFluid().isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 
     public record GasTurbineTank(MarkableFluidTank input, MarkableFluidTank output) {
         public GasTurbineTank(Consumer<Void> markDirty, int inputCapacity, int outputCapacity) {

@@ -5,12 +5,14 @@ import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.gui.*;
-import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.ModDynamicModel;
-import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
-import mctmods.immersivetechnology.client.models.mirror.MirroredModelLoader;
+import com.immersiveconvergence.api.client.StandaloneModel;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
+import com.immersiveconvergence.api.client.mirror.MirrorModelLoader;
+import com.immersiveconvergence.api.fluid.FluidEntry;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.split.SplitModelHandler;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
@@ -38,8 +40,6 @@ import mctmods.immersivetechnology.core.registration.Particles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -71,15 +71,13 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        BaseBlockEntityRenderer.viewDistanceModifier = () -> ClientConfig.multiblockSpecialRenderDistanceModifier;
         ParticleSettings.particleCollide = () -> ClientConfig.particleCollide;
         ParticleSettings.coloredSmokeHeight = () -> ClientConfig.coloredSmokeHeight;
         ParticleSettings.customSmokeHeight = () -> ClientConfig.customSmokeHeight;
         ColoredSmoke.typeSupplier = () -> Particles.COLORED_SMOKE.get();
         event.enqueueWork(() -> {
-            for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) {
-                ItemBlockRenderTypes.setRenderLayer(entry.getStill(), RenderType.translucent());
-                ItemBlockRenderTypes.setRenderLayer(entry.getFlowing(), RenderType.translucent());
-            }
+            FluidEntry.registerRenderLayers(ModFluids.ALL_ENTRIES);
 
             MenuScreens.register(MenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
             MenuScreens.register(MenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
@@ -223,24 +221,18 @@ public class ClientProxy extends CommonProxy {
                 }, i);
             }
         }
-        for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) {
-            final int tint = entry.tintColor();
-            event.register((stack, index) -> { if (index == 1) { return tint; } return -1; }, entry.bucket().get());
-        }
+        FluidEntry.registerItemColors(event, ModFluids.ALL_ENTRIES);
     }
 
     @SubscribeEvent
     public static void onBlockColor(RegisterColorHandlersEvent.Block event) {
-        for (ModFluids.FluidEntry entry : ModFluids.ALL_ENTRIES) {
-            final int tint = entry.tintColor();
-            event.register((state, level, pos, index) -> tint, entry.block().get());
-        }
+        FluidEntry.registerBlockColors(event, ModFluids.ALL_ENTRIES);
     }
 
     @Override
     public void reinitializeGUI() {
         Screen currentScreen = Minecraft.getInstance().screen;
-        if (currentScreen instanceof ContainerScreen) { currentScreen.init(Minecraft.getInstance(), currentScreen.width, currentScreen.height); }
+        if (currentScreen instanceof BaseContainerScreen) { currentScreen.init(Minecraft.getInstance(), currentScreen.width, currentScreen.height); }
     }
 
     @Override
@@ -251,13 +243,13 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
-        ev.register(ModelConfigurableSides.Loader.NAME.getPath(), new ModelConfigurableSides.Loader());
-        ev.register(MirroredModelLoader.ID.getPath(), MirroredModelLoader.INSTANCE);
-        RotorModels.ROTOR = new ModDynamicModel("rotor");
-        RotorModels.ROTOR_EAST_WEST = new ModDynamicModel("rotor_east_west");
-        SolarReflectorModels.SUPPORT = new ModDynamicModel("solar_reflector_support");
-        SolarReflectorModels.MIRROR = new ModDynamicModel("solar_reflector_mirror");
-        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new ModDynamicModel("advanced_coke_oven_baseheater_fan");
+        ev.register("conf_sides", ConfigurableSidesModel.Loader.INSTANCE);
+        ev.register("mirror", MirrorModelLoader.INSTANCE);
+        RotorModels.ROTOR = new StandaloneModel(Reference.rl("dynamic/rotor"));
+        RotorModels.ROTOR_EAST_WEST = new StandaloneModel(Reference.rl("dynamic/rotor_east_west"));
+        SolarReflectorModels.SUPPORT = new StandaloneModel(Reference.rl("dynamic/solar_reflector_support"));
+        SolarReflectorModels.MIRROR = new StandaloneModel(Reference.rl("dynamic/solar_reflector_mirror"));
+        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new StandaloneModel(Reference.rl("dynamic/advanced_coke_oven_baseheater_fan"));
         registerSplitModels();
     }
 

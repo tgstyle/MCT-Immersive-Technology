@@ -5,7 +5,7 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLev
 import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.immersiveconvergence.api.particles.ColoredBeam;
-import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import net.minecraft.client.renderer.MultiBufferSource;

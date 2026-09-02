@@ -2,9 +2,9 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
+import com.immersiveconvergence.api.gui.MenuSyncData;
+import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MeltingCrucibleMenu extends ContainerMenu {
+public class MeltingCrucibleMenu extends BaseContainerMenu {
     public final SimpleContainerData state;
     public final FluidTank inputTank;
     public final FluidTank outputTank;
@@ -61,9 +61,9 @@ public class MeltingCrucibleMenu extends ContainerMenu {
         ownSlotCount = 4;
         addPlayerInventorySlots(inventoryPlayer);
         addDataSlots(state);
-        addGenericData(GenericContainerData.fluid(inputTank));
-        addGenericData(GenericContainerData.fluid(outputTank));
-        addGenericData(GenericContainerData.energy(energy));
+        addGenericData(MenuSyncData.fluid(inputTank));
+        addGenericData(MenuSyncData.fluid(outputTank));
+        addGenericData(MenuSyncData.energy(energy));
     }
 
     @Override public void broadcastChanges() {

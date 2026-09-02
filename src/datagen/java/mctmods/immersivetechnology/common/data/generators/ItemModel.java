@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.fluid.FluidEntry;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import net.minecraft.data.DataGenerator;
@@ -64,7 +65,7 @@ public class ItemModel extends ItemModelProvider {
         withExistingParent("salt", mcLoc("item/generated")).texture("layer0", modLoc("item/" + "salt"));
     }
 
-    private void createBucket(ModFluids.FluidEntry entry) {
+    private void createBucket(FluidEntry entry) {
         boolean isGas = entry.type().get().getDensity() < 0;
         withExistingParent(name(entry.getBucket()), forgeLoc()).customLoader(DynamicFluidContainerModelBuilder::begin).fluid(entry.getStill()).flipGas(isGas);
     }

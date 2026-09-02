@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.models.multiblock;
 
-import mctmods.immersivetechnology.client.models.ModDynamicModel;
+import com.immersiveconvergence.api.client.StandaloneModel;
 
 public class SolarReflectorModels {
-    public static ModDynamicModel SUPPORT;
-    public static ModDynamicModel MIRROR;
+    public static StandaloneModel SUPPORT;
+    public static StandaloneModel MIRROR;
 }

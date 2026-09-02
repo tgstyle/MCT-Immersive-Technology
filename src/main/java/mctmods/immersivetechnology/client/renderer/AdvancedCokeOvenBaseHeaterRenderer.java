@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.models.ModDynamicModel;
-import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.StandaloneModel;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 
@@ -23,7 +23,7 @@ import java.util.List;
 public class AdvancedCokeOvenBaseHeaterRenderer extends BaseBlockEntityRenderer<AdvancedCokeOvenBaseHeaterBlockEntity> {
     private static final Quaternionf ROT_Y = new Quaternionf();
     private static final Quaternionf ROT_X = new Quaternionf();
-    public static ModDynamicModel FAN_MODEL;
+    public static StandaloneModel FAN_MODEL;
 
     public AdvancedCokeOvenBaseHeaterRenderer() {}
 
@@ -46,7 +46,7 @@ public class AdvancedCokeOvenBaseHeaterRenderer extends BaseBlockEntityRenderer<
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
+    private void renderDynamicModel(StandaloneModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
         RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);

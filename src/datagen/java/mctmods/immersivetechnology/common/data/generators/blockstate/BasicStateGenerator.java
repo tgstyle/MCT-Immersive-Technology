@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
+import com.immersiveconvergence.api.registration.BlockEntry;
 import com.google.common.collect.ImmutableMap;
-import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
 import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
 import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import com.immersiveconvergence.api.block.ModProperties;
@@ -85,7 +86,7 @@ public class BasicStateGenerator {
         createSimpleBlock(ModBlocks.getBlock.apply("barrel_creative"), main.models().cubeAll("block/metal/barrel_creative", main.modLoc("block/metal/barrel_creative")));
 
         VariantBlockStateBuilder steelBuilder = main.getVariantBuilder(ModBlocks.getBlock.apply("barrel_steel"));
-        BlockModelBuilder steelModel = main.models().getBuilder("block/metal/barrel_steel").customLoader(SideConfigBuilder::begin).type(ModelConfigurableSides.Type.VERTICAL).baseName(main.modLoc("block/metal/barrel_steel")).end();
+        BlockModelBuilder steelModel = main.models().getBuilder("block/metal/barrel_steel").customLoader(SideConfigBuilder::begin).type(ConfigurableSidesModel.Type.VERTICAL).baseName(main.modLoc("block/metal/barrel_steel")).end();
         steelBuilder.partialState().setModels(new ConfiguredModel(steelModel));
 
         VariantBlockStateBuilder openBuilder = main.getVariantBuilder(ModBlocks.getBlock.apply("barrel_open"));
@@ -115,7 +116,7 @@ public class BasicStateGenerator {
         BlockModelBuilder trashEnergyModel = createTrashModel("energy");
         createRotatedBlock(ModBlocks.Metal.TRASH_ENERGY, state -> trashEnergyModel, List.of());
         ModelFile emptyModel = main.models().withExistingParent("empty", main.mcLoc("block/block")).renderType("cutout").texture("particle", "#missingno");
-        for (ModBlocks.BlockEntry<?> fluidEntry : ModFluids.ALL_FLUID_BLOCKS) {
+        for (BlockEntry<?> fluidEntry : ModFluids.ALL_FLUID_BLOCKS) {
             Block fluidBlock = fluidEntry.get();
             VariantBlockStateBuilder builder = main.getVariantBuilder(fluidBlock);
             for (int level = 0; level < 16; level++) {

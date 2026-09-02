@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
+import com.immersiveconvergence.api.gui.MenuSyncData;
+import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import com.immersiveconvergence.api.util.TankPair;
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SolarMenu extends ContainerMenu {
+public class SolarMenu extends BaseContainerMenu {
     public final SimpleContainerData state;
     public final FluidTank inputTank;
     public FluidTank outputTank;
@@ -51,8 +51,8 @@ public class SolarMenu extends ContainerMenu {
         ownSlotCount = 4;
         addPlayerInventorySlots(inventoryPlayer);
         addDataSlots(state);
-        addGenericData(GenericContainerData.fluid(inputTank));
-        addGenericData(GenericContainerData.fluid(outputTank));
+        addGenericData(MenuSyncData.fluid(inputTank));
+        addGenericData(MenuSyncData.fluid(outputTank));
     }
 
     @Override public void broadcastChanges() {

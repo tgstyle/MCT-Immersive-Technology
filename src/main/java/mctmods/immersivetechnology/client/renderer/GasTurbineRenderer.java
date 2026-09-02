@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
-import mctmods.immersivetechnology.client.models.ModDynamicModel;
-import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.StandaloneModel;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.GasTurbineLogic;
 import mctmods.immersivetechnology.core.ClientConfig;
@@ -48,12 +48,12 @@ public class GasTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBlockE
         poseStack.translate(rotorStart.x + 0.5, rotorStart.y + 0.5, rotorStart.z + 0.5);
         ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
         poseStack.mulPose(ROTATION);
-        ModDynamicModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
+        StandaloneModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         renderDynamicModel(selectedModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
+    private void renderDynamicModel(StandaloneModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
         RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);

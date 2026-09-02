@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
-import mctmods.immersivetechnology.client.gui.helper.InfoArea;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.SolarMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SolarScreen extends ContainerScreen<SolarMenu> {
+public class SolarScreen extends BaseContainerScreen<SolarMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("solar");
     public final boolean isMelter;
 
@@ -34,7 +34,7 @@ public class SolarScreen extends ContainerScreen<SolarMenu> {
         this.isMelter = menu.getType() == MenuTypes.SOLAR_MELTER_MENU.getType();
     }
 
-    @Override @Nonnull protected List<InfoArea> makeInfoAreas() { return ImmutableList.of(new FluidInfoArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new FluidInfoArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() { return ImmutableList.of(new GuiFluidArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new GuiFluidArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
 
     @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
         double heatLevel = menu.state.get(0);

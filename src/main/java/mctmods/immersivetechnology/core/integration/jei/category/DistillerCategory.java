@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -22,7 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
+public class DistillerCategory extends BaseRecipeCategory<DistillerRecipe> {
 
     private final IDrawableStatic tankOverlay;
 
@@ -53,7 +54,7 @@ public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
         FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 112, 21)
@@ -62,7 +63,7 @@ public class DistillerCategory extends ModRecipeCategory<DistillerRecipe> {
 
         outputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
 
         var itemSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 35)
                 .addItemStack(recipe.itemOutput.isEmpty() ? net.minecraft.world.item.ItemStack.EMPTY : recipe.itemOutput);

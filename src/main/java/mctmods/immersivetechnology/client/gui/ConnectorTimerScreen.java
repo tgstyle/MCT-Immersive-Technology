@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.gui;
 
-import mctmods.immersivetechnology.client.gui.elements.GuiButtonBoolean;
-import mctmods.immersivetechnology.client.gui.elements.GuiButtonState;
+import com.immersiveconvergence.api.client.gui.BooleanButton;
+import com.immersiveconvergence.api.client.gui.StateButton;
 import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
@@ -31,8 +31,8 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("timer");
     private static final ResourceLocation CONFIG_TEXTURE = Reference.makeTextureLocation("immersiveengineering", "redstone_configuration");
     private final ConnectorTimerBlockEntity tile;
-    private GuiButtonState<IOSideConfig> buttonInOut;
-    private GuiButtonBoolean[] colorButtons;
+    private StateButton<IOSideConfig> buttonInOut;
+    private BooleanButton[] colorButtons;
 
     public ConnectorTimerScreen(ConnectorTimerMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -48,14 +48,14 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         addRenderableWidget(Button.builder(Component.literal("+"), btn -> changeTarget(1)).bounds(leftPos + 39, topPos + 35, 16, 16).build());
         addRenderableWidget(Button.builder(Component.literal("-"), btn -> changeTarget(-1)).bounds(leftPos + 120, topPos + 35, 16, 16).build());
 
-        this.buttonInOut = new GuiButtonState<>(leftPos + 38, topPos + 80, 18, 18, Component.empty(),
+        this.buttonInOut = new StateButton<>(leftPos + 38, topPos + 80, 18, 18, Component.empty(),
                 new IOSideConfig[]{IOSideConfig.INPUT, IOSideConfig.OUTPUT},
                 () -> tile.getIoMode() == 0 ? 0 : 1,
                 CONFIG_TEXTURE, 176, 0, 1,
                 (btn) -> sendConfig("ioMode", tile.getIoMode() == 0 ? 1 : 0));
         addRenderableWidget(this.buttonInOut);
 
-        this.colorButtons = new GuiButtonBoolean[16];
+        this.colorButtons = new BooleanButton[16];
         for (int i = 0; i < this.colorButtons.length; ++i) {
             DyeColor color = DyeColor.byId(i);
             this.colorButtons[i] = buildColorButton(this.colorButtons, leftPos + 82 + i % 4 * 14, topPos + 66 + i / 4 * 14,
@@ -105,8 +105,8 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         if (!tooltip.isEmpty()) { graphics.renderTooltip(this.font, tooltip, Optional.empty(), mouseX, mouseY); }
     }
 
-    public static GuiButtonBoolean buildColorButton(GuiButtonBoolean[] buttons, int posX, int posY, Supplier<Boolean> active, final DyeColor color, Consumer<GuiButtonBoolean> onClick) {
-        return new GuiButtonBoolean(posX, posY, 12, 12, "", active, CONFIG_TEXTURE, 194, 0, 1, (btn) -> {
+    public static BooleanButton buildColorButton(BooleanButton[] buttons, int posX, int posY, Supplier<Boolean> active, final DyeColor color, Consumer<BooleanButton> onClick) {
+        return new BooleanButton(posX, posY, 12, 12, "", active, CONFIG_TEXTURE, 194, 0, 1, (btn) -> {
             if (btn.getNextState()) { onClick.accept(btn); }
             for (int j = 0; j < buttons.length; ++j) {
                 if (j != color.ordinal() && buttons[j].getState()) {

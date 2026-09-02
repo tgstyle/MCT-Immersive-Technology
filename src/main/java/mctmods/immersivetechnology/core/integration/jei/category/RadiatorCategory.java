@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
+public class RadiatorCategory extends BaseRecipeCategory<RadiatorRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;
@@ -60,7 +61,7 @@ public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 11)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.fluidOutput)
@@ -68,7 +69,7 @@ public class RadiatorCategory extends ModRecipeCategory<RadiatorRecipe> {
 
         outputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput.getAmount(), tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull RadiatorRecipe recipe) {

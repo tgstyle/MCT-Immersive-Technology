@@ -11,13 +11,13 @@ import com.immersiveconvergence.api.util.SlotRangeItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.AdvancedCokeOvenProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.Utils;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.ICItemUtils;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -168,12 +168,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         final IItemHandlerModifiable inventory = state.inventory;
         ItemStack itemOutput = inventory.getStackInSlot(SLOT_OUTPUT);
         if (!itemOutput.isEmpty()) {
-            itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false);
+            itemOutput = ICItemUtils.insertStackIntoInventory(state.outputRef, itemOutput, false);
             inventory.setStackInSlot(SLOT_OUTPUT, itemOutput);
         }
         ItemStack filledContainer = inventory.getStackInSlot(SLOT_FILLED_CONTAINER);
         if (!filledContainer.isEmpty()) {
-            filledContainer = Utils.insertStackIntoInventory(state.outputRef, filledContainer, false);
+            filledContainer = ICItemUtils.insertStackIntoInventory(state.outputRef, filledContainer, false);
             inventory.setStackInSlot(SLOT_FILLED_CONTAINER, filledContainer);
         }
         boolean activeChanged = wasActive != state.active;
@@ -227,7 +227,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 
     public static class State implements IMultiblockState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, IDisplayContext {
-        public final BiFunction<Level, ItemStack, AdvancedCokeOvenRecipe> recipeGetter = CachedRecipe.cached(AdvancedCokeOvenRecipe::findRecipe);
+        public final BiFunction<Level, ItemStack, AdvancedCokeOvenRecipe> recipeGetter = RecipeCache.cached(AdvancedCokeOvenRecipe::findRecipe);
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
         public static final int NUM_SLOTS = 2;
@@ -266,7 +266,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             );
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, AdvancedCokeOvenRecipe::getById);
             this.invCap = new StoredCapability<>(this.inventory);
-            this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, onChanged));
+            this.fluidCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.output, true, false, onChanged));
             this.itemOutputCap = new StoredCapability<>(new SlotRangeItemHandler(
                     inventory,
                     false,

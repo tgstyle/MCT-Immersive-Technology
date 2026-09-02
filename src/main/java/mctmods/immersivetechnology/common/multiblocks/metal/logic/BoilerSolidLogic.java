@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
@@ -13,7 +14,7 @@ import mctmods.immersivetechnology.core.lib.Reference;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -269,7 +270,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     }
 
     public static class State implements IMultiblockState, IDisplayContext {
-        public final BiFunction<Level, ItemStack, BoilerSolidRecipe> recipeGetter = CachedRecipe.cached(BoilerSolidRecipe::findRecipe);
+        public final BiFunction<Level, ItemStack, BoilerSolidRecipe> recipeGetter = RecipeCache.cached(BoilerSolidRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public StoredCapability<IItemHandlerModifiable> inputFuelCap;
         public StoredCapability<IHeatProvider> heatSourceCap;
@@ -357,7 +358,13 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
             workingHeatLevel = nbt.getDouble("workingHeatLevel");
             inventoryDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            lines.temperature(heatLevel, getWorkingHeatLevel()).percent((totalBurnTime > 0 && burnRemaining > 0) ? (totalBurnTime - burnRemaining) * 100 / totalBurnTime : 0);
+            if (inventory.getStackInSlot(INPUT_FUEL_SLOT).isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 
     private record HeatSourceImpl(State state) implements IHeatProvider {
         @Override public double getHeatLevel() { return state.heatLevel; }

@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<ElectrolyticCrucibleBatteryRecipe> {
+public class ElectrolyticCrucibleBatteryCategory extends BaseRecipeCategory<ElectrolyticCrucibleBatteryRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;
@@ -55,7 +56,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidInput0.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidInput0.getAmount(), tooltip::add)));
 
         FluidStack out0 = (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) ? recipe.fluidOutput0 : FluidStack.EMPTY;
         var output0Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 102, 12)
@@ -64,7 +65,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
 
         output0Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput0 != null ? recipe.fluidOutput0.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput0 != null ? recipe.fluidOutput0.getAmount() : 0, tooltip::add)));
 
         FluidStack out1 = (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) ? recipe.fluidOutput1 : FluidStack.EMPTY;
         var output1Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 125, 12)
@@ -73,7 +74,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
 
         output1Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput1 != null ? recipe.fluidOutput1.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput1 != null ? recipe.fluidOutput1.getAmount() : 0, tooltip::add)));
 
         FluidStack out2 = (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) ? recipe.fluidOutput2 : FluidStack.EMPTY;
         var output2Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 148, 12)
@@ -82,7 +83,7 @@ public class ElectrolyticCrucibleBatteryCategory extends ModRecipeCategory<Elect
 
         output2Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull ElectrolyticCrucibleBatteryRecipe recipe) {

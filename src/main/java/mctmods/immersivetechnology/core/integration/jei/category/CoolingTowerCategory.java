@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> {
+public class CoolingTowerCategory extends BaseRecipeCategory<CoolingTowerRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;
@@ -60,7 +61,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
 
         input0Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.input0.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.input0.getAmount(), tooltip::add)));
 
         List<FluidStack> inputs1 = recipe.input1.getMatchingFluidStacks().stream()
                 .map(fs -> {
@@ -76,7 +77,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
 
         input1Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.input1.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.input1.getAmount(), tooltip::add)));
 
         FluidStack out0 = (recipe.fluidOutput0 != null && !recipe.fluidOutput0.isEmpty()) ? recipe.fluidOutput0 : FluidStack.EMPTY;
         var output0Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 86, 11)
@@ -85,7 +86,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
 
         output0Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput0 != null ? recipe.fluidOutput0.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput0 != null ? recipe.fluidOutput0.getAmount() : 0, tooltip::add)));
 
         FluidStack out1 = (recipe.fluidOutput1 != null && !recipe.fluidOutput1.isEmpty()) ? recipe.fluidOutput1 : FluidStack.EMPTY;
         var output1Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 109, 11)
@@ -94,7 +95,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
 
         output1Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput1 != null ? recipe.fluidOutput1.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput1 != null ? recipe.fluidOutput1.getAmount() : 0, tooltip::add)));
 
         FluidStack out2 = (recipe.fluidOutput2 != null && !recipe.fluidOutput2.isEmpty()) ? recipe.fluidOutput2 : FluidStack.EMPTY;
         var output2Slot = builder.addSlot(RecipeIngredientRole.OUTPUT, 132, 11)
@@ -103,7 +104,7 @@ public class CoolingTowerCategory extends ModRecipeCategory<CoolingTowerRecipe> 
 
         output2Slot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.fluidOutput2 != null ? recipe.fluidOutput2.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull CoolingTowerRecipe recipe) {

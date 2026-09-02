@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.gui;
 
 import com.mojang.datafixers.util.Pair;
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.GenericDataSerializers;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
+import com.immersiveconvergence.api.gui.MenuSyncSerializers;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -15,12 +15,12 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class TrashItemMenu extends ContainerMenu {
+public class TrashItemMenu extends BaseContainerMenu {
     private final IItemHandlerModifiable handler;
     private final TrashItemBlockEntity tile;
 
     public TrashItemMenu(MenuType<TrashItemMenu> type, int id, Inventory inv, TrashItemBlockEntity tile) {
-        super(ContainerMenu.blockCtx(type, id, tile));
+        super(BaseContainerMenu.blockCtx(type, id, tile));
         this.handler = tile;
         this.tile = tile;
         addOwnSlots();
@@ -28,7 +28,7 @@ public class TrashItemMenu extends ContainerMenu {
     }
 
     public TrashItemMenu(MenuType<TrashItemMenu> type, int id, Inventory inv) {
-        super(ContainerMenu.clientCtx(type, id));
+        super(BaseContainerMenu.clientCtx(type, id));
         this.handler = new DummyHandler();
         this.tile = null;
         addOwnSlots();
@@ -66,7 +66,7 @@ public class TrashItemMenu extends ContainerMenu {
 
     @Override public boolean stillValid(@Nonnull Player player) { return tile == null || tile.stillValid(player); }
 
-    @Override public void receiveSync(List<Pair<Integer, GenericDataSerializers.DataPair<?>>> synced) {}
+    @Override public void receiveSync(List<Pair<Integer, MenuSyncSerializers.DataPair<?>>> synced) {}
 
     private static class DummyHandler implements IItemHandlerModifiable {
         @Override public int getSlots() { return 1; }

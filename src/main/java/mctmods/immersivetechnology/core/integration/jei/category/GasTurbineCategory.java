@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class GasTurbineCategory extends ModRecipeCategory<GasTurbineRecipe> {
+public class GasTurbineCategory extends BaseRecipeCategory<GasTurbineRecipe> {
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated turbineAndArrow;
 
@@ -51,14 +52,14 @@ public class GasTurbineCategory extends ModRecipeCategory<GasTurbineRecipe> {
                 .addIngredients(ForgeTypes.FLUID_STACK, inputs)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
         inputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                FluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+                GuiFluidArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
         FluidStack fluidOut = (recipe.fluidOutput != null && !recipe.fluidOutput.isEmpty()) ? recipe.fluidOutput : FluidStack.EMPTY;
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 89, 11)
                 .addIngredient(ForgeTypes.FLUID_STACK, fluidOut)
                 .setFluidRenderer(tankCapacity, false, 16, 47);
         outputSlot.addRichTooltipCallback((slotView, tooltip) -> slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                FluidInfoArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
+                GuiFluidArea.fillTooltip(fs, recipe.fluidOutput != null ? recipe.fluidOutput.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull GasTurbineRecipe recipe) {

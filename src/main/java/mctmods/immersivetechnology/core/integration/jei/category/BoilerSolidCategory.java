@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -19,7 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class BoilerSolidCategory extends ModRecipeCategory<BoilerSolidRecipe> {
+public class BoilerSolidCategory extends BaseRecipeCategory<BoilerSolidRecipe> {
 
     public BoilerSolidCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.BOILER_SOLID, "block.immersivetechnology.boiler_solid");

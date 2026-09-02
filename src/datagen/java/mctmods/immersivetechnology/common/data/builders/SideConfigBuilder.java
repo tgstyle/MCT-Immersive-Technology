@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.data.builders;
 
+import mctmods.immersivetechnology.core.lib.Reference;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -14,13 +15,13 @@ public class SideConfigBuilder<T extends ModelBuilder<T>> extends CustomLoaderBu
     }
 
     protected SideConfigBuilder(T parent, ExistingFileHelper existingFileHelper) {
-        super(ModelConfigurableSides.Loader.NAME, parent, existingFileHelper);
+        super(Reference.rl("conf_sides"), parent, existingFileHelper);
     }
 
-    private ModelConfigurableSides.Type type;
+    private ConfigurableSidesModel.Type type;
     private ResourceLocation baseName;
 
-    public SideConfigBuilder<T> type(ModelConfigurableSides.Type type) {
+    public SideConfigBuilder<T> type(ConfigurableSidesModel.Type type) {
         Preconditions.checkNotNull(type);
         Preconditions.checkState(this.type == null);
         this.type = type;

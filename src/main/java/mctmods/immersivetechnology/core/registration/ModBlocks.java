@@ -191,22 +191,12 @@ public class ModBlocks {
         }
     }
 
-    public static final class BlockEntry<T extends Block> implements Supplier<T>, ItemLike {
+    public static final class BlockEntry<T extends Block> extends com.immersiveconvergence.api.registration.BlockEntry<T> {
         public static final Collection<BlockEntry<?>> ALL_ENTRIES = new ArrayList<>();
 
-        private final RegistryObject<T> regObject;
-        private final Supplier<BlockBehaviour.Properties> properties;
-
         public BlockEntry(String name, Supplier<BlockBehaviour.Properties> properties, Function<BlockBehaviour.Properties, T> make) {
-            this.properties = properties;
-            this.regObject = REGISTER.register(name, () -> make.apply(properties.get()));
+            super(REGISTER, name, properties, make);
             ALL_ENTRIES.add(this);
         }
-
-        @Override public T get() { return regObject.get(); }
-        public ResourceLocation getId() { return regObject.getId(); }
-        public BlockBehaviour.Properties getProperties() { return properties.get(); }
-        @Override public @Nonnull Item asItem() { return get().asItem(); }
-        public RegistryObject<? extends Block> getRegObject() { return regObject; }
     }
 }

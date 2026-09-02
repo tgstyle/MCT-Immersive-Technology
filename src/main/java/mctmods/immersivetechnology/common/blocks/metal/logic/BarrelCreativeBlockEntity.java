@@ -7,7 +7,6 @@ import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
-import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;

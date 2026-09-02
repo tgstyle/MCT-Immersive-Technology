@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
+import net.minecraftforge.fluids.IFluidTank;
+import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.block.BaseBlockEntity;
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.Enums.IOSideConfig;
@@ -7,7 +9,6 @@ import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.util.Utils;
 
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import com.google.common.collect.ImmutableMap;
@@ -41,9 +42,11 @@ import com.immersiveconvergence.api.block.Enums;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IComparatorOverride, BlockInterfaces.IPlacementInteraction, BlockInterfaces.IConfigurableSides {
+public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IPlayerInteraction, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IComparatorOverride, BlockInterfaces.IPlacementInteraction, BlockInterfaces.IConfigurableSides, IDisplayContext {
     public final MarkableFluidTank tank;
     public EnumMap<Direction, IOSideConfig> sideConfig = new EnumMap<>(ImmutableMap.of(Direction.DOWN, IOSideConfig.OUTPUT, Direction.UP, IOSideConfig.INPUT));
+    @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
+
     protected static final int transferSpeed = FluidType.BUCKET_VOLUME;
     protected final Map<Direction, CapabilityReference<IFluidHandler>> neighbors = ImmutableMap.of(Direction.DOWN, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.DOWN), Direction.UP, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.UP));
     private final LazyOptional<IFluidHandler> nonsidedHandler = LazyOptional.of(() -> new SidedFluidHandler(this, null));

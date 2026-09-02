@@ -1,19 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.capability.RotationInertiaProcess;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -311,9 +312,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             this.tanks = new SteamTurbineTank(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
-            this.fluidCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, onChanged));
-            this.fluidCapExhaust = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, onChanged));
-            this.recipeGetter = CachedRecipe.cached(SteamTurbineRecipe::findRecipe);
+            this.fluidCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input, false, true, onChanged));
+            this.fluidCapExhaust = new StoredCapability<>(new MultiTankFluidHandler(tanks.output, true, false, onChanged));
+            this.recipeGetter = RecipeCache.cached(SteamTurbineRecipe::findRecipe);
             this.inertia = new RotationInertiaProcess(baseMass() + connectedMass, driveTorque(), friction() + connectedFriction, effectiveMaxSpeed);
             this.accumConsume = 0f;
             this.outAccum = 0f;
@@ -379,7 +380,13 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
             if (active && !oldActive) { animation_fanFadeIn = 80; }
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            lines.rpm(speed, effectiveMaxSpeed);
+            if (tanks.input().getFluid().isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 
     public record SteamTurbineTank(MarkableFluidTank input, MarkableFluidTank output) {
         public SteamTurbineTank(Consumer<Void> markDirty, int inputCapacity, int outputCapacity) {

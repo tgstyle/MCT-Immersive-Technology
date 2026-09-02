@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
 import blusunrize.immersiveengineering.common.register.IEFluids;
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -22,7 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-public class AdvancedCokeOvenCategory extends ModRecipeCategory<AdvancedCokeOvenRecipe> {
+public class AdvancedCokeOvenCategory extends BaseRecipeCategory<AdvancedCokeOvenRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated flame;
@@ -56,7 +57,7 @@ public class AdvancedCokeOvenCategory extends ModRecipeCategory<AdvancedCokeOven
 
         fluidSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.creosoteOutput, tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.creosoteOutput, tooltip::add)));
     }
 
     @Override public void draw(@Nonnull AdvancedCokeOvenRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {

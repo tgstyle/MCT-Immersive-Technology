@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
@@ -7,11 +8,11 @@ import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -179,7 +180,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerTankShape.GETTER; }
 
     public static class State implements IMultiblockState, IDisplayContext {
-        public final BiFunction<Level, FluidStack, BoilerTankRecipe> recipeGetter = CachedRecipe.cached(BoilerTankRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, BoilerTankRecipe> recipeGetter = RecipeCache.cached(BoilerTankRecipe::findRecipe);
         public final BoilerTanks tanks;
         public StoredCapability<IFluidHandler> inputCap;
         public StoredCapability<IFluidHandler> outputCap;
@@ -210,8 +211,8 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
                     ),
                     () -> { onChanged.run(); this.inventoryDirty = true; }
             );
-            inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
-            outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            inputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
+            outputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             boilerInputCap = new StoredCapability<>(new BoilerInputImpl(tanks.input));
             MultiblockFace heatMBFace = new MultiblockFace(HEAT_INPUT_FACING, HEAT_INPUT_POIS.get(0));
             CapabilityPosition heatOpposingCP = CapabilityPosition.opposing(heatMBFace);
@@ -272,7 +273,10 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             tanksDirty = false;
             inventoryDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) { lines.temperature(heatLevel, getWorkingHeatLevel()).percent((totalProcessTime > 0 && recipeTimeRemaining > 0) ? (totalProcessTime - recipeTimeRemaining) * 100 / totalProcessTime : 0); }
+}
 
     private record BoilerInputImpl(MarkableFluidTank tank) implements IHeatConsumer {
         @Override public int getFluidAmount() { return tank.getFluidAmount(); }

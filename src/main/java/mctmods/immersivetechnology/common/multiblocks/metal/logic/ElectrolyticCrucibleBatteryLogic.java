@@ -1,17 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.Utils;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.ICItemUtils;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -122,7 +123,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         pumpOutputs(ctx);
         IItemHandlerModifiable inventory = state.inventory;
         ItemStack itemOutput = inventory.getStackInSlot(0);
-        if (!itemOutput.isEmpty()) { itemOutput = Utils.insertStackIntoInventory(state.outputRef, itemOutput, false); inventory.setStackInSlot(0, itemOutput); }
+        if (!itemOutput.isEmpty()) { itemOutput = ICItemUtils.insertStackIntoInventory(state.outputRef, itemOutput, false); inventory.setStackInSlot(0, itemOutput); }
         boolean activeChanged = wasActive != state.active;
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
@@ -189,7 +190,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ElectrolyticCrucibleBatteryShape.GETTER; }
 
     public static class State implements IMultiblockState, IProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, IDisplayContext {
-        public final BiFunction<Level, FluidStack, ElectrolyticCrucibleBatteryRecipe> recipeGetter = CachedRecipe.cached(ElectrolyticCrucibleBatteryRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, ElectrolyticCrucibleBatteryRecipe> recipeGetter = RecipeCache.cached(ElectrolyticCrucibleBatteryRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final ElectrolyticCrucibleBatteryTanks tanks;
         public final StoredCapability<IEnergyStorage> energyCap;
@@ -218,10 +219,10 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.tanks = new ElectrolyticCrucibleBatteryTanks(v -> { onChanged.run(); this.tanksDirty = true; });
             this.tankArray = new IFluidTank[]{tanks.input, tanks.output0, tanks.output1, tanks.output2};
             inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.OUTPUT), () -> { onChanged.run(); this.inventoryDirty = true; });
-            this.inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.outputCap0 = new StoredCapability<>(new ArrayFluidHandler(tanks.output0, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.outputCap1 = new StoredCapability<>(new ArrayFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
-            this.outputCap2 = new StoredCapability<>(new ArrayFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.inputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.outputCap0 = new StoredCapability<>(new MultiTankFluidHandler(tanks.output0, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.outputCap1 = new StoredCapability<>(new MultiTankFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
+            this.outputCap2 = new StoredCapability<>(new MultiTankFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.invCap = new StoredCapability<>(inventory);
             this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
@@ -250,7 +251,12 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) { nbt.putBoolean("active", active); nbt.put("tanks", tanks.toNBT()); nbt.put("energy", energy.serializeNBT()); nbt.put("inventory", inventory.serializeNBT()); nbt.putIntArray("processPercents", processPercents); }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); int[] percents = nbt.getIntArray("processPercents"); processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1}; tanksDirty = false; inventoryDirty = false; }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            for (int percent : processPercents) { if (percent >= 0) { lines.percent(percent); } }
+        }
+}
 
     public record ElectrolyticCrucibleBatteryTanks(MarkableFluidTank input, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
         public ElectrolyticCrucibleBatteryTanks(Consumer<Void> markDirty) { this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty)); }

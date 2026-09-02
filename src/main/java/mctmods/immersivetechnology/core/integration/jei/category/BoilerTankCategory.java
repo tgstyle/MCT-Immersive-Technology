@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -19,7 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
+public class BoilerTankCategory extends BaseRecipeCategory<BoilerTankRecipe> {
 
     private final IDrawableStatic tankOverlay;
 
@@ -55,7 +56,7 @@ public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
 
         inputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.input.getAmount(), tooltip::add)));
 
         var outputSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 92, 20)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.output)
@@ -63,7 +64,7 @@ public class BoilerTankCategory extends ModRecipeCategory<BoilerTankRecipe> {
 
         outputSlot.addRichTooltipCallback((slotView, tooltip) ->
                 slotView.getDisplayedIngredient(ForgeTypes.FLUID_STACK).ifPresent(fs ->
-                        FluidInfoArea.fillTooltip(fs, recipe.output.getAmount(), tooltip::add)));
+                        GuiFluidArea.fillTooltip(fs, recipe.output.getAmount(), tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull BoilerTankRecipe recipe) {

@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
@@ -7,12 +8,12 @@ import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.HeatExchangerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HeatExchangerShape;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -194,7 +195,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return HeatExchangerShape.GETTER; }
 
     public static class State implements IMultiblockState, IDisplayContext, ProcessContext.ProcessContextInMachine<HeatExchangerRecipe> {
-        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, HeatExchangerRecipe> recipeGetter = CachedRecipe.cached3(HeatExchangerRecipe::findRecipe);
+        public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, HeatExchangerRecipe> recipeGetter = RecipeCache.cached3(HeatExchangerRecipe::findRecipe);
         public final HeatExchangerTanks tanks;
 
         @SuppressWarnings("unchecked")
@@ -231,10 +232,10 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new HeatExchangerTanks(onChanged);
             energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), onChanged);
-            inputCap[0] = new StoredCapability<>(new ArrayFluidHandler(tanks.input0, false, true, onChanged));
-            inputCap[1] = new StoredCapability<>(new ArrayFluidHandler(tanks.input1, false, true, onChanged));
-            outputCap[0] = new StoredCapability<>(new ArrayFluidHandler(tanks.output0, true, false, onChanged));
-            outputCap[1] = new StoredCapability<>(new ArrayFluidHandler(tanks.output1, true, false, onChanged));
+            inputCap[0] = new StoredCapability<>(new MultiTankFluidHandler(tanks.input0, false, true, onChanged));
+            inputCap[1] = new StoredCapability<>(new MultiTankFluidHandler(tanks.input1, false, true, onChanged));
+            outputCap[0] = new StoredCapability<>(new MultiTankFluidHandler(tanks.output0, true, false, onChanged));
+            outputCap[1] = new StoredCapability<>(new MultiTankFluidHandler(tanks.output1, true, false, onChanged));
             energyCap = new StoredCapability<>(energy);
             processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, HeatExchangerRecipe.RECIPES::getById);
         }
@@ -297,7 +298,15 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public int[] getOutputSlots() { return new int[0]; }
 
         @Override public int[] getOutputTanks() { return new int[]{2, 3}; }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            if (queueSize > 0) {
+                lines.percent(totalProcessTime > 0 ? processProgress * 100 / totalProcessTime : 0);
+                if (queueSize > 1) { lines.text((queueSize - 1) + " queued"); }
+            }
+        }
+}
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
         private final Runnable onChanged;

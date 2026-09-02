@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
-import mctmods.immersivetechnology.client.gui.helper.FluidInfoArea;
+import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe> {
+public class HeatExchangerCategory extends BaseRecipeCategory<HeatExchangerRecipe> {
 
     private final IDrawableStatic tankOverlay;
     private final IDrawableAnimated arrow;
@@ -59,7 +60,7 @@ public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe
 
         slotIn0.addRichTooltipCallback((view, tooltip) ->
                 view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                        .ifPresent(fs -> FluidInfoArea.fillTooltip(fs, recipe.input0.getAmount(), tooltip::add)));
+                        .ifPresent(fs -> GuiFluidArea.fillTooltip(fs, recipe.input0.getAmount(), tooltip::add)));
 
         List<FluidStack> in1 = (recipe.input1 != null) ? recipe.input1.getMatchingFluidStacks().stream()
                 .map(fs -> {
@@ -75,7 +76,7 @@ public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe
 
         slotIn1.addRichTooltipCallback((view, tooltip) ->
                 view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                        .ifPresent(fs -> FluidInfoArea.fillTooltip(fs, recipe.input1 != null ? recipe.input1.getAmount() : 0, tooltip::add)));
+                        .ifPresent(fs -> GuiFluidArea.fillTooltip(fs, recipe.input1 != null ? recipe.input1.getAmount() : 0, tooltip::add)));
 
         var slotOut0 = builder.addSlot(RecipeIngredientRole.OUTPUT, 125, 12)
                 .addIngredient(ForgeTypes.FLUID_STACK, recipe.output0)
@@ -83,7 +84,7 @@ public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe
 
         slotOut0.addRichTooltipCallback((view, tooltip) ->
                 view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                        .ifPresent(fs -> FluidInfoArea.fillTooltip(fs, recipe.output0.getAmount(), tooltip::add)));
+                        .ifPresent(fs -> GuiFluidArea.fillTooltip(fs, recipe.output0.getAmount(), tooltip::add)));
 
         FluidStack out1 = (recipe.output1 != null && !recipe.output1.isEmpty()) ? recipe.output1 : FluidStack.EMPTY;
         var slotOut1 = builder.addSlot(RecipeIngredientRole.OUTPUT, 148, 12)
@@ -92,7 +93,7 @@ public class HeatExchangerCategory extends ModRecipeCategory<HeatExchangerRecipe
 
         slotOut1.addRichTooltipCallback((view, tooltip) ->
                 view.getDisplayedIngredient(ForgeTypes.FLUID_STACK)
-                        .ifPresent(fs -> FluidInfoArea.fillTooltip(fs, recipe.output1 != null ? recipe.output1.getAmount() : 0, tooltip::add)));
+                        .ifPresent(fs -> GuiFluidArea.fillTooltip(fs, recipe.output1 != null ? recipe.output1.getAmount() : 0, tooltip::add)));
     }
 
     private int getTankCapacity(@Nonnull HeatExchangerRecipe recipe) {

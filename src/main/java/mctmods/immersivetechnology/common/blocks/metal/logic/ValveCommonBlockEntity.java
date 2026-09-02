@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import java.text.DecimalFormat;
-import mctmods.immersivetechnology.common.blocks.helper.*;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.network.OSDRequestMessage;
 import mctmods.immersivetechnology.core.util.TranslationKey;

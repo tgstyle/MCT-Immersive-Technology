@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
-import mctmods.immersivetechnology.client.models.ModDynamicModel;
-import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.StandaloneModel;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 
@@ -46,8 +46,8 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
         Direction dir = orientation.front();
         double supportAngle = state.animation_supportRotation;
         double mirrorAngle = state.animation_mirrorTilt;
-        ModDynamicModel supportModel = SolarReflectorModels.SUPPORT;
-        ModDynamicModel mirrorModel = SolarReflectorModels.MIRROR;
+        StandaloneModel supportModel = SolarReflectorModels.SUPPORT;
+        StandaloneModel mirrorModel = SolarReflectorModels.MIRROR;
         BlockPos start = context.getLevel().toAbsolute(ORIGIN);
         double startX = start.getX() - pos.getX() + 0.5;
         double startY = start.getY() - pos.getY();
@@ -75,7 +75,7 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
         poseStack.popPose();
     }
 
-    private void renderDynamicModel(ModDynamicModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light, boolean useCachedLight) {
+    private void renderDynamicModel(StandaloneModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light, boolean useCachedLight) {
         matrix.pushPose();
         List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
         RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, useCachedLight, 0xffffff, light);

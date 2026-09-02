@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
@@ -13,7 +14,7 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -201,8 +202,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return CoolingTowerShape.GETTER; }
 
     public static class State implements IMultiblockState, IDisplayContext {
-        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = CachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
-        public final CachedRecipe.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = CachedRecipe.cached3(CoolingTowerRecipe::findRecipe);
+        public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = RecipeCache.cached3(CoolingTowerRecipe::findRecipe);
+        public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = RecipeCache.cached3(CoolingTowerRecipe::findRecipe);
         public final CoolingTowerTanks tanks;
         public final StoredCapability<IFluidHandler> input0Cap;
         public final StoredCapability<IFluidHandler> input1Cap;
@@ -222,11 +223,11 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             Runnable sync = ctx.getSyncRunnable();
             Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
             this.tanks = new CoolingTowerTanks(onChanged);
-            this.input0Cap = new StoredCapability<>(ArrayFluidHandler.fillOnly(tanks.input0, () -> onChanged.accept(null)));
-            this.input1Cap = new StoredCapability<>(ArrayFluidHandler.fillOnly(tanks.input1, () -> onChanged.accept(null)));
-            this.output0Cap = new StoredCapability<>(ArrayFluidHandler.drainOnly(tanks.output0, () -> onChanged.accept(null)));
-            this.output1Cap = new StoredCapability<>(ArrayFluidHandler.drainOnly(tanks.output1, () -> onChanged.accept(null)));
-            this.output2Cap = new StoredCapability<>(ArrayFluidHandler.drainOnly(tanks.output2, () -> onChanged.accept(null)));
+            this.input0Cap = new StoredCapability<>(MultiTankFluidHandler.fillOnly(tanks.input0, () -> onChanged.accept(null)));
+            this.input1Cap = new StoredCapability<>(MultiTankFluidHandler.fillOnly(tanks.input1, () -> onChanged.accept(null)));
+            this.output0Cap = new StoredCapability<>(MultiTankFluidHandler.drainOnly(tanks.output0, () -> onChanged.accept(null)));
+            this.output1Cap = new StoredCapability<>(MultiTankFluidHandler.drainOnly(tanks.output1, () -> onChanged.accept(null)));
+            this.output2Cap = new StoredCapability<>(MultiTankFluidHandler.drainOnly(tanks.output2, () -> onChanged.accept(null)));
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
@@ -267,7 +268,12 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1};
             tanksDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            for (int percent : processPercents) { if (percent >= 0) { lines.percent(percent); } }
+        }
+}
 
     public record CoolingTowerTanks(MarkableFluidTank input0, MarkableFluidTank input1, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
 

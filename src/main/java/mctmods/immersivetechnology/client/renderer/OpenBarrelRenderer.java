@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.renderer.helper.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;

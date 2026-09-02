@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
@@ -12,7 +13,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -205,7 +206,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return RadiatorShape.GETTER; }
 
     public static class State implements IMultiblockState, IDisplayContext {
-        public final BiFunction<Level, FluidStack, RadiatorRecipe> recipeGetter = CachedRecipe.cached(RadiatorRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, RadiatorRecipe> recipeGetter = RecipeCache.cached(RadiatorRecipe::findRecipe);
         public final RadiatorTanks tanks;
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;
@@ -226,8 +227,8 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
             Consumer<Void> onChanged = v -> { markDirty.run(); sync.run(); this.tanksDirty = true; };
 
             this.tanks = new RadiatorTanks(onChanged);
-            this.inputCap = new StoredCapability<>(ArrayFluidHandler.fillOnly(tanks.input(), () -> onChanged.accept(null)));
-            this.outputCap = new StoredCapability<>(ArrayFluidHandler.drainOnly(tanks.output(), () -> onChanged.accept(null)));
+            this.inputCap = new StoredCapability<>(MultiTankFluidHandler.fillOnly(tanks.input(), () -> onChanged.accept(null)));
+            this.outputCap = new StoredCapability<>(MultiTankFluidHandler.drainOnly(tanks.output(), () -> onChanged.accept(null)));
         }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
@@ -273,7 +274,13 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
             radiationEfficiency = nbt.getDouble("radiationEfficiency");
             tanksDirty = false;
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            if (active) { lines.percent(totalProcessTime > 0 ? processProgress * 100 / totalProcessTime : 0); }
+            lines.text("Active processes: " + queueSize).text("Reflector efficiency").percent((int) Math.round(radiationEfficiency * 100.0D));
+        }
+}
 
     public record RadiatorTanks(MarkableFluidTank input, MarkableFluidTank output) {
 

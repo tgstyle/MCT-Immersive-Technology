@@ -1,19 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.TankPair;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
-import mctmods.immersivetechnology.common.fluids.helper.ArrayFluidHandler;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import mctmods.immersivetechnology.core.util.CachedRecipe;
+import com.immersiveconvergence.api.util.RecipeCache;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -382,7 +383,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     }
 
     public static class State implements ISolarMultiblockState, IDisplayContext {
-        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = CachedRecipe.cached(MeltingRecipe::findRecipe);
+        public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = RecipeCache.cached(MeltingRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final TankPair tanks;
         public StoredCapability<IFluidHandler> inputCap;
@@ -419,8 +420,8 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
             tanks = new TankPair(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
             inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), onChanged);
-            inputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.input(), false, true, onChanged));
-            outputCap = new StoredCapability<>(new ArrayFluidHandler(tanks.output(), true, false, onChanged));
+            inputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input(), false, true, onChanged));
+            outputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.output(), true, false, onChanged));
             InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
             MultiblockOrientation orientation = initialContext.orientation();
             BlockPos masterOffset = initialContext.masterOffset();
@@ -529,5 +530,13 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
         }
-    }
+    
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) {
+            FluidStack input = tanks.input().getFluid();
+            MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
+            lines.temperature(heatLevel, recipe != null ? recipe.requiredTemp : workingHeatLevel()).percent(totalProcessTime > 0 ? processProgress * 100 / totalProcessTime : 0);
+            if (input.isEmpty()) { lines.fuelEmpty(); }
+        }
+}
 }

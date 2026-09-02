@@ -2,9 +2,9 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
-import mctmods.immersivetechnology.common.gui.helper.GenericContainerData;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.ModSlot;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
+import com.immersiveconvergence.api.gui.MenuSyncData;
+import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import java.util.List;
 
-public class DistillerMenu extends ContainerMenu {
+public class DistillerMenu extends BaseContainerMenu {
     public final DistillerLogic.DistillerTank tanks;
     public final IMutableEnergyStorage energy;
 
@@ -51,8 +51,8 @@ public class DistillerMenu extends ContainerMenu {
         this.addSlot(new ModSlot.Output(inv, DistillerLogic.SLOT_OUTPUT_FILLED, 134, 53));
         this.addSlot(new ModSlot.Output(inv, DistillerLogic.OUTPUT_SLOT, 80, 35));
         addPlayerInventorySlots(inventoryPlayer);
-        addGenericData(GenericContainerData.energy(energy));
-        addGenericData(GenericContainerData.fluid(tanks.input()));
-        addGenericData(GenericContainerData.fluid(tanks.output()));
+        addGenericData(MenuSyncData.energy(energy));
+        addGenericData(MenuSyncData.fluid(tanks.input()));
+        addGenericData(MenuSyncData.fluid(tanks.output()));
     }
 }

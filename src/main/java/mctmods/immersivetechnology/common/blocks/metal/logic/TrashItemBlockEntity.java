@@ -16,12 +16,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import mctmods.immersivetechnology.common.blocks.helper.IInteractionObjectIT;
+import com.immersiveconvergence.api.block.IArgMenuProvider;
+import com.immersiveconvergence.api.gui.ArgContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, IInteractionObjectIT<TrashItemBlockEntity>, ITrashCanShape, Container {
+public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, IArgMenuProvider<TrashItemBlockEntity>, ITrashCanShape, Container {
     public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ITEM.get(), pos, state); }
 
     @Override @Nonnull public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
@@ -46,7 +47,7 @@ public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemH
 
     @Override public TrashItemBlockEntity getGuiMaster() { return this; }
 
-    @Override public MenuTypes.ArgContainer<? super TrashItemBlockEntity, ?> getContainerType() { return MenuTypes.TRASH_ITEM; }
+    @Override public ArgContainer<? super TrashItemBlockEntity, ?> getContainerType() { return MenuTypes.TRASH_ITEM; }
 
     @Override public boolean canUseGui(Player player) { return true; }
 

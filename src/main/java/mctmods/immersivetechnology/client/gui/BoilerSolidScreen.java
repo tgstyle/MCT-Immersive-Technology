@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.client.gui;
 
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import com.google.common.collect.ImmutableList;
-import mctmods.immersivetechnology.client.gui.helper.ContainerScreen;
-import mctmods.immersivetechnology.client.gui.helper.InfoArea;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.BoilerSolidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BoilerSolidScreen extends ContainerScreen<BoilerSolidMenu> {
+public class BoilerSolidScreen extends BaseContainerScreen<BoilerSolidMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("boiler_solid");
 
     public BoilerSolidScreen(BoilerSolidMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
@@ -36,9 +36,9 @@ public class BoilerSolidScreen extends ContainerScreen<BoilerSolidMenu> {
         }
     }
 
-    @Override @Nonnull protected List<InfoArea> makeInfoAreas() {
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
         return ImmutableList.of(
-                new InfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
+                new GuiInfoArea(new Rect2i(leftPos + 119, topPos + 38, 41, 9)) {
                     @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();

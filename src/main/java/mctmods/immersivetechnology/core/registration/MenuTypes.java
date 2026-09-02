@@ -11,27 +11,18 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntit
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
-import mctmods.immersivetechnology.common.gui.helper.ContainerMenu;
+import com.immersiveconvergence.api.gui.ArgContainer;
+import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import mctmods.immersivetechnology.common.multiblocks.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import org.apache.commons.lang3.mutable.Mutable;
-import org.apache.commons.lang3.mutable.MutableObject;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
 public class MenuTypes {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "immersivetechnology");
@@ -56,54 +47,13 @@ public class MenuTypes {
 
     public static final ArgContainer<ConnectorTimerBlockEntity, ConnectorTimerMenu> CONNECTOR_TIMER = registerArg("connector_timer", ConnectorTimerMenu::makeServer, ConnectorTimerMenu::makeClient);
 
-    public static <T, C extends ContainerMenu> ArgContainer<T, C> registerArg(String name, IArgContainerConstructor<T, C> container, IClientContainerConstructor<C> client) {
-        RegistryObject<MenuType<C>> typeRef = registerType(name, client);
-        return new ArgContainer<>(typeRef, container);
+    public static <T, C extends BaseContainerMenu> ArgContainer<T, C> registerArg(String name, ArgContainer.IArgContainerConstructor<T, C> container, ArgContainer.IClientContainerConstructor<C> client) { return ArgContainer.register(REGISTER, name, container, client); }
+
+    public static <S extends IMultiblockState, C extends BaseContainerMenu> MultiblockContainer<S, C> registerMultiblock(String name, ArgContainer.IArgContainerConstructor<BaseContainerMenu.MultiblockMenuContext<S>, C> container, ArgContainer.IClientContainerConstructor<C> client) { return new MultiblockContainer<>(ArgContainer.registerType(REGISTER, name, client), container); }
+
+    public static class MultiblockContainer<S extends IMultiblockState, C extends BaseContainerMenu> extends ArgContainer<BaseContainerMenu.MultiblockMenuContext<S>, C> {
+        private MultiblockContainer(Supplier<MenuType<C>> type, ArgContainer.IArgContainerConstructor<BaseContainerMenu.MultiblockMenuContext<S>, C> factory) { super(type, factory); }
+
+        public MenuProvider provide(IMultiblockContext<S> ctx, BlockPos relativeClicked) { return this.provide(new BaseContainerMenu.MultiblockMenuContext<>(ctx, ctx.getLevel().toAbsolute(relativeClicked))); }
     }
-
-    public static <S extends IMultiblockState, C extends ContainerMenu> MultiblockContainer<S, C> registerMultiblock(String name, IArgContainerConstructor<ContainerMenu.MultiblockMenuContext<S>, C> container, IClientContainerConstructor<C> client) {
-        RegistryObject<MenuType<C>> typeRef = registerType(name, client);
-        return new MultiblockContainer<>(typeRef, container);
-    }
-
-    public static class MultiblockContainer<S extends IMultiblockState, C extends ContainerMenu> extends ArgContainer<ContainerMenu.MultiblockMenuContext<S>, C> {
-        private MultiblockContainer(RegistryObject<MenuType<C>> type, IArgContainerConstructor<ContainerMenu.MultiblockMenuContext<S>, C> factory) { super(type, factory); }
-
-        public MenuProvider provide(IMultiblockContext<S> ctx, BlockPos relativeClicked) { return this.provide(new ContainerMenu.MultiblockMenuContext<>(ctx, ctx.getLevel().toAbsolute(relativeClicked))); }
-    }
-
-    public static class ArgContainer<T, C extends ContainerMenu> {
-        private final RegistryObject<MenuType<C>> type;
-        private final IArgContainerConstructor<T, C> factory;
-
-        private ArgContainer(RegistryObject<MenuType<C>> type, IArgContainerConstructor<T, C> factory) {
-            this.type = type;
-            this.factory = factory;
-        }
-
-        public C create(int windowId, Inventory playerInv, T tile) { return this.factory.construct(this.getType(), windowId, playerInv, tile); }
-
-        public MenuProvider provide(final T arg) {
-            return new MenuProvider() {
-                @Nonnull public Component getDisplayName() { return Component.empty(); }
-
-                @Nullable public AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) { return ArgContainer.this.create(containerId, inventory, arg); }
-            };
-        }
-
-        public MenuType<C> getType() { return this.type.get(); }
-    }
-
-    private static <C extends ContainerMenu> RegistryObject<MenuType<C>> registerType(String name, IClientContainerConstructor<C> client) {
-        return REGISTER.register(name, () -> {
-            Mutable<MenuType<C>> typeBox = new MutableObject<>();
-            MenuType<C> type = IForgeMenuType.create((id, inv, buffer) -> client.construct(typeBox.getValue(), id, inv, buffer));
-            typeBox.setValue(type);
-            return type;
-        });
-    }
-
-    @FunctionalInterface public interface IArgContainerConstructor<T, C extends ContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, T arg); }
-
-    @FunctionalInterface public interface IClientContainerConstructor<C extends ContainerMenu> { C construct(MenuType<C> type, int windowId, Inventory invPlayer, FriendlyByteBuf buffer); }
 }
