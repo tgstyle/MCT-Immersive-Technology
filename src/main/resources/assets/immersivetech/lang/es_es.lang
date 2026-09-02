@@ -123,9 +123,6 @@ ie.manual.entry.technologistsWrench.name=Llave del tecnólogo
 ie.manual.entry.technologistsWrench.subtext=Aprieta y afloja
 ie.manual.entry.technologistsWrench0=La §6Llave del tecnólogo§r forma y configura los multibloques de Immersive Technology. Hace todo lo que hace el Martillo del ingeniero. Forma estructuras, gira bloques y cambia los paneles de control entre redstone normal e invertida.
 ie.manual.entry.technologistsWrench1=Las entradas aceptan cualquier fluido que se les bombee, y una máquina con el fluido equivocado queda inactiva hasta que se vacía ese tanque. Agáchate y usa la Llave sobre una entrada de fluido para vaciarla.<br>El fluido se descarta en lugar de devolverse, así que el tanque queda libre de inmediato para el fluido correcto. Esto funciona en todas las máquinas de Immersive Technology con entrada de fluidos, y el Martillo del ingeniero sirve igualmente.
-ie.manual.entry.multiblockDisassembly.name=Desmontaje de multibloques
-ie.manual.entry.multiblockDisassembly.subtext=Desármalo y quédate las piezas
-ie.manual.entry.multiblockDisassembly0=Romper cualquier bloque de una máquina formada desmonta toda la estructura. Se deshace bloque a bloque en unos instantes, y todos sus materiales de construcción caen en el bloque que se rompió. Agáchate al romper para usar en su lugar el comportamiento clásico: la estructura vuelve al instante a ser los bloques colocados. Desactivar disassembly_queue en la configuración hace que el comportamiento clásico sea el predeterminado.
 
 ie.manual.entry.advancedCokeOven.name=Horno de coque avanzado
 ie.manual.entry.alternator.name=Alternador

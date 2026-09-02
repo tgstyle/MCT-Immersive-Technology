@@ -123,9 +123,6 @@ ie.manual.entry.technologistsWrench.name=Chave do Tecnólogo
 ie.manual.entry.technologistsWrench.subtext=Aperta e afrouxa
 ie.manual.entry.technologistsWrench0=A §6Chave do Tecnólogo§r forma e configura os multiblocos do Immersive Technology. Faz tudo o que o Engineer's Hammer faz. Forma estruturas, roda blocos e alterna os painéis de controlo entre redstone normal e invertida.
 ie.manual.entry.technologistsWrench1=As entradas aceitam qualquer fluido que lhes seja enviado, e uma máquina com o fluido errado fica parada até esse tanque ser esvaziado. Agacha-te e usa a Chave numa entrada de fluido para a esvaziar.<br>O fluido é descartado e não devolvido, pelo que o tanque fica logo livre para o fluido correto. Funciona em todas as máquinas do Immersive Technology com entrada de fluido, e o Engineer's Hammer pode ser usado no seu lugar.
-ie.manual.entry.multiblockDisassembly.name=Desmontagem de multiblocos
-ie.manual.entry.multiblockDisassembly.subtext=Desmonta e guarda as peças
-ie.manual.entry.multiblockDisassembly0=Partir qualquer bloco de uma máquina formada desmonta toda a estrutura. Esta desfaz-se bloco a bloco em poucos instantes, e todos os materiais de construção caem no bloco que foi partido. Agacha-te ao partir para usares o comportamento clássico: a estrutura volta de imediato a ser os blocos colocados. Desativar disassembly_queue na configuração torna o comportamento clássico o predefinido.
 
 ie.manual.entry.advancedCokeOven.name=Fornalha de Coque Avançada
 ie.manual.entry.alternator.name=Alternador
