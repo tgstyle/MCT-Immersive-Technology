@@ -182,12 +182,14 @@ neoForge {
             client()
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
             jvmArgument("-Djava.library.path=/usr/lib64")
+            jvmArgument('-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile')
             environment 'LD_LIBRARY_PATH', '/usr/lib64'
         }
 
         server {
             server()
             programArguments.addAll '--nogui'
+            jvmArgument('-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile')
         }
 
         data {
