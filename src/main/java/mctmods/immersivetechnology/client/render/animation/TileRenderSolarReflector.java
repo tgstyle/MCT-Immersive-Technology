@@ -50,16 +50,16 @@ public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEnti
 		GlStateManager.rotate(te.getAnimationRotations()[0], 0, 1, 0);
 
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-		worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-		ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), supportModel, state, blockPos, worldRenderer);
+		worldRenderer.setTranslation(-.5, -.5, -.5);
+		ITTESRHelper.renderQuads(supportModel.getQuads(state, null, 0L), worldRenderer, te.getWorld(), blockPos, false);
 		worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
 		tessellator.draw();
 
 		GlStateManager.rotate(te.getAnimationRotations()[1], te.getFacing().getZOffset(), 0, te.getFacing().getXOffset());
 
 		worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-		worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-		ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), mirrorModel, state1, blockPos, worldRenderer);
+		worldRenderer.setTranslation(-.5, -.5, -.5);
+		ITTESRHelper.renderQuads(mirrorModel.getQuads(state1, null, 0L), worldRenderer, te.getWorld(), blockPos, true);
 		worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
 		tessellator.draw();
 
