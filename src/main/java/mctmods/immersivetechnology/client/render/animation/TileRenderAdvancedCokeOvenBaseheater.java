@@ -49,8 +49,8 @@ public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRende
 
         ClientUtils.bindAtlas();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        worldRenderer.setTranslation(-0.5 - blockPos.getX(), -0.5 - blockPos.getY(), -0.5 - blockPos.getZ());
-        ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), fanModel, dynamicState, blockPos, worldRenderer);
+        worldRenderer.setTranslation(-0.5, -0.5, -0.5);
+        ITTESRHelper.renderQuads(fanModel.getQuads(dynamicState, null, 0L), worldRenderer, te.getWorld(), blockPos, false);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();
 

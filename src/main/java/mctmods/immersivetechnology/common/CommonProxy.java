@@ -1,11 +1,8 @@
 package mctmods.immersivetechnology.common;
 
-import com.immersiveconvergence.api.multiblock.QueueProcessor;
-
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
@@ -36,7 +33,6 @@ public class CommonProxy implements IGuiHandler {
 
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
-		QueueProcessor.queueEnabled = () -> ITConfig.Multiblocks.disassembly.disassemblyMode == Config.DisassemblyMode.PROCESS_QUEUE;
 	}
 
 	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {

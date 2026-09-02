@@ -109,6 +109,20 @@ if (!ifJars.isEmpty()) {
     logger.warn('No Immersive Fixes dev JAR found in ../Immersive-Fixes-Legacy/build/libs, build one there first')
 }
 
+def esJar = null
+def esDir = file('../EngineeredSchematics-Legacy/build/libs')
+def esJars = esDir.exists() ? fileTree(esDir) {
+    include '*-dev.jar'
+    exclude '**/*-sources.jar'
+}.files : []
+
+if (!esJars.isEmpty()) {
+    esJar = esJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
+    logger.lifecycle("Found Engineered Schematics dev JAR: ${esJar.name}")
+} else {
+    logger.warn('No Engineered Schematics dev JAR found in ../EngineeredSchematics-Legacy/build/libs, build one there first')
+}
+
 dependencies {
     if (icJar != null) {
         implementation files(icJar)
@@ -116,8 +130,12 @@ dependencies {
     if (ifJar != null) {
         implementation files(ifJar)
     }
+    if (esJar != null) {
+        implementation files(esJar)
+    }
     implementation rfg.deobf("${common.mjei_version}")
     implementation rfg.deobf("curse.maven:${common.imme_version}")
+    implementation rfg.deobf("curse.maven:${common.imps_version}")
     implementation rfg.deobf("curse.maven:${common.mtop_version}")
     implementation rfg.deobf("curse.maven:${common.woed_version}")
     implementation rfg.deobf("curse.maven:${common.wcui_version}")

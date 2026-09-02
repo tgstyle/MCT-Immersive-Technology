@@ -54,8 +54,9 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
         else { GlStateManager.shadeModel(GL11.GL_FLAT); }
         GlStateManager.rotate(te.getAnimation().getAnimationRotation() + (te.getAnimation().getAnimationMomentum() * partialTicks), rotAxis.getXOffset(), 0, rotAxis.getZOffset());
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        worldRenderer.setTranslation(-.5 - blockPos.getX(), -.5 - blockPos.getY(), -.5 - blockPos.getZ());
-        ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, state, blockPos.offset(rotAxis, ROTOR_DISTANCE), worldRenderer);
+        BlockPos rotorPos = blockPos.offset(rotAxis, ROTOR_DISTANCE);
+        worldRenderer.setTranslation(rotorPos.getX() - blockPos.getX() - .5, rotorPos.getY() - blockPos.getY() - .5, rotorPos.getZ() - blockPos.getZ() - .5);
+        ITTESRHelper.renderQuads(model.getQuads(state, null, 0L), worldRenderer, te.getWorld(), rotorPos, false);
         worldRenderer.setTranslation(0.0D, 0.0D, 0.0D);
         tessellator.draw();
         GlStateManager.enableCull();

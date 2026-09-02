@@ -15,7 +15,6 @@ import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.split.SplitModelHandler;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.client.event.ClientEventHandler;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.client.models.ModelConfigurableSides;
 import mctmods.immersivetechnology.client.render.fluid.TileRenderBarrelOpen;
@@ -212,8 +211,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init() {
-        MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAdvancedCokeOvenBaseheater.class, new TileRenderAdvancedCokeOvenBaseheater());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBarrelOpen.class, new TileRenderBarrelOpen());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGasTurbineMaster.class, new TileRendererGasTurbine());

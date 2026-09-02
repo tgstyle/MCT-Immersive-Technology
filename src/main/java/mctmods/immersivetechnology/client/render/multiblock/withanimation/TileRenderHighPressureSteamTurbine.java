@@ -48,13 +48,13 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         EnumFacing rotAxis = validFacing ? te.facing : EnumFacing.NORTH;
         GlStateManager.rotate(rotation, rotAxis.getXOffset(), 0, rotAxis.getZOffset());
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
+        buffer.setTranslation(-0.5, -0.5, -0.5);
         IBlockState state = te.getWorld().getBlockState(masterPos);
         if (state.getBlock() == ITContent.blockMetalMultiblock1) {
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
             state = state.withProperty(IEProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
-            ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, state, masterPos, buffer);
+            ITTESRHelper.renderQuads(model.getQuads(state, null, 0L), buffer, te.getWorld(), masterPos, false);
         }
         buffer.setTranslation(0, 0, 0);
         tessellator.draw();

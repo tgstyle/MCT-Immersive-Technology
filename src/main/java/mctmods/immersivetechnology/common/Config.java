@@ -7,8 +7,6 @@ import net.minecraftforge.common.config.Config.Comment;
 public class Config {
     public static final double SMOKE_HEIGHT_DEFAULT = 0.7;
 
-    public enum DisassemblyMode { PROCESS_QUEUE, TEMPLATE_BLOCKS }
-
     @net.minecraftforge.common.config.Config(modid=ImmersiveTechnology.MODID, name="mct_immersivetechnology")
     public static class ITConfig {
         public static Blocks blocks;
@@ -41,7 +39,6 @@ public class Config {
             public static BoilerLiquid boilerLiquid = new BoilerLiquid();
             public static BoilerSolid boilerSolid = new BoilerSolid();
             public static CoolingTower coolingTower = new CoolingTower();
-            public static Disassembly disassembly = new Disassembly();
             public static Distiller distiller = new Distiller();
             public static ElectrolyticCrucibleBattery electrolyticCrucibleBattery = new ElectrolyticCrucibleBattery();
             public static Enable enable = new Enable();
@@ -128,10 +125,6 @@ public class Config {
                 public double coolingTower_biome_temp_factor = 0.5;
                 @Comment({"How much the local biome's humidity affects Cooling Tower speed. 0 disables the effect entirely. Drier biomes speed it up, wetter biomes slow it down [Default=3.0]"})
                 public double coolingTower_biome_humidity_factor = 3.0;
-            }
-            public static class Disassembly {
-                @Comment({"How a machine comes apart. PROCESS_QUEUE breaks it down block by block over a few ticks and drops all its materials at the broken block; TEMPLATE_BLOCKS instantly reverts it to the blocks it was built from. Sneak-breaking always uses TEMPLATE_BLOCKS [Default=PROCESS_QUEUE]"})
-                public DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
             }
             public static class Distiller {
                 @Comment({"The capacity of the input tank for the Distiller [Default=24000]"})

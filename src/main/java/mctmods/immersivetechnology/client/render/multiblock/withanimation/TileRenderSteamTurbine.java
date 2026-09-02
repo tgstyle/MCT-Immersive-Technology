@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -24,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntitySteamTurbineMaster> {
     private static final int[] ROTOR_DISTANCES = {9, 4};
@@ -55,10 +57,13 @@ public class TileRenderSteamTurbine extends TileEntitySpecialRenderer<TileEntity
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
             state = state.withProperty(IEProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
-            buffer.setTranslation(-0.5 - masterPos.getX(), -0.5 - masterPos.getY(), -0.5 - masterPos.getZ());
+            List<BakedQuad> quads = model.getQuads(state, null, 0L);
+            boolean useCached = false;
             for (int distance : ROTOR_DISTANCES) {
                 BlockPos rotorPos = masterPos.offset(rotAxis, distance);
-                ITTESRHelper.renderModel(blockRenderer.getBlockModelRenderer(), te.getWorld(), model, state, rotorPos, buffer);
+                buffer.setTranslation(rotorPos.getX() - masterPos.getX() - 0.5, rotorPos.getY() - masterPos.getY() - 0.5, rotorPos.getZ() - masterPos.getZ() - 0.5);
+                ITTESRHelper.renderQuads(quads, buffer, te.getWorld(), rotorPos, useCached);
+                useCached = true;
             }
         }
         buffer.setTranslation(0, 0, 0);
