@@ -163,6 +163,7 @@ minecraft {
             property 'forge.logging.markers', ''
             property 'forge.enabledGameTestNamespaces', mod_id
             ideaModule project.name + ".main"
+            jvmArgs '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
             mods {
                 immersivetechnology {
                     source(sourceSets.main as SourceSet)
@@ -177,6 +178,7 @@ minecraft {
             property 'forge.logging.markers', ''
             property 'forge.enabledGameTestNamespaces', mod_id
             arg '-nogui'
+            jvmArgs '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
             mods {
                 immersivetechnology {
                     source(sourceSets.main as SourceSet)

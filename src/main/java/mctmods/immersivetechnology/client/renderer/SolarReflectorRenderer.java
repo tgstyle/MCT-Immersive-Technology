@@ -19,7 +19,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -33,6 +32,7 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
     private static final Quaternionf ROT_SUPPORT = new Quaternionf();
     private static final Quaternionf ROT_MIRROR = new Quaternionf();
     private static final Vector3f AXIS = new Vector3f();
+    private static final BlockPos ORIGIN = new BlockPos(1, 0, 1);
 
     public SolarReflectorRenderer() {}
 
@@ -48,20 +48,23 @@ public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBl
         double mirrorAngle = state.animation_mirrorTilt;
         ModDynamicModel supportModel = SolarReflectorModels.SUPPORT;
         ModDynamicModel mirrorModel = SolarReflectorModels.MIRROR;
-        Vec3 start = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 0, 1)).subtract(pos));
+        BlockPos start = context.getLevel().toAbsolute(ORIGIN);
+        double startX = start.getX() - pos.getX() + 0.5;
+        double startY = start.getY() - pos.getY();
+        double startZ = start.getZ() - pos.getZ() + 0.5;
         boolean isEW = dir.getStepX() != 0;
         Quaternionf orientRot = isEW ? ROT_Y90 : IDENTITY;
         ROT_SUPPORT.rotationY((float)(supportAngle * Mth.DEG_TO_RAD));
         AXIS.set(dir.getStepZ(), 0, dir.getStepX());
         orientRot.transform(AXIS);
         poseStack.pushPose();
-        poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
+        poseStack.translate(startX, startY, startZ);
         poseStack.mulPose(orientRot);
         poseStack.mulPose(ROT_SUPPORT);
         renderDynamicModel(supportModel, poseStack, buffer, level, pos, packedLight, false);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(start.x + 0.5, start.y, start.z + 0.5);
+        poseStack.translate(startX, startY, startZ);
         poseStack.mulPose(orientRot);
         poseStack.mulPose(ROT_SUPPORT);
         poseStack.translate(0, 2, 0);

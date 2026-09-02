@@ -468,9 +468,10 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             int numClear = 0;
             Direction right = facing.getClockWise();
             Direction back = facing.getOpposite();
-            BlockPos baseCheck = sunPos.above();
+            BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+            int baseX = sunPos.getX(), baseY = sunPos.getY() + 1, baseZ = sunPos.getZ();
             for (int l = -1; l < 2; l++) for (int w = -1; w < 2; w++) {
-                BlockPos checkPos = baseCheck.relative(back, l).relative(right, w);
+                checkPos.set(baseX + back.getStepX() * l + right.getStepX() * w, baseY, baseZ + back.getStepZ() * l + right.getStepZ() * w);
                 if (level.canSeeSky(checkPos)) { numClear++; }
             }
             return numClear / 9.0;
