@@ -39,6 +39,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver, IComparatorOverride {
 
@@ -158,21 +161,33 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
         int currentEnergy = energyStorage.getEnergyStored();
         if (currentEnergy > 0) {
-            int transferRate = (int)Math.ceil(rfPerTickPerPort * torqueMult);
+            int budget = Math.min(currentEnergy, (int)Math.ceil(rfPerTick() * torqueMult));
+            TileEntity[] outputs = new TileEntity[6];
+            EnumFacing[] sides = new EnumFacing[6];
+            int[] simulated = new int[6];
+            List<Integer> ports = new ArrayList<>();
             for (int i = 0; i < 6; i++) {
-                if (currentEnergy <= 0) break;
                 BlockPos outPos = energyOutputTEPos0[i];
                 if (outPos == null) continue;
                 TileEntity te = Utils.getExistingTileEntity(world, outPos);
                 if (te == null) continue;
-                EnumFacing side = energyOutputsPos0[i].facing.getOpposite();
-                int canReceive = EnergyHelper.insertFlux(te, side, Math.min(currentEnergy, transferRate), true);
-                if (canReceive > 0) {
-                    int inserted = EnergyHelper.insertFlux(te, side, canReceive, false);
-                    energyStorage.modifyEnergyStored(-inserted);
-                    currentEnergy -= inserted;
-                }
+                outputs[i] = te;
+                sides[i] = energyOutputsPos0[i].facing.getOpposite();
+                simulated[i] = EnergyHelper.insertFlux(te, sides[i], budget, true);
+                ports.add(i);
             }
+            ports.sort(Comparator.comparingInt(i -> simulated[i]));
+            int remaining = budget;
+            int remainingOutputs = ports.size();
+            for (int i : ports) {
+                if (remaining <= 0) break;
+                int possibleOutput = (int)Math.ceil((double)remaining / remainingOutputs);
+                int inserted = EnergyHelper.insertFlux(outputs[i], sides[i], possibleOutput, false);
+                energyStorage.modifyEnergyStored(-inserted);
+                remaining -= inserted;
+                remainingOutputs--;
+            }
+            currentEnergy = energyStorage.getEnergyStored();
         }
 
         boolean didWork = speed > 0;
