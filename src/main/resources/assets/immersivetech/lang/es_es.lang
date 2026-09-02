@@ -176,10 +176,12 @@ subtitle.immersivetech.solarTower=La torre solar hierve
 subtitle.immersivetech.steamTurbine=La turbina de vapor gira
 
 #ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:AdvancedCokeOven=Horno de coque avanzado
 desc.engineered_schematics.multiblock.IT:Alternator=Alternador
 desc.engineered_schematics.multiblock.IT:BoilerLiquid=Quemador de combustible líquido (caldera)
 desc.engineered_schematics.multiblock.IT:BoilerSolid=Quemador de combustible sólido (caldera)
 desc.engineered_schematics.multiblock.IT:BoilerTank=Tanque de caldera
+desc.engineered_schematics.multiblock.IT:CoolingTower=Torre de enfriamiento
 desc.engineered_schematics.multiblock.IT:Distiller=Destilador
 desc.engineered_schematics.multiblock.IT:GasTurbine=Turbina de gas
 desc.engineered_schematics.multiblock.IT:HeatExchanger=Intercambiador de calor

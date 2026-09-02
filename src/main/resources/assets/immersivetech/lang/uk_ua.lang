@@ -176,10 +176,12 @@ subtitle.immersivetech.solarTower=Сонячна вежа кипить
 subtitle.immersivetech.steamTurbine=Парова турбіна обертається
 
 #ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:AdvancedCokeOven=Покращена коксівна піч
 desc.engineered_schematics.multiblock.IT:Alternator=Альтернатор
 desc.engineered_schematics.multiblock.IT:BoilerLiquid=Пальник котла на рідкому паливі
 desc.engineered_schematics.multiblock.IT:BoilerSolid=Пальник котла на твердому паливі
 desc.engineered_schematics.multiblock.IT:BoilerTank=Резервуар котла
+desc.engineered_schematics.multiblock.IT:CoolingTower=Охолоджувальна вежа
 desc.engineered_schematics.multiblock.IT:Distiller=Дистилятор
 desc.engineered_schematics.multiblock.IT:GasTurbine=Газова турбіна
 desc.engineered_schematics.multiblock.IT:HeatExchanger=Теплообмінник

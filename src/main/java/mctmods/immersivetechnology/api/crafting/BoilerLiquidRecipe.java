@@ -1,9 +1,8 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
+import com.immersiveconvergence.core.ICCommonConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -22,7 +21,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
         this.fluidInput = fluidInput;
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.heatPerTick = heatPerTick;
-        this.targetHeat = Math.min(targetHeat, Multiblocks.boilerHeat.boiler_heat_max);
+        this.targetHeat = Math.min(targetHeat, ICCommonConfig.heat.maxHeat);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
     }
 

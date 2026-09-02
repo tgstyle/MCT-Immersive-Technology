@@ -176,10 +176,12 @@ subtitle.immersivetech.solarTower=太陽熱タワーの沸騰音
 subtitle.immersivetech.steamTurbine=蒸気タービンの回転音
 
 #ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:AdvancedCokeOven=改良型コークス炉
 desc.engineered_schematics.multiblock.IT:Alternator=オルタネーター
 desc.engineered_schematics.multiblock.IT:BoilerLiquid=液体燃料ボイラー燃焼器
 desc.engineered_schematics.multiblock.IT:BoilerSolid=固体燃料ボイラー燃焼器
 desc.engineered_schematics.multiblock.IT:BoilerTank=ボイラータンク
+desc.engineered_schematics.multiblock.IT:CoolingTower=冷却塔
 desc.engineered_schematics.multiblock.IT:Distiller=蒸留装置
 desc.engineered_schematics.multiblock.IT:GasTurbine=ガスタービン
 desc.engineered_schematics.multiblock.IT:HeatExchanger=熱交換器

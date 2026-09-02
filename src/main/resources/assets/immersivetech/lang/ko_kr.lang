@@ -388,10 +388,12 @@ subtitle.immersivetech.solarTower=태양열 타워 끓는 소리
 subtitle.immersivetech.steamTurbine=증기 터빈 회전음
 
 #ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:AdvancedCokeOven=고급 코크스 오븐
 desc.engineered_schematics.multiblock.IT:Alternator=교류 발전기
 desc.engineered_schematics.multiblock.IT:BoilerLiquid=액체 연료 보일러 연소기
 desc.engineered_schematics.multiblock.IT:BoilerSolid=고체 연료 보일러 연소기
 desc.engineered_schematics.multiblock.IT:BoilerTank=보일러 탱크
+desc.engineered_schematics.multiblock.IT:CoolingTower=냉각탑
 desc.engineered_schematics.multiblock.IT:Distiller=증류기
 desc.engineered_schematics.multiblock.IT:GasTurbine=가스 터빈
 desc.engineered_schematics.multiblock.IT:HeatExchanger=열 교환기

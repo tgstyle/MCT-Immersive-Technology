@@ -13,6 +13,7 @@ import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.core.ICCommonConfig;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -51,7 +52,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
 
     private static int inputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_output_tankSize; }
-    public static int maxSpeed() { return Math.round(Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max * Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxFactor); }
+    public static int maxSpeed() { return Math.round(ICCommonConfig.mechanical.maxRpm * Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxFactor); }
     private RotationInertiaProcess inertia;
     private double connectedMass = -1;
     private double connectedFriction = -1;

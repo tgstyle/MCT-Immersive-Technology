@@ -389,10 +389,12 @@ subtitle.immersivetech.solarTower=Solar Tower boiling
 subtitle.immersivetech.steamTurbine=Steam Turbine spinning
 
 #ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:AdvancedCokeOven=Advanced Coke Oven
 desc.engineered_schematics.multiblock.IT:Alternator=Alternator
 desc.engineered_schematics.multiblock.IT:BoilerLiquid=Boiler Liquid Fuel Burner
 desc.engineered_schematics.multiblock.IT:BoilerSolid=Boiler Solid Fuel Burner
 desc.engineered_schematics.multiblock.IT:BoilerTank=Boiler Tank
+desc.engineered_schematics.multiblock.IT:CoolingTower=Cooling Tower
 desc.engineered_schematics.multiblock.IT:Distiller=Distiller
 desc.engineered_schematics.multiblock.IT:GasTurbine=Gas Turbine
 desc.engineered_schematics.multiblock.IT:HeatExchanger=Heat Exchanger

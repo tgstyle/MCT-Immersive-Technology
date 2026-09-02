@@ -49,7 +49,6 @@ public class Config {
             public static HeatExchanger heatExchanger = new HeatExchanger();
             public static HighPressureSteamTurbine highPressureSteamTurbine = new HighPressureSteamTurbine();
             public static JEI JEI = new JEI();
-            public static MechanicalEnergy mechanicalEnergy = new MechanicalEnergy();
             public static MeltingCrucible meltingCrucible = new MeltingCrucible();
             public static Radiator radiator = new Radiator();
             public static SolarMelter solarMelter = new SolarMelter();
@@ -91,8 +90,6 @@ public class Config {
                 public int advancedCokeOvenBaseheater_energy_consumption = 32;
             }
             public static class BoilerHeat {
-                @Comment({"The maximum heat level any boiler recipe can require or target [Default=2000.0]"})
-                public double boiler_heat_max = 2000.0;
                 @Comment({"The heat level boilers work toward when no recipe specifies one [Default=100.0]"})
                 public double boiler_heat_workingLevel = 100.0;
             }
@@ -231,8 +228,8 @@ public class Config {
                 public float highPressureSteamTurbine_speed_maxRotation = 72;
                 @Comment({"Rotating mass of the High Pressure Steam Turbine. Higher values slow both spin-up and coast-down [Default=30.0]"})
                 public double highPressureSteamTurbine_baseMass = 30.0;
-                @Comment({"Torque the High Pressure Steam Turbine's drive applies [Default=360.0]"})
-                public double highPressureSteamTurbine_driveTorque = 360.0;
+                @Comment({"Torque the High Pressure Steam Turbine's drive applies. High pressure steam drives far harder than the regular turbine's, so it spins up twice as fast despite the heavier rotor [Default=2160.0]"})
+                public double highPressureSteamTurbine_driveTorque = 2160.0;
                 @Comment({"Constant drag on the High Pressure Steam Turbine [Default=0.0]"})
                 public double highPressureSteamTurbine_friction = 0.0;
                 @Comment({"Fraction of the maximum tolerated RPM the High Pressure Steam Turbine can reach. Above 1.0 it overdrives the alternator past its rated output [Default=1.0]"})
@@ -245,10 +242,6 @@ public class Config {
             public static class JEI {
                 @Comment({"Display IT Multiblocks in JEI [Default=true]"})
                 public boolean enableJEIMultiblocks = true;
-            }
-            public static class MechanicalEnergy {
-                @Comment({"The maximum speed that machines can tolerate in RPM [Default=7200]"})
-                public int mechanicalEnergy_speed_max = 7200;
             }
             public static class MeltingCrucible {
                 @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 1.0]"})

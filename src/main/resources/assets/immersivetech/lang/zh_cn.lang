@@ -388,10 +388,12 @@ subtitle.immersivetech.solarTower=太阳能塔沸腾
 subtitle.immersivetech.steamTurbine=蒸汽轮机旋转
 
 #ENGINEERED SCHEMATICS
+desc.engineered_schematics.multiblock.IT:AdvancedCokeOven=高级焦炉
 desc.engineered_schematics.multiblock.IT:Alternator=交流发电机
 desc.engineered_schematics.multiblock.IT:BoilerLiquid=液体燃料锅炉燃烧室
 desc.engineered_schematics.multiblock.IT:BoilerSolid=固体燃料锅炉燃烧室
 desc.engineered_schematics.multiblock.IT:BoilerTank=锅炉储罐
+desc.engineered_schematics.multiblock.IT:CoolingTower=冷却塔
 desc.engineered_schematics.multiblock.IT:Distiller=蒸馏器
 desc.engineered_schematics.multiblock.IT:GasTurbine=燃气轮机
 desc.engineered_schematics.multiblock.IT:HeatExchanger=热交换器

@@ -18,6 +18,7 @@ import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICFluxStorage;
+import com.immersiveconvergence.core.ICCommonConfig;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -63,7 +64,7 @@ import java.util.Random;
 
 public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
 
-    public static int maxSpeed() { return Math.round(Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max * Multiblocks.gasTurbine.gasTurbine_speed_maxFactor); }
+    public static int maxSpeed() { return Math.round(ICCommonConfig.mechanical.maxRpm * Multiblocks.gasTurbine.gasTurbine_speed_maxFactor); }
     private static float maxRotationSpeed() { return Multiblocks.gasTurbine.gasTurbine_speed_maxRotation; }
     private RotationInertiaProcess inertia;
     private RotationInertiaProcess inertia() {

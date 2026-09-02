@@ -14,6 +14,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.core.ICCommonConfig;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -41,7 +42,7 @@ import javax.annotation.Nullable;
 
 public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implements IBinaryMessageReceiver, IComparatorOverride {
 
-    public static int maxSpeed() { return Multiblocks.mechanicalEnergy.mechanicalEnergy_speed_max; }
+    public static int maxSpeed() { return ICCommonConfig.mechanical.maxRpm; }
     private static float maxRotationSpeed() { return Multiblocks.steamTurbine.steamTurbine_speed_maxRotation; }
     private static int rfPerTick() { return Multiblocks.alternator.alternator_energy_perTick; }
     private static double rfExponent() { return Multiblocks.alternator.alternator_exponent; }
