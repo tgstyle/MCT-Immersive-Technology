@@ -13,6 +13,7 @@ import blusunrize.lib.manual.ManualPages;
 
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.split.SplitModelHandler;
+import com.immersiveconvergence.api.particles.ParticleSettings;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.gui.*;
@@ -26,6 +27,7 @@ import mctmods.immersivetechnology.client.render.multiblock.withanimation.TileRe
 import mctmods.immersivetechnology.client.render.fluid.TileRenderSteelSheetmetalTank;
 import mctmods.immersivetechnology.client.render.animation.TileRenderAdvancedCokeOvenBaseheater;
 import mctmods.immersivetechnology.common.CommonProxy;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
@@ -107,6 +109,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override public void preInit() {
         ClientUtils.mc().getFramebuffer().enableStencil();
+        ParticleSettings.particleCollide = () -> ITConfig.Client.particles.collide;
         ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
         OBJLoader.INSTANCE.addDomain(ImmersiveTechnology.MODID);
         IEOBJLoader.instance.addDomain(ImmersiveTechnology.MODID);

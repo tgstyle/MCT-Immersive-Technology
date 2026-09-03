@@ -198,7 +198,7 @@ ie.manual.entry.advancedCokeOven.name=고급 코크스 오븐
 ie.manual.entry.advancedCokeOven.subtext=이제 빠릅니다
 ie.manual.entry.advancedCokeOven0=고급 코크스 오븐은 코크스 석탄과 크레오소트유를 더 빨리 생산할 수 있게 해 주는 멀티블록 구조입니다.<br>구조물은 위 그림과 같이 건설되며 중앙 강화 코크스 벽돌 블록의 엔지니어의 망치를 사용하여 형성됩니다.
 ie.manual.entry.advancedCokeOven1=입력 및 출력 아이템의 자동화를 허용하며, 뜨거운 공기를 추가하여 베이스히터로 프로세스를 가속화할 수도 있습니다.<br>용광로는 강화 벽돌로 만들어지므로 첫 번째 강철 배치를 이 업그레이드에 사용하는 것이 좋습니다.<br>개선된 용광로와 유사하게 코크스 석탄은 전면에 출력되고 크레오소트유는 후면에 출력됩니다. 석탄은 상단을 통해 공급됩니다.
-ie.manual.entry.advancedCokeOven2=코크스 오븐 베이스히터는 석탄의 정제 과정을 가속화하는 데 사용됩니다. 각 오븐은 양측 포트에 최대 두 개의 베이스히터를 연결할 수 있으며, 각 베이스히터는 작동하기 위해 <config;i;cokeOvenBaseheater_consumption> Flux/t가 필요합니다. 기본 설정에서는 활성화된 베이스히터 하나당 처리 속도가 두 배로 증가합니다.
+ie.manual.entry.advancedCokeOven2=코크스 오븐 베이스히터는 석탄의 정제 과정을 가속화하는 데 사용됩니다. 각 오븐은 양측 포트에 최대 두 개의 베이스히터를 연결할 수 있으며, 각 베이스히터는 작동하기 위해 <config;i;cokeOvenBaseheater_consumption> Flux/t가 필요합니다. 기본 설정에서는 활성화된 베이스히터마다 처리 속도가 증가하지만, 두 개를 함께 사용하면 추가 이득이 줄어듭니다.
 ie.manual.entry.advancedCokeOven3=멀티블록에 비교기를 설치하면 현재 작업 진행도에 비례하는 신호를 출력합니다. 대기 중일 때는 0, 거의 완료되었을 때는 15입니다.
 
 ie.manual.entry.alternator.name=교류 발전기

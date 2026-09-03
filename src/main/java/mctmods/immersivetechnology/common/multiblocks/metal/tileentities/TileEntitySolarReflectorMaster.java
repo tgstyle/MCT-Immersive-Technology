@@ -10,7 +10,6 @@ import com.immersiveconvergence.api.particles.BeamParticles;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 

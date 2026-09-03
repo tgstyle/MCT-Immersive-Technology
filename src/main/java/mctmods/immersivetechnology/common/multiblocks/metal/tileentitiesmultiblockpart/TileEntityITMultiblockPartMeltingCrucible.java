@@ -3,9 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultibl
 import blusunrize.immersiveengineering.client.ClientUtils;
 
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityMeltingCrucibleSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,7 +21,7 @@ public class TileEntityITMultiblockPartMeltingCrucible extends MachineTemplateMu
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartMeltingCrucible() { super("IT:meltingCrucible", MeltingCrucibleShape.SHAPE, ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.MELTING_CRUCIBLE.getMeta()), ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.MELTING_CRUCIBLE_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartMeltingCrucible() { super("IT:meltingCrucible", ITShapes.get("melting_crucible"), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.MELTING_CRUCIBLE), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.MELTING_CRUCIBLE_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

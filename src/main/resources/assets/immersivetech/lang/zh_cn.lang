@@ -198,7 +198,7 @@ ie.manual.entry.advancedCokeOven.name=高级焦炉
 ie.manual.entry.advancedCokeOven.subtext=现在更快了
 ie.manual.entry.advancedCokeOven0=高级焦炉是允许更快生产焦炭和木焦油的多方块结构。<br>结构如上所示，使用工程师锤击中央强化焦炉砖块形成。
 ie.manual.entry.advancedCokeOven1=允许输入输出自动化，也可以用基热器加速过程添加热空气。<br>炉子是用强化砖做的，所以建议第一批钢用于此升级。<br>类似于改进高炉,焦炭输出在前,木焦油在后.煤从顶部输入。
-ie.manual.entry.advancedCokeOven2=焦炉基热器用于加速煤精炼过程。每炉可连接两个基热器到两侧端口，每个基热器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。默认设置下，每个激活的基热器可将处理速度提升一倍。
+ie.manual.entry.advancedCokeOven2=焦炉基热器用于加速煤精炼过程。每炉可连接两个基热器到两侧端口，每个基热器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。默认设置下，每个激活的基热器都会提升处理速度，但同时使用两个时收益递减。
 ie.manual.entry.advancedCokeOven3=在多方块结构上放置比较器可输出与当前批次进度成比例的信号，空闲时为0，接近完成时为15。
 
 ie.manual.entry.alternator.name=交流发电机
@@ -226,7 +226,7 @@ ie.manual.entry.boilerSolid2=- 空闲时以待机模式运行，只消耗一丝�
 ie.manual.entry.distiller.name=蒸馏器
 ie.manual.entry.distiller.subtext=比水更清澈
 ie.manual.entry.distiller0=蒸馏器是一种可以将水蒸馏成蒸馏水和盐多方块结构。<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击正面中央的铁板金属块完成搭建.
-ie.manual.entry.distiller1=蒸馏器需要能源供应才能将水蒸馏成蒸馏水和盐。<br>水可以通过机器左侧标有蓝点的开口输入到蒸馏器中.另一侧带有橙点的开口则用作蒸馏水输出，而另一个橙点开口作为盐的输出口。<br>可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.
+ie.manual.entry.distiller1=蒸馏器需要能源供应才能将水蒸馏成蒸馏水和盐。<br>水可以通过机器右侧标有蓝点的开口输入到蒸馏器中.另一侧带有橙点的开口则用作蒸馏水输出，而另一个橙点开口作为盐的输出口。<br>可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.
 ie.manual.entry.distiller2=物品产出是有几率的，并非必定获得，与流体产出同时进行。在多方块结构上放置比较器可输出与内部Flux储量成比例的信号。支持OpenComputers。
 
 ie.manual.entry.openBarrel.name=无盖金属桶

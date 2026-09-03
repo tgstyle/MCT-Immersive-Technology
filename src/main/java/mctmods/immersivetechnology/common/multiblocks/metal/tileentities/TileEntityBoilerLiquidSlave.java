@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerLiquid;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
@@ -66,7 +66,7 @@ public class TileEntityBoilerLiquidSlave extends TileEntityTemplateMultiblock<Ti
         return cachedMaster;
     }
 
-    @Override protected GenericShape getShapeGetter() { return BoilerLiquidShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("boiler_liquid"); }
 
     @Override public double getHeatLevel() {
         TileEntityBoilerLiquidMaster m = master();

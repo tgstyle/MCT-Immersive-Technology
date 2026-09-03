@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
@@ -68,9 +68,9 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
         return cachedMaster;
     }
 
-    @Override protected GenericShape getShapeGetter() { return BoilerSolidShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("boiler_solid"); }
 
-    @Override public PropertyBoolInverted getBoolProperty(Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return inf == IEBlockInterfaces.IActiveState.class ? IEProperties.BOOLEANS[1] : super.getBoolProperty(inf); }
+    @Override @Nonnull public PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return inf == IEBlockInterfaces.IActiveState.class ? IEProperties.BOOLEANS[1] : super.getBoolProperty(inf); }
 
     @Override public boolean getIsActive() {
         TileEntityBoilerSolidMaster m = master();

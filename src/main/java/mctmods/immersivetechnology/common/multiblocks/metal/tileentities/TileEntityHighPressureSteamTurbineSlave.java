@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HighPressureSteamTurbineShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
@@ -69,7 +69,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateM
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return HighPressureSteamTurbineShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("high_pressure_steam_turbine"); }
 
     @Override public NonNullList<ItemStack> getInventory() { return null; }
 

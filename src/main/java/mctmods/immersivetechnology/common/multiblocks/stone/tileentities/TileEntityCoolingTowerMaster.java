@@ -18,7 +18,6 @@ import com.immersiveconvergence.api.util.ICFluidTank;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -123,7 +122,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         ParticleSmokeCustom cloud = new ParticleSmokeCustom(world,
                 particlePos0.getX() + 2 - rand.nextFloat() * 3,
                 particlePos0.getY(),
-                particlePos0.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f * ITConfig.client.particles.custom_smoke_height, 0, 7);
+                particlePos0.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f * ITConfig.Client.particles.custom_smoke_height, 0, 7);
         cloud.setRBGColorF(1, 1, 1);
         ClientUtils.mc().effectRenderer.addEffect(cloud);
     }

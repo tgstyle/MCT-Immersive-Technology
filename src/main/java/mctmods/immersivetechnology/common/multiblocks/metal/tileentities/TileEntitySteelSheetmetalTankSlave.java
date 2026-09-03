@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -76,7 +76,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return SteelSheetmetalTankShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("steel_sheetmetal_tank"); }
 
     @Override protected boolean useMirroredShape() { return false; }
 

@@ -12,13 +12,15 @@ import net.minecraft.util.ITickable;
 
 import javax.annotation.Nonnull;
 
+import mctmods.immersivetechnology.common.util.ITUtils;
+
 public class TileEntityRotorCreative extends TileEntityIEBase implements ITickable {
     private int rpm;
     private EnumFacing facing = EnumFacing.NORTH;
 
     @Override public void update() {
         if (world.isRemote) { return; }
-        IBlockState state = ICContent.blockDevice.getStateFromMeta(ICBlockType_Device.ROTOR_CREATIVE.getMeta());
+        IBlockState state = ITUtils.stateOf(ICContent.blockDevice, ICBlockType_Device.ROTOR_CREATIVE);
         world.setBlockState(pos, state, 3);
         TileEntity converted = world.getTileEntity(pos);
         if (converted instanceof com.immersiveconvergence.common.blocks.tileentities.TileEntityRotorCreative) {

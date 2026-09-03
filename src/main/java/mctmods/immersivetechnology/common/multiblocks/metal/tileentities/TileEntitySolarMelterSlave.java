@@ -4,7 +4,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -73,7 +73,7 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return SolarMelterShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("solar_melter"); }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() {
         TileEntitySolarMelterMaster m = master();

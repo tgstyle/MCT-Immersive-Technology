@@ -7,10 +7,12 @@ import mctmods.immersivetechnology.client.gui.GuiLoadController;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,6 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyStorage {
 
@@ -32,6 +35,9 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	@SideOnly(Side.CLIENT)
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiLoadController(this)); }
+
+	@SideOnly(Side.CLIENT)
+	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform, 270, 180, 0, 0, 1); }
 
 	public static class DummyBattery implements IEnergyStorage {
 

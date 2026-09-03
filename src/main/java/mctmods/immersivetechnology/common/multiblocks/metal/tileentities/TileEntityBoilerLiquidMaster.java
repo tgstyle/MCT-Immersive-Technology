@@ -19,7 +19,6 @@ import com.immersiveconvergence.api.util.ICFluidTank;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -246,7 +245,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
                     exhaustPos0.getX() + 0.5,
                     exhaustPos0.getY() + 1.25,
                     exhaustPos0.getZ() + 0.5,
-                    0, 0.125, 0, ITConfig.client.particles.colored_smoke_height);
+                    0, 0.125, 0, ITConfig.Client.particles.colored_smoke_height);
             cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
             Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
         }

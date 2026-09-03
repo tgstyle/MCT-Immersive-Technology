@@ -9,10 +9,12 @@ import mctmods.immersivetechnology.client.gui.GuiFluidValve;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -23,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class TileEntityFluidValve extends TileEntityCommonValve implements IFluidHandler, IFluidPipe, IEBlockInterfaces.IBlockBounds {
 
@@ -41,6 +44,9 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	@SideOnly(Side.CLIENT)
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this)); }
+
+	@SideOnly(Side.CLIENT)
+	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform, 0, 90, 270, 2, 2); }
 
 	public static class DummyTank implements IFluidHandler {
 
@@ -88,7 +94,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 		canAccept = timeLimit != -1 ? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
 		canAccept = keepSize != -1 ? Math.min(Math.max(keepSize - getTankFill(destination.getTankProperties(), resource), 0), canAccept) : canAccept;
 		canAccept = packetLimit != -1 ? Math.min(canAccept, packetLimit) : canAccept;
-		if (redstoneMode > 0) { canAccept *= (int)((double)(redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15); }
+		if (redstoneMode > 0) { canAccept = (int)(canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0)); }
 		if (canAccept == 0) { return 0; }
 		FluidStack toInsert = resource.copy();
 		toInsert.amount = canAccept;

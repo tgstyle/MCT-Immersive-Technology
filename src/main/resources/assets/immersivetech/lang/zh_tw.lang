@@ -198,7 +198,7 @@ ie.manual.entry.advancedCokeOven.name=高級焦爐
 ie.manual.entry.advancedCokeOven.subtext=現在更快了
 ie.manual.entry.advancedCokeOven0=高級焦爐是允許更快生產焦炭和木焦油的多方塊結構。<br>結構如上所示，使用工程師錘擊中央強化焦爐磚塊形成。
 ie.manual.entry.advancedCokeOven1=允許輸入輸出自動化，也可以用基熱器加速過程添加熱空氣。<br>爐子是用強化磚做的，所以建議第一批鋼用於此升級。<br>類似於改進高爐,焦炭輸出在前,木焦油在後.煤從頂部輸入。
-ie.manual.entry.advancedCokeOven2=焦爐基熱器用於加速煤精煉過程。每爐可連接兩個基熱器到兩側端口，每個基熱器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。預設設定下，每個啟用的基熱器可將處理速度提升一倍。
+ie.manual.entry.advancedCokeOven2=焦爐基熱器用於加速煤精煉過程。每爐可連接兩個基熱器到兩側端口，每個基熱器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。預設設定下，每個啟用的基熱器都會提升處理速度，但同時使用兩個時收益遞減。
 ie.manual.entry.advancedCokeOven3=在多方塊結構上放置比較器可輸出與當前批次進度成比例的信號，閒置時為0，接近完成時為15。
 
 ie.manual.entry.alternator.name=交流發電機
@@ -226,7 +226,7 @@ ie.manual.entry.boilerSolid2=- 空閒時以待機模式運行，只消耗一絲�
 ie.manual.entry.distiller.name=蒸餾器
 ie.manual.entry.distiller.subtext=比水更清澈
 ie.manual.entry.distiller0=蒸餾器是一種可以將水蒸餾成蒸餾水和鹽多方塊結構。<br>具體結構如上圖所示，全部搭建完成後，使用工程師錘右擊正面中央的鐵板金屬塊完成搭建.
-ie.manual.entry.distiller1=蒸餾器需要能源供應才能將水蒸餾成蒸餾水和鹽。<br>水可以通過機器左側標有藍點的開口輸入到蒸餾器中.另一側帶有橙點的開口則用作蒸餾水輸出，而另一個橙點開口作為鹽的輸出口。<br>可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式.
+ie.manual.entry.distiller1=蒸餾器需要能源供應才能將水蒸餾成蒸餾水和鹽。<br>水可以通過機器右側標有藍點的開口輸入到蒸餾器中.另一側帶有橙點的開口則用作蒸餾水輸出，而另一個橙點開口作為鹽的輸出口。<br>可以在控制面板通過紅石信號控制機器開關，使用工程師錘右擊控制面板可改變紅石信號模式.
 ie.manual.entry.distiller2=物品產出是有機率的，並非必定獲得，與流體產出同時進行。在多方塊結構上放置比較器可輸出與內部Flux儲量成比例的信號。支援OpenComputers。
 
 ie.manual.entry.openBarrel.name=無蓋金屬桶

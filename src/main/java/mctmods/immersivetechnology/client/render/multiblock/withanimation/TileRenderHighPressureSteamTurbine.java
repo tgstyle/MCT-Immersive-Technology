@@ -28,8 +28,8 @@ import javax.annotation.Nonnull;
 public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRenderer<TileEntityHighPressureSteamTurbineMaster> {
     @Override public boolean isGlobalRenderer(@Nonnull TileEntityHighPressureSteamTurbineMaster te) { return true; }
 
-    @Override public void render(TileEntityHighPressureSteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if (!ITConfig.client.render.steam_turbine_renderer || !ITTESRHelper.inRenderRange(x, y, z)) { return; }
+    @Override public void render(@Nonnull TileEntityHighPressureSteamTurbineMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        if (!ITConfig.Client.render.steam_turbine_renderer || ITTESRHelper.outOfRenderRange(x, y, z)) { return; }
         if (!te.formed || te.isInvalid() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
         final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Tessellator tessellator = Tessellator.getInstance();

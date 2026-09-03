@@ -7,13 +7,13 @@ import com.immersiveconvergence.api.multiblock.TemplateData;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidShape;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,7 +58,7 @@ public class BoilerLegacyConverter {
         EnumFacing facing = master.facing;
         boolean mirrored = master.mirrored;
 
-        TemplateData tankTemplate = BoilerTankShape.SHAPE.template;
+        TemplateData tankTemplate = ITShapes.get("boiler_tank").template;
         for (int h = 0; h < tankTemplate.height; h++) for (int l = 0; l < tankTemplate.length; l++) for (int w = 0; w < tankTemplate.width; w++) {
             if (tankTemplate.getState(w, h, l) == null) { continue; }
             BlockPos worldPos = worldFromLegacyLocal(masterPos, facing, mirrored, w, h, l);
@@ -69,7 +69,7 @@ public class BoilerLegacyConverter {
             part.markDirty();
         }
 
-        TemplateData liquidTemplate = BoilerLiquidShape.SHAPE.template;
+        TemplateData liquidTemplate = ITShapes.get("boiler_liquid").template;
         BlockPos liquidMasterPos = worldFromLegacyLocal(masterPos, facing, mirrored, LEGACY_BURNER_X, 1, 0);
         for (int h = 0; h < liquidTemplate.height; h++) for (int l = 0; l < liquidTemplate.length; l++) {
             BlockPos worldPos = worldFromLegacyLocal(masterPos, facing, mirrored, LEGACY_BURNER_X, h, l);
@@ -82,7 +82,7 @@ public class BoilerLegacyConverter {
                 continue;
             }
             boolean isMaster = worldPos.equals(liquidMasterPos);
-            IBlockState state = ITContent.blockMetalMultiblock1.getStateFromMeta((isMaster ? BlockType_MetalMultiblock1.BOILER_LIQUID : BlockType_MetalMultiblock1.BOILER_LIQUID_SLAVE).getMeta()).withProperty(IEProperties.FACING_HORIZONTAL, facing).withProperty(IEProperties.MULTIBLOCKSLAVE, !isMaster);
+            IBlockState state = ITUtils.stateOf(ITContent.blockMetalMultiblock1, isMaster ? BlockType_MetalMultiblock1.BOILER_LIQUID : BlockType_MetalMultiblock1.BOILER_LIQUID_SLAVE).withProperty(IEProperties.FACING_HORIZONTAL, facing).withProperty(IEProperties.MULTIBLOCKSLAVE, !isMaster);
             world.setBlockState(worldPos, state, 2);
             TileEntity converted = world.getTileEntity(worldPos);
             if (converted instanceof TileEntityBoilerLiquidSlave) {

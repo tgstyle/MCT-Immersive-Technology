@@ -1,0 +1,73 @@
+{
+ "forge_marker": 1,
+ "defaults": {
+  "transform": "forge:default-block",
+  "model": "immersivetech:it_tunnel",
+  "custom": {
+   "flip-v": true
+  },
+  "textures": {
+   "side": "immersivetech:block/metal/valve_limiter_side",
+   "top": "immersivetech:block/metal/valve_limiter_top",
+   "bottom": "immersivetech:block/metal/valve_limiter_bottom"
+  }
+ },
+ "variants": {
+  "inventory,type=stack_limiter": [
+   {}
+  ],
+  "type": {
+   "stack_limiter": {}
+  },
+  "facing": {
+   "north": {
+    "transform": {
+     "rotation": {
+      "y": 0
+     }
+    }
+   },
+   "south": {
+    "transform": {
+     "rotation": {
+      "y": 180
+     }
+    }
+   },
+   "west": {
+    "transform": {
+     "rotation": {
+      "y": 90
+     }
+    }
+   },
+   "east": {
+    "transform": {
+     "rotation": {
+      "y": -90
+     }
+    }
+   },
+   "up": {
+    "transform": {
+     "rotation": {
+      "x": 90
+     }
+    }
+   },
+   "down": {
+    "transform": {
+     "rotation": {
+      "x": -90
+     }
+    }
+   }
+  },
+  "rotation": {
+   "0": {},
+   "1": {},
+   "2": {},
+   "3": {}
+  }
+ }
+}

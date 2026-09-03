@@ -5,11 +5,12 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarTowerShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -30,7 +31,7 @@ public class TileEntityITMultiblockPartSolarTower extends MachineTemplateMultibl
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartSolarTower() { super("IT:SolarTower", SolarTowerShape.SHAPE, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER.getMeta()), ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartSolarTower() { super("IT:SolarTower", ITShapes.get("solar_tower"), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_TOWER), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

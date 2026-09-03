@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.connectors.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import blusunrize.immersiveengineering.api.IEProperties;
@@ -12,7 +13,6 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerIn
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAttachedIntegerProperies;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 
@@ -41,7 +41,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public class TileEntityTimer extends TileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperies {
+public class TileEntityTimer extends TileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperies, ITileSyncReceiver {
     private int lastOutput = 0;
     private int target = 40;
     private int rotation = 0;

@@ -10,7 +10,8 @@ import com.immersiveconvergence.api.multiblock.*;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityRadiatorSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import net.minecraft.block.state.IBlockState;
@@ -32,10 +33,11 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartRadiator() { super("IT:Radiator", RadiatorShape.SHAPE, ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR.getMeta()), ITContent.blockMetalMultiblock1.getStateFromMeta(BlockType_MetalMultiblock1.RADIATOR_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartRadiator() { super("IT:Radiator", ITShapes.get("radiator"), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.RADIATOR), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.RADIATOR_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     @Override public Set<BlockPos> worldOffsetsFromMaster(EnumFacing facing, boolean mirrored) {
         if (!mirrored) { return super.worldOffsetsFromMaster(facing, false); }
         Set<BlockPos> offsets = new HashSet<>();

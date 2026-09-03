@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +33,7 @@ public class CoolingTowerLegacyConverter {
         NBTTagCompound nbt = part.writeToNBT(new NBTTagCompound());
         boolean isMaster = part instanceof TileEntityCoolingTowerMaster;
         part.formed = false;
-        IBlockState state = ITContent.blockStoneMultiblock.getStateFromMeta((isMaster ? BlockType_StoneMultiblock.COOLING_TOWER : BlockType_StoneMultiblock.COOLING_TOWER_SLAVE).getMeta()).withProperty(IEProperties.FACING_HORIZONTAL, part.facing).withProperty(IEProperties.MULTIBLOCKSLAVE, !isMaster);
+        IBlockState state = ITUtils.stateOf(ITContent.blockStoneMultiblock, isMaster ? BlockType_StoneMultiblock.COOLING_TOWER : BlockType_StoneMultiblock.COOLING_TOWER_SLAVE).withProperty(IEProperties.FACING_HORIZONTAL, part.facing).withProperty(IEProperties.MULTIBLOCKSLAVE, !isMaster);
         world.setBlockState(position, state, 2);
         TileEntity converted = world.getTileEntity(position);
         if (converted != null) {

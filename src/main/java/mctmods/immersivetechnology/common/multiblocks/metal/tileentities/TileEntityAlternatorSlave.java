@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -72,7 +72,7 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return AlternatorShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("alternator"); }
 
     @Override protected boolean useMirroredShape() { return false; }
 

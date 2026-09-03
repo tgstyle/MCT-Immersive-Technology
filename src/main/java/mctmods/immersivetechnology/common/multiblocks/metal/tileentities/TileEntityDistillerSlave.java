@@ -4,7 +4,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -71,7 +71,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return DistillerShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("distiller"); }
 
     @Override public NonNullList<ItemStack> getInventory() {
         TileEntityDistillerMaster m = master();

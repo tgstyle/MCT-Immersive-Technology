@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -69,7 +69,7 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return GasTurbineShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("gas_turbine"); }
 
     @Override public NonNullList<ItemStack> getInventory() { return null; }
 

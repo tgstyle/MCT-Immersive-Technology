@@ -11,12 +11,12 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -55,7 +55,7 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ICFluidTank.TankListener, IIEInventory, IComparatorOverride {
+public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ICFluidTank.TankListener, IIEInventory, IComparatorOverride, ITileSyncReceiver {
 
     private static int tankSize() { return Multiblocks.advancedCokeOven.advancedCokeOven_tankSize; }
     public static float baseSpeed = Multiblocks.advancedCokeOven.advancedCokeOven_speed_base;
@@ -125,7 +125,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
         Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleCampfireSmoke(world,
                 smokePos0.getX() + 0.5, smokePos0.getY() + 0.9, smokePos0.getZ() + 0.5,
-                (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.client.particles.colored_smoke_height / Config.SMOKE_HEIGHT_DEFAULT, (rand.nextDouble() - 0.5) * 0.0125));
+                (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.Client.particles.colored_smoke_height / Config.SMOKE_HEIGHT_DEFAULT, (rand.nextDouble() - 0.5) * 0.0125));
     }
 
     @SideOnly(Side.CLIENT)

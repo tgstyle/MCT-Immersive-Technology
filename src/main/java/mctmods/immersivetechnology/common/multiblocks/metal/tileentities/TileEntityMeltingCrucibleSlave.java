@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -70,7 +70,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return MeltingCrucibleShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("melting_crucible"); }
 
     @Override
     @Nonnull

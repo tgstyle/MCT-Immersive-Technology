@@ -6,7 +6,8 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -20,7 +21,7 @@ public class TileEntityITMultiblockPartCoolingTower extends MachineTemplateMulti
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartCoolingTower() { super("IT:CoolingTower", CoolingTowerShape.SHAPE, ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COOLING_TOWER.getMeta()), ITContent.blockStoneMultiblock.getStateFromMeta(BlockType_StoneMultiblock.COOLING_TOWER_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartCoolingTower() { super("IT:CoolingTower", ITShapes.get("cooling_tower"), ITUtils.stateOf(ITContent.blockStoneMultiblock, BlockType_StoneMultiblock.COOLING_TOWER), ITUtils.stateOf(ITContent.blockStoneMultiblock, BlockType_StoneMultiblock.COOLING_TOWER_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

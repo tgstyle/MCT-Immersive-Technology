@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
+import com.immersiveconvergence.api.capability.RotationInertiaProcess;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.PoICache;
@@ -23,11 +24,9 @@ import com.immersiveconvergence.core.ICCommonConfig;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.process.RotationInertiaProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartGasTurbine;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -197,7 +196,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             b = (tint & 0xFF) / 255f;
         }
         ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
-                smokePos1.getX() + 0.5, smokePos1.getY() + 0.5, smokePos1.getZ() + 0.5, velX, baseUp, velZ, ITConfig.client.particles.colored_smoke_height);
+                smokePos1.getX() + 0.5, smokePos1.getY() + 0.5, smokePos1.getZ() + 0.5, velX, baseUp, velZ, ITConfig.Client.particles.colored_smoke_height);
         cloud.setRBGColorF(r, g, b);
         ClientUtils.mc().effectRenderer.addEffect(cloud);
     }

@@ -6,7 +6,8 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteamTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -20,7 +21,7 @@ public class TileEntityITMultiblockPartSteamTurbine extends MachineTemplateMulti
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartSteamTurbine() { super("IT:SteamTurbine", SteamTurbineShape.SHAPE, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEAM_TURBINE.getMeta()), ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEAM_TURBINE_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartSteamTurbine() { super("IT:SteamTurbine", ITShapes.get("steam_turbine"), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.STEAM_TURBINE), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.STEAM_TURBINE_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

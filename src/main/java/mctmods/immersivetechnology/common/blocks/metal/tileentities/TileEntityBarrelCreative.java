@@ -46,19 +46,9 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
 
     public TileEntityBarrelCreative() {}
 
-    private FluidStack getOutputStack(boolean pressurized) {
+    private FluidStack getStack(int amount, boolean pressurized) {
         if (selectedFluid == null) { return null; }
-        FluidStack stack = Utils.copyFluidStackWithAmount(selectedFluid, Blocks.barrels.barrel_creative_outputAmount, true);
-        if (pressurized) {
-            if (stack.tag == null) { stack.tag = new NBTTagCompound(); }
-            stack.tag.setBoolean("pressurized", true);
-        }
-        return stack;
-    }
-
-    private FluidStack getInfiniteStack(boolean pressurized) {
-        if (selectedFluid == null) { return null; }
-        FluidStack stack = Utils.copyFluidStackWithAmount(selectedFluid, Integer.MAX_VALUE, true);
+        FluidStack stack = Utils.copyFluidStackWithAmount(selectedFluid, amount, true);
         if (pressurized) {
             if (stack.tag == null) { stack.tag = new NBTTagCompound(); }
             stack.tag.setBoolean("pressurized", true);
@@ -120,7 +110,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
             if (output != null) {
                 TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
-                FluidStack toOffer = getOutputStack(tile instanceof ITIPipe);
+                FluidStack toOffer = getStack(Blocks.barrels.barrel_creative_outputAmount, tile instanceof ITIPipe);
                 if (toOffer == null) { continue; }
                 int accepted = output.fill(toOffer, false);
                 if (accepted <= 0) { continue; }
@@ -163,7 +153,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     }
 
     @Override
-    public FluidStack getFluid() { return getInfiniteStack(false); }
+    public FluidStack getFluid() { return getStack(Integer.MAX_VALUE, false); }
 
     @Override
     public int getFluidAmount() { return selectedFluid == null ? 0 : Integer.MAX_VALUE; }

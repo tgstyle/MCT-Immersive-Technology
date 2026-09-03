@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -65,7 +65,7 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTempla
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return ElectrolyticCrucibleBatteryShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("electrolytic_crucible_battery"); }
 
     @Override public NonNullList<ItemStack> getInventory() { return null; }
 

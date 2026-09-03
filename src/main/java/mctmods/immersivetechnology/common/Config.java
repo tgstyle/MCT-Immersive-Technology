@@ -22,12 +22,12 @@ public class Config {
                 public int barrel_creative_outputAmount = Integer.MAX_VALUE;
                 @Comment({"The capacity of the tank for the Open Barrel [Default=12000]"})
                 public int barrel_open_tankSize = 12000;
-                @Comment({"How fast can the Open Barrel push fluids out, in mB [Default=40]"})
-                public int barrel_open_transferSpeed = 40;
+                @Comment({"How fast can the Open Barrel push fluids out, in mB [Default=1000]"})
+                public int barrel_open_transferSpeed = 1000;
                 @Comment({"The capacity of the tank for the Steel Barrel [Default=24000]"})
                 public int barrel_steel_tankSize = 24000;
-                @Comment({"How fast can the Steel Barrel push fluids out, in mB [Default=500]"})
-                public int barrel_steel_transferSpeed = 500;
+                @Comment({"How fast can the Steel Barrel push fluids out, in mB [Default=1000]"})
+                public int barrel_steel_transferSpeed = 1000;
             }
         }
         public static class Multiblocks {
@@ -73,14 +73,14 @@ public class Config {
                 public double alternator_threshold = 0.0;
             }
             public static class AdvancedCokeOven {
-                @Comment({"The capacity of the tank for the Advanced Coke Oven [Default=24000]"})
-                public int advancedCokeOven_tankSize = 24000;
+                @Comment({"The capacity of the tank for the Advanced Coke Oven [Default=12000]"})
+                public int advancedCokeOven_tankSize = 12000;
                 @Comment({"How fast the Advanced Coke Oven (with no baseheaters) is when compared to the basic Coke Oven. A value of 1 means same speed. [Default=1]"})
                 public float advancedCokeOven_speed_base = 1;
-                @Comment({"This value gets added per baseheater, to the speed of the Advanced Coke Oven [Default=1]"})
-                public float advancedCokeOven_baseheater_speed_increase = 1;
-                @Comment({"The speed of the Advanced Coke Oven gets multiplied by this value per baseheater [Default=1]"})
-                public float advancedCokeOven_baseheater_speed_multiplier = 1;
+                @Comment({"This value gets added per baseheater, to the speed of the Advanced Coke Oven [Default=0.25]"})
+                public float advancedCokeOven_baseheater_speed_increase = 0.25f;
+                @Comment({"The speed of the Advanced Coke Oven gets multiplied by this value per baseheater [Default=1.25]"})
+                public float advancedCokeOven_baseheater_speed_multiplier = 1.25f;
             }
             public static class AdvancedCokeOvenBaseheater {
                 @Comment({"The energy per tick the Coke Oven Baseheater consumes while processing [Default=32]"})
@@ -117,10 +117,10 @@ public class Config {
                 public int boilerSolid_burnTime_divider = 10;
             }
             public static class CoolingTower {
-                @Comment({"The capacity of the input tanks for the Cooling Tower [Default=100000]"})
-                public int coolingTower_input_tankSize = 100000;
-                @Comment({"The capacity of the output tanks for the Cooling Tower [Default=20000]"})
-                public int coolingTower_output_tankSize = 20000;
+                @Comment({"The capacity of the input tanks for the Cooling Tower [Default=24000]"})
+                public int coolingTower_input_tankSize = 24000;
+                @Comment({"The capacity of the output tanks for the Cooling Tower [Default=24000]"})
+                public int coolingTower_output_tankSize = 24000;
                 @Comment({"Biome temperature effect strength on cooling tower speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8 [Default=0.5]"})
                 public double coolingTower_biome_temp_factor = 0.5;
                 @Comment({"How much the local biome's humidity affects Cooling Tower speed. 0 disables the effect entirely. Drier biomes speed it up, wetter biomes slow it down [Default=3.0]"})
@@ -131,8 +131,8 @@ public class Config {
                 public int distiller_input_tankSize = 24000;
                 @Comment({"The capacity of the output tank for the Distiller [Default=24000]"})
                 public int distiller_output_tankSize = 24000;
-                @Comment({"The maximum energy a Distiller can store [Default=16000]"})
-                public int distiller_energy_size = 16000;
+                @Comment({"The maximum energy a Distiller can store [Default=32000]"})
+                public int distiller_energy_size = 32000;
                 @Comment({"The maximum energy input per tick per port for the Distiller [Default=512]"})
                 public int distiller_energy_maxInput = 512;
             }
@@ -177,14 +177,14 @@ public class Config {
                 public boolean enable_steamTurbine = true;
             }
             public static class GasTurbine {
-                @Comment({"The power consumption of the electric starter for the Gas Turbine [Default=3072]"})
-                public int gasTurbine_electric_starter_consumption = 3072;
-                @Comment({"The capacity of the electric starter for the Gas Turbine [Default=3072]"})
-                public int gasTurbine_electric_starter_size = 6144;
-                @Comment({"The capacity of the input tank for the Gas Turbine [Default=10000]"})
-                public int gasTurbine_input_tankSize = 10000;
-                @Comment({"The capacity of the output tank for the Gas Turbine [Default=10000]"})
-                public int gasTurbine_output_tankSize = 10000;
+                @Comment({"The power consumption of the electric starter for the Gas Turbine [Default=4096]"})
+                public int gasTurbine_electric_starter_consumption = 4096;
+                @Comment({"The capacity of the electric starter for the Gas Turbine [Default=8192]"})
+                public int gasTurbine_electric_starter_size = 8192;
+                @Comment({"The capacity of the input tank for the Gas Turbine [Default=12000]"})
+                public int gasTurbine_input_tankSize = 12000;
+                @Comment({"The capacity of the output tank for the Gas Turbine [Default=12000]"})
+                public int gasTurbine_output_tankSize = 12000;
                 @Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
                 public float gasTurbine_speed_maxRotation = 72;
                 @Comment({"Rotating mass of the Gas Turbine. Higher values slow both spin-up and coast-down [Default=8.0]"})
@@ -197,8 +197,8 @@ public class Config {
                 public float gasTurbine_speed_maxFactor = 0.5f;
                 @Comment({"The power consumption  of the spark plug for the Gas Turbine [Default=1024]"})
                 public int gasTurbine_sparkplug_consumption = 1024;
-                @Comment({"The capacity of the spark plug for the Gas Turbine [Default=1024]"})
-                public int gasTurbine_sparkplug_size = 1024;
+                @Comment({"The capacity of the spark plug for the Gas Turbine [Default=2048]"})
+                public int gasTurbine_sparkplug_size = 2048;
                 @Comment({"How much of the maximum alternator output power should the Gas Turbine generate [Default=1.0]"})
                 public float gasTurbine_torque = 1.0f;
             }
@@ -237,10 +237,10 @@ public class Config {
                 public boolean enableJEIMultiblocks = true;
             }
             public static class MeltingCrucible {
-                @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 1.0]"})
-                public double meltingCrucible_heat_loss_multiplier = 1.0;
-                @Comment({"Temperature gain per tick when consuming full heating energy. Actual gain is proportional to energy consumed. [Default=0.23]"})
-                public double meltingCrucible_heat_gainPerTick = 0.23;
+                @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 0.2]"})
+                public double meltingCrucible_heat_loss_multiplier = 0.2;
+                @Comment({"Temperature gain per tick while heating energy is being consumed. [Default=0.55]"})
+                public double meltingCrucible_heat_gainPerTick = 0.55;
                 @Comment({"The maximum energy a Melting Crucible can store [Default=50000]"})
                 public int meltingCrucible_energy_size = 50000;
                 @Comment({"The maximum energy input per tick per port for the Melting Crucible [Default=1024]"})
@@ -273,40 +273,38 @@ public class Config {
                 public double solarMelter_heat_workingTemperature = 1000.0;
                 @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
                 public double solarMelter_maximum_reflector_strength = 227.5;
-                @Comment({"The capacity of the output tank for the Solar Melter [Default=10000]"})
-                public int solarMelter_output_tankSize = 10000;
-                @Comment({"Default amount of energy per tick the solar melter loses when not processing. Maximum energy input per tick by mirrors is ~30720  [Default=80]"})
-                public int solarMelter_progress_lossEnergy = 80;
+                @Comment({"The capacity of the output tank for the Solar Melter [Default=12000]"})
+                public int solarMelter_output_tankSize = 12000;
                 @Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
                 public float solarMelter_speed_multiplier = 1;
             }
             public static class SolarReflector {
-                @Comment({"The maximum distance between the Solar Reflectors and the Solar Tower **WARNING** The tower's ability to produce steam will be severely hampered if this number is small!!! [Default=48]"})
-                public int solarReflector_maxRange = 48;
+                @Comment({"The maximum distance between the Solar Reflectors and the Solar Tower **WARNING** The tower's ability to produce steam will be severely hampered if this number is small!!! [Default=22]"})
+                public int solarReflector_maxRange = 22;
                 @Comment({"The minimum distance between the Solar Reflectors and the Solar Tower [Default=12]"})
                 public int solarReflector_minRange = 12;
             }
             public static class SolarTower {
                 @Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
                 public double solarTower_heat_loss_multiplier = 1.0;
-                @Comment({"A Solar Tower can only start processing recipes once it reaches this temperature [Default=600.0]"})
-                public double solarTower_heat_workingTemperature = 600.0;
-                @Comment({"The capacity of the input tank for the Solar Tower [Default=32000]"})
-                public int solarTower_input_tankSize = 32000;
+                @Comment({"A Solar Tower can only start processing recipes once it reaches this temperature [Default=400.0]"})
+                public double solarTower_heat_workingTemperature = 400.0;
+                @Comment({"The capacity of the input tank for the Solar Tower [Default=12000]"})
+                public int solarTower_input_tankSize = 12000;
                 @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
                 public double solarTower_maximum_reflector_strength = 227.5;
-                @Comment({"The capacity of the output tank for the Solar Tower [Default=32000]"})
-                public int solarTower_output_tankSize = 32000;
+                @Comment({"The capacity of the output tank for the Solar Tower [Default=12000]"})
+                public int solarTower_output_tankSize = 12000;
                 @Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=1]"})
                 public int solarTower_progress_lossInTicks = 1;
                 @Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
                 public float solarTower_speed_multiplier = 1;
             }
             public static class SteamTurbine {
-                @Comment({"The capacity of the input tank for the Steam Turbine [Default=10000]"})
-                public int steamTurbine_input_tankSize = 10000;
-                @Comment({"The capacity of the output tank for the Steam Turbine [Default=10000]"})
-                public int steamTurbine_output_tankSize = 10000;
+                @Comment({"The capacity of the input tank for the Steam Turbine [Default=12000]"})
+                public int steamTurbine_input_tankSize = 12000;
+                @Comment({"The capacity of the output tank for the Steam Turbine [Default=12000]"})
+                public int steamTurbine_output_tankSize = 12000;
                 @Comment({"How fast should the Steam Turbine's axle rotate in degrees per tick (purely cosmetic) [Default=72]"})
                 public float steamTurbine_speed_maxRotation = 72;
                 @Comment({"Rotating mass of the Steam Turbine. Higher values slow both spin-up and coast-down [Default=10.0]"})
@@ -332,6 +330,8 @@ public class Config {
             public static Render render = new Render();
 
             public static class Particles {
+                @Comment({"Should smoke particles collide with blocks instead of drifting through them [Default=false]"})
+                public boolean collide = false;
                 @Comment({"How strongly the tinted smoke from the boilers, turbines, coke oven and solar melter rises [Default=0.7]"})
                 public double colored_smoke_height = 0.7;
                 @Comment({"Height scale for the cooling tower's smoke. 1.0 is the shipped height [Default=1.0]"})

@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.client.gui;
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;

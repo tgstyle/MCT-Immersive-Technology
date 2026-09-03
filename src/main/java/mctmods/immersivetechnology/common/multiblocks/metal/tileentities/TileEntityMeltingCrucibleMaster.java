@@ -18,7 +18,6 @@ import com.immersiveconvergence.api.util.ICFluidTank;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
@@ -241,12 +240,12 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return changed;
     }
 
-    private double getTemperatureIncrease(int energyUsed) { return (energyUsed / (double)energyPerTickToHeat()) * heatGainBase(); }
+    private double getTemperatureIncrease(int energyUsed) { return energyUsed > 0 ? heatGainBase() : 0; }
 
     private double getCooldownAmount() {
         double heatLost = world.getBiome(getPos()).getTemperature(getPos());
         if (heatLost <= 0) heatLost = 0.1;
-        return (1 / heatLost) * heatLossMultiplier() / 19.4;
+        return (1 / heatLost) * heatLossMultiplier();
     }
 
     public double targetTemperature() {

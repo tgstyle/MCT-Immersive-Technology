@@ -6,7 +6,8 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock2;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -20,7 +21,7 @@ public class TileEntityITMultiblockPartBoilerSolid extends MachineTemplateMultib
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartBoilerSolid() { super("IT:BoilerSolid", BoilerSolidShape.SHAPE, ITContent.blockMetalMultiblock2.getStateFromMeta(BlockType_MetalMultiblock2.BOILER_SOLID.getMeta()), ITContent.blockMetalMultiblock2.getStateFromMeta(BlockType_MetalMultiblock2.BOILER_SOLID_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartBoilerSolid() { super("IT:BoilerSolid", ITShapes.get("boiler_solid"), ITUtils.stateOf(ITContent.blockMetalMultiblock2, BlockType_MetalMultiblock2.BOILER_SOLID), ITUtils.stateOf(ITContent.blockMetalMultiblock2, BlockType_MetalMultiblock2.BOILER_SOLID_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

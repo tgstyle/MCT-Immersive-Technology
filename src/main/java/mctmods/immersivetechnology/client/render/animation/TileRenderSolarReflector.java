@@ -22,10 +22,12 @@ import net.minecraft.util.math.BlockPos;
 
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+
 public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEntitySolarReflectorMaster> {
 	@SuppressWarnings("deprecation")
-	@Override public void render(TileEntitySolarReflectorMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		if (!ITConfig.client.render.solar_reflector_renderer) { return; }
+	@Override public void render(@Nonnull TileEntitySolarReflectorMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+		if (!ITConfig.Client.render.solar_reflector_renderer) { return; }
 		if (!te.formed || te.isDummy() || !te.getWorld().isBlockLoaded(te.getPos(), false)) { return; }
 		final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
 		BlockPos blockPos = te.getPos();

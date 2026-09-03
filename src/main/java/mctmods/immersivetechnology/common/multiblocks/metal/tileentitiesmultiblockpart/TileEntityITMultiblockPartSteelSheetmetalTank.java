@@ -5,7 +5,8 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,7 @@ public class TileEntityITMultiblockPartSteelSheetmetalTank extends MachineTempla
 
     static ItemStack renderStack = ItemStack.EMPTY;
 
-    public TileEntityITMultiblockPartSteelSheetmetalTank() { super("IT:SteelSheetmetalTank", SteelSheetmetalTankShape.SHAPE, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK.getMeta()), ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.STEEL_TANK_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartSteelSheetmetalTank() { super("IT:SteelSheetmetalTank", ITShapes.get("steel_sheetmetal_tank"), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.STEEL_TANK), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.STEEL_TANK_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

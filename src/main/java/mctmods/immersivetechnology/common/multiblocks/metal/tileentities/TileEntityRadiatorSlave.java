@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -80,11 +80,10 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return RadiatorShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("radiator"); }
 
-    @Override protected AxisAlignedBB preprocessShapeAABB(AxisAlignedBB aabb) {
-        return mirrored ? new AxisAlignedBB(aabb.minY, aabb.minX, aabb.minZ, aabb.maxY, aabb.maxX, aabb.maxZ) : aabb;
-    }
+    @SuppressWarnings("SuspiciousNameCombination")
+    @Override protected AxisAlignedBB preprocessShapeAABB(AxisAlignedBB aabb) { return mirrored ? new AxisAlignedBB(aabb.minY, aabb.minX, aabb.minZ, aabb.maxY, aabb.maxX, aabb.maxZ) : aabb; }
 
     @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }
 

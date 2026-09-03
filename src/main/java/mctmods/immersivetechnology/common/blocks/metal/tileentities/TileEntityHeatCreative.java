@@ -9,10 +9,12 @@ import net.minecraft.util.ITickable;
 
 import javax.annotation.Nonnull;
 
+import mctmods.immersivetechnology.common.util.ITUtils;
+
 public class TileEntityHeatCreative extends TileEntityIEBase implements ITickable {
     @Override public void update() {
         if (world.isRemote) { return; }
-        world.setBlockState(pos, ICContent.blockDevice.getStateFromMeta(ICBlockType_Device.HEAT_CREATIVE.getMeta()), 3);
+        world.setBlockState(pos, ITUtils.stateOf(ICContent.blockDevice, ICBlockType_Device.HEAT_CREATIVE), 3);
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {}

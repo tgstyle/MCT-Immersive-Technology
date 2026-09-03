@@ -31,6 +31,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import mctmods.immersivetechnology.common.util.ITUtils;
+
 public class ConveyorCoveredHelper {
     public static final ArrayList<com.google.common.base.Function<ItemStack, Boolean>> validConveyorCovers = new ArrayList<>();
 
@@ -117,7 +119,7 @@ public class ConveyorCoveredHelper {
         ItemStack coverStack = coverGet.get();
         ItemStack cover = coverStack.isEmpty() ? defaultCover : coverStack;
         Block b = Block.getBlockFromItem(cover.getItem());
-        IBlockState state = b.getStateFromMeta(cover.getMetadata());
+        IBlockState state = ITUtils.stateOf(b, cover.getMetadata());
 
         CoverRenderData renderData = coverRenderCache.get(state);
         if (renderData == null) {

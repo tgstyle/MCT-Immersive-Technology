@@ -6,7 +6,7 @@
     "fluid": "water"
   },
   "item_output": {
-    "chance": 0.01,
+    "chance": 0.5,
     "data": 0,
     "item": "immersivetech:material"
   },

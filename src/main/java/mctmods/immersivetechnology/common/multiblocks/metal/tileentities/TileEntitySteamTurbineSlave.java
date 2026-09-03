@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteamTurbine;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
@@ -69,7 +69,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return SteamTurbineShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("steam_turbine"); }
 
     @Override public NonNullList<ItemStack> getInventory() { return null; }
 

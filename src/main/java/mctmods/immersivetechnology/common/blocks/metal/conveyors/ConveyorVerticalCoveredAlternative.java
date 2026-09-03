@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
+import mctmods.immersivetechnology.common.util.ITUtils;
+
 public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternative {
     private ItemStack cover = ItemStack.EMPTY;
 
@@ -101,7 +103,7 @@ public class ConveyorVerticalCoveredAlternative extends ConveyorVerticalAlternat
 
         ItemStack coverStack = cover.isEmpty() ? ConveyorCoveredHelper.defaultCover : cover;
         Block b = Block.getBlockFromItem(coverStack.getItem());
-        IBlockState state = b.getStateFromMeta(coverStack.getMetadata());
+        IBlockState state = ITUtils.stateOf(b, coverStack.getMetadata());
 
         IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(state);
         TextureAtlasSprite particle = model.getParticleTexture();

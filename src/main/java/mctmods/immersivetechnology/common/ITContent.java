@@ -9,7 +9,6 @@ import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig;
-import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.BlockITSlab;
 import mctmods.immersivetechnology.common.blocks.BlockValve;

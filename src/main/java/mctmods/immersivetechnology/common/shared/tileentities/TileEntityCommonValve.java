@@ -3,8 +3,11 @@ package mctmods.immersivetechnology.common.shared.tileentities;
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 
+import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
@@ -13,9 +16,12 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.blocks.BlockValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,6 +33,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,8 +41,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.Optional;
 
-public abstract class TileEntityCommonValve extends TileEntityIEBase implements IEBlockInterfaces.IDirectionalTile, ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IBinaryMessageReceiver {
+public abstract class TileEntityCommonValve extends TileEntityIEBase implements IEBlockInterfaces.IDirectionalTile, ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAttachedIntegerProperies, IOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
 
 	final TranslationKey overlayNormal;
 	final TranslationKey overlaySneakingFirstLine;
@@ -55,6 +63,8 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public int timeLimit = -1;
 	public int keepSize = -1;
 	public byte redstoneMode = 0;
+	public int rotation = 0;
+	public boolean open = true;
 
 	public long acceptedAmount;
 	public long lastAcceptedAmount;
@@ -68,6 +78,26 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	public long[] averages = new long[60];
 	public long[] packetTotals = new long[60];
+
+	@Override public void onLoad() {
+		super.onLoad();
+		if (!world.isRemote) { updateOpenState(); }
+	}
+
+	public boolean isOpenForRedstone() {
+		if (redstoneMode == 0) { return true; }
+		int power = getRSPower();
+		return redstoneMode == 1 ? power == 0 : power > 0;
+	}
+
+	public void updateOpenState() {
+		boolean shouldOpen = isOpenForRedstone();
+		if (open == shouldOpen) { return; }
+		open = shouldOpen;
+		efficientMarkDirty();
+		IBlockState state = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, state, state, 3);
+	}
 
 	public void efficientMarkDirty() {
 		world.getChunk(getPos()).markDirty();
@@ -135,6 +165,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 			}
 			ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(translationKey));
 			efficientMarkDirty();
+			updateOpenState();
 			return true;
 		}
 		return false;
@@ -176,6 +207,8 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		timeLimit = nbt.getInteger("timeLimit");
 		keepSize = nbt.getInteger("keepSize");
 		redstoneMode = nbt.getByte("redstoneMode");
+		rotation = nbt.getInteger("rotation");
+		open = nbt.getBoolean("open");
 		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
 		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
 		secondCounter = nbt.getInteger("secondCounter");
@@ -190,6 +223,8 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		nbt.setInteger("timeLimit", timeLimit);
 		nbt.setInteger("keepSize", keepSize);
 		nbt.setByte("redstoneMode", redstoneMode);
+		nbt.setInteger("rotation", rotation);
+		nbt.setBoolean("open", open);
 		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
 		nbt.setLong("acceptedAmount", acceptedAmount);
 		nbt.setInteger("secondCounter", secondCounter);
@@ -236,6 +271,38 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	@Override public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) { return !entity.isSneaking(); }
 
 	@Override public boolean canRotate(@Nonnull EnumFacing axis) { return true; }
+
+	@SideOnly(Side.CLIENT)
+	@Override public boolean shouldRenderGroup(@Nonnull IBlockState object, @Nonnull String group) {
+		if ("Handle_Open".equals(group)) { return open; }
+		if ("Handle_Closed".equals(group)) { return !open; }
+		return true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	protected Optional<TRSRTransformation> valveTransform(IBlockState state, Optional<TRSRTransformation> transform, int horizontalXRot, int verticalDownXRot, int verticalUpXRot, int horizontalYOffset, int verticalYOffset) {
+		EnumFacing stateFacing = state.getValue(IEProperties.FACING_ALL);
+		int angleX;
+		int angleY;
+		if (stateFacing.getAxis().isHorizontal()) {
+			angleX = horizontalXRot;
+			angleY = ((stateFacing.getHorizontalIndex() + horizontalYOffset) % 4) * 90;
+		}
+		else {
+			angleX = stateFacing == EnumFacing.DOWN ? verticalDownXRot : verticalUpXRot;
+			angleY = ((state.getValue(BlockValve.ROTATION) + verticalYOffset) % 4) * 90;
+		}
+		TRSRTransformation rotate = TRSRTransformation.from(ModelRotation.getModelRotation(angleX, angleY));
+		return transform.map(t -> Optional.of(rotate.compose(t))).orElseGet(() -> Optional.of(rotate));
+	}
+
+	@Override @Nonnull public String[] getIntPropertyNames() { return new String[]{"rotation"}; }
+
+	@Override @Nonnull public PropertyInteger getIntProperty(@Nonnull String name) { return BlockValve.ROTATION; }
+
+	@Override public int getIntPropertyValue(@Nonnull String name) { return rotation; }
+
+	@Override public void setValue(@Nonnull String name, int value) { this.rotation = value; }
 
 	public int getRSPower() {
 		int power = 0;

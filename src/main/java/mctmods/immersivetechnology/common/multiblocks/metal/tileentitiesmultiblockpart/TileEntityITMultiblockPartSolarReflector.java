@@ -6,7 +6,8 @@ import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarReflectorSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -20,7 +21,7 @@ public class TileEntityITMultiblockPartSolarReflector extends MachineTemplateMul
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartSolarReflector() { super("IT:SolarReflector", SolarReflectorShape.SHAPE, ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR.getMeta()), ITContent.blockMetalMultiblock.getStateFromMeta(BlockType_MetalMultiblock.SOLAR_REFLECTOR_SLAVE.getMeta())); }
+    public TileEntityITMultiblockPartSolarReflector() { super("IT:SolarReflector", ITShapes.get("solar_reflector"), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_REFLECTOR), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_REFLECTOR_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 

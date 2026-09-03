@@ -5,6 +5,7 @@ import com.immersiveconvergence.api.block.ICBlockBase;
 import blusunrize.immersiveengineering.client.ClientProxy;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -53,7 +54,7 @@ public class ItemBlockITBase extends ItemBlock {
 
     @Override public void addInformation(@Nonnull ItemStack stack, World worldIn, @Nonnull List<String> list, @Nonnull ITooltipFlag advInfo) {
         if (((ICBlockBase<?>) block).hasFlavour(stack)) {
-            String subName = ((ICBlockBase<?>) this.block).getStateFromMeta(stack.getItemDamage()).getValue(((ICBlockBase<?>) this.block).property).toString().toLowerCase(Locale.US);
+            String subName = ITUtils.stateOf((ICBlockBase<?>) this.block, stack.getItemDamage()).getValue(((ICBlockBase<?>) this.block).property).toString().toLowerCase(Locale.US);
             String flavourKey = "desc." + ImmersiveTechnology.MODID + ".flavor." + ((ICBlockBase<?>) this.block).name + "." + subName;
             list.add(TextFormatting.GRAY + I18n.format(flavourKey));
         }
@@ -108,7 +109,7 @@ public class ItemBlockITBase extends ItemBlock {
     private boolean canBlockBePlaced(World w, BlockPos pos, EnumFacing side, ItemStack stack) {
         ICBlockBase<?> blockIn = (ICBlockBase<?>) this.block;
         Block block = w.getBlockState(pos).getBlock();
-        AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox(blockIn.getStateFromMeta(stack.getItemDamage()), w, pos);
+        AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox(ITUtils.stateOf(blockIn, stack.getItemDamage()), w, pos);
         if (axisalignedbb != null && !w.checkNoEntityCollision(axisalignedbb.offset(pos), null)) return false;
         return block.isReplaceable(w, pos) && blockIn.canPlaceBlockOnSide(w, pos, side);
     }

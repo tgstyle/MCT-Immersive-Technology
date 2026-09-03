@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.stone.shapes.CoolingTowerShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -59,7 +59,7 @@ public class TileEntityCoolingTowerSlave extends TileEntityTemplateMultiblock<Ti
         return master;
     }
 
-    @Override protected GenericShape getShapeGetter() { return CoolingTowerShape.GETTER; }
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("cooling_tower"); }
 
     @Override protected boolean useMirroredShape() { return false; }
 

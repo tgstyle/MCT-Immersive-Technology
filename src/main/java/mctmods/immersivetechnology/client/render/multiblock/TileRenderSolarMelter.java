@@ -11,8 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.Nonnull;
 
 public class TileRenderSolarMelter extends TileEntitySpecialRenderer<TileEntitySolarMelterMaster> {
-    @Override public void render(TileEntitySolarMelterMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        if (!ITTESRHelper.inRenderRange(x, y, z)) { return; }
+    @Override public void render(@Nonnull TileEntitySolarMelterMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        if (ITTESRHelper.outOfRenderRange(x, y, z)) { return; }
         if (!te.formed || te.isInvalid()) { return; }
         if (te.particlePos0 == null) { return; }
         if (te.heatLevel < te.targetTemperature() || te.reflectorStrength <= 0) { return; }

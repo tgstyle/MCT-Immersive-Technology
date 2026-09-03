@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.util;
 
+import com.immersiveconvergence.api.block.ICBlockBase;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -22,6 +24,11 @@ public class ITUtils {
     public static void RemoveDummyFromTicking(TileEntity te) { REMOVE_FROM_TICKING.add(te); }
 
     public static float remapRange(float inMin, float inMax, float outMin, float outMax, float value) { return outMin + ((value - inMin) / inMax) * (outMax - outMin); }
+
+    public static IBlockState stateOf(ICBlockBase<?> block, ICBlockBase.IBlockEnum type) { return block.getStateFromMeta(type.getMeta()); }
+
+    @SuppressWarnings("deprecation")
+    public static IBlockState stateOf(Block block, int meta) { return block.getStateFromMeta(meta); }
 
     public static void improvedMarkBlockForUpdate(World world, BlockPos pos, @Nullable IBlockState newState, EnumSet<EnumFacing> directions) {
         IBlockState state = world.getBlockState(pos);
