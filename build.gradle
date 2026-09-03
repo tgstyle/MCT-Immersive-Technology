@@ -68,6 +68,7 @@ ext {
     version_ie = versionProps['version_ie']
     version_ie_full = "${version_minecraft}-${version_ie}"
     version_ic = versionProps.getProperty('version_ic', '[0,)')
+    version_ic_curse = versionProps['version_ic_curse']
     version_ie_curse = versionProps['version_ie_curse']
     version_wayfix_curse = versionProps['version_wayfix_curse']
     version_cloth_config_curse = versionProps['version_cloth_config_curse']
@@ -150,13 +151,13 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
 
 def icJar = null
 def icDir = file('../ImmersiveConvergence-21/build/libs')
-def matchingJars = fileTree(icDir) {
+def matchingJars = icDir.exists() ? fileTree(icDir) {
     include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
     exclude "**/*-sources.jar"
-}.files
+}.files : []
 
 if (!matchingJars.isEmpty()) {
-    icJar = matchingJars.sort { a, b -> b.lastModified() <=> a.lastModified() }.last()
+    icJar = matchingJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
     logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
 } else {
     logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence-21/build/libs')
@@ -263,6 +264,7 @@ dependencies {
         implementation files(icJar)
     } else {
         logger.warn('⚠️  Falling back to CurseMaven for ImmersiveConvergence')
+        implementation "curse.maven:${version_ic_curse}"
     }
 
     jarJar(implementation("malte0811:DualCodecs")) {

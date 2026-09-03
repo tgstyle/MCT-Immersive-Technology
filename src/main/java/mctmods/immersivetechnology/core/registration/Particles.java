@@ -31,4 +31,5 @@ public class Particles {
     });
 
     public static final Supplier<SimpleParticleType> SMOKE_CUSTOM = REGISTER.register("smoke_custom", () -> new SimpleParticleType(true));
+    public static final Supplier<SimpleParticleType> CAMPFIRE_SMOKE = REGISTER.register("campfire_smoke", () -> new SimpleParticleType(true));
 }

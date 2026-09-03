@@ -15,6 +15,7 @@ import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
+import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.ICItemUtils;
@@ -38,7 +39,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.InteractionHand;
@@ -100,7 +100,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         if (state.active) {
             final Vec3 particlePos = level.toAbsolute(new Vec3(SMOKE_POI.getX() + 0.5, SMOKE_POI.getY() + 0.9, SMOKE_POI.getZ() + 0.5));
             level.getRawLevel().addAlwaysVisibleParticle(
-                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    Particles.CAMPFIRE_SMOKE.get(),
                     particlePos.x,
                     particlePos.y,
                     particlePos.z,
