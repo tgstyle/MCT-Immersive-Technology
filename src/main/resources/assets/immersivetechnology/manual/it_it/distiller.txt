@@ -5,8 +5,4 @@ Evaporazione!
 
 
 
-§lFunzionamento§r
-    - L'§lAcqua§r viene inserita a destra.
-    - L'§lAcqua distillata§r esce a sinistra.
-    - Il sale esce sul retro.
-    - Un comparatore contro il pannello di controllo emette un segnale proporzionale a quanto è pieno il suo buffer Flux interno (<config;i;distiller.energy_capacity> Flux).
+L'§lAcqua§r viene inserita a destra. L'§lAcqua distillata§r esce a sinistra. Il sale esce sul retro. Un secchio d'Acqua produce 500 mB di Acqua distillata. L'uscita degli oggetti è una probabilità, non una garanzia, in aggiunta all'uscita del fluido. Un comparatore contro il pannello di controllo emette un segnale proporzionale a quanto è pieno il suo buffer Flux interno (<config;i;distiller.energy_capacity> Flux).

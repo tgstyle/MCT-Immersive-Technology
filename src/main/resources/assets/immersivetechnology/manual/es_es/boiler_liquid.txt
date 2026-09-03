@@ -6,8 +6,4 @@ Caldera de combustible líquido
 
 
 
-§lFuncionamiento§r
-    - El §lCombustible líquido§r se introduce debajo de la cámara de combustión.
-    - Enciéndela con una antorcha o pedernal y acero en la rejilla superior de escape.
-    - Funciona en modo piloto cuando está inactiva, consumiendo un pequeño hilo de combustible para no apagarse.
-    - Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de calor actual.
+El §lCombustible líquido§r se introduce debajo de la cámara de combustión. Enciéndela con una antorcha o pedernal y acero en la rejilla superior de escape. Funciona en modo piloto cuando está inactiva, consumiendo un pequeño hilo de combustible para no apagarse. Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de calor actual.

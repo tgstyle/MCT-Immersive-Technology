@@ -4,8 +4,4 @@ Fusione!
 
 
 
-§lFunzionamento§r
-    - I §lFluidi caldi§r vengono inseriti davanti.
-    - I §lFluidi fusi§r escono dietro.
-    - Deve trovarsi a 44 blocchi di distanza dalle altre torri.
-    - Un comparatore contro il pannello di controllo emette un segnale proporzionale al livello di calore attuale.
+Richiede <link;solar_reflector;§n§oRiflettore§r> puntati verso il fonditore. I §lFluidi caldi§r vengono inseriti davanti. I §lFluidi fusi§r escono dietro. Tieni i collettori a più di 44 blocchi di distanza tra loro, così i loro riflettori non si sovrappongono. Un comparatore contro il pannello di controllo emette un segnale proporzionale al livello di calore attuale.

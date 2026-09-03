@@ -5,9 +5,4 @@ Getting steamy in here!
 
 
 
-§lOperation§r
-    - §lWater§r is input near the tank on the left side; §lSteam§r is output from the top.
-    - Holds up to <config;i;boiler_tank.tank_capacity> mB of water.
-    - Runs a batch once the attached burner's heat reaches working temperature.
-    - If heat drops mid-batch, progress drains back gradually rather than resetting outright — a brief interruption costs some progress, not all of it.
-    - A comparator against any exterior block outputs a signal proportional to current heat level.
+§lWater§r or §lDistilled Water§r is input near the tank on the §lleft side§r; §lSteam§r is output from the top. Holds up to <config;i;boiler_tank.tank_capacity> mB of water. Runs a batch once the attached burner's heat reaches working temperature. If heat drops mid-batch, progress drains back gradually rather than resetting outright — a brief interruption costs some progress, not all of it. A comparator against any exterior block outputs a signal proportional to current heat level.

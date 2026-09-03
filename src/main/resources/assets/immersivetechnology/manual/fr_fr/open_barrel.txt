@@ -2,7 +2,4 @@ Baril métallique ouvert
 Ouvert sur le ciel
 Un réservoir fluide à bloc unique, ouvert sur le dessus, d'une capacité de 12 000 mB. Le fluide peut être versé à la main, et il se remplit lentement d'eau de pluie lorsqu'il est exposé au ciel ouvert.
 
-§lFonctionnement§r
-    - Le haut est fixé en entrée uniquement ; le bas peut être basculé entre entrée, sortie et désactivé avec un Marteau.
-    - N'accepte que les liquides, pas les gaz.
-    - Se remplit d'eau de pluie s'il pleut directement au-dessus et que le réservoir est vide ou contient déjà de l'eau — plus vite pendant un orage. Dans les biomes chauds, il s'évapore à la place.
+Le haut est fixé en entrée uniquement ; le bas peut être basculé entre entrée, sortie et désactivé avec un Marteau. N'accepte que les liquides, pas les gaz. Se remplit d'eau de pluie s'il pleut directement au-dessus et que le réservoir est vide ou contient déjà de l'eau — plus vite pendant un orage. Dans les biomes chauds, il s'évapore à la place.

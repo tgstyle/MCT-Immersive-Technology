@@ -6,8 +6,4 @@ Chaudière à combustible solide
 
 
 
-§lFonctionnement§r
-    - Le §lCombustible solide§r est introduit en dessous de la chambre de combustion.
-    - Allumez-la avec une torche ou un briquet sur l'échappement grillagé supérieur.
-    - Fonctionne en mode pilote au repos, consommant un léger filet de combustible pour rester allumée.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau de chaleur actuel.
+Le §lCombustible solide§r est introduit en dessous de la chambre de combustion. Allumez-la avec une torche ou un briquet sur l'échappement grillagé supérieur. Fonctionne en mode pilote au repos, consommant un léger filet de combustible pour rester allumée. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau de chaleur actuel.

@@ -7,9 +7,4 @@ Torre de enfriamiento
 
 
 
-§lFuncionamiento§r
-    - El §lAgua§r y el §lVapor de escape§r pueden entrar por cualquiera de las entradas — el orden no importa.
-    - El §lAgua§r sale por todas las salidas.
-    - Hasta 3 lotes se procesan en paralelo, así que el rendimiento puede superar lo que sugiere el tiempo de un solo lote.
-    - La eficiencia depende del diferencial de temperatura con el entorno y las obstrucciones cercanas.
-    - Un comparador contra el bloque usado para formar la estructura (el golpeado con el Martillo) emite una señal proporcional a cuán llena está la cola de 3 lotes. La Torre de enfriamiento no tiene panel de control de redstone, así que este es el único punto fijo donde responde.
+El §lAgua§r y el §lVapor de escape§r pueden entrar por cualquiera de las entradas — el orden no importa. El §lAgua§r sale por todas las salidas. Hasta 3 lotes se procesan en paralelo, así que el rendimiento puede superar lo que sugiere el tiempo de un solo lote. La eficiencia depende del diferencial de temperatura con el entorno y las obstrucciones cercanas. Un comparador contra el bloque usado para formar la estructura (el golpeado con el Martillo) emite una señal proporcional a cuán llena está la cola de 3 lotes. La Torre de enfriamiento no tiene panel de control de redstone, así que este es el único punto fijo donde responde.

@@ -1,0 +1,5 @@
+Redstonový časovač
+Tik-tak
+Redstonový konektor, který vydává opakující se redstonový puls, od 0,5 do 30 sekund, nastavitelný v rozhraní. Připojuje se k síti redstonových kabelů Immersive Engineering místo obyčejného redstonového prachu.
+
+Potřebuje aktivní redstonový vstup, aby dál pulzoval. Rozhraní nastavuje zpoždění, přepíná mezi vstupním a výstupním režimem a vybírá jednu ze 16 barev kabelu. Kliknutí pravým tlačítkem se Šroubovákem poskytuje stejné ovládání bez otevření rozhraní: podřep mění barvu kabelu, bez podřepu přepíná vstup/výstup.

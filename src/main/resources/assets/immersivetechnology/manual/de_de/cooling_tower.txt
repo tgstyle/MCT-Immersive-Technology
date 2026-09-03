@@ -7,9 +7,4 @@ Abkühlen!
 
 
 
-§lBetrieb§r
-    - §lWasser§r und §lAuspuffdampf§r können in beide Eingänge – die Reihenfolge spielt keine Rolle.
-    - §lWasser§r wird an allen Ausgängen ausgegeben.
-    - Bis zu 3 Chargen laufen parallel, daher kann der Durchsatz höher sein, als die Zeit einer einzelnen Charge vermuten lässt.
-    - Die Effizienz hängt vom Temperaturunterschied zur Umgebung und nahen Hindernissen ab.
-    - Ein Komparator am Block, mit dem die Struktur gebildet wurde (der mit dem Hammer angeklickte), gibt ein Signal proportional zur Auslastung der 3er-Warteschlange aus. Der Kühlturm hat kein Redstone-Bedienfeld, daher ist dies der einzige feste Punkt, an dem er reagiert.
+§lWasser§r und §lAuspuffdampf§r können in beide Eingänge – die Reihenfolge spielt keine Rolle. §lWasser§r wird an allen Ausgängen ausgegeben. Bis zu 3 Chargen laufen parallel, daher kann der Durchsatz höher sein, als die Zeit einer einzelnen Charge vermuten lässt. Die Effizienz hängt vom Temperaturunterschied zur Umgebung und nahen Hindernissen ab. Ein Komparator am Block, mit dem die Struktur gebildet wurde (der mit dem Hammer angeklickte), gibt ein Signal proportional zur Auslastung der 3er-Warteschlange aus. Der Kühlturm hat kein Redstone-Bedienfeld, daher ist dies der einzige feste Punkt, an dem er reagiert.

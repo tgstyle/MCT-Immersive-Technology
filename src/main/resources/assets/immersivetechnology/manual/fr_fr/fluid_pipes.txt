@@ -1,0 +1,5 @@
+Conduites de fluide
+Plus de débit
+Immersive Technology ajuste le débit des conduites de fluide d'Immersive Engineering.
+
+Conduites non pressurisées : <config;i;fluid_pipe.unpressurized> mB/t. Conduites pressurisées : <config;i;fluid_pipe.pressurized> mB/t.

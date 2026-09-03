@@ -2,7 +2,4 @@ Barile metallico aperto
 Aperto al cielo
 Un serbatoio fluido a blocco singolo, aperto in cima, con capacità di 12.000 mB. Il fluido può essere versato a mano, e si riempie lentamente di acqua piovana quando esposto al cielo aperto.
 
-§lFunzionamento§r
-    - La parte superiore è fissa come ingresso; quella inferiore può essere alternata tra ingresso, uscita e spento con un Martello.
-    - Accetta solo liquidi, non gas.
-    - Si riempie di acqua piovana se piove direttamente sopra e il serbatoio è vuoto o contiene già acqua — più velocemente durante un temporale. Nei biomi caldi evapora invece.
+La parte superiore è fissa come ingresso; quella inferiore può essere alternata tra ingresso, uscita e spento con un Martello. Accetta solo liquidi, non gas. Si riempie di acqua piovana se piove direttamente sopra e il serbatoio è vuoto o contiene già acqua — più velocemente durante un temporale. Nei biomi caldi evapora invece.

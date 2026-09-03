@@ -2,8 +2,4 @@ Batterie de creuset électrolytique
 Électrolyse avancée
 <&multiblock>La Batterie de creuset électrolytique effectue l'électrolyse de sels fondus et d'autres fluides, produisant plusieurs sorties à la fois. Elle peut traiter jusqu'à 3 lots en parallèle.
 
-§lFonctionnement§r
-    - Le §lFluide§r et l'§lÉnergie§r sont fournis par le côté. Le tampon interne contient <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
-    - Les sorties (fluides et objets) sont collectées depuis plusieurs côtés.
-    - Jusqu'à 3 lots sont traités en parallèle, donc le débit peut dépasser ce que suggère le temps d'un seul lot.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au remplissage du premier réservoir de sortie fluide.
+Le §lFluide§r et l'§lÉnergie§r sont fournis par le côté. Le tampon interne contient <config;i;electrolytic_crucible_battery.energy_capacity> Flux. Les deux fluides séparés sortent par les ports supérieurs à l'arrière ; les objets et l'électrolyte usé par le bas. Jusqu'à 3 lots sont traités en parallèle, donc le débit peut dépasser ce que suggère le temps d'un seul lot. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au remplissage du premier réservoir de sortie fluide.

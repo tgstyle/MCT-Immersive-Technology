@@ -1,7 +1,18 @@
 {
-  "multiblock":
-  {
+  "multiblock": {
     "type": "multiblock",
     "name": "immersivetechnology:multiblocks/alternator"
+  },
+  "diagram": {
+    "type": "image",
+    "images": [
+      {
+        "location": "immersivetechnology:textures/misc/alternator.png",
+        "uMin": 0,
+        "vMin": 0,
+        "uSize": 110,
+        "vSize": 50
+      }
+    ]
   }
 }

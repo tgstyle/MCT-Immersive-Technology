@@ -1,8 +1,0 @@
-Otevřený kovový sud
-Otevřený nebi
-Jednoblokový zásobník kapaliny, otevřený nahoře, s kapacitou 12 000 mB. Kapalinu lze nalévat ručně a pomalu se plní dešťovou vodou, když je vystaven otevřenému nebi.
-
-§lProvoz§r
-    - Horní strana je pevně nastavena jako vstup; spodní lze přepínat mezi vstupem, výstupem a vypnutím Kladivem.
-    - Přijímá pouze kapaliny, ne plyny.
-    - Plní se dešťovou vodou, pokud přímo nad ním prší a nádrž je prázdná nebo už obsahuje vodu – rychleji během bouřky. V horkých biomech místo toho vysychá.

@@ -3,7 +3,4 @@ Mejor Coque
 <&multiblock>El Horno de Coque Avanzado es una máquina multibloque que convierte carbón en §lCoque§r y §lAceite de creosota§r más rápido que un horno de coque estándar.
 
 
-§lFuncionamiento§r
-    - Los §lobjetos§r combustibles se insertan desde arriba; la salida de fluido (aceite de creosota) se extrae por el §lfrente§r.
-    - Se pueden acoplar hasta dos calentadores base en los puertos laterales; cada calentador activo consume <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t y aumenta la velocidad de procesamiento, con beneficio decreciente al combinar ambos.
-    - Un comparador contra cualquier bloque exterior emite una señal proporcional al avance del lote actual.
+Los §lobjetos§r combustibles se insertan desde arriba; la salida de fluido (aceite de creosota) se extrae por el §lfrente§r, y el §lCoque§r por la §lparte trasera§r. Se pueden acoplar hasta dos calentadores base en los puertos laterales; cada calentador activo consume <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t y aumenta la velocidad de procesamiento, con beneficio decreciente al combinar ambos. Un comparador contra cualquier bloque exterior emite una señal proporcional al avance del lote actual.

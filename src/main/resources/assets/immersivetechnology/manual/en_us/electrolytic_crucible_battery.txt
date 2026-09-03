@@ -2,8 +2,4 @@ Electrolytic Crucible Battery
 Advanced Electrolysis
 <&multiblock>The Electrolytic Crucible Battery performs electrolysis on molten salts and other fluids, producing multiple outputs at once. It can run up to 3 batches in parallel.
 
-§lOperation§r
-    - §lFluid§r and §lEnergy§r are supplied from the side. Internal buffer holds <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
-    - Outputs (fluids and items) are collected from multiple sides.
-    - Up to 3 batches process in parallel, so throughput can exceed what one batch's time alone would suggest.
-    - A comparator against any exterior block outputs a signal proportional to how full the first fluid output tank is.
+§lFluid§r and §lEnergy§r are supplied from the side. Internal buffer holds <config;i;electrolytic_crucible_battery.energy_capacity> Flux. The two separated fluids are output from the top ports at the back; items and spent electrolyte from the bottom. Up to 3 batches process in parallel, so throughput can exceed what one batch's time alone would suggest. A comparator against any exterior block outputs a signal proportional to how full the first fluid output tank is.

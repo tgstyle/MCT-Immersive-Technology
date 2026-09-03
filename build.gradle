@@ -155,6 +155,20 @@ if (!matchingJars.isEmpty()) {
     logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence/build/libs')
 }
 
+def ifJar = null
+def ifDir = file('../Immersive-Fixes/build/libs')
+def ifJars = ifDir.exists() ? fileTree(ifDir) {
+    include '*-dev.jar'
+    exclude '**/*-sources.jar'
+}.files : []
+
+if (!ifJars.isEmpty()) {
+    ifJar = ifJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
+    logger.lifecycle("✅ Found Immersive Fixes dev JAR: ${ifJar.name}")
+} else {
+    logger.warn('⚠️  No Immersive Fixes dev JAR found in ../Immersive-Fixes/build/libs, build one there first')
+}
+
 minecraft {
     mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
     accessTransformer { file('src/main/resources/META-INF/accesstransformer.cfg') }
@@ -278,6 +292,9 @@ dependencies {
         implementation files(icJar)
     } else {
         implementation fg.deobf("curse.maven:${version_ic_curse}")
+    }
+    if (ifJar != null) {
+        runtimeOnly files(ifJar)
     }
 }
 

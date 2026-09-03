@@ -1,0 +1,7 @@
+Solární tavicí věž
+Tavící!
+<&multiblock>Solární tavicí věž taví pevné látky na roztavenou formu pro další zpracování.
+
+
+
+Vyžaduje <link;solar_reflector;§n§oreflektor§r> namířené na tavicí věž. §lOhřáté kapaliny§r se vkládají zepředu. §lRoztavené kapaliny§r vycházejí zezadu. Udržujte mezi kolektory odstup větší než 44 bloků, aby se jejich reflektory nepřekrývaly. Komparátor u ovládacího panelu vydává signál úměrný aktuální úrovni tepla.

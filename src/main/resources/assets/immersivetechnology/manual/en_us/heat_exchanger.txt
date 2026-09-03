@@ -2,6 +2,4 @@ Heat Exchanger
 Is it hot or is it cool?
 <&multiblock>The Heat Exchanger is a countercurrent exchanger — hot fluid enters one side and exits the other as it cools, while the fluid being heated flows the opposite direction through the second loop.
 
-§lOperation§r
-    - The §lHeat Exchanger§r needs hot fluids to make other fluids.
-    - A comparator against any exterior block outputs a signal proportional to how full its internal Flux buffer (<config;i;heat_exchanger.energy_capacity> Flux) is.
+The §lHeat Exchanger§r needs hot fluids to make other fluids. The heat exchanger processes hot, energy-bearing fluids with colder fluids like §lWater§r or §lDistilled Water§r to heat them up into more usable forms. A comparator against any exterior block outputs a signal proportional to how full its internal Flux buffer (<config;i;heat_exchanger.energy_capacity> Flux) is.

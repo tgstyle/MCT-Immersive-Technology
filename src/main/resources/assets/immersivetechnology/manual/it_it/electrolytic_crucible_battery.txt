@@ -2,8 +2,4 @@ Batteria di Crogiolo Elettrolitico
 Elettrolisi Avanzata
 <&multiblock>La Batteria di Crogiolo Elettrolitico esegue l'elettrolisi di sali fusi e altri fluidi, producendo più uscite contemporaneamente. Può elaborare fino a 3 lotti in parallelo.
 
-§lFunzionamento§r
-    - §lFluido§r ed §lEnergia§r vengono forniti dal lato. Il buffer interno contiene <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
-    - Le uscite (fluidi e oggetti) vengono raccolte da più lati.
-    - Fino a 3 lotti vengono elaborati in parallelo, quindi il throughput può superare quanto suggerito dal tempo di un singolo lotto.
-    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale a quanto è pieno il primo serbatoio di uscita fluido.
+§lFluido§r ed §lEnergia§r vengono forniti dal lato. Il buffer interno contiene <config;i;electrolytic_crucible_battery.energy_capacity> Flux. I due fluidi separati escono dalle porte superiori sul retro; gli oggetti e l'elettrolita esausto dal basso. Fino a 3 lotti vengono elaborati in parallelo, quindi il throughput può superare quanto suggerito dal tempo di un singolo lotto. Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale a quanto è pieno il primo serbatoio di uscita fluido.

@@ -2,8 +2,4 @@ Steel Metal Barrel
 Full to the Max
 A single-block fluid tank holding 24,000 mB — double the Open Barrel's capacity.
 
-§lOperation§r
-    - Both the top and bottom can be cycled between input, output, and off with a Hammer.
-    - Accepts any fluid, including gasses.
-    - A redstone signal disables fluid transfer entirely while active.
-    - A comparator against it outputs a signal proportional to how full it is.
+Both the top and bottom can be cycled between input, output, and off with a Hammer. Accepts any fluid, including gasses. A redstone signal disables fluid transfer entirely while active. A comparator against it outputs a signal proportional to how full it is.

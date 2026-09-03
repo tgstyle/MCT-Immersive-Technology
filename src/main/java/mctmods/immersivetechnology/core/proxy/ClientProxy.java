@@ -109,6 +109,8 @@ public class ClientProxy extends CommonProxy {
                 case "steel_sheetmetal_tank.capacity" -> ServerConfig.steelSheetmetalTankCapacity;
                 case "steel_sheetmetal_tank.comparator_layers" -> SteelSheetmetalTankLogic.COMPARATOR_LAYER_COUNT;
                 case "barrel_creative.output_amount" -> CommonConfig.creativeBarrelOutputAmount;
+                case "fluid_pipe.pressurized" -> ServerConfig.fluidPipeAmountPressurized;
+                case "fluid_pipe.unpressurized" -> ServerConfig.fluidPipeAmountUnpressurized;
                 default -> null;
             });
             InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(Reference.rl("main"), 99);
@@ -117,75 +119,76 @@ public class ClientProxy extends CommonProxy {
             builder.readFromFile(Reference.rl("intro"));
             instance.addEntry(parent_category, builder.create());
 
-            InnerNode<ResourceLocation, ManualEntry> multiblock_category = parent_category.getOrCreateSubnode(Reference.rl("it_multiblocks"), 0);
+            InnerNode<ResourceLocation, ManualEntry> power_category = parent_category.getOrCreateSubnode(Reference.rl("it_power"), 0);
+            InnerNode<ResourceLocation, ManualEntry> processing_category = parent_category.getOrCreateSubnode(Reference.rl("it_processing"), 1);
 
             ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("advanced_coke_oven"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(processing_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("alternator"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("boiler_liquid"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("boiler_solid"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("boiler_tank"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("cooling_tower"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("distiller"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(processing_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("electrolytic_crucible_battery"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(processing_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("gas_turbine"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("heat_exchanger"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("melting_crucible"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(processing_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("radiator"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("solar_melter"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(processing_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("solar_reflector"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("solar_tower"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("steam_turbine"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(power_category, multiblock.create());
 
             multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             multiblock.readFromFile(Reference.rl("steel_sheetmetal_tank"));
-            instance.addEntry(multiblock_category, multiblock.create());
+            instance.addEntry(processing_category, multiblock.create());
 
             ManualEntry.ManualEntryBuilder normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             normalBlock.readFromFile(Reference.rl("open_barrel"));
@@ -197,6 +200,18 @@ public class ClientProxy extends CommonProxy {
 
             normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
             normalBlock.readFromFile(Reference.rl("barrel_creative"));
+            instance.addEntry(parent_category, normalBlock.create());
+
+            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("valves"));
+            instance.addEntry(parent_category, normalBlock.create());
+
+            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("technologists_wrench"));
+            instance.addEntry(parent_category, normalBlock.create());
+
+            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
+            normalBlock.readFromFile(Reference.rl("fluid_pipes"));
             instance.addEntry(parent_category, normalBlock.create());
 
             normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());

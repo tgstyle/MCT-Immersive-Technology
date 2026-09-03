@@ -1,0 +1,5 @@
+Omezovací a řídicí zařízení
+Propustnost se přeceňuje
+§lOmezovač stohů§r, §lRegulátor zátěže§r a §lKapalinový ventil§r omezují průchod předmětů, energie a kapalin.
+
+V GUI lze nastavit celkový limit v čase, limit na to, kolik smí cíl držet, než přestane dostávat další, a limit na jeden přenos; lze je kombinovat. Lze jej také škrtit silou redstonového signálu: jeden režim s rostoucím signálem propustnost snižuje (signál 15 znamená vypnuto), druhý ji s rostoucím signálem zvyšuje. Aktivní režim se nastavuje v rozhraní. Redstonový režim zapneš kladivem v podřepu.

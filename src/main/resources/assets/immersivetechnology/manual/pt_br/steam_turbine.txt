@@ -4,8 +4,4 @@ Gira gira!
 
 
 
-§lOperação§r
-    - O §lVapor§r é inserido por tubo.
-    - O §lVapor de escape§r sai abaixo do rotor.
-    - Um multibloco que use energia mecânica precisa estar conectado ao rotor para que funcione.
-    - Um comparador contra o painel de controle emite um sinal proporcional à velocidade atual do rotor.
+O §lVapor§r é inserido por tubo. O §lVapor de escape§r sai abaixo do rotor. Um multibloco que use energia mecânica precisa estar conectado ao rotor para que funcione. Um comparador contra o painel de controle emite um sinal proporcional à velocidade atual do rotor.

@@ -2,7 +2,4 @@ Barril Metálico Aberto
 Aberto ao Céu
 Um tanque de fluido de bloco único, aberto no topo, com capacidade de 12.000 mB. O fluido pode ser vertido à mão, e enche lentamente com água da chuva quando exposto ao céu aberto.
 
-§lOperação§r
-    - O topo é fixo apenas como entrada; a parte inferior pode ser alternada entre entrada, saída e desligado com um Martelo.
-    - Aceita apenas líquidos, não gases.
-    - Enche-se com água da chuva se estiver a chover diretamente por cima e o tanque estiver vazio ou já contiver água — mais depressa durante uma trovoada. Em biomas quentes, evapora em vez disso.
+O topo é fixo apenas como entrada; a parte inferior pode ser alternada entre entrada, saída e desligado com um Martelo. Aceita apenas líquidos, não gases. Enche-se com água da chuva se estiver a chover diretamente por cima e o tanque estiver vazio ou já contiver água — mais depressa durante uma trovoada. Em biomas quentes, evapora em vez disso.

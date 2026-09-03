@@ -1,0 +1,3 @@
+Techniker-Schlüssel
+Fest ist fest
+Der §6Techniker-Schlüssel§r formt und konfiguriert Multiblöcke von Immersive Technology. Er kann alles, was auch der Ingenieurshammer kann. Er formt Strukturen, dreht Blöcke und schaltet Bedienfelder zwischen normalem und invertiertem Redstone-Signal um.

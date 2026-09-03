@@ -1,0 +1,10 @@
+Alternátor
+Velký a silný!
+<&multiblock>Alternátor přeměňuje mechanickou energii na Flux a dokáže napájet mnohem více strojů než jediný Dieselový generátor.
+
+
+
+Potřebuje rotační vstup z mechanického zdroje energie – §lParní turbíny§r nebo §lPlynové turbíny§r – připojeného vzadu. Výstup je vpředu vlevo a vpředu vpravo; vyrábí až <config;i;alternator.alternator_max_output> Flux/t podle rychlosti rotoru. Vnitřní zásobník pojme <config;i;alternator.alternator_energy_capacity> Flux. Komparátor u libovolného vnějšího bloku vydává signál úměrný aktuální úrovni energie.
+
+Parní turbína s alternátorem
+<&diagram>

@@ -1,0 +1,5 @@
+Výměník tepla
+Je horký, nebo studený?
+<&multiblock>Výměník tepla je protiproudý výměník – horká kapalina vstupuje na jedné straně a vystupuje ochlazená na druhé, zatímco ohřívaná kapalina proudí opačným směrem druhým okruhem.
+
+Výměník tepla potřebuje horké kapaliny, aby vyrobil jiné kapaliny. Výměník tepla zpracovává horké tekutiny nesoucí energii spolu s chladnějšími tekutinami, jako je §lVoda§r nebo §lDestilovaná voda§r, a ohřívá je do použitelnější podoby. Komparátor u libovolného vnějšího bloku vydává signál úměrný zaplněnosti vnitřního zásobníku Flux (<config;i;heat_exchanger.energy_capacity> Flux).

@@ -3,7 +3,4 @@
 <&multiblock>進階焦炭爐是一種多方塊機器，能比標準焦炭爐更快地將煤炭加工成§l焦炭§r和§l雜酚油§r。
 
 
-§l操作§r
-    - 燃料§l物品§r從§l頂部§r輸入；流體輸出（雜酚油）從§l正面§r取出。
-    - 側面端口最多可連接兩個底座加熱器；每個運行中的加熱器消耗<config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t並提高加工速度，兩者疊加時收益遞減。
-    - 靠在任意外部方塊上的比較器會輸出與目前批次進度成比例的訊號。
+燃料§l物品§r從§l頂部§r輸入；流體輸出（雜酚油）從§l正面§r取出；焦炭從§l背面§r取出。 側面端口最多可連接兩個底座加熱器；每個運行中的加熱器消耗<config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t並提高加工速度，兩者疊加時收益遞減。 靠在任意外部方塊上的比較器會輸出與目前批次進度成比例的訊號。

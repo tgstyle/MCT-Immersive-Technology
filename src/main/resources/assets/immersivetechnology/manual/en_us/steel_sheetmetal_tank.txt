@@ -6,8 +6,4 @@ Fill it up!
 
 
 
-§lOperation§r
-    - §lFluids§r are input on the top and bottom.
-    - §lFluids§r are output on the bottom. Use redstone signal to output fluid on the bottom.
-    - Holds up to <config;i;steel_sheetmetal_tank.capacity> mB of fluid.
-    - A comparator against one of the tank's <config;i;steel_sheetmetal_tank.comparator_layers> vertical layers outputs a signal proportional to fluid level at that layer specifically — lower layers read full sooner as the tank fills, similar to a vanilla hopper-fed tank.
+§lFluids§r are input on the top and bottom. §lFluids§r are output on the bottom. Use redstone signal to output fluid on the bottom. Holds up to <config;i;steel_sheetmetal_tank.capacity> mB of fluid. A comparator against one of the tank's <config;i;steel_sheetmetal_tank.comparator_layers> vertical layers outputs a signal proportional to fluid level at that layer specifically — lower layers read full sooner as the tank fills, similar to a vanilla hopper-fed tank.

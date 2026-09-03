@@ -2,7 +2,4 @@ Minuteur Redstone
 Tic-Tac
 Un connecteur Redstone qui émet une impulsion Redstone répétée, de 0,5 à 30 secondes, réglable dans l'interface. Se connecte au réseau de câbles Redstone d'Immersive Engineering plutôt qu'à la poudre de redstone classique.
 
-§lFonctionnement§r
-    - Nécessite une entrée Redstone active pour continuer à pulser.
-    - L'interface règle le délai, bascule entre les modes entrée et sortie, et choisit l'une des 16 couleurs de câble.
-    - Un clic droit avec un Tournevis donne accès aux mêmes réglages sans ouvrir l'interface : s'accroupir change la couleur du câble, sans s'accroupir bascule entre entrée et sortie.
+Nécessite une entrée Redstone active pour continuer à pulser. L'interface règle le délai, bascule entre les modes entrée et sortie, et choisit l'une des 16 couleurs de câble. Un clic droit avec un Tournevis donne accès aux mêmes réglages sans ouvrir l'interface : s'accroupir change la couleur du câble, sans s'accroupir bascule entre entrée et sortie.

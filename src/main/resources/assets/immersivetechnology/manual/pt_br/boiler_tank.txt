@@ -5,9 +5,4 @@ Está ficando bem vaporoso aqui!
 
 
 
-§lOperação§r
-    - A §lÁgua§r é inserida perto do tanque no §llado esquerdo§r; o §lVapor§r sai pelo topo.
-    - Comporta até <config;i;boiler_tank.tank_capacity> mB de água.
-    - Inicia um lote quando o calor do queimador conectado atinge a temperatura de trabalho.
-    - Se o calor cair no meio do lote, o progresso recua gradualmente em vez de zerar totalmente — uma interrupção breve custa algum progresso, não tudo.
-    - Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de calor atual.
+A §lÁgua§r ou a §lÁgua Destilada§r é inserida perto do tanque no §llado esquerdo§r; o §lVapor§r sai pelo topo. Comporta até <config;i;boiler_tank.tank_capacity> mB de água. Inicia um lote quando o calor do queimador conectado atinge a temperatura de trabalho. Se o calor cair no meio do lote, o progresso recua gradualmente em vez de zerar totalmente — uma interrupção breve custa algum progresso, não tudo. Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de calor atual.

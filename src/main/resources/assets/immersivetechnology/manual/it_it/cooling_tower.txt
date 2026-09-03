@@ -7,9 +7,4 @@ Raffredda!
 
 
 
-§lFunzionamento§r
-    - L'§lAcqua§r e il §lVapore di scarico§r possono entrare in entrambi gli ingressi — l'ordine non conta.
-    - L'§lAcqua§r esce da tutte le uscite.
-    - Fino a 3 lotti vengono elaborati in parallelo, quindi il throughput può superare quanto suggerito dal tempo di un singolo lotto.
-    - L'efficienza dipende dal differenziale di temperatura con l'ambiente e dalle ostruzioni vicine.
-    - Un comparatore contro il blocco usato per formare la struttura (quello colpito con il Martello) emette un segnale proporzionale a quanto è piena la coda dei 3 lotti. La Torre di raffreddamento non ha un pannello di controllo redstone, quindi questo è l'unico punto fisso in cui risponde.
+L'§lAcqua§r e il §lVapore di scarico§r possono entrare in entrambi gli ingressi — l'ordine non conta. L'§lAcqua§r esce da tutte le uscite. Fino a 3 lotti vengono elaborati in parallelo, quindi il throughput può superare quanto suggerito dal tempo di un singolo lotto. L'efficienza dipende dal differenziale di temperatura con l'ambiente e dalle ostruzioni vicine. Un comparatore contro il blocco usato per formare la struttura (quello colpito con il Martello) emette un segnale proporzionale a quanto è piena la coda dei 3 lotti. La Torre di raffreddamento non ha un pannello di controllo redstone, quindi questo è l'unico punto fisso in cui risponde.

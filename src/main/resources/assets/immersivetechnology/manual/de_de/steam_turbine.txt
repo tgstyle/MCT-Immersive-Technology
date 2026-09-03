@@ -4,8 +4,4 @@ Dreh dich!
 
 
 
-§lBetrieb§r
-    - §lDampf§r wird über das Rohr eingefüllt.
-    - §lAuspuffdampf§r wird unter dem Rotor ausgegeben.
-    - Am Rotor muss ein Multiblock angeschlossen werden, der mechanische Energie nutzt.
-    - Ein Komparator am Bedienfeld gibt ein Signal proportional zur aktuellen Rotordrehzahl aus.
+§lDampf§r wird über das Rohr eingefüllt. §lAuspuffdampf§r wird unter dem Rotor ausgegeben. Am Rotor muss ein Multiblock angeschlossen werden, der mechanische Energie nutzt. Ein Komparator am Bedienfeld gibt ein Signal proportional zur aktuellen Rotordrehzahl aus.

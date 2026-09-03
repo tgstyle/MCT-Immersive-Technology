@@ -3,10 +3,4 @@ GAS GAS GAS!
 <&multiblock>Die Gasturbine nutzt Brennstoff und eine Zündquelle aus den Brennern im Inneren, um heißes, schnell strömendes Gas zu erzeugen. Dieses Gas treibt die Turbinenschaufeln an und erzeugt Rotationsenergie.
 
 
-§lBetrieb§r
-    - §lFlüssigbrennstoff§r wird über das Rohr eingefüllt.
-    - §lAbgas§r wird unter dem Rotor ausgegeben.
-    - Die Seite mit MV-Energieeingang ist die Zündkerze, die dauerhaft versorgt werden kann.
-    - Die Seite mit HV-Energieeingang ist der Anlasser, der Strom benötigt, bis die Zündkerze den Brennstoff entzündet. Danach muss der Strom vom Anlasser entfernt werden.
-    - Am Rotor muss ein Multiblock angeschlossen werden, der mechanische Energie nutzt.
-    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zur aktuellen Rotordrehzahl aus.
+§lFlüssigbrennstoff§r wird über das Rohr eingefüllt. §lAbgas§r wird unter dem Rotor ausgegeben. Die Seite mit MV-Energieeingang ist die Zündkerze, die dauerhaft versorgt werden kann. Die Seite mit HV-Energieeingang ist der Anlasser, der Strom benötigt, bis die Zündkerze den Brennstoff entzündet. Danach muss der Strom vom Anlasser entfernt werden. Am Rotor muss ein Multiblock angeschlossen werden, der mechanische Energie nutzt. Das anfallende Rauchgas kann im <link;heat_exchanger;§n§oWärmetauscher§r> weiter genutzt werden. Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zur aktuellen Rotordrehzahl aus.

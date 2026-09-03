@@ -6,8 +6,4 @@ Está ficando bem vaporoso aqui!
 
 
 
-§lOperação§r
-    - O §lCombustível sólido§r é inserido abaixo da câmara de combustão.
-    - Acenda com uma tocha ou pederneira e aço na saída gradeada superior.
-    - Opera em modo piloto quando inativa, consumindo um fio pequeno de combustível para não apagar.
-    - Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de calor atual.
+O §lCombustível sólido§r é inserido abaixo da câmara de combustão. Acenda com uma tocha ou pederneira e aço na saída gradeada superior. Opera em modo piloto quando inativa, consumindo um fio pequeno de combustível para não apagar. Um comparador contra qualquer bloco externo emite um sinal proporcional ao nível de calor atual.

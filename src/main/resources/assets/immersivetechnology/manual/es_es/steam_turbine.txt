@@ -4,8 +4,4 @@ Turbina de vapor
 
 
 
-§lFuncionamiento§r
-    - El §lVapor§r se introduce por tubería.
-    - El §lVapor de escape§r sale por debajo del rotor.
-    - Debe conectarse un multibloque que use energía mecánica al rotor para que funcione.
-    - Un comparador contra el panel de control emite una señal proporcional a la velocidad actual del rotor.
+El §lVapor§r se introduce por tubería. El §lVapor de escape§r sale por debajo del rotor. Debe conectarse un multibloque que use energía mecánica al rotor para que funcione. Un comparador contra el panel de control emite una señal proporcional a la velocidad actual del rotor.

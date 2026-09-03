@@ -1,0 +1,5 @@
+Tubi per fluidi
+Più portata
+Immersive Technology regola la portata dei tubi per fluidi di Immersive Engineering.
+
+Tubi non pressurizzati: <config;i;fluid_pipe.unpressurized> mB/t. Tubi pressurizzati: <config;i;fluid_pipe.pressurized> mB/t.

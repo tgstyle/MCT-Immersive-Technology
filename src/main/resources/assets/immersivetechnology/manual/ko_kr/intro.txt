@@ -2,7 +2,3 @@ Immersive Technology
 스타일 있는 전력 생성!
 
 Immersive Technology는 Immersive Engineering을 완벽하게 보완하는 전력 기술 애드온입니다.
-
-크레딧: tgstyle, MagneticPrism, Cordyceps22
-
-특별 감사: MuddyKat, Crimson Twilight, MC7

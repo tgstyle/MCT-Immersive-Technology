@@ -1,0 +1,3 @@
+Clé du technologue
+Un bon tour de clé
+La §6Clé du technologue§r forme et configure les multiblocs d’Immersive Technology. Elle fait tout ce que fait l’Engineer's Hammer. Elle forme les structures, fait pivoter les blocs et bascule les panneaux de contrôle entre redstone normale et inversée.

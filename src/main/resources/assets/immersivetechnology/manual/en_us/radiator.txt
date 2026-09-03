@@ -2,10 +2,4 @@ Radiator
 Cooling!
 <&multiblock>The Radiator performs radiative cooling of hot fluids and gasses, similar to the Cooling Tower but far more compact. It can be built both vertically and horizontally.
 
-§lOperation§r
-    - §lHot Fluids/Gasses§r are input on one end.
-    - §lCooled Fluids/Gasses§r are output on the opposite end.
-    - Can be formed vertically (1→7→9) or horizontally (9→1→7) by rotating the structure.
-    - Efficiency depends on the temperature differential with the environment and nearby obstructions.
-    - Works in vacuum (unlike the Cooling Tower) but is significantly less efficient.
-    - A comparator against any exterior block outputs a signal proportional to how far along the current cycle is.
+§lHot Fluids/Gasses§r are input on one end. §lCooled Fluids/Gasses§r are output on the opposite end. Can be formed vertically (1→7→9) or horizontally (9→1→7) by rotating the structure. Efficiency depends on the temperature differential with the environment and nearby obstructions. Works in vacuum (unlike the Cooling Tower) but is significantly less efficient. The Radiator produces no cooling at all in the Nether, regardless of how much open space surrounds it. A comparator against any exterior block outputs a signal proportional to how far along the current cycle is.

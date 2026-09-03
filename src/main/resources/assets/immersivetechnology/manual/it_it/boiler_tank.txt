@@ -5,9 +5,4 @@ Sta diventando molto vaporoso qui dentro!
 
 
 
-§lFunzionamento§r
-    - L'§lAcqua§r viene inserita vicino al serbatoio sul §llato sinistro§r; il §lVapore§r esce dall'alto.
-    - Contiene fino a <config;i;boiler_tank.tank_capacity> mB di acqua.
-    - Avvia un lotto quando il calore del bruciatore collegato raggiunge la temperatura di lavoro.
-    - Se il calore scende a metà lotto, il progresso regredisce gradualmente invece di azzerarsi — un'interruzione breve costa un po' di progresso, non tutto.
-    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di calore attuale.
+L'§lAcqua§r o l'§lAcqua distillata§r viene inserita vicino al serbatoio sul §llato sinistro§r; il §lVapore§r esce dall'alto. Contiene fino a <config;i;boiler_tank.tank_capacity> mB di acqua. Avvia un lotto quando il calore del bruciatore collegato raggiunge la temperatura di lavoro. Se il calore scende a metà lotto, il progresso regredisce gradualmente invece di azzerarsi — un'interruzione breve costa un po' di progresso, non tutto. Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di calore attuale.

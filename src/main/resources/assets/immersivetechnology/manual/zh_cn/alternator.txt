@@ -4,7 +4,7 @@
 
 
 
-§l运行§r
-    - 需要来自机械能源的旋转输入——连接在后方的§l蒸汽涡轮§r或§l燃气涡轮§r。
-    - 输出位于前左和前右；根据转子速度最多产生<config;i;alternator.alternator_max_output> Flux/t。
-    - 内部缓冲区容纳<config;i;alternator.alternator_energy_capacity> Flux。靠在任意外部方块上的比较器会输出与当前能量水平成比例的信号。
+需要来自机械能源的旋转输入——连接在后方的§l蒸汽涡轮§r或§l燃气涡轮§r。 输出位于前左和前右；根据转子速度最多产生<config;i;alternator.alternator_max_output> Flux/t。 内部缓冲区容纳<config;i;alternator.alternator_energy_capacity> Flux。靠在任意外部方块上的比较器会输出与当前能量水平成比例的信号。
+
+蒸汽轮机与交流发电机组合
+<&diagram>

@@ -1,0 +1,5 @@
+Рідинні труби
+Більша пропускна здатність
+Immersive Technology змінює пропускну здатність рідинних труб Immersive Engineering.
+
+Труби без тиску: <config;i;fluid_pipe.unpressurized> мБ/т. Труби під тиском: <config;i;fluid_pipe.pressurized> мБ/т.

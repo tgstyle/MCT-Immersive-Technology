@@ -1,0 +1,5 @@
+Tubos de Fluido
+Mais vazão
+O Immersive Technology ajusta a vazão dos tubos de fluido do Immersive Engineering.
+
+Tubos sem pressão: <config;i;fluid_pipe.unpressurized> mB/t. Tubos pressurizados: <config;i;fluid_pipe.pressurized> mB/t.

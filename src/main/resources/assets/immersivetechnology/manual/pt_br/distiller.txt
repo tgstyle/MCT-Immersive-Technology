@@ -5,8 +5,4 @@ Evaporação!
 
 
 
-§lOperação§r
-    - A §lÁgua§r é inserida à direita.
-    - A §lÁgua destilada§r sai à esquerda.
-    - O sal sai pela parte de trás.
-    - Um comparador contra o painel de controle emite um sinal proporcional a quão cheio está seu buffer interno de Flux (<config;i;distiller.energy_capacity> Flux).
+A §lÁgua§r é inserida à direita. A §lÁgua destilada§r sai à esquerda. O sal sai pela parte de trás. Um balde de Água produz 500 mB de Água Destilada. A saída de item é uma chance, não uma garantia, junto com a saída de fluido. Um comparador contra o painel de controle emite um sinal proporcional a quão cheio está seu buffer interno de Flux (<config;i;distiller.energy_capacity> Flux).

@@ -1,0 +1,5 @@
+Limitatori e dispositivi di controllo
+Il throughput è sopravvalutato
+Il §lLimitatore di pile§r, il §lControllore di carico§r e la §lValvola per fluidi§r limitano il passaggio di oggetti, energia e fluidi.
+
+Nella GUI si impostano un limite totale nel tempo, un limite su quanto la destinazione può contenere prima di non ricevere altro, e un limite per singolo trasferimento; sono combinabili. Può anche essere regolato dall'intensità del segnale redstone: una modalità riduce il throughput all'aumentare del segnale (un segnale di 15 lo spegne), l'altra aumenta il throughput all'aumentare del segnale. La modalità attiva si imposta nell'interfaccia. Abilita la modalità redstone accovacciandoti con un Martello.

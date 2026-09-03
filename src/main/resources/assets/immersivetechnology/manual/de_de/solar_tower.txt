@@ -4,8 +4,4 @@ Sonnenkessel!
 
 
 
-§lBetrieb§r
-    - §lFlüssigkeiten§r zum Erhitzen werden vorne eingefüllt.
-    - §lErhitzte Flüssigkeiten§r werden hinten ausgegeben.
-    - Muss mindestens 44 Blöcke von anderen Türmen entfernt stehen.
-    - Ein Komparator am Bedienfeld gibt ein Signal proportional zum aktuellen Wärmestand aus.
+Benötigt auf den Turm ausgerichtete <link;solar_reflector;§n§oSolarreflektor§r>. §lFlüssigkeiten§r zum Erhitzen werden vorne eingefüllt. §lErhitzte Flüssigkeiten§r werden hinten ausgegeben. Halte zwischen Kollektoren mehr als 44 Blöcke Abstand, damit sich ihre Reflektoren nicht überschneiden. Ein Komparator am Bedienfeld gibt ein Signal proportional zum aktuellen Wärmestand aus.

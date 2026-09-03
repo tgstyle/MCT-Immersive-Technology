@@ -4,8 +4,4 @@ Spinny Spin!
 
 
 
-§lOperation§r
-    - §lSteam§r is input by the pipe.
-    - §lExhaust Steam§r is output under the rotor.
-    - You need to attach a multiblock to the rotor that uses mechanical power for the turbine to work.
-    - A comparator against the front control panel outputs a signal proportional to current rotor speed.
+§lSteam§r is input by the pipe. §lExhaust Steam§r is output under the rotor. You need to attach a multiblock to the rotor that uses mechanical power for the turbine to work. A comparator against the front control panel outputs a signal proportional to current rotor speed.

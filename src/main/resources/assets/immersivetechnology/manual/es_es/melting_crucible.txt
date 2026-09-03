@@ -3,8 +3,4 @@ Crisol de Fundición
 <&multiblock>El Crisol de Fundición utiliza electricidad para fundir materiales en su forma fluida fundida. Su velocidad de enfriamiento en reposo depende de la temperatura ambiental del bioma — se enfría más lento en biomas cálidos.
 
 
-§lFuncionamiento§r
-    - §lFluidos§r se introducen por la parte trasera.
-    - §lFluidos Fundidos§r se extraen por la parte frontal inferior.
-    - La energía se introduce por el lateral. El búfer interno contiene <config;i;melting_crucible.energy_capacity> Flux.
-    - Un comparador contra el panel de control emite una señal proporcional al nivel de calor actual.
+§lFluidos§r se introducen por la parte trasera. §lFluidos Fundidos§r se extraen por la parte frontal inferior. La energía se introduce por el lateral. El búfer interno contiene <config;i;melting_crucible.energy_capacity> Flux. Un comparador contra el panel de control emite una señal proporcional al nivel de calor actual.

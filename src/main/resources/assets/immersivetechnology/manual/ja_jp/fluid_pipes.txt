@@ -1,0 +1,5 @@
+流体パイプ
+より多くの流量
+Immersive TechnologyはImmersive Engineeringの流体パイプの流量を変更します。
+
+非加圧のパイプ: <config;i;fluid_pipe.unpressurized> mB/t。 加圧されたパイプ: <config;i;fluid_pipe.pressurized> mB/t。

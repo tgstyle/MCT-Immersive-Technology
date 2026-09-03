@@ -6,8 +6,4 @@ Sta diventando molto vaporoso qui dentro!
 
 
 
-§lFunzionamento§r
-    - Il §lCombustibile solido§r viene inserito sotto la camera di combustione.
-    - Accendila con una torcia o acciarino e selce sulla griglia di scarico superiore.
-    - Funziona in modalità pilota quando inattiva, consumando un piccolo filo di combustibile per non spegnersi.
-    - Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di calore attuale.
+Il §lCombustibile solido§r viene inserito sotto la camera di combustione. Accendila con una torcia o acciarino e selce sulla griglia di scarico superiore. Funziona in modalità pilota quando inattiva, consumando un piccolo filo di combustibile per non spegnersi. Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di calore attuale.

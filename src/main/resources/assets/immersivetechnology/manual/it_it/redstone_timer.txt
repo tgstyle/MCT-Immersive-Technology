@@ -2,7 +2,4 @@ Timer Redstone
 Tic-Tac
 Un connettore redstone che emette un impulso redstone ripetuto, da 0,5 a 30 secondi, regolabile nell'interfaccia. Si connette alla rete di cavi redstone di Immersive Engineering invece che alla polvere di redstone normale.
 
-§lFunzionamento§r
-    - Richiede un ingresso redstone attivo per continuare a pulsare.
-    - L'interfaccia imposta il ritardo, alterna tra modalità ingresso e uscita, e sceglie uno dei 16 colori del cavo.
-    - Clic destro con un Cacciavite offre gli stessi controlli senza aprire l'interfaccia: accovacciarsi cambia il colore del cavo, senza accovacciarsi alterna tra ingresso e uscita.
+Richiede un ingresso redstone attivo per continuare a pulsare. L'interfaccia imposta il ritardo, alterna tra modalità ingresso e uscita, e sceglie uno dei 16 colori del cavo. Clic destro con un Cacciavite offre gli stessi controlli senza aprire l'interfaccia: accovacciarsi cambia il colore del cavo, senza accovacciarsi alterna tra ingresso e uscita.

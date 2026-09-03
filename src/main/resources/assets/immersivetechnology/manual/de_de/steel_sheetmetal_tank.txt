@@ -6,8 +6,4 @@ Füll ihn auf!
 
 
 
-§lBetrieb§r
-    - §lFlüssigkeiten§r werden oben und unten eingefüllt.
-    - §lFlüssigkeiten§r werden unten ausgegeben. Verwende ein Redstone-Signal, um Flüssigkeit unten auszugeben.
-    - Fasst bis zu <config;i;steel_sheetmetal_tank.capacity> mB Flüssigkeit.
-    - Ein Komparator an einer der 4 vertikalen Schichten des Tanks gibt ein Signal proportional zum Flüssigkeitsstand an genau dieser Schicht aus – untere Schichten melden früher „voll“, während sich der Tank füllt, ähnlich einem von einem Trichter befüllten Vanilla-Tank.
+§lFlüssigkeiten§r werden oben und unten eingefüllt. §lFlüssigkeiten§r werden unten ausgegeben. Verwende ein Redstone-Signal, um Flüssigkeit unten auszugeben. Fasst bis zu <config;i;steel_sheetmetal_tank.capacity> mB Flüssigkeit. Ein Komparator an einer der <config;i;steel_sheetmetal_tank.comparator_layers> vertikalen Schichten des Tanks gibt ein Signal proportional zum Flüssigkeitsstand an genau dieser Schicht aus – untere Schichten melden früher „voll“, während sich der Tank füllt, ähnlich einem von einem Trichter befüllten Vanilla-Tank.

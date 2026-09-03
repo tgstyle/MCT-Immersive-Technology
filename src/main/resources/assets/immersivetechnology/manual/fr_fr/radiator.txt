@@ -2,10 +2,4 @@ Radiateur
 Refroidissement !
 <&multiblock>Le Radiateur effectue un refroidissement radiatif des fluides et gaz chauds, similaire à la Tour de refroidissement mais bien plus compact. Il peut être construit verticalement ou horizontalement.
 
-§lFonctionnement§r
-    - Les §lFluides/Gaz chauds§r entrent à une extrémité.
-    - Les §lFluides/Gaz refroidis§r sortent à l'extrémité opposée.
-    - Peut être formé verticalement (1→7→9) ou horizontalement (9→1→7) en faisant pivoter la structure.
-    - L'efficacité dépend de l'écart de température avec l'environnement et des obstructions proches.
-    - Fonctionne dans le vide (contrairement à la Tour de refroidissement) mais est nettement moins efficace.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à l'avancement du cycle en cours.
+Les §lFluides/Gaz chauds§r entrent à une extrémité. Les §lFluides/Gaz refroidis§r sortent à l'extrémité opposée. Peut être formé verticalement (1→7→9) ou horizontalement (9→1→7) en faisant pivoter la structure. L'efficacité dépend de l'écart de température avec l'environnement et des obstructions proches. Fonctionne dans le vide (contrairement à la Tour de refroidissement) mais est nettement moins efficace. Le Radiateur ne produit aucun refroidissement dans le Nether, quel que soit l'espace libre qui l'entoure. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à l'avancement du cycle en cours.

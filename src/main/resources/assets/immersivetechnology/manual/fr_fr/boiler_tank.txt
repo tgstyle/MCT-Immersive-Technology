@@ -5,9 +5,4 @@ Réservoir de chaudière
 
 
 
-§lFonctionnement§r
-    - L'§lEau§r est introduite près du réservoir sur le §lcôté gauche§r ; la §lVapeur§r sort par le haut.
-    - Contient jusqu'à <config;i;boiler_tank.tank_capacity> mB d'eau.
-    - Démarre un lot une fois que la chaleur du brûleur connecté atteint la température de fonctionnement.
-    - Si la chaleur baisse en cours de lot, la progression diminue progressivement plutôt que de se réinitialiser — une brève interruption coûte de la progression, pas tout.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau de chaleur actuel.
+L'§lEau§r ou l'§lEau distillée§r est introduite près du réservoir sur le §lcôté gauche§r ; la §lVapeur§r sort par le haut. Contient jusqu'à <config;i;boiler_tank.tank_capacity> mB d'eau. Démarre un lot une fois que la chaleur du brûleur connecté atteint la température de fonctionnement. Si la chaleur baisse en cours de lot, la progression diminue progressivement plutôt que de se réinitialiser — une brève interruption coûte de la progression, pas tout. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau de chaleur actuel.

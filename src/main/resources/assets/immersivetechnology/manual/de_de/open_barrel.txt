@@ -2,7 +2,4 @@ Offenes Metallfass
 Offen zum Himmel
 Ein einzelner Flüssigkeitstank, der oben offen ist und 12.000 mB fasst. Flüssigkeit kann von Hand eingefüllt werden, und er füllt sich langsam mit Regenwasser, wenn er dem offenen Himmel ausgesetzt ist.
 
-§lBetrieb§r
-    - Die Oberseite ist fest als Eingang eingestellt; die Unterseite kann mit einem Hammer zwischen Eingang, Ausgang und Aus umgeschaltet werden.
-    - Akzeptiert nur Flüssigkeiten, keine Gase.
-    - Füllt sich mit Regenwasser, wenn es direkt darüber regnet und der Tank leer ist oder bereits Wasser enthält – schneller während eines Gewitters. In heißen Biomen verdunstet es stattdessen.
+Die Oberseite ist fest als Eingang eingestellt; die Unterseite kann mit einem Hammer zwischen Eingang, Ausgang und Aus umgeschaltet werden. Akzeptiert nur Flüssigkeiten, keine Gase. Füllt sich mit Regenwasser, wenn es direkt darüber regnet und der Tank leer ist oder bereits Wasser enthält – schneller während eines Gewitters. In heißen Biomen verdunstet es stattdessen.
