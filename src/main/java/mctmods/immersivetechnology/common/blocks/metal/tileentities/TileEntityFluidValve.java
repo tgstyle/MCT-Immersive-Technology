@@ -87,7 +87,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	}
 
 	@Override public int fill(FluidStack resource, boolean doFill) {
-		if (busy) { return 0; }
+		if (busy || !open) { return 0; }
 		IFluidHandler destination = getDestination();
 		if (destination == null || resource == null) { return 0; }
 		int canAccept = resource.amount;

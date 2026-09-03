@@ -17,6 +17,10 @@
   "type": {
    "fluid_valve": {}
   },
+  "boolean0": {
+   "false": {},
+   "true": {}
+  },
   "facing": {
    "north": {},
    "south": {},

@@ -2,7 +2,7 @@
  "forge_marker": 1,
  "defaults": {
   "transform": "forge:default-block",
-  "model": "immersivetech:metal/valve_load/valve_load.obj.ie",
+  "model": "immersivetech:smartmodel/conn_valve_load",
   "custom": {
    "flip-v": true
   },
@@ -12,10 +12,16 @@
  },
  "variants": {
   "inventory,type=load_controller": [
-   {}
+   {
+    "model": "immersivetech:metal/valve_load/valve_load.obj.ie"
+   }
   ],
   "type": {
    "load_controller": {}
+  },
+  "boolean0": {
+   "false": {},
+   "true": {}
   },
   "facing": {
    "north": {},

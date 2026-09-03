@@ -7,9 +7,12 @@ import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.IEProperties.PropertyBoolInverted;
 import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
+import blusunrize.immersiveengineering.api.energy.wires.IWireCoil;
+import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
 import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.Utils;
 
@@ -28,11 +31,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.thread.SidedThreadGroups;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,7 +49,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public abstract class TileEntityCommonValve extends TileEntityIEBase implements IEBlockInterfaces.IDirectionalTile, ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IAttachedIntegerProperies, IOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
+public abstract class TileEntityCommonValve extends TileEntityImmersiveConnectable implements IEBlockInterfaces.IDirectionalTile, ITickable, IEBlockInterfaces.IBlockOverlayText, IEBlockInterfaces.IPlayerInteraction, IEBlockInterfaces.IGuiTile, IEBlockInterfaces.IActiveState, IEBlockInterfaces.IAttachedIntegerProperies, IOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
 
 	final TranslationKey overlayNormal;
 	final TranslationKey overlaySneakingFirstLine;
@@ -62,7 +68,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	public int packetLimit = -1;
 	public int timeLimit = -1;
 	public int keepSize = -1;
-	public byte redstoneMode = 0;
+	public byte redstoneMode = 1;
 	public int rotation = 0;
 	public boolean open = true;
 
@@ -84,6 +90,15 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		if (!world.isRemote) { updateOpenState(); }
 	}
 
+	@Override public boolean getIsActive() { return open; }
+
+	@Override @Nonnull public Vec3d getConnectionOffset(@Nonnull Connection con) {
+		double radius = con.cableType.getRenderDiameter() / 2;
+		return new Vec3d(.5 + (.5 - radius) * facing.getXOffset(), .5 + (.5 - radius) * facing.getYOffset(), .5 + (.5 - radius) * facing.getZOffset());
+	}
+
+	@Override @Nonnull public PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
+
 	public boolean isOpenForRedstone() {
 		if (redstoneMode == 0) { return true; }
 		int power = getRSPower();
@@ -95,8 +110,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 		if (open == shouldOpen) { return; }
 		open = shouldOpen;
 		efficientMarkDirty();
-		IBlockState state = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, state, state, 3);
+		markContainingBlockForUpdate(null);
 	}
 
 	public void efficientMarkDirty() {
@@ -141,7 +155,15 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote && !Utils.isHammer(heldItem)) {
+		if (!world.isRemote && player.isSneaking() && !Utils.isHammer(heldItem)) {
+			if (hand != EnumHand.MAIN_HAND) { return true; }
+			redstoneMode = (byte)(redstoneMode == 1 ? 2 : 1);
+			efficientMarkDirty();
+			updateOpenState();
+			return true;
+		}
+		else if (heldItem.getItem() instanceof IWireCoil) { return false; }
+		else if (!world.isRemote && !Utils.isHammer(heldItem)) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger("packetLimit", packetLimit);
 			tag.setInteger("timeLimit", timeLimit);
@@ -202,13 +224,17 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+		super.readCustomNBT(nbt, descPacket);
 		facing = EnumFacing.byIndex(nbt.getByte("facing"));
 		packetLimit = nbt.getInteger("packetLimit");
 		timeLimit = nbt.getInteger("timeLimit");
 		keepSize = nbt.getInteger("keepSize");
 		redstoneMode = nbt.getByte("redstoneMode");
+		int oldRotation = rotation;
+		boolean wasOpen = open;
 		rotation = nbt.getInteger("rotation");
 		open = nbt.getBoolean("open");
+		if (hasWorld() && world.isRemote && (wasOpen != open || oldRotation != rotation)) { world.markBlockRangeForRenderUpdate(pos, pos); }
 		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
 		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
 		secondCounter = nbt.getInteger("secondCounter");
@@ -218,6 +244,7 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 	}
 
 	@Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+		super.writeCustomNBT(nbt, descPacket);
 		nbt.setByte("facing", (byte)facing.getIndex());
 		nbt.setInteger("packetLimit", packetLimit);
 		nbt.setInteger("timeLimit", timeLimit);
@@ -272,10 +299,15 @@ public abstract class TileEntityCommonValve extends TileEntityIEBase implements 
 
 	@Override public boolean canRotate(@Nonnull EnumFacing axis) { return true; }
 
+	@Override @Nonnull public String getCacheKey(@Nonnull IBlockState object) { return rotation + ";" + facing.getIndex() + ";" + open; }
+
 	@SideOnly(Side.CLIENT)
 	@Override public boolean shouldRenderGroup(@Nonnull IBlockState object, @Nonnull String group) {
-		if ("Handle_Open".equals(group)) { return open; }
-		if ("Handle_Closed".equals(group)) { return !open; }
+		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+		if (layer != null && layer != BlockRenderLayer.CUTOUT) { return false; }
+		boolean isOpen = !object.getPropertyKeys().contains(IEProperties.BOOLEANS[0]) || object.getValue(IEProperties.BOOLEANS[0]);
+		if ("Handle_Open".equals(group)) { return isOpen; }
+		if ("Handle_Closed".equals(group)) { return !isOpen; }
 		return true;
 	}
 

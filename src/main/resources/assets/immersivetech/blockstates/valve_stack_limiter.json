@@ -19,6 +19,10 @@
   "type": {
    "stack_limiter": {}
   },
+  "boolean0": {
+   "false": {},
+   "true": {}
+  },
   "facing": {
    "north": {
     "transform": {
