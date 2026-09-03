@@ -1,13 +1,20 @@
 {
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
-  "automatic_culling": false,
-  "emissive_ambient": true,
-  "flip_v": true,
-  "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/gas_turbine/gas_turbine_mirrored.obj",
-  "mtl_override": "immersivetechnology:models/multiblock/metal/gas_turbine/gas_turbine.mtl",
-  "shade_quads": true,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "forge:obj",
+    "model": "immersivetechnology:models/multiblock/metal/gas_turbine/gas_turbine.obj",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/gas_turbine"
+    }
+  },
+  "loader": "immersivetechnology:mirror",
   "textures": {
     "particle": "immersivetechnology:multiblock/metal/gas_turbine"
   }

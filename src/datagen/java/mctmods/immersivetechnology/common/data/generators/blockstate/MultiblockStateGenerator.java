@@ -40,24 +40,24 @@ public class MultiblockStateGenerator {
 
     public void generate() {
         Reference.IT_LOGGER.info("Generating Multiblock Models");
-        generateMultiblockConfig("advanced_coke_oven", "stone", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("alternator", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("boiler_liquid", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
-        generateMultiblockConfig("boiler_solid", "metal", false, true, ImmutableMap.of("cube_front", main.modLoc("multiblock/metal/boiler_solid")), ImmutableMap.of("cube_front", main.modLoc("multiblock/metal/boiler_solid_active")), "cutout_mipped");
-        generateMultiblockConfig("boiler_tank", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("cooling_tower", "stone", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("distiller", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("electrolytic_crucible_battery", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("gas_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("heat_exchanger", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("melting_crucible", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("radiator", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("radiator_horizontal", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("solar_melter", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("solar_reflector", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("solar_tower", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("steam_turbine", "metal", true, false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("steel_sheetmetal_tank", "metal", false, false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
+        generateMultiblockConfig("advanced_coke_oven", "stone", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("alternator", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("boiler_liquid", "metal", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
+        generateMultiblockConfig("boiler_solid", "metal", true, ImmutableMap.of("cube_front", main.modLoc("multiblock/metal/boiler_solid")), ImmutableMap.of("cube_front", main.modLoc("multiblock/metal/boiler_solid_active")), "cutout_mipped");
+        generateMultiblockConfig("boiler_tank", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("cooling_tower", "stone", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("distiller", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("electrolytic_crucible_battery", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("gas_turbine", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("heat_exchanger", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("melting_crucible", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("radiator", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("radiator_horizontal", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("solar_melter", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("solar_reflector", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("solar_tower", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("steam_turbine", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("steel_sheetmetal_tank", "metal", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
     }
 
     private BlockModelBuilder createMirrorWrappedModel(String name, BlockModelBuilder inner) {
@@ -72,27 +72,20 @@ public class MultiblockStateGenerator {
         return ret;
     }
 
-    private void generateMultiblockConfig(String registry_name, String block_type, boolean useSeparateMirror, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures, @Nullable String renderType) {
+    private void generateMultiblockConfig(String registry_name, String block_type, boolean hasActive, Map<String, ResourceLocation> defaultTextures, Map<String, ResourceLocation> activeTextures, @Nullable String renderType) {
         if (!hasActive) { defaultTextures = ImmutableMap.of(); activeTextures = ImmutableMap.of(); }
         Reference.IT_LOGGER.info("Generating [{}] Multiblock Model Data", registry_name);
         MachineTemplateMultiblock multiblock = (MachineTemplateMultiblock) MultiblockRegistry.getMBTemplate.apply(registry_name);
         boolean hasMirror = multiblock.getBlock().getStateDefinition().getProperties().contains(ModProperties.MIRRORED);
-        boolean flipMirror = hasMirror && useSeparateMirror;
         String baseObjPath = "multiblock/" + block_type + "/" + registry_name + "/" + registry_name + ".obj";
-        String mirroredObjPath = baseObjPath.replace(".obj", "_mirrored.obj");
         String modelPrefix = "multiblock/" + block_type + "/";
         BlockModelBuilder defaultUnsplit = createUnsplitModel(modelPrefix + registry_name, baseObjPath, defaultTextures, renderType);
         BlockModelBuilder activeUnsplit = hasActive ? createUnsplitModel(modelPrefix + registry_name + "_active", baseObjPath, activeTextures, renderType) : null;
         BlockModelBuilder mirroredUnsplit = null;
         BlockModelBuilder activeMirroredUnsplit = null;
         if (hasMirror) {
-            if (flipMirror) {
-                mirroredUnsplit = createUnsplitModel(modelPrefix + registry_name + "_mirrored", mirroredObjPath, defaultTextures, renderType);
-                if (hasActive) { activeMirroredUnsplit = createUnsplitModel(modelPrefix + registry_name + "_active_mirrored", mirroredObjPath, activeTextures, renderType); }
-            } else {
-                mirroredUnsplit = createMirrorWrappedModel(modelPrefix + registry_name + "_mirrored", defaultUnsplit);
-                if (hasActive) { activeMirroredUnsplit = createMirrorWrappedModel(modelPrefix + registry_name + "_active_mirrored", activeUnsplit); }
-            }
+            mirroredUnsplit = createMirrorWrappedModel(modelPrefix + registry_name + "_mirrored", defaultUnsplit);
+            if (hasActive) { activeMirroredUnsplit = createMirrorWrappedModel(modelPrefix + registry_name + "_active_mirrored", activeUnsplit); }
         }
         createMultiblockVariant(multiblock::getBlock, defaultUnsplit, activeUnsplit, mirroredUnsplit, activeMirroredUnsplit, hasMirror ? ModProperties.MIRRORED : null, hasActive ? ModProperties.ACTIVE : null);
     }
@@ -108,15 +101,9 @@ public class MultiblockStateGenerator {
         loader.automaticCulling(false);
         loader.shadeQuads(true);
         loader.emissiveAmbient(true);
-        String path = objPath.getPath();
-        ResourceLocation textureModel = objPath;
-        if (path.endsWith("_mirrored.obj")) {
-            textureModel = ResourceLocation.fromNamespaceAndPath(objPath.getNamespace(), path.replace("_mirrored.obj", ".obj"));
-            loader.overrideMaterialLibrary(ResourceLocation.fromNamespaceAndPath(modelLocation.getNamespace(), modelLocation.getPath().replace("_mirrored.obj", ".mtl")));
-        }
         BlockModelBuilder ret = loader.end();
         ret.ao(false);
-        String particleTex = GeneratorUtils.getTextureFromObj(textureModel, existingFileHelper);
+        String particleTex = GeneratorUtils.getTextureFromObj(objPath, existingFileHelper);
         if (particleTex.charAt(0) == '#') { particleTex = textures.getOrDefault(particleTex.substring(1), main.modLoc("block/metal/technology_engineering")).toString(); }
         ret.texture("particle", particleTex);
         ModBlockState.generatedParticleTextures.put(ret.getLocation(), particleTex);

@@ -1,13 +1,20 @@
 {
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
-  "automatic_culling": false,
-  "emissive_ambient": true,
-  "flip_v": true,
-  "loader": "forge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/solar_tower/solar_tower_mirrored.obj",
-  "mtl_override": "immersivetechnology:models/multiblock/metal/solar_tower/solar_tower.mtl",
-  "shade_quads": true,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "forge:obj",
+    "model": "immersivetechnology:models/multiblock/metal/solar_tower/solar_tower.obj",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/solar_tower"
+    }
+  },
+  "loader": "immersivetechnology:mirror",
   "textures": {
     "particle": "immersivetechnology:multiblock/metal/solar_tower"
   }
