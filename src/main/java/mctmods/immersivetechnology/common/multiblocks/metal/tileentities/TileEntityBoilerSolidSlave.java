@@ -83,6 +83,13 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
         return m.heatLevel;
     }
 
+    @Override public boolean providesHeatTo(EnumFacing side) {
+        TileEntityBoilerSolidMaster m = master();
+        if (m == null || !formed) return false;
+        if (m.heatOutputPos0 == null) m.InitializePoIs();
+        return m.heatOutputPos0.isPoI(side, posInMultiblock());
+    }
+
     @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         TileEntityBoilerSolidMaster m = master();
         if (m != null && m.tryIgnite(posInMultiblock(), player, heldItem)) { return true; }

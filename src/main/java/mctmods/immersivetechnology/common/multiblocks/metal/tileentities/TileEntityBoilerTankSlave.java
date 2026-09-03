@@ -72,6 +72,13 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
         return m.tanks[0].getFluidAmount();
     }
 
+    @Override public boolean acceptsHeatFrom(EnumFacing side) {
+        TileEntityBoilerTankMaster m = master();
+        if (m == null || !formed) return false;
+        if (m.heatInputPos0 == null) m.InitializePoIs();
+        return m.heatInputPos0.isPoI(side, posInMultiblock());
+    }
+
     @Override @Nonnull public NonNullList<ItemStack> getInventory() {
         TileEntityBoilerTankMaster m = master();
         return (m == null || !formed) ? NonNullList.withSize(TileEntityBoilerTankMaster.slotCount, ItemStack.EMPTY) : m.inventory;

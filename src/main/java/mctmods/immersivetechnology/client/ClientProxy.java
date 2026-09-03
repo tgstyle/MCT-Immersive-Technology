@@ -118,21 +118,21 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(this);
         ModelLoaderRegistry.registerLoader(new ModelConfigurableSides.Loader());
         SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_alternator", () -> TileEntityITMultiblockPartAlternator.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_boiler_tank", () -> TileEntityITMultiblockPartBoilerTank.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_boiler_liquid", () -> TileEntityITMultiblockPartBoilerLiquid.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock2_boiler_solid", () -> TileEntityITMultiblockPartBoilerSolid.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_boiler_tank", true, () -> TileEntityITMultiblockPartBoilerTank.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_boiler_liquid", true, () -> TileEntityITMultiblockPartBoilerLiquid.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock2_boiler_solid", true, () -> TileEntityITMultiblockPartBoilerSolid.instance);
         SplitModelHandler.register(ImmersiveTechnology.MODID, "stone_multiblock_cooling_tower", () -> TileEntityITMultiblockPartCoolingTower.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_distiller", () -> TileEntityITMultiblockPartDistiller.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_solar_tower", () -> TileEntityITMultiblockPartSolarTower.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_steam_turbine", () -> TileEntityITMultiblockPartSteamTurbine.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_distiller", true, () -> TileEntityITMultiblockPartDistiller.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_solar_tower", true, () -> TileEntityITMultiblockPartSolarTower.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_steam_turbine", true, () -> TileEntityITMultiblockPartSteamTurbine.instance);
         SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_steel_tank", () -> TileEntityITMultiblockPartSteelSheetmetalTank.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_electrolytic_crucible_battery", () -> TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_gas_turbine", () -> TileEntityITMultiblockPartGasTurbine.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_heat_exchanger", () -> TileEntityITMultiblockPartHeatExchanger.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_high_pressure_steam_turbine", () -> TileEntityITMultiblockPartHighPressureSteamTurbine.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_melting_crucible", () -> TileEntityITMultiblockPartMeltingCrucible.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_electrolytic_crucible_battery", true, () -> TileEntityITMultiblockPartElectrolyticCrucibleBattery.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_gas_turbine", true, () -> TileEntityITMultiblockPartGasTurbine.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_heat_exchanger", true, () -> TileEntityITMultiblockPartHeatExchanger.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_high_pressure_steam_turbine", true, () -> TileEntityITMultiblockPartHighPressureSteamTurbine.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_melting_crucible", true, () -> TileEntityITMultiblockPartMeltingCrucible.instance);
         SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_radiator", () -> TileEntityITMultiblockPartRadiator.instance);
-        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_solar_melter", () -> TileEntityITMultiblockPartSolarMelter.instance);
+        SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock1_solar_melter", true, () -> TileEntityITMultiblockPartSolarMelter.instance);
         SplitModelHandler.register(ImmersiveTechnology.MODID, "stone_multiblock_advanced_coke_oven", () -> TileEntityITMultiblockPartAdvancedCokeOven.instance);
     }
 
