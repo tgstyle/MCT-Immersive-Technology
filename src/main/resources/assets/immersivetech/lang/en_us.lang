@@ -155,7 +155,6 @@ gui.immersivetech.rotor_creative.rpm=RPM
 gui.immersivetech.stack_limiter.limitpacket=Items per packet
 gui.immersivetech.stack_limiter.limittime=Items per second
 gui.immersivetech.stack_limiter.limitdestination=Items in output storage
-gui.immersivetech.generic_multiblock_jei_tooltip=Check Engineer's Manual to Build
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=Distiller
@@ -187,9 +186,17 @@ chat.immersivetech.solar_tower_too_close=Solar Tower Too Close To Another - Move
 tile.immersivetech.connectors.connectors_timer.name=Redstone Timer
 
 #MANUAL
-ie.manual.category.it_power.name=Turbine Power Systems
 ie.manual.category.it.name=Immersive Technology
+ie.manual.category.it_power.name=Turbine Power Systems
+ie.manual.category.it_processing.name=Processing and Storage
 
+ie.manual.entry.intro.name=Immersive Technology
+ie.manual.entry.intro.subtext=Power Generation with style!
+ie.manual.entry.intro0=Immersive Technology is a Power Technology add on complimenting Immersive Engineering.
+ie.manual.entry.barrelCreative.name=Creative Fluid Barrel
+ie.manual.entry.barrelCreative.subtext=Infinite Supply
+ie.manual.entry.barrelCreative0=A creative/testing-only block that supplies an unlimited amount of a chosen fluid. It does not accept fluid input.
+ie.manual.entry.barrelCreative1=Right-click with a bucket or container of a fluid to set that as the output fluid. Sneak-right-click with an empty hand to clear the selected fluid. Once set, it actively pushes fluid into all 6 neighboring blocks every tick, up to <config;i;barrel_creative_outputAmount> mB/t — effectively unlimited at default settings.
 ie.manual.entry.technologistsWrench.name=Technologist's Wrench
 ie.manual.entry.technologistsWrench.subtext=Righty tighty
 ie.manual.entry.technologistsWrench0=The §6Technologist's Wrench§r forms and configures Immersive Technology multiblocks. Anything the Engineer's Hammer does, it does too. It forms structures, rotates blocks, and switches control panels between normal and inverted redstone.
@@ -197,7 +204,7 @@ ie.manual.entry.technologistsWrench0=The §6Technologist's Wrench§r forms and c
 ie.manual.entry.advancedCokeOven.name=Advanced Coke Oven
 ie.manual.entry.advancedCokeOven.subtext=It's fast now
 ie.manual.entry.advancedCokeOven0=The Advanced Coke Oven is a multiblock structure that allows faster production of Coal Coke and Creosote Oil.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Reinforced Coke Brick Block.
-ie.manual.entry.advancedCokeOven1=It allows the automation of input and output of items, it can also be outfitted with baseheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, Coal Coke is output at the front and Creosote Oil at the back. Coal is fed in through the top.
+ie.manual.entry.advancedCokeOven1=It allows the automation of input and output of items, it can also be outfitted with baseheaters to speed up the process by addition of hot air.<br>The furnace is made from reinforced bricks, so you'd be advised to spend your first batches of steel on this upgrade.<br>Similar to the Improved Blast Furnace, Coal Coke is output at the back and Creosote Oil at the front. Coal is fed in through the top.
 ie.manual.entry.advancedCokeOven2=Coke Oven Baseheaters are used to speed up the refinement process of coal. Each oven can have up to two baseheaters connected to the ports on each side, and each baseheater requires <config;i;cokeOvenBaseheater_consumption> Flux/t to operate. With default settings, each active baseheater increases processing speed, with diminishing benefit from stacking both.
 ie.manual.entry.advancedCokeOven3=A comparator placed against the multiblock outputs a signal proportional to how far along the current batch is, from 0 when idle up to 15 when nearly finished.
 
@@ -213,15 +220,15 @@ ie.manual.entry.boilerLiquid.name=Boiler Liquid Fuel Burner
 ie.manual.entry.boilerLiquid.subtext=Getting steamy in here!
 ie.manual.entry.boilerSolid.name=Boiler Solid Fuel Burner
 ie.manual.entry.boilerSolid.subtext=Getting steamy in here!
-ie.manual.entry.boilerTank0=The Boiler Tank is the core of the Boiler system - it holds water and turns it into steam, but cannot produce heat on its own. Attach a Liquid or Solid Fuel Burner against the heat intake hatch on its right side to supply it. The structure is built as shown above and formed by using the Engineer's Hammer on the Light Engineering Block at the front.
-ie.manual.entry.boilerTank1=Water and <link;distiller;§n§oDistilled Water§r> can be input via the hatch on the left side that is marked with a blue dot, holding up to <config;i;boilerTank_tankSize> mB. Steam is output from the hatch with the orange dot on top.
-ie.manual.entry.boilerTank2=A batch starts once the attached burner reaches the recipe's working temperature. If heat drops partway through a batch, progress isn't lost outright - it drains back gradually, so a brief interruption costs some progress, not all of it. A comparator placed against the multiblock outputs a signal proportional to current heat level. Supports OpenComputers.
-ie.manual.entry.boilerLiquid0=The Liquid Fuel Burner burns fluid fuel to supply heat to an attached Boiler Tank - it holds no water and produces no steam itself. The structure is built as shown above and formed by using the Engineer's Hammer on the Redstone Engineering Block.
-ie.manual.entry.boilerLiquid1=Fluid fuel such as Biodiesel is input through the pipe below the combustion chamber, on the side away from the tank. Light the burner with a Torch or Flint and Steel on the exhaust vent. While idle it runs in pilot mode, consuming a small trickle of fuel to stay lit rather than going cold.
-ie.manual.entry.boilerLiquid2=Applying a redstone signal to the control block at the front will drop the burner back to its pilot light; this behavior can be inverted by use of the Engineer's Hammer. A comparator placed against the multiblock outputs a signal proportional to current heat level. Supports OpenComputers.
-ie.manual.entry.boilerSolid0=The Solid Fuel Burner burns item fuel such as Coal or Coal Coke to supply heat to an attached Boiler Tank - it holds no water and produces no steam itself. The structure is built as shown above and formed by using the Engineer's Hammer on the Redstone Engineering Block.
-ie.manual.entry.boilerSolid1=Fuel items are input through the hatch below the combustion chamber, on the side away from the tank. Light the burner with a Torch or Flint and Steel on the exhaust vent. While idle it runs in pilot mode, burning fuel far slower to stay lit rather than going cold.
-ie.manual.entry.boilerSolid2=Applying a redstone signal to the control block at the front will drop the burner back to its pilot light; this behavior can be inverted by use of the Engineer's Hammer. A comparator placed against the multiblock outputs a signal proportional to current heat level. Supports OpenComputers.
+ie.manual.entry.boilerTank0=The Boiler Tank is the core of the Boiler system - it holds water and turns it into steam, but it can't produce heat on its own. Attach one §lBoiler (Liquid Fuel)§r or §lBoiler (Solid Fuel)§r burner to supply it.
+ie.manual.entry.boilerTank1=§lWater§r is input near the tank on the §lleft side§r; §lSteam§r is output from the top. Holds up to <config;i;boilerTank_tankSize> mB of water. Runs a batch once the attached burner's heat reaches working temperature.
+ie.manual.entry.boilerTank2=If heat drops mid-batch, progress drains back gradually rather than resetting outright - a brief interruption costs some progress, not all of it. A comparator against any exterior block outputs a signal proportional to current heat level.
+ie.manual.entry.boilerLiquid0=The Liquid Fuel Boiler burns fluid fuel to supply heat to an attached §lBoiler Tank§r - it does not hold water or produce steam itself.
+ie.manual.entry.boilerLiquid1=§lLiquid Fuel§r is input below the combustion chamber. Light it with a torch or flint and steel on the top exhaust vent.
+ie.manual.entry.boilerLiquid2=Runs in pilot mode when idle, consuming a small trickle of fuel to stay lit rather than going cold. A comparator against any exterior block outputs a signal proportional to current heat level.
+ie.manual.entry.boilerSolid0=The Solid Fuel Boiler burns item fuel (coal, coke, etc.) to supply heat to an attached §lBoiler Tank§r - it does not hold water or produce steam itself.
+ie.manual.entry.boilerSolid1=§lSolid Fuel§r is input below the combustion chamber. Light it with a torch or flint and steel on the top exhaust vent.
+ie.manual.entry.boilerSolid2=Runs in pilot mode when idle, consuming a small trickle of fuel to stay lit rather than going cold. A comparator against any exterior block outputs a signal proportional to current heat level.
 
 ie.manual.entry.distiller.name=Distiller
 ie.manual.entry.distiller.subtext=Clearer than water
@@ -238,10 +245,13 @@ ie.manual.entry.solarTower.name=Solar Tower
 ie.manual.entry.solarTower.subtext=Automatic Bird Roaster 2056
 ie.manual.entry.solarTower0=The Solar Tower is a multiblock structure that uses the light of the Sun to heat water into steam. The structure is built as shown and formed by using the Engineer's Hammer on the central Light Engineering Block.
 ie.manual.entry.solarTower1=The Solar Tower can produce Steam from Water and <link;distiller;§n§oDistilled Water§r>. Water can be input into the Solar Tower via the hatch marked with the blue dot. The hatch with the orange dot serves as a fluid output. The Solar Tower needs at least one Solar Reflector to work, and many to reach full efficiency. The fraction of reflectors out of the maximum number of reflectors is the fraction of the recipe processed. In the overworld, about 230 reflectors are needed to reach full output.
-ie.manual.entry.solarTower2=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. It must be placed above the concrete
-ie.manual.entry.solarTower2a=foundation layer of the Tower/Melter. If too low or too high, it will not connect.
-ie.manual.entry.solarTower3=Reflector distance from the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. The reflector does not work at night or during thunderstorms, and has reduced efficiency during rainstorms. Efficiency is also reduced at dawn and dusk when the sunlight's angle of incidence is too low to be easily collected, and by high ambient humidity. Full reflector efficiency depends on full sky access. With §lAdvanced Rocketry§r, strength varies by planet.
-ie.manual.entry.solarTower4=Each Solar Reflector can only serve one collector - a Solar Tower or a Solar Melting Crucible - at a time. Building several solar collectors near each other means they will compete for the same pool of reflectors rather than each reaching full efficiency. A comparator placed against the Solar Tower outputs a signal proportional to current heat level. Supports OpenComputers.
+ie.manual.entry.solarTower2=<link;solarReflector;§n§oSolar Reflector§r>
+ie.manual.entry.solarReflector.name=Solar Reflector
+ie.manual.entry.solarReflector.subtext=Shine!
+ie.manual.entry.solarReflector0=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. It must be placed above the concrete
+ie.manual.entry.solarReflector1=foundation layer of the Tower/Melter. If too low or too high, it will not connect.
+ie.manual.entry.solarReflector2=Reflector distance from the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. The reflector does not work at night or during thunderstorms, and has reduced efficiency during rainstorms. Efficiency is also reduced at dawn and dusk when the sunlight's angle of incidence is too low to be easily collected, and by high ambient humidity. Full reflector efficiency depends on full sky access. With §lAdvanced Rocketry§r, strength varies by planet.
+ie.manual.entry.solarReflector3=Each Solar Reflector can only serve one collector - a Solar Tower or a Solar Melting Crucible - at a time. Building several solar collectors near each other means they will compete for the same pool of reflectors rather than each reaching full efficiency. A comparator placed against the Solar Tower outputs a signal proportional to current heat level. Supports OpenComputers.
 
 ie.manual.entry.controlBlocks.name=Limiter and Control Devices
 ie.manual.entry.controlBlocks.subtext=Throughput is overrated
@@ -271,7 +281,7 @@ ie.manual.entry.gasTurbine.subtext=Not part of a 747
 ie.manual.entry.gasTurbine0=The Gas Turbine is a multiblock structure that uses combustible fuels to produce kinetic energy. The structure is built as shown, and formed by using the Engineer's hammer on the central steel block (short side). To work, the turbine needs an <link;alternator;§o§nAlternator§r>.
 ie.manual.entry.gasTurbine1=When the turbine is supplied with adequate fuel, the turbine will slowly speed up until it hits max speed and efficiency about 30 seconds into the spinup process. Some fuels may require large enough amounts to be fed into the turbine to require pressurized transport, and if the turbine runs out of fuel it will begin to slow down. If the turbine is at speed while shut down, it will slowly lose speed. If it slows down to below 1/4 speed, it will need to be spun back up before it can be used again.
 ie.manual.entry.gasTurbine2=The fluid pipe on the front of the turbine is the input, and the two power plugs on the sides of the turbine each serve a different input purpose. The HV plug consumes 4096 IF/t to start the turbine up to 1/4 speed, at which point more flux input will cause the turbine to stall and not spin up past 1/4 speed. The MV plug uses 1024 IF to ignite the fuel if the turbine is not currently burning fuel - this happens on startup and any time the turbine has no fuel for 3 or more seconds.
-ie.manual.entry.gasTurbine3=The turbine outputs kinetic energy from the rear, and the result gasses just below the kinetic energy output. These gasses have a special place, in that they can be burned to increase the efficiency of the turbine.  While usually worse than the diesel generator, for a greater power output and complexity, this output is where the gas turbine really shines. CCGT (or COGAS for the mariners out there) allows even larger returns on combustible fuels when used in the boiler for steam power.
+ie.manual.entry.gasTurbine3=The turbine outputs kinetic energy from the rear, and the flue gas just below the kinetic energy output. On its own it is usually worse than the diesel generator, but this output is where the gas turbine really shines: feed the hot flue gas to a <link;heatExchanger;§n§oHeat Exchanger§r> to raise steam from it - combined cycle, CCGT (or COGAS for the mariners out there) - for a far larger return on combustible fuels.
 ie.manual.entry.gasTurbine4=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers.
 
 ie.manual.entry.steelBarrel.name=Steel Metal Barrel
@@ -358,11 +368,15 @@ ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r: returns a table wi
 ie.manual.entry.computer.solarTower0=§lgetReflectors()§r: returns a table of the valid reflectors connected to the solar tower.<br>§lgetInputTankInfo()§r: returns information about the tower's input tank.<br>§lgetOutputTankInfo()§r: returns information about the tower's output tank.
 ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys "input" and "output" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys "input" and "output" referring to each tank.
 ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetInputTankInfo()§r: returns information about the turbine's fuel tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
+ie.manual.entry.computer.gasTurbine1=§lenableComputerControl(enabled)§r and §lsetEnabled(enabled)§r control the machine like a redstone signal would.
 ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: returns a table with information about the heat exchanger's first input tank (upper loop).<br>§lgetSecondInputTankInfo()§r: returns a table with information about the heat exchanger's second input tank (lower loop).
 ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: returns a table with information about the heat exchanger's first output tank (upper loop).<br>§lgetSecondOutputTankInfo()§r: returns a table with information about the heat exchanger's second output tank (lower loop).
 ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: returns the speed of the turbine in RPM.<br>§lgetTankInfo()§r: returns information about the turbine's steam tank.<br>§lgetOutputTankInfo()§r: returns information about the turbine's output tank.
 
-ie.manual.entry.fluidPipes3=In order for the pump to pick up fluid blocks, it will need a power input at the top and a redstone signal. Pumps can also be used to extract from tanks and other fluid containers that do not have an automatic output. This will also require a redstone signal, but won't consume power.<br><br>Pumps have a new mode! The operating mode of the Fluid Pump can be changed by right clicking it with an Engineer's Wire Cutter. Toggle the mode if it's not behaving as expected.
+ie.manual.entry.fluidPipes.name=Fluid Pipes
+ie.manual.entry.fluidPipes.subtext=More throughput
+ie.manual.entry.fluidPipes3=In order for the pump to pick up fluid blocks, it will need a power input at the top and a redstone signal. Pumps can also be used to extract from tanks and other fluid containers that do not have an automatic output. This will also require a redstone signal, but won't consume power.
+ie.manual.entry.fluidPipes4=Pumps have a new mode! The operating mode of the Fluid Pump can be changed by right clicking it with an Engineer's Wire Cutter. Toggle the mode if it's not behaving as expected.
 subtitle.immersivetech.advancedCokeOven=Advanced Coke Oven burning
 subtitle.immersivetech.advancedCokeOvenFan=Baseheater fan spinning
 subtitle.immersivetech.alternator=Alternator humming

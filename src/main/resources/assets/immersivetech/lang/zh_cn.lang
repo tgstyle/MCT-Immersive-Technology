@@ -155,7 +155,6 @@ gui.immersivetech.rotor_creative.rpm=转速
 gui.immersivetech.stack_limiter.limitpacket=物品 每包
 gui.immersivetech.stack_limiter.limittime=物品 每秒
 gui.immersivetech.stack_limiter.limitdestination=物品 在输出存储
-gui.immersivetech.generic_multiblock_jei_tooltip=查看工程师手册以构建
 
 #METAL MULTIBLOCKS
 desc.immersiveengineering.info.multiblock.IT:Distiller=蒸馏器
@@ -187,9 +186,17 @@ chat.immersivetech.solar_tower_too_close=太阳能塔太靠近另一个 - 至少
 tile.immersivetech.connectors.connectors_timer.name=红石计时器
 
 #MANUAL
-ie.manual.category.it_power.name=涡轮发电系统
 ie.manual.category.it.name=沉浸科技
+ie.manual.category.it_power.name=涡轮发电系统
+ie.manual.category.it_processing.name=加工与储存
 
+ie.manual.entry.intro.name=Immersive Technology
+ie.manual.entry.intro.subtext=充满风格的发电！
+ie.manual.entry.intro0=Immersive Technology 是一个能源技术扩展模组，完美补充 Immersive Engineering。
+ie.manual.entry.barrelCreative.name=创造模式流体桶
+ie.manual.entry.barrelCreative.subtext=无限供应
+ie.manual.entry.barrelCreative0=仅供创造模式/测试使用的方块，可提供无限量的选定流体。它不接受流体输入。
+ie.manual.entry.barrelCreative1=用装有某种流体的桶或容器右键点击，将其设为输出流体。 空手潜行右键点击可清除已选流体。 设定后，它会每tick主动向所有6个相邻方块推送流体，最多<config;i;barrel_creative_outputAmount> mB/t——默认设置下实际上是无限的。
 ie.manual.entry.technologistsWrench.name=技术扳手
 ie.manual.entry.technologistsWrench.subtext=拧紧拧松
 ie.manual.entry.technologistsWrench0=§6技术扳手§r用于形成和配置Immersive Technology的多方块结构。工程师锤能做的它都能做：形成结构、旋转方块，以及在正常与反转红石信号之间切换控制面板。
@@ -197,7 +204,7 @@ ie.manual.entry.technologistsWrench0=§6技术扳手§r用于形成和配置Imme
 ie.manual.entry.advancedCokeOven.name=高级焦炉
 ie.manual.entry.advancedCokeOven.subtext=现在更快了
 ie.manual.entry.advancedCokeOven0=高级焦炉是允许更快生产焦炭和木焦油的多方块结构。<br>结构如上所示，使用工程师锤击中央强化焦炉砖块形成。
-ie.manual.entry.advancedCokeOven1=允许输入输出自动化，也可以用基热器加速过程添加热空气。<br>炉子是用强化砖做的，所以建议第一批钢用于此升级。<br>类似于改进高炉,焦炭输出在前,木焦油在后.煤从顶部输入。
+ie.manual.entry.advancedCokeOven1=允许输入输出自动化，也可以用基热器加速过程添加热空气。<br>炉子是用强化砖做的，所以建议第一批钢用于此升级。<br>类似于改进高炉,焦炭输出在后,木焦油在前.煤从顶部输入。
 ie.manual.entry.advancedCokeOven2=焦炉基热器用于加速煤精炼过程。每炉可连接两个基热器到两侧端口，每个基热器需 <config;i;cokeOvenBaseheater_consumption> Flux/t 操作。默认设置下，每个激活的基热器都会提升处理速度，但同时使用两个时收益递减。
 ie.manual.entry.advancedCokeOven3=在多方块结构上放置比较器可输出与当前批次进度成比例的信号，空闲时为0，接近完成时为15。
 
@@ -214,14 +221,14 @@ ie.manual.entry.boilerLiquid.subtext=这里蒸汽满满！
 ie.manual.entry.boilerSolid.name=固体燃料锅炉
 ie.manual.entry.boilerSolid.subtext=这里蒸汽满满！
 ie.manual.entry.boilerTank0=锅炉水箱是锅炉系统的核心——它容纳水并将其转化为蒸汽，但自身无法产生热量。连接一台§l液体燃料锅炉§r或§l固体燃料锅炉§r为其供热。
-ie.manual.entry.boilerTank1=§l运行§r<br>- §l水§r从水箱附近的§l左侧§r输入；§l蒸汽§r从顶部输出。<br>- 最多容纳<config;i;boilerTank_tankSize> mB的水。<br>- 当连接的燃烧器热量达到工作温度时开始一批次处理。
-ie.manual.entry.boilerTank2=- 若批次中途热量下降，进度会逐渐倒退而非完全重置——短暂中断只消耗部分进度，不会全部清零。<br>- 靠在任意外部方块上的比较器会输出与当前热量水平成比例的信号。
+ie.manual.entry.boilerTank1=§l水§r从水箱附近的§l左侧§r输入；§l蒸汽§r从顶部输出。 最多容纳<config;i;boilerTank_tankSize> mB的水。 当连接的燃烧器热量达到工作温度时开始一批次处理。
+ie.manual.entry.boilerTank2=若批次中途热量下降，进度会逐渐倒退而非完全重置——短暂中断只消耗部分进度，不会全部清零。 靠在任意外部方块上的比较器会输出与当前热量水平成比例的信号。
 ie.manual.entry.boilerLiquid0=液体燃料锅炉燃烧流体燃料，为连接的§l锅炉水箱§r供热——它本身不容纳水也不产生蒸汽。
-ie.manual.entry.boilerLiquid1=§l运行§r<br>- §l液体燃料§r从燃烧室下方输入。<br>- 用火把或打火石在顶部网格排气口点燃它。
-ie.manual.entry.boilerLiquid2=- 空闲时以待机模式运行，只消耗一丝燃料以维持不熄灭。<br>- 靠在任意外部方块上的比较器会输出与当前热量水平成比例的信号。
+ie.manual.entry.boilerLiquid1=§l液体燃料§r从燃烧室下方输入。 用火把或打火石在顶部网格排气口点燃它。
+ie.manual.entry.boilerLiquid2=空闲时以待机模式运行，只消耗一丝燃料以维持不熄灭。 靠在任意外部方块上的比较器会输出与当前热量水平成比例的信号。
 ie.manual.entry.boilerSolid0=固体燃料锅炉燃烧固体燃料（煤炭、焦炭等），为连接的§l锅炉水箱§r供热——它本身不容纳水也不产生蒸汽。
-ie.manual.entry.boilerSolid1=§l运行§r<br>- §l固体燃料§r从燃烧室下方输入。<br>- 用火把或打火石在顶部网格排气口点燃它。
-ie.manual.entry.boilerSolid2=- 空闲时以待机模式运行，只消耗一丝燃料以维持不熄灭。<br>- 靠在任意外部方块上的比较器会输出与当前热量水平成比例的信号。
+ie.manual.entry.boilerSolid1=§l固体燃料§r从燃烧室下方输入。 用火把或打火石在顶部网格排气口点燃它。
+ie.manual.entry.boilerSolid2=空闲时以待机模式运行，只消耗一丝燃料以维持不熄灭。 靠在任意外部方块上的比较器会输出与当前热量水平成比例的信号。
 
 ie.manual.entry.distiller.name=蒸馏器
 ie.manual.entry.distiller.subtext=比水更清澈
@@ -238,10 +245,13 @@ ie.manual.entry.solarTower.name=太阳能集热塔
 ie.manual.entry.solarTower.subtext=高端烤鸟机
 ie.manual.entry.solarTower0=太阳能集热塔是一种可以利用阳光，将水转换成蒸汽的多方块结构.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的轻型工程块完成搭建.
 ie.manual.entry.solarTower1=太阳能集热塔可将水或<link;distiller;§n§o蒸馏水§r> 转换成蒸汽.<br>水可以通过标有蓝点的开口输入,蒸汽从背面带有橙点的开口输出.<br>太阳能集热塔附近至少有一个太阳能反射镜才能工作.集热塔的工作效率取决发射镜的数量比例（实际数量/最大效率镜子数）.在主世界里，需要230个反射镜才可以使得集热塔效率达到最大.
-ie.manual.entry.solarTower2=太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的银块完成搭建.
-ie.manual.entry.solarTower2a=反射镜必须放置在集热塔/熔炼塔的混凝土地基层上方，太高或太低都无法连接。
-ie.manual.entry.solarTower3=反射镜的距离集热塔的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 而且摆放位置需要与集热塔的输入口平齐（集热塔底部的混凝土充当地基，不算入第一层）反射镜遇到沙尘暴、夜晚等情况下无法工作.当处于以下的情况时,会降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>安装§lAdvancedRocketry§r后，效率随星球光照变化.
-ie.manual.entry.solarTower4=每个太阳能反射镜一次只能为一个集热装置（集热塔或太阳能熔炼塔）服务。如果在附近建造多个太阳能集热装置，它们将争夺同一批反射镜，而不是各自都能达到满效率。在集热塔上放置比较器可输出与当前热量水平成比例的信号。支持OpenComputers。
+ie.manual.entry.solarTower2=<link;solarReflector;§n§o太阳能反射镜§r>
+ie.manual.entry.solarReflector.name=太阳能反射镜
+ie.manual.entry.solarReflector.subtext=闪耀！
+ie.manual.entry.solarReflector0=太阳能反射镜是将阳光反射到太阳能集热塔中心的多方块结构。<br>太阳能反射镜的具体结构如上图所示，全部搭建完成后，使用工程师锤右击中间的银块完成搭建。
+ie.manual.entry.solarReflector1=反射镜必须放置在集热塔/熔炼塔的混凝土地基层上方，太高或太低都无法连接。
+ie.manual.entry.solarReflector2=反射镜的距离集热塔的距离需要介于 <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> 个方格之间. 而且摆放位置需要与集热塔的输入口平齐（集热塔底部的混凝土充当地基，不算入第一层）反射镜遇到沙尘暴、夜晚等情况下无法工作.当处于以下的情况时,会降低工作效率：<br>*早晨和傍晚<br>*下雨<br>*潮湿的环境<br>*反射镜被遮挡<br>安装§lAdvancedRocketry§r后，效率随星球光照变化.
+ie.manual.entry.solarReflector3=每个太阳能反射镜一次只能为一个集热装置（集热塔或太阳能熔炼塔）服务。如果在附近建造多个太阳能集热装置，它们将争夺同一批反射镜，而不是各自都能达到满效率。在集热塔上放置比较器可输出与当前热量水平成比例的信号。支持OpenComputers。
 
 ie.manual.entry.controlBlocks.name=限制器和控制装置
 ie.manual.entry.controlBlocks.subtext=有备而来
@@ -261,17 +271,17 @@ ie.manual.entry.steamTurbine3=在多方块结构上放置比较器可输出与�
 
 ie.manual.entry.highPressureSteamTurbine.name=高压蒸汽轮机
 ie.manual.entry.highPressureSteamTurbine.subtext=二级朗肯循环
-ie.manual.entry.highPressureSteamTurbine0=与蒸汽轮机一样，高压蒸汽轮机是使用蒸汽来产生动能的多方块结构机械.只不过其是为§lNuclearCraft§r而设计的，通入足够蒸汽后，<config;i;highPressureSteamTurbine_timeToMax>秒后可达到达到最大转速.
-ie.manual.entry.highPressureSteamTurbine1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.<br>机器前方的流体管道口为蒸汽的输入口.动能通过镍质传动轴输出，传动轴右下方为蒸汽的输出口，若想进一步改善发电系统，可以将其循环利用.
+ie.manual.entry.highPressureSteamTurbine0=高压蒸汽轮机是使用高压蒸汽产生动能的多方块结构。结构如上图所示，使用工程师锤右击短边正中的方块完成搭建。
+ie.manual.entry.highPressureSteamTurbine1=持续供给蒸汽时，轮机会缓慢提速，<config;i;highPressureSteamTurbine_timeToMax>秒后达到最大转速。关闭机器或蒸汽供应不足会使轮机减速并降低输出功率。<br>要使其运转，需要连接一台<link;alternator;§o§n交流发电机§r>。
 ie.manual.entry.highPressureSteamTurbine2=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式。机器前方的流体管道口为输入口。动能输出位于机器后方。此外，也可通过动能输出口下方的输出管道回收流体。
 ie.manual.entry.highPressureSteamTurbine3=在多方块结构上放置比较器可输出与当前转速成比例的信号。支持OpenComputers。
 
 ie.manual.entry.gasTurbine.name=燃气轮机
 ie.manual.entry.gasTurbine.subtext=并非来自747
-ie.manual.entry.gasTurbine0=燃气轮机是使用燃料产生动能，以及燃烧废气的多方块结构机械.<br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击红石工程块那一侧的正中心的钢块完成搭建.
+ie.manual.entry.gasTurbine0=燃气轮机是使用可燃燃料产生动能的多方块结构。结构如上图所示，使用工程师锤右击短边正中的钢块完成搭建。要使其运转，需要连接一台<link;alternator;§o§n交流发电机§r>。
 ie.manual.entry.gasTurbine1=机器前方的流体管道口为燃料的输入口，两侧有用作不同目的的电源插口.<br>高压插口：提供4096IF/t利用电磁驱动燃气轮机至1/4转速.<br>中压插口（位于控制面板侧）：提供1024IF/t用于将蒸汽轮机在1/4转速时为燃料点火. 点燃后燃气轮机开始自行提速,不再需要额外的电源（没有断开高压插口，会导致无法提速）.
 ie.manual.entry.gasTurbine2=为燃气轮机提供足够的燃料，机器将缓慢加速.在启动约30秒后便可达到最大转速和效率.<br>若是对于一些燃烧热低的燃料可能需要通过加压输送来维持足够的供应量.<br>如果在正常运作状态将其关闭，或无法提供足够的燃料，燃气轮机的转速会缓慢降低.如果其转速降至1/4以下，会导致燃气轮机熄火，此时需要重新通电点火加速.
-ie.manual.entry.gasTurbine3=与蒸汽轮机类似，燃气轮机从后部传动轴输出动能（需要在动能轴末端一台连接<link;alternator;§o§n交流发电机§r>），实现动能的转换.燃烧废气输出口则刚好位于传动轴下方.<br>尽管燃气轮机本身的效率会比柴油发电机要差，但是对于搭建更大的而且更复杂的电能输出系统而言，这才是燃气轮机的价值所在.（即搭建联合循环发电系统 <link;gasTurbine;§n§oCCGT§r>）.<br>在这套系统中，可以将燃气轮机产出的大量的高温燃烧废气用于热交换器内产生蒸汽.
+ie.manual.entry.gasTurbine3=燃气轮机从后方输出动能，燃烧废气则从动能输出口正下方排出。单独使用时效率通常不及柴油发电机，但这一废气输出正是燃气轮机的价值所在：将高温废气送入<link;heatExchanger;§n§o热交换器§r>产生蒸汽，组成联合循环（CCGT，航海领域称为COGAS），可从可燃燃料中获得高得多的收益。
 ie.manual.entry.gasTurbine4=在多方块结构上放置比较器可输出与当前转速成比例的信号。支持OpenComputers。
 
 ie.manual.entry.steelBarrel.name=钢制金属桶
@@ -281,7 +291,7 @@ ie.manual.entry.steelBarrel0=§6钢制金属桶§r是拥有金属桶两倍容量
 ie.manual.entry.steelTank.name=钢制流体储罐
 ie.manual.entry.steelTank.subtext=全力以赴！
 ie.manual.entry.steelTank0=钢制流体储罐是提供更大的流体容量的多方块结构.它可以存储<config;i;steelTank_tankSize>mB的任意流体，它可用管道从顶部或底部输入，但是流体只能从底部输出.
-ie.manual.entry.steelTank1=在底部提供红石信号可以让储罐自动输出，红石比较器可以依据内部容量发出信号.
+ie.manual.entry.steelTank1=向底部中央方块施加红石信号会使储罐自动输出；在该处放置比较器，会输出与储罐充满程度成比例的信号。将比较器接在顶部4层中的某一层，信号则与比较器所在高度相关：例如接在第二层的比较器，在储罐达到1/4之前不会输出信号，储罐达到一半及以上时信号强度为15。
 ie.manual.entry.steelTank2=储罐的部分连接点同时充当输入和输出。当红石触发储罐主动推出流体时，该流体会被标记为加压状态，从而在本模组自己的管道中获得更快的传输速度。
 
 ie.manual.entry.redstone.name=红石计时器
@@ -298,26 +308,26 @@ ie.manual.entry.coolingTower2=冷却塔可以按任意顺序接受两个流体�
 ie.manual.entry.heatExchanger.name=热交换器
 ie.manual.entry.heatExchanger.subtext=你好，克劳修斯！
 ie.manual.entry.heatExchanger0=热交换器是一种可以将某种流体的热量快速转移到另外一种流体的多方块结构. <br>具体结构如上图所示，全部搭建完成后，使用工程师锤右击位于红石工程块一侧的正中央的铁板金属块完成搭建
-ie.manual.entry.heatExchanger1=高温流体通过底部对流输入及输出（分别标有蓝色及橙色标识）,类似地，但低温流体循环则位于上方.<br>可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式.
+ie.manual.entry.heatExchanger1=向前方控制面板施加红石信号会暂停机器运行，使用工程师锤可以反转这一行为。热交换器用§l水§r或§l蒸馏水§r等低温流体处理携带能量的高温流体，将其加热为更有用的形态。它是逆流式热交换器：高温流体从其输入的一侧输出，低温流体亦然。
 ie.manual.entry.heatExchanger2=在多方块结构上放置比较器可输出与内部Flux储量成比例的信号。支持OpenComputers。
 
 ie.manual.entry.electrolyticCrucibleBattery.name=电解池
 ie.manual.entry.electrolyticCrucibleBattery.subtext=电流的力量!
 ie.manual.entry.electrolyticCrucibleBattery0=电解池是一种利用电流可以对电解质溶液或熔融态物质进行电解的多方块结构.全部搭建完成后，使用工程师锤右击物品输出口可完成搭建.
-ie.manual.entry.electrolyticCrucibleBattery1=可以在控制面板通过红石信号控制机器开关，使用工程师锤右击控制面板可改变红石信号模式. 流体输入口带有蓝色标识，阴极阳极的产物输出口位于背面的上方，而物品和废液将从底部输出.电解池一般用来将熔融盐（将盐熔炼后得到)电解成熔融钠，向提供给<link;solarTower;§n§o太阳能集热塔§r>.
+ie.manual.entry.electrolyticCrucibleBattery1=向前方控制面板施加红石信号会暂停机器运行，使用工程师锤可以反转这一行为。带蓝色标识的单个舱口为流体输入口，分离出的两种流体从背面上方的端口输出，物品和废电解液则从底部输出。
 ie.manual.entry.electrolyticCrucibleBattery2=该多方块结构最常用于电解熔盐，为 <link;solarTower;§n§o集热塔§r> 提供熔融钠。可以通过用工程师锤敲击物品输出方块来组成结构。
 ie.manual.entry.electrolyticCrucibleBattery3=电解池也可以并行处理多个批次，而不是严格地一次一个。在多方块结构上放置比较器可输出与第一个流体输出罐的饱和度成比例的信号。可以通过OpenComputers开关，设置后其优先级高于红石控制。
 
 ie.manual.entry.meltingCrucible.name=电熔炼埚
 ie.manual.entry.meltingCrucible.subtext=我不是熔炉！
 ie.manual.entry.meltingCrucible0=电熔炼埚是一个通过电流将固态物体熔炼成流体的多方块结构. 使用工程师锤右击位于电源插口和红石工程块间的方块完成搭建.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击红石控制面板可以反转红石信号模式.
-ie.manual.entry.meltingCrucible1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.电熔炼锅一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.
+ie.manual.entry.meltingCrucible1=向前方控制面板施加红石信号会暂停机器运行，使用工程师锤可以反转这一行为。物品从背面带蓝色标识的端口输入，液体从前方底部带橙色标识的端口输出。该多方块最常用于为<link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐，电解成熔融钠后供给<link;solarTower;§n§o太阳能集热塔§r>。
 ie.manual.entry.meltingCrucible2=电熔炼锅的冷却速度取决于当地生物群系的温度——在寒冷的生物群系中冷却得更快，在温暖的生物群系中冷却得更慢。在多方块结构上放置比较器可输出与当前热量水平成比例的信号。
 
 ie.manual.entry.solarMelter.name=太阳能熔炼塔
 ie.manual.entry.solarMelter.subtext=赫利俄斯 与 安培
 ie.manual.entry.solarMelter0=与电熔炼埚类似，但太阳能熔炼塔是一使用太阳能将固态物体熔炼成流体的多方块结构. 使用工程师锤右击位于其中间的银块顶面完成搭建.
-ie.manual.entry.solarMelter1=背面带蓝色标识的为物品输入口，前面底部带有橙色标识的为流体输出口.太阳能熔炼塔一般用来向 <link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐.熔炼塔需要与太阳能集热塔一样的方式摆放反射镜.可以在控制面板通过红石信号控制机器开关，使用工程师锤右击面板可以反转红石信号模式.
+ie.manual.entry.solarMelter1=向前方控制面板施加红石信号会暂停机器运行，使用工程师锤可以反转这一行为。物品从背面带蓝色标识的端口输入，液体从前方底部带橙色标识的端口输出。该多方块最常用于为<link;electrolyticCrucibleBattery;§n§o电解池§r>提供熔融盐，电解成熔融钠后供给<link;solarTower;§n§o太阳能集热塔§r>。
 ie.manual.entry.solarMelter2=与集热塔一样，太阳能熔炼塔也需要在范围内连接太阳能反射镜才能产生热量——如果范围内没有反射镜，它将一直无法升温。生物群系的湿度也会影响其效率，干燥的生物群系会带来小幅加成，潮湿的生物群系则会带来惩罚。每个太阳能反射镜一次只能为一个集热装置服务，因此在附近建造多个太阳能集热装置会导致它们争夺同一批反射镜。在多方块结构上放置比较器可输出
 ie.manual.entry.solarMelter2a=与当前热量水平成比例的信号。
 
@@ -329,17 +339,17 @@ ie.manual.entry.radiator2=无论周围有多少开阔空间，散热板在下界
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸腾的气息
-ie.manual.entry.computer.boilerTank.name=Boiler Tank ☎
-ie.manual.entry.computer.boilerTank.subtext=Getting steamy in here!
-ie.manual.entry.computer.boilerTank0=§lgetHeat()§r: returns the heat level supplied to the tank.<br>§lgetInputTankInfo()§r: returns information about the water input tank.<br>§lgetOutputTankInfo()§r: returns information about the steam output tank.
-ie.manual.entry.computer.boilerTank1=§lgetFullCanisters()§r: returns a table with information about the full fluid canisters in the machine, with the keys "input" and "output" referring to each tank.<br>§lgetEmptyCanisters()§r: returns a table with information about the empty fluid canisters in the machine, with the keys "input" and "output" referring to each tank.
-ie.manual.entry.computer.boilerLiquid.name=Liquid Fuel Burner ☎
-ie.manual.entry.computer.boilerLiquid.subtext=Getting steamy in here!
-ie.manual.entry.computer.boilerLiquid0=§lgetHeat()§r: returns the burner's heat level.<br>§lisPilotLit()§r: returns whether the pilot light is lit.<br>§lgetFuelTankInfo()§r: returns information about the fuel tank.
-ie.manual.entry.computer.boilerLiquid1=§lgetFullCanisters()§r / §lgetEmptyCanisters()§r: return tables with information about the fluid canisters in the machine, with the key "fuel" referring to the fuel tank.<br>§lenableComputerControl(enabled)§r and §lsetEnabled(enabled)§r control the machine like a redstone signal would.
-ie.manual.entry.computer.boilerSolid.name=Solid Fuel Burner ☎
-ie.manual.entry.computer.boilerSolid.subtext=Getting steamy in here!
-ie.manual.entry.computer.boilerSolid0=§lgetHeat()§r: returns the burner's heat level.<br>§lisPilotLit()§r: returns whether the pilot light is lit.<br>§lgetBurnRemaining()§r: returns the remaining burn time of the current fuel.<br>§lgetFuelStack()§r: returns the fuel item in the input slot.<br>§lenableComputerControl(enabled)§r and §lsetEnabled(enabled)§r control the machine like a redstone signal would.
+ie.manual.entry.computer.boilerTank.name=锅炉水箱 ☎
+ie.manual.entry.computer.boilerTank.subtext=这里蒸汽满满！
+ie.manual.entry.computer.boilerTank0=§lgetHeat()§r:返回供给储罐的热量等级.<br>§lgetInputTankInfo()§r:返回关于水输入储罐的信息.<br>§lgetOutputTankInfo()§r:返回关于蒸汽输出储罐的信息.
+ie.manual.entry.computer.boilerTank1=§lgetFullCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表.<br>§lgetEmptyCanisters()§r:返回一张表，该表包含机器中空液罐的信息，并带有引用自每个储罐的键“input”和“output”.
+ie.manual.entry.computer.boilerLiquid.name=液体燃料锅炉 ☎
+ie.manual.entry.computer.boilerLiquid.subtext=这里蒸汽满满！
+ie.manual.entry.computer.boilerLiquid0=§lgetHeat()§r:返回燃烧器的热量等级.<br>§lisPilotLit()§r:返回引燃火是否点燃.<br>§lgetFuelTankInfo()§r:返回关于燃料储罐的信息.
+ie.manual.entry.computer.boilerLiquid1=§lgetFullCanisters()§r / §lgetEmptyCanisters()§r:返回包含机器中液罐信息的表，键“fuel”指向燃料储罐.<br>§lenableComputerControl(enabled)§r和§lsetEnabled(enabled)§r像红石信号一样控制机器.
+ie.manual.entry.computer.boilerSolid.name=固体燃料锅炉 ☎
+ie.manual.entry.computer.boilerSolid.subtext=这里蒸汽满满！
+ie.manual.entry.computer.boilerSolid0=§lgetHeat()§r:返回燃烧器的热量等级.<br>§lisPilotLit()§r:返回引燃火是否点燃.<br>§lgetBurnRemaining()§r:返回当前燃料的剩余燃烧时间.<br>§lgetFuelStack()§r:返回输入槽中的燃料物品.<br>§lenableComputerControl(enabled)§r和§lsetEnabled(enabled)§r像红石信号一样控制机器.
 ie.manual.entry.computer.distiller.name=蒸馏器 ☎
 ie.manual.entry.computer.distiller.subtext=比水更清澈
 ie.manual.entry.computer.solarTower.name=太阳能集热塔 ☎
@@ -357,11 +367,15 @@ ie.manual.entry.computer.distiller1=§lgetFullCanisters()§r:返回一张包含�
 ie.manual.entry.computer.solarTower0=§lgetReflectors()§r:返回一张连接到太阳能塔的有效反射镜的表.<br>§lgetInputTankInfo()§r: 返回关于集热塔输入储罐的信息.<br>§lgetOutputTankInfo()§r:返回关于集热塔输出储罐的信息.
 ie.manual.entry.computer.solarTower1=§lgetFullCanisters()§r:返回一张包含机器中已满液罐的信息，并带有引用自每个储罐的键“input”和“output”的表.<br>§lgetEmptyCanisters()§r:返回一张包含机器中空液罐的信息，并带有引用自每个储罐的键“input”和“output”的表.
 ie.manual.entry.computer.gasTurbine0=§lgetSpeed()§r:返回燃气轮机的转速.<br>§lgetInputTankInfo()§r:返回关于燃气轮机燃料储罐的信息.<br>§lgetOutputTankInfo()§r:返回关于蒸汽轮机输出储罐的信息.
+ie.manual.entry.computer.gasTurbine1=§lenableComputerControl(enabled)§r和§lsetEnabled(enabled)§r像红石信号一样控制机器.
 ie.manual.entry.computer.heatExchanger0=§lgetFirstInputTankInfo()§r: 返回一张包含热交换器(顶部）输入储罐的信息的表.<br>§lgetSecondInputTankInfo()§r: 返回一张包含热交换器(底部)输入储罐的信息的表.
 ie.manual.entry.computer.heatExchanger1=§lgetFirstOutputTankInfo()§r: 返回一张包含热交换器（顶部）输出储罐的信息的表.<br>§lgetSecondOutputTankInfo()§r: 返回一张包含热交换器(底部)输出储罐的信息的表.
 ie.manual.entry.computer.highPressureSteamTurbine0=§lgetSpeed()§r: 返回高压蒸汽轮机的转速.<br>§lgetTankInfo()§r:返回关高压蒸汽轮机蒸汽储罐的信息.<br>§lgetOutputTankInfo()§r:返回关于高压蒸汽轮机输出储罐的信息.
 
-ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号.泵也可以用来从储罐和其他没有自动输出的流体容器中抽取.这同样需要红石信号，但不会消耗功率，正如预期的那样.<br>泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式.如果运行模式不符合预期，可以切换模式.
+ie.manual.entry.fluidPipes.name=流体管道
+ie.manual.entry.fluidPipes.subtext=更大流量
+ie.manual.entry.fluidPipes3=为了使泵能提取流体方块，它需要在顶部有能量输入和红石信号.泵也可以用来从储罐和其他没有自动输出的流体容器中抽取.这同样需要红石信号，但不会消耗功率，正如预期的那样.
+ie.manual.entry.fluidPipes4=泵有了新模式! 通过用工程剪线钳右键单击流体泵，可以改变其工作模式.如果运行模式不符合预期，可以切换模式.
 subtitle.immersivetech.advancedCokeOven=高级焦炭炉燃烧
 subtitle.immersivetech.advancedCokeOvenFan=底座加热器风扇旋转中
 subtitle.immersivetech.alternator=交流发电机嗡嗡作响

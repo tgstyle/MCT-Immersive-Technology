@@ -38,6 +38,9 @@ public class ComputerManualHelper {
 					new ManualPages.Text(ManualHelper.getManual(), "computer.solarTower0"),
 					new ManualPages.Text(ManualHelper.getManual(), "computer.solarTower1")
 			);
+			if (Multiblocks.enable.enable_highPressureSteamTurbine) ManualHelper.getManual().addEntry("computer.highPressureSteamTurbine", "computers",
+					new ManualPages.Text(ManualHelper.getManual(), "computer.highPressureSteamTurbine0")
+			);
 			if (Multiblocks.enable.enable_gasTurbine) ManualHelper.getManual().addEntry("computer.gasTurbine", "computers",
 					new ManualPages.Text(ManualHelper.getManual(), "computer.gasTurbine0"),
 					new ManualPages.Text(ManualHelper.getManual(), "computer.gasTurbine1")
