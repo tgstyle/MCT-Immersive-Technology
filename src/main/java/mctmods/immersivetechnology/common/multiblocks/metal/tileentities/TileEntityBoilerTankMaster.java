@@ -49,7 +49,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
 
     private static int tankSize() { return Multiblocks.boilerTank.boilerTank_tankSize; }
     private static int progressLossPerTick() { return Multiblocks.boilerTank.boilerTank_progress_lossInTicks; }
-    private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.boiler_heat_workingLevel; }
+    private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.workingLevel(); }
 
     public FluidTank[] tanks = new FluidTank[] {
             new ICFluidTank(tankSize(), this),

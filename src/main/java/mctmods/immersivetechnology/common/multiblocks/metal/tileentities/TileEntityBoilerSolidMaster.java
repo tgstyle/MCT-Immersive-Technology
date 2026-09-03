@@ -59,7 +59,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     private static int pilotMultiplier() { return Multiblocks.boilerSolid.boilerSolid_pilot_fuelMultiplier; }
     private static double defaultHeatPerTick() { return Multiblocks.boilerSolid.boilerSolid_heat_defaultPerTick; }
     private static int burnTimeDivider() { return Multiblocks.boilerSolid.boilerSolid_burnTime_divider; }
-    private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.boiler_heat_workingLevel; }
+    private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.workingLevel(); }
 
     public static int slotCount = 1;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);

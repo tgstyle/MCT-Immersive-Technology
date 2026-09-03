@@ -67,7 +67,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
     private static int fuelTankSize() { return Multiblocks.boilerLiquid.boilerLiquid_fuel_tankSize; }
     private static double heatLossPerTick() { return Multiblocks.boilerLiquid.boilerLiquid_heat_lossPerTick; }
     private static double pilotHeat() { return Multiblocks.boilerLiquid.boilerLiquid_heat_pilot; }
-    private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.boiler_heat_workingLevel; }
+    private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.workingLevel(); }
 
     public FluidTank[] tanks = new FluidTank[] { new ICFluidTank(fuelTankSize(), this) };
 

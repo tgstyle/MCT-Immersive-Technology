@@ -1,7 +1,9 @@
 package mctmods.immersivetechnology.common;
 
+import com.immersiveconvergence.core.ICCommonConfig;
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraftforge.common.config.Config.Comment;
+import net.minecraftforge.common.config.Config.RangeDouble;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -87,8 +89,11 @@ public class Config {
                 public int advancedCokeOvenBaseheater_energy_consumption = 32;
             }
             public static class BoilerHeat {
-                @Comment({"The heat level boilers work toward when no recipe specifies one [Default=100.0]"})
-                public double boiler_heat_workingLevel = 100.0;
+                @Comment({"The heat level boilers work toward when no recipe specifies one. 600 is the lowest value used; anything below counts as 600 [Default=600.0]"})
+                @RangeDouble(min = 600.0)
+                public double boiler_heat_workingLevel = 600.0;
+
+                public double workingLevel() { return Math.min(Math.max(600.0, boiler_heat_workingLevel), ICCommonConfig.heat.maxHeat); }
             }
             public static class BoilerTank {
                 @Comment({"The capacity of the input and output tanks for the Boiler Tank [Default=24000]"})
