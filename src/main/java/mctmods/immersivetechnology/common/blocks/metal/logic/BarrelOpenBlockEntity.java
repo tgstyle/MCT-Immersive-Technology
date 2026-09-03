@@ -14,7 +14,6 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.Random;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nonnull;
 

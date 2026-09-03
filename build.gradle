@@ -74,6 +74,7 @@ ext {
     version_engineered_schematics_curse = versionProps['version_engineered_schematics_curse']
     version_jade_curse = versionProps['version_jade_curse']
     version_top_curse = versionProps['version_top_curse']
+    version_ip_curse = versionProps['version_ip_curse']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -250,6 +251,7 @@ dependencies {
     runtimeOnly "curse.maven:${version_wayfix_curse}"
     runtimeOnly "curse.maven:${version_cloth_config_curse}"
     runtimeOnly "curse.maven:${version_engineered_schematics_curse}"
+    runtimeOnly "curse.maven:${version_ip_curse}"
 
     implementation "curse.maven:${version_ie_curse}"
     implementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"

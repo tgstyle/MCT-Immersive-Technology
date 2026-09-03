@@ -21,7 +21,6 @@ public class ClientConfig {
     public static final ModConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY;
     public static final ModConfigSpec.DoubleValue CONFIG_SOLAR_REFLECTOR_DANCE_DURATION;
     public static final ModConfigSpec.BooleanValue CONFIG_PER_TICK_TRASH_CANS;
-    public static final ModConfigSpec.BooleanValue CONFIG_DISABLE_FANCY_TESR;
     public static final ModConfigSpec.BooleanValue CONFIG_PARTICLE_COLLIDE;
     public static final ModConfigSpec.DoubleValue CONFIG_COLORED_SMOKE_HEIGHT;
     public static final ModConfigSpec.DoubleValue CONFIG_CUSTOM_SMOKE_HEIGHT;
@@ -39,7 +38,6 @@ public class ClientConfig {
     public static double solarReflectorBaseFrequency;
     public static double solarReflectorDanceDuration;
     public static boolean perTickTrashCans;
-    public static boolean disableFancyTESR;
     public static boolean particleCollide;
     public static double coloredSmokeHeight;
     public static double customSmokeHeight;
@@ -54,7 +52,6 @@ public class ClientConfig {
         CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Steam Turbine (Default: true).").define("steam_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR = BUILDER.comment("This controls if the animations and special client rendering applies to the Solar Reflector (Default: true).").define("solar_reflector_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_STYLENOX = BUILDER.comment("This controls if the control rod animation is smoothed for the StyleNOX (Default: true).").define("stylenox_renderer", true);
-        CONFIG_DISABLE_FANCY_TESR = BUILDER.comment("Disables most lighting code for certain models that are rendered dynamically (TESR). May improve FPS. Affects various multiblocks.").define("disableFancyTESR", false);
         BUILDER.pop();
         BUILDER.comment("Solar Reflector options").push("solar_reflector");
         CONFIG_DISABLE_REFLECTOR_DANCE = BUILDER.comment("Disable the dance animation and sound for untaken solar reflectors (Default: false).").define("disable_dance", false);
@@ -91,7 +88,6 @@ public class ClientConfig {
             solarReflectorBaseFrequency = CONFIG_SOLAR_REFLECTOR_BASE_FREQUENCY.get();
             solarReflectorDanceDuration = CONFIG_SOLAR_REFLECTOR_DANCE_DURATION.get();
             perTickTrashCans = CONFIG_PER_TICK_TRASH_CANS.get();
-            disableFancyTESR = CONFIG_DISABLE_FANCY_TESR.get();
             particleCollide = CONFIG_PARTICLE_COLLIDE.get();
             coloredSmokeHeight = CONFIG_COLORED_SMOKE_HEIGHT.get();
             customSmokeHeight = CONFIG_CUSTOM_SMOKE_HEIGHT.get();

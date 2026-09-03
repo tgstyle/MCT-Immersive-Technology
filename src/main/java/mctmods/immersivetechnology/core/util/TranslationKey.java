@@ -22,8 +22,6 @@ public enum TranslationKey {
     GUI_DIRECTION_WEST("gui." + Reference.MODID + ".direction_west"),
     GUI_EMPTY("gui." + Reference.MODID + ".empty"),
     GUI_HEAT_LEVEL_DETAILED("gui." + Reference.MODID + ".heat_level_detailed"),
-    GUI_INPUT_TANK_CLEARED("gui." + Reference.MODID + ".input_tank_cleared"),
-    GUI_INPUT_TANKS_CLEARED("gui." + Reference.MODID + ".input_tanks_cleared"),
     GUI_STYLENOX_BURNUP("gui." + Reference.MODID + ".stylenox.burnup"),
     GUI_STYLENOX_CRITICAL("gui." + Reference.MODID + ".stylenox.critical"),
     GUI_STYLENOX_IDLE("gui." + Reference.MODID + ".stylenox.idle"),

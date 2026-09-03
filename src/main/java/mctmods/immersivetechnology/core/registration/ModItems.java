@@ -5,14 +5,10 @@ import com.immersiveconvergence.api.block.BaseItem;
 import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;

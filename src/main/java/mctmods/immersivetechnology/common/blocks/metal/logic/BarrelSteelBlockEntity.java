@@ -10,7 +10,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nonnull;
 

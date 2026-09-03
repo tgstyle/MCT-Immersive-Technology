@@ -10,12 +10,13 @@ import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.StyleNOXShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.ICItemUtils;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -56,6 +57,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, IServerTickableComponent<StyleNOXLogic.State>, IClientTickableComponent<StyleNOXLogic.State>, IFluidOutputPump<StyleNOXLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("stylenox");
     public static final int SLOT_FUEL = 0;
     public static final int SLOT_SPENT = 1;
     public static final int MAX_ROD_LEVEL = 4;
@@ -63,7 +65,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
     public static final int FULL_CHANNELS = MAX_ROD_LEVEL * CHANNELS_PER_LEVEL;
     public static final float ROD_TRAVEL = 2.0f;
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(StyleNOXShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("stylenox").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
     public static final List<BlockPos> WATER_INPUT_POS_LIST = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
@@ -193,11 +195,15 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             }
             state.loadedFuel = ItemStack.EMPTY;
             state.burnProgress = 0;
-            if (!tryLoad(state, level) || state.recipeForLoad(level) == null) {
+            if (!tryLoad(state, level)) {
                 state.reactorState = ReactorState.IDLE;
                 return;
             }
             recipeHolder = state.recipeForLoad(level);
+            if (recipeHolder == null) {
+                state.reactorState = ReactorState.IDLE;
+                return;
+            }
             recipe = recipeHolder.value();
         }
         int channels = state.rodLevel * CHANNELS_PER_LEVEL;
@@ -302,7 +308,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return StyleNOXShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

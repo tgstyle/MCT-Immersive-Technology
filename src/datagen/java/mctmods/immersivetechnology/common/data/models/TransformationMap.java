@@ -58,7 +58,7 @@ public class TransformationMap {
             if (forType != null) {
                 if (vanilla) {
                     ItemTransform vanillaTransform = gson.fromJson(forType, ItemTransform.class);
-                    transform = fromItemTransform(vanillaTransform, false);
+                    transform = fromItemTransform(vanillaTransform);
                 } else {
                     transform = readMatrix(forType, gson);
                     if (type.map("no_corner_offset"::equals).orElse(false)) { transform = transform.blockCornerToCenter(); }
@@ -120,25 +120,14 @@ public class TransformationMap {
         return ret;
     }
 
-    private static Transformation fromItemTransform(ItemTransform transform, boolean leftHand) {
-        Vector3f translate = new Vector3f(transform.translation);
-        if (leftHand) { translate.setComponent(0, -translate.x()); }
+    private static Transformation fromItemTransform(ItemTransform transform) {
+        Vector3f rotation = transform.rotation;
+        Quaternionf leftRotation = new Quaternionf().rotateXYZ(Mth.DEG_TO_RAD * rotation.x(), Mth.DEG_TO_RAD * rotation.y(), Mth.DEG_TO_RAD * rotation.z());
 
-        float rx = transform.rotation.x();
-        float ry = transform.rotation.y();
-        float rz = transform.rotation.z();
-        if (leftHand) {
-            ry = -ry;
-            rz = -rz;
-        }
-        Quaternionf leftRotation = new Quaternionf().rotateXYZ(Mth.DEG_TO_RAD * rx, Mth.DEG_TO_RAD * ry, Mth.DEG_TO_RAD * rz);
+        Vector3f rightRotationDegrees = transform.rightRotation;
+        Quaternionf rightRotation = new Quaternionf().rotateXYZ(Mth.DEG_TO_RAD * rightRotationDegrees.x(), Mth.DEG_TO_RAD * rightRotationDegrees.y(), Mth.DEG_TO_RAD * rightRotationDegrees.z());
 
-        rx = transform.rightRotation.x();
-        ry = transform.rightRotation.y() * (leftHand ? -1.0F : 1.0F);
-        rz = transform.rightRotation.z() * (leftHand ? -1.0F : 1.0F);
-        Quaternionf rightRotation = new Quaternionf().rotateXYZ(Mth.DEG_TO_RAD * rx, Mth.DEG_TO_RAD * ry, Mth.DEG_TO_RAD * rz);
-
-        return new Transformation(translate, leftRotation, new Vector3f(transform.scale), rightRotation);
+        return new Transformation(new Vector3f(transform.translation), leftRotation, new Vector3f(transform.scale), rightRotation);
     }
 
 }

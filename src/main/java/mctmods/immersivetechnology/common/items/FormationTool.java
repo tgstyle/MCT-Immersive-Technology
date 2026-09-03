@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.items;
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.HammerUse;
 import mctmods.immersivetechnology.core.util.Advancements;
 import net.minecraft.ChatFormatting;

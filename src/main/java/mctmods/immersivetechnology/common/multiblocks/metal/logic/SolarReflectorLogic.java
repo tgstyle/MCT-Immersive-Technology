@@ -15,10 +15,11 @@ import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarReflectorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.ClientConfig;
 import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -43,7 +44,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarReflectorShape.DATA.pointsOfInterest);
+    private static final ShapeData SHAPE = ITShapes.get("solar_reflector");
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("solar_reflector").pointsOfInterest);
 
     public static final BlockPos DANCE_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
     public static final BlockPos LINK_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "link0").getFirst();
@@ -357,7 +359,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         if (!state.isMirrorTaken) { SolarRegistry.updateDance(level); }
     }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarReflectorShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> context) { return new State(context); }
 

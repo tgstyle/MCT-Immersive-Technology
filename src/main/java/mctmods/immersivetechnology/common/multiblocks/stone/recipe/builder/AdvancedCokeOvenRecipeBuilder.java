@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@SuppressWarnings("unused")
 public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
     private IngredientWithSize input;
     private TagOutput itemOutput;
@@ -63,7 +62,6 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    @SuppressWarnings("unused")
     public AdvancedCokeOvenRecipeBuilder addOutput(TagKey<Item> output, int count) {
         this.itemOutput = new TagOutput(output, count);
         return this;

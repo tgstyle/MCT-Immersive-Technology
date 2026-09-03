@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import java.util.function.BiFunction;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nonnull;
 

@@ -19,12 +19,10 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
-import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -144,8 +142,8 @@ public class MultiblockStateGenerator {
                     angleY = getAngle(dir);
                     if (facing.getPossibleValues().contains(Direction.UP)) { angleX = -90 * dir.getStepY(); angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0; }
                 }
-                boolean mirrored = (mirroredState != null && state.hasProperty(mirroredState)) ? state.getValue(mirroredState) : false;
-                boolean active = (activeState != null && state.hasProperty(activeState)) ? state.getValue(activeState) : false;
+                boolean mirrored = mirroredState != null && state.hasProperty(mirroredState) && state.getValue(mirroredState);
+                boolean active = activeState != null && state.hasProperty(activeState) && state.getValue(activeState);
                 ModelFile baseModel = active ? activeMaster : defaultMaster;
                 ModelFile model = mirrored ? (active ? activeMirrored : defaultMirrored) : baseModel;
                 assert model != null;

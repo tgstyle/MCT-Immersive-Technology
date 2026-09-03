@@ -13,6 +13,7 @@ import blusunrize.immersiveengineering.data.recipes.builder.HammerCrushingRecipe
 import blusunrize.immersiveengineering.data.recipes.builder.MetalPressRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.MixerRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.CoolingTowerRecipeBuilder;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
@@ -58,6 +59,7 @@ public class Recipes extends RecipeProvider {
         itemRecipes(output);
         materialRecipes(output);
         nuclearRecipes(output);
+        recipesAdvancedCokeOven(output);
         recipesBoilerLiquid(output);
         recipesBoilerSolid(output);
         recipesBoilerTank(output);
@@ -89,6 +91,12 @@ public class Recipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LOAD.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', IEBlocks.Connectors.getEnergyConnector("HV", false).get()).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(output, toResourceLocation("valve_load"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get().asItem(), 1).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).define('H', IEBlocks.MetalDevices.FURNACE_HEATER.get()).define('R', Items.REDSTONE).pattern("SSS").pattern("HRH").pattern("SSS").unlockedBy("has_furnace_heater", has(IEBlocks.MetalDevices.FURNACE_HEATER.get())).save(output, toResourceLocation("advanced_coke_oven_baseheater"));
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FORMATION_TOOL.get(), 1).define('I', IETags.getTagsFor(EnumMetals.IRON).ingot).define('E', IETags.getTagsFor(EnumMetals.ELECTRUM).ingot).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(IETags.getTagsFor(EnumMetals.IRON).ingot)).save(output, toResourceLocation("formation_tool"));
+    }
+
+    private void recipesAdvancedCokeOven(RecipeOutput output) {
+        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL).addOutput(IETags.coalCoke, 1).setCreosote(500).setTime(600).save(output, toResourceLocation("advanced_coke_oven/coke"));
+        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL_BLOCK).addOutput(IETags.getItemTag(IETags.coalCokeBlock), 1).setCreosote(5000).setTime(5400).save(output, toResourceLocation("advanced_coke_oven/coke_block"));
+        AdvancedCokeOvenRecipeBuilder.builder(ItemTags.LOGS, 1).addOutput(Items.CHARCOAL).setCreosote(250).setTime(600).save(output, toResourceLocation("advanced_coke_oven/charcoal"));
     }
 
     private void recipesBoilerLiquid(RecipeOutput output) {

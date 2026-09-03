@@ -6,7 +6,7 @@ Vypařování!
 
 
 §lProvoz§r
-    - §lVoda§r se vkládá zleva.
-    - §lDestilovaná voda§r vychází zprava.
+    - §lVoda§r se vkládá zprava.
+    - §lDestilovaná voda§r vychází zleva.
     - Sůl vychází zezadu.
     - Komparátor u ovládacího panelu vydává signál úměrný zaplněnosti vnitřního zásobníku Flux (<config;i;distiller.energy_capacity> Flux).

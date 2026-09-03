@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.DelegatingFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
@@ -44,15 +44,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 import com.immersiveconvergence.api.util.ICFluidUtils;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State>, BlockInterfaces.ILadderPositionProvider {
+    private static final ShapeData SHAPE = ITShapes.get("steel_sheetmetal_tank");
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("steel_sheetmetal_tank").pointsOfInterest);
     private static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
     private static final List<CapabilityPosition> IO_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
     private static final BlockPos OUTPUT0_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0").getFirst();
@@ -221,7 +222,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         return null;
     }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SteelSheetmetalTankShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SHAPE.getter; }
 
     public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { ctx.markMasterDirty(); ctx.requestMasterBESync(); return ItemInteractionResult.SUCCESS; } else return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

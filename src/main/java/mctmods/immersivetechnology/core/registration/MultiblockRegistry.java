@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.core.registration;
 
 import com.immersiveconvergence.api.block.ModBlockItem;
 import com.immersiveconvergence.api.multiblock.ClearTank;
+import com.immersiveconvergence.api.multiblock.ClearTankRegistry;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerLiquidProcess;
@@ -10,7 +11,6 @@ import mctmods.immersivetechnology.common.multiblocks.stone.AdvancedCokeOven;
 import mctmods.immersivetechnology.common.multiblocks.stone.CoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
-import mctmods.immersivetechnology.core.util.TranslationKey;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
@@ -93,7 +93,7 @@ public class MultiblockRegistry {
                     .structure(() -> BoilerLiquid.INSTANCE)
                     .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
                     .component(new BoilerLiquidProcess())
-                    .component(new ClearTank<>(BoilerLiquidLogic.INPUT_FLUID_POIS, s -> s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(BoilerLiquidLogic.INPUT_FLUID_POIS, s -> s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.BOILER_LIQUID_MENU))
                     .withComparator()
                     .build();
@@ -110,7 +110,7 @@ public class MultiblockRegistry {
     public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
             metalNoMirror(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> BoilerTank.INSTANCE)
-                    .component(new ClearTank<>(BoilerTankLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(BoilerTankLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.BOILER_TANK_MENU))
                     .withComparator()
                     .build();
@@ -118,7 +118,7 @@ public class MultiblockRegistry {
     public static final MultiblockRegistration<CoolingTowerLogic.State> COOLING_TOWER =
             stone(new CoolingTowerLogic(), "cooling_tower")
                     .structure(() -> CoolingTower.INSTANCE)
-                    .component(new ClearTank<>(CoolingTowerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
+                    .component(new ClearTank<>(CoolingTowerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(ClearTankRegistry.KEY_TANKS_CLEARED)))
                     .withComparator()
                     .build();
 
@@ -126,7 +126,7 @@ public class MultiblockRegistry {
             metal(new DistillerLogic(), "distiller")
                     .structure(() -> Distiller.INSTANCE)
                     .redstone(s -> s.rsState, DistillerLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(DistillerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(DistillerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.DISTILLER_MENU))
                     .withComparator()
                     .build();
@@ -135,7 +135,7 @@ public class MultiblockRegistry {
             metal(new ElectrolyticCrucibleBatteryLogic(), "electrolytic_crucible_battery")
                     .structure(() -> ElectrolyticCrucibleBattery.INSTANCE)
                     .redstone(s -> s.rsState, ElectrolyticCrucibleBatteryLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(ElectrolyticCrucibleBatteryLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(ElectrolyticCrucibleBatteryLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .withComparator()
                     .build();
 
@@ -143,7 +143,7 @@ public class MultiblockRegistry {
             metal(new GasTurbineLogic(), "gas_turbine")
                     .structure(() -> GasTurbine.INSTANCE)
                     .redstone(s -> s.rsState, GasTurbineLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(GasTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(GasTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .withComparator()
                     .build();
 
@@ -151,7 +151,7 @@ public class MultiblockRegistry {
             metal(new HeatExchangerLogic(), "heat_exchanger")
                     .structure(() -> HeatExchanger.INSTANCE)
                     .redstone(s -> s.rsState, HeatExchangerLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(HeatExchangerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(TranslationKey.GUI_INPUT_TANKS_CLEARED.getLocation())))
+                    .component(new ClearTank<>(HeatExchangerLogic.INPUT_FLUID_POIS, s -> { s.tanks.input0().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.tanks.input1().drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(ClearTankRegistry.KEY_TANKS_CLEARED)))
                     .withComparator()
                     .build();
 
@@ -159,7 +159,7 @@ public class MultiblockRegistry {
             metal(new MeltingCrucibleLogic(), "melting_crucible")
                     .structure(() -> MeltingCrucible.INSTANCE)
                     .redstone(s -> s.rsState, MeltingCrucibleLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(MeltingCrucibleLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(MeltingCrucibleLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.MELTING_CRUCIBLE_MENU))
                     .withComparator()
                     .build();
@@ -182,7 +182,7 @@ public class MultiblockRegistry {
             metal(new SolarMelterLogic(), "solar_melter")
                     .structure(() -> SolarMelter.INSTANCE)
                     .redstone(s -> s.rsState, SolarMelterLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(SolarMelterLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(SolarMelterLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.SOLAR_MELTER_MENU))
                     .withComparator()
                     .build();
@@ -196,7 +196,7 @@ public class MultiblockRegistry {
             metal(new SolarTowerLogic(), "solar_tower")
                     .structure(() -> SolarTower.INSTANCE)
                     .redstone(s -> s.rsState, SolarTowerLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(SolarTowerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(SolarTowerLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.SOLAR_TOWER_MENU))
                     .withComparator()
                     .build();
@@ -205,7 +205,7 @@ public class MultiblockRegistry {
             metal(new SteamTurbineLogic(), "steam_turbine")
                     .structure(() -> SteamTurbine.INSTANCE)
                     .redstone(s -> s.rsState, SteamTurbineLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(SteamTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(SteamTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .withComparator()
                     .build();
 
@@ -219,7 +219,7 @@ public class MultiblockRegistry {
             metal(new StyleNOXLogic(), "stylenox")
                     .structure(() -> StyleNOX.INSTANCE)
                     .redstone(s -> s.rsState, StyleNOXLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(StyleNOXLogic.WATER_INPUT_POS_LIST, s -> s.tanks.water().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(TranslationKey.GUI_INPUT_TANK_CLEARED.getLocation())))
+                    .component(new ClearTank<>(StyleNOXLogic.WATER_INPUT_POS_LIST, s -> s.tanks.water().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.STYLENOX_MENU))
                     .withComparator()
                     .build();

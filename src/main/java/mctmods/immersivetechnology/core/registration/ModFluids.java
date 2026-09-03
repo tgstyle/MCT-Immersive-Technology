@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static mctmods.immersivetechnology.core.lib.Reference.rl;
 
@@ -46,92 +45,92 @@ public class ModFluids {
     };
 
     public static final FluidEntry CARBON_DIOXIDE = make(
-            "carbon_dioxide", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "carbon_dioxide", rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(500), 0xFFBFC8C3
     );
 
     public static final FluidEntry CHLORINE = make(
-            "chlorine", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "chlorine", rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(1000), 0xFFC0E67B
     );
 
     public static final FluidEntry EXHAUST_STEAM = make(
-            "exhaust_steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "exhaust_steam", rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(500).temperature(500), 0xFFC1C1C5
     );
 
     public static final FluidEntry GRAVEL_SLURRY = make(
-            "gravel_slurry", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "gravel_slurry", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000), 0xFF6D6565
     );
 
     public static final FluidEntry CRUDE_NITRATE = make(
-            "crude_nitrate", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "crude_nitrate", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1500), 0xFF8A6A3C
     );
 
     public static final FluidEntry DISTILLED_WATER = make(
-            "distilled_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "distilled_water", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000), 0xFF7079E0
     );
 
     public static final FluidEntry FLUE_GAS = make(
-            "flue_gas", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "flue_gas", rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(500), 0xFFFFFFFF
     );
 
     public static final FluidEntry FUEL_SLURRY = make(
-            "fuel_slurry", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "fuel_slurry", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(2000), 0xFF5A5F3A
     );
 
     public static final FluidEntry HEATED_GRAVEL = make(
-            "heated_gravel_slurry", 0, rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
+            "heated_gravel_slurry", rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
             props -> props.density(930).viscosity(10000).temperature(400), 0xFFA8A6A6
     );
 
     public static final FluidEntry HEATED_SALT = make(
-            "heated_salt_slurry", 0, rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
+            "heated_salt_slurry", rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
             props -> props.density(930).viscosity(10000).temperature(400), 0xFFC2C2C2
     );
 
     public static final FluidEntry HOT_WATER = make(
-            "hot_water", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "hot_water", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000).temperature(400), 0xFF0DFFFF
     );
 
     public static final FluidEntry HYDROGEN = make(
-            "hydrogen", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "hydrogen", rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(1000), 0xFF00BFFF
     );
 
     public static final FluidEntry MOLTEN_SALT = make(
-            "molten_salt", 0, rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
+            "molten_salt", rl("block/fluid/molten_still"), rl("block/fluid/molten_flowing"),
             props -> props.density(1000).viscosity(10000).temperature(1000), 0xFFAEA0A2
     );
 
     public static final FluidEntry NITRIC_ACID = make(
-            "nitric_acid", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "nitric_acid", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1200), 0xFFD8A93F
     );
 
     public static final FluidEntry NUCLEAR_WASTE = make(
-            "nuclear_waste", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "nuclear_waste", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(2000), 0xFF3E4A2E
     );
 
     public static final FluidEntry SALT_SLURRY = make(
-            "salt_slurry", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "salt_slurry", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1000).viscosity(1000), 0xFFBB6528
     );
 
     public static final FluidEntry SULFURIC_ACID = make(
-            "sulfuric_acid", 0, rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
+            "sulfuric_acid", rl("block/fluid/fluid_still"), rl("block/fluid/fluid_flowing"),
             props -> props.density(1830).viscosity(1200), 0xFFC9B247
     );
 
     public static final FluidEntry STEAM = make(
-            "steam", 0, rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
+            "steam", rl("block/fluid/fluid_gas_still"), rl("block/fluid/fluid_gas_flowing"),
             props -> props.density(-100).viscosity(500).temperature(1000), 0xFF3E444F
     );
 
@@ -155,10 +154,8 @@ public class ModFluids {
         FLUID_REGISTRY_MAP.put("sulfuric_acid", SULFURIC_ACID.getStillGetter());
     }
 
-    public static List<? extends Fluid> getITFluids() { return REGISTER.getEntries().stream().map(Supplier::get).collect(Collectors.toList()); }
-
-    private static FluidEntry make(String name, int burnTime, ResourceLocation stillTex, ResourceLocation flowingTex, @Nullable Consumer<FluidType.Properties> buildAttributes, int tintColor) {
-        FluidEntry entry = FluidEntry.make(REGISTERS, name, burnTime, stillTex, flowingTex, buildAttributes, tintColor);
+    private static FluidEntry make(String name, ResourceLocation stillTex, ResourceLocation flowingTex, @Nullable Consumer<FluidType.Properties> buildAttributes, int tintColor) {
+        FluidEntry entry = FluidEntry.make(REGISTERS, name, 0, stillTex, flowingTex, buildAttributes, tintColor);
         ALL_FLUID_BLOCKS.add(entry.block());
         ALL_ENTRIES.add(entry);
         return entry;
