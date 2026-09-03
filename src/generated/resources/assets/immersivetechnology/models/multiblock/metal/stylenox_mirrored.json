@@ -1,13 +1,20 @@
 {
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
-  "automatic_culling": false,
-  "emissive_ambient": true,
-  "flip_v": true,
-  "loader": "neoforge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/stylenox/stylenox_mirrored.obj",
-  "mtl_override": "immersivetechnology:models/multiblock/metal/stylenox/stylenox.mtl",
-  "shade_quads": true,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "neoforge:obj",
+    "model": "immersivetechnology:models/multiblock/metal/stylenox/stylenox.obj",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/stylenox_base"
+    }
+  },
+  "loader": "immersivetechnology:mirror",
   "textures": {
     "particle": "immersivetechnology:multiblock/metal/stylenox_base"
   }

@@ -1,14 +1,21 @@
 {
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
-  "automatic_culling": false,
-  "emissive_ambient": true,
-  "flip_v": true,
-  "loader": "neoforge:obj",
-  "model": "immersivetechnology:models/multiblock/stone/cooling_tower/cooling_tower_mirrored.obj",
-  "mtl_override": "immersivetechnology:models/multiblock/stone/cooling_tower/cooling_tower.mtl",
-  "render_type": "minecraft:cutout_mipped",
-  "shade_quads": true,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "neoforge:obj",
+    "model": "immersivetechnology:models/multiblock/stone/cooling_tower/cooling_tower.obj",
+    "render_type": "minecraft:cutout_mipped",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/stone/cooling_tower_base"
+    }
+  },
+  "loader": "immersivetechnology:mirror",
   "textures": {
     "particle": "immersivetechnology:multiblock/stone/cooling_tower_base"
   }

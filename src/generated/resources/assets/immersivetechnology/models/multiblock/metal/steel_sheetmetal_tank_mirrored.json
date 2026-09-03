@@ -1,14 +1,21 @@
 {
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
-  "automatic_culling": false,
-  "emissive_ambient": true,
-  "flip_v": true,
-  "loader": "neoforge:obj",
-  "model": "immersivetechnology:models/multiblock/metal/steel_sheetmetal_tank/steel_sheetmetal_tank_mirrored.obj",
-  "mtl_override": "immersivetechnology:models/multiblock/metal/steel_sheetmetal_tank/steel_sheetmetal_tank.mtl",
-  "render_type": "minecraft:cutout_mipped",
-  "shade_quads": true,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "neoforge:obj",
+    "model": "immersivetechnology:models/multiblock/metal/steel_sheetmetal_tank/steel_sheetmetal_tank.obj",
+    "render_type": "minecraft:cutout_mipped",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
+    }
+  },
+  "loader": "immersivetechnology:mirror",
   "textures": {
     "particle": "immersivetechnology:multiblock/metal/steel_sheetmetal_tank"
   }
