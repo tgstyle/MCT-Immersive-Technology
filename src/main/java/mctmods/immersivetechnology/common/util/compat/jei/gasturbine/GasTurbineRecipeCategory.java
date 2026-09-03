@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.gasturbine;
 
 import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -22,7 +22,7 @@ public class GasTurbineRecipeCategory extends ITRecipeCategory<GasTurbineRecipe,
     private final IDrawableAnimated turbineAndArrow;
 
     public GasTurbineRecipeCategory(IGuiHelper helper) {
-        super("gasTurbine", "tile.immersivetech.metal_multiblock1.gas_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), GasTurbineRecipe.class, GenericMultiblockIngredient.GAS_TURBINE);
+        super("gasTurbine", "tile.immersivetech.metal_multiblock1.gas_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), GasTurbineRecipe.class, ITMultiblockIngredients.GAS_TURBINE);
         tankOverlay = helper.drawableBuilder(background, 118, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
         IDrawableStatic staticImage = helper.createDrawable(background, 0, 78, 32, 42);
         this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

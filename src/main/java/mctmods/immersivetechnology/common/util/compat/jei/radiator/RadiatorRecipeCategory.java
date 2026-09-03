@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.radiator;
 
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -23,7 +23,7 @@ public class RadiatorRecipeCategory extends ITRecipeCategory<RadiatorRecipe, Rad
 	private final IDrawableAnimated drops;
 
 	public RadiatorRecipeCategory(IGuiHelper helper) {
-		super("radiator", "tile.immersivetech.metal_multiblock1.radiator.name", helper.createDrawable(background, 0, 0, 159, 69), RadiatorRecipe.class, GenericMultiblockIngredient.RADIATOR);
+		super("radiator", "tile.immersivetech.metal_multiblock1.radiator.name", helper.createDrawable(background, 0, 0, 159, 69), RadiatorRecipe.class, ITMultiblockIngredients.RADIATOR);
 		tankOverlay = helper.drawableBuilder(background, 161, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
 		IDrawableStatic staticImage = helper.createDrawable(background, 17, 69, 32, 9);
 		this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.util.compat.jei.distiller;
 
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.util.TranslationKey;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -25,7 +25,7 @@ public class DistillerRecipeCategory extends ITRecipeCategory<DistillerRecipe, D
 	private final IDrawable tankOverlay;
 
 	public DistillerRecipeCategory(IGuiHelper helper) {
-		super("distiller", "tile.immersivetech.metal_multiblock.distiller.name", helper.createDrawable(background, 8, 13, 168, 60), DistillerRecipe.class, GenericMultiblockIngredient.DISTILLER);
+		super("distiller", "tile.immersivetech.metal_multiblock.distiller.name", helper.createDrawable(background, 8, 13, 168, 60), DistillerRecipe.class, ITMultiblockIngredients.DISTILLER);
 		tankOverlay = helper.drawableBuilder(background, 177, 31, 16, 47).addPadding(-2, 2, -2, 2).build();
 	}
 

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.boiler;
 
 import mctmods.immersivetechnology.api.crafting.BoilerSolidRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IGuiItemStackGroup;
@@ -19,7 +19,7 @@ public class BoilerSolidRecipeCategory extends ITRecipeCategory<BoilerSolidRecip
 	public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/boiler_solid.png");
 
 	public BoilerSolidRecipeCategory(IGuiHelper helper) {
-		super("boilerSolid", "tile.immersivetech.metal_multiblock2.boiler_solid.name", helper.createDrawable(background, 0, 0, 176, 77), BoilerSolidRecipe.class, GenericMultiblockIngredient.BOILER_SOLID);
+		super("boilerSolid", "tile.immersivetech.metal_multiblock2.boiler_solid.name", helper.createDrawable(background, 0, 0, 176, 77), BoilerSolidRecipe.class, ITMultiblockIngredients.BOILER_SOLID);
 	}
 
 	@Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull BoilerSolidRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.heatexchanger;
 
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -24,7 +24,7 @@ public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerR
     private final IDrawableAnimated drops;
 
     public HeatExchangerRecipeCategory(IGuiHelper helper) {
-        super("heatExchanger", "tile.immersivetech.metal_multiblock1.heat_exchanger.name", helper.createDrawable(background, 0, 0, 176, 64), HeatExchangerRecipe.class, GenericMultiblockIngredient.HEAT_EXCHANGER);
+        super("heatExchanger", "tile.immersivetech.metal_multiblock1.heat_exchanger.name", helper.createDrawable(background, 0, 0, 176, 64), HeatExchangerRecipe.class, ITMultiblockIngredients.HEAT_EXCHANGER);
         tankOverlay = helper.drawableBuilder(background, 178, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
         IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 9);
         this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

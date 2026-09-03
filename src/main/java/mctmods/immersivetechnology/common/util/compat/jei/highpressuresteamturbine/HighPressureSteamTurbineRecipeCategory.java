@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.highpressuresteamturbine;
 
 import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -23,7 +23,7 @@ public class HighPressureSteamTurbineRecipeCategory extends ITRecipeCategory<Hig
 	private final IDrawableAnimated turbineAndArrow;
 
 	public HighPressureSteamTurbineRecipeCategory(IGuiHelper helper) {
-		super("highPressureSteamTurbine", "tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), HighPressureSteamTurbineRecipe.class, GenericMultiblockIngredient.HIGH_PRESSURE_STEAM_TURBINE);
+		super("highPressureSteamTurbine", "tile.immersivetech.metal_multiblock1.high_pressure_steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), HighPressureSteamTurbineRecipe.class, ITMultiblockIngredients.HIGH_PRESSURE_STEAM_TURBINE);
 		tankOverlay = helper.drawableBuilder(background, 118, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
 		IDrawableStatic staticImage = helper.createDrawable(background, 0, 78, 32, 42);
 		this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

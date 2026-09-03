@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
+import com.immersiveconvergence.api.jei.MultiblockIngredient;
+
 import mctmods.immersivetechnology.ImmersiveTechnology;
 
 import java.util.Collections;
@@ -20,9 +22,9 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	public String localizedName;
 	private final IDrawable background;
 	private final Class<T> recipeClass;
-	private final GenericMultiblockIngredient[] displayStacks;
+	private final MultiblockIngredient[] displayStacks;
 
-	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, GenericMultiblockIngredient... displayStacks) {
+	public ITRecipeCategory(String uniqueName, String localKey, IDrawable background, Class<T> recipeClass, MultiblockIngredient... displayStacks) {
 		this.uniqueName = uniqueName;
 		this.localizedName = I18n.format(localKey);
 		this.background = background;
@@ -31,7 +33,7 @@ public abstract class ITRecipeCategory<T, W extends IRecipeWrapper> implements I
 	}
 
 	public void addCatalysts(IModRegistry registry) {
-		for (GenericMultiblockIngredient stack : displayStacks) if (stack != null) registry.addRecipeCatalyst(stack, getUid());
+		for (MultiblockIngredient stack : displayStacks) if (stack != null) registry.addRecipeCatalyst(stack, getUid());
 	}
 
     @Override @Nonnull public String getUid() { return "it." + uniqueName; }

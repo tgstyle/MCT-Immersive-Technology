@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.steamturbine;
 
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -22,7 +22,7 @@ public class SteamTurbineRecipeCategory extends ITRecipeCategory<SteamTurbineRec
 	private final IDrawableAnimated turbineAndArrow;
 
 	public SteamTurbineRecipeCategory(IGuiHelper helper) {
-		super("steamTurbine", "tile.immersivetech.metal_multiblock.steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), SteamTurbineRecipe.class, GenericMultiblockIngredient.STEAM_TURBINE);
+		super("steamTurbine", "tile.immersivetech.metal_multiblock.steam_turbine.name", helper.createDrawable(background, 0, 0, 116, 69), SteamTurbineRecipe.class, ITMultiblockIngredients.STEAM_TURBINE);
 		tankOverlay = helper.drawableBuilder(background, 118, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
 		IDrawableStatic staticImage = helper.createDrawable(background, 0, 78, 32, 42);
 		this.turbineAndArrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

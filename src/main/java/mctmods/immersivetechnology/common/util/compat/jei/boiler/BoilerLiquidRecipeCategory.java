@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.boiler;
 
 import mctmods.immersivetechnology.api.crafting.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -22,7 +22,7 @@ public class BoilerLiquidRecipeCategory extends ITRecipeCategory<BoilerLiquidRec
 	private final IDrawable tankOverlay;
 
 	public BoilerLiquidRecipeCategory(IGuiHelper helper) {
-		super("boilerLiquid", "tile.immersivetech.metal_multiblock1.boiler_liquid.name", helper.createDrawable(background, 0, 0, 176, 77), BoilerLiquidRecipe.class, GenericMultiblockIngredient.BOILER_LIQUID);
+		super("boilerLiquid", "tile.immersivetech.metal_multiblock1.boiler_liquid.name", helper.createDrawable(background, 0, 0, 176, 77), BoilerLiquidRecipe.class, ITMultiblockIngredients.BOILER_LIQUID);
 		tankOverlay = helper.drawableBuilder(background, 177, 31, 16, 47).addPadding(-2, 2, -2, 2).build();
 	}
 

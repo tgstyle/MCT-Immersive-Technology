@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.coolingtower;
 
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -23,7 +23,7 @@ public class CoolingTowerRecipeCategory extends ITRecipeCategory<CoolingTowerRec
 
     @SuppressWarnings("deprecation")
     public CoolingTowerRecipeCategory(IGuiHelper helper) {
-        super("coolingTower", "tile.immersivetech.metal_multiblock.cooling_tower.name", helper.createDrawable(background, 0, 0, 159, 69), CoolingTowerRecipe.class, GenericMultiblockIngredient.COOLING_TOWER);
+        super("coolingTower", "tile.immersivetech.metal_multiblock.cooling_tower.name", helper.createDrawable(background, 0, 0, 159, 69), CoolingTowerRecipe.class, ITMultiblockIngredients.COOLING_TOWER);
         tankOverlay = helper.createDrawable(background, 161, 2, 16, 47, -2, 2, -2, 2);
         IDrawableStatic staticImage = helper.createDrawable(background, 17, 69, 32, 9);
         this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

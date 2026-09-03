@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery;
 
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.common.util.compat.jei.GenericMultiblockIngredient;
+import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;
 import mctmods.immersivetechnology.common.util.compat.jei.ITRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.JEIHelper;
 import mezz.jei.api.IGuiHelper;
@@ -22,7 +22,7 @@ public class ElectrolyticCrucibleBatteryRecipeCategory extends ITRecipeCategory<
     private final IDrawableAnimated arrow;
 
     public ElectrolyticCrucibleBatteryRecipeCategory(IGuiHelper helper) {
-        super("electrolyticCrucibleBattery", "tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name", helper.createDrawable(background, 0, 0, 176, 64), ElectrolyticCrucibleBatteryRecipe.class, GenericMultiblockIngredient.ELECTROLYTIC_CRUCIBLE_BATTERY);
+        super("electrolyticCrucibleBattery", "tile.immersivetech.metal_multiblock1.electrolytic_crucible_battery.name", helper.createDrawable(background, 0, 0, 176, 64), ElectrolyticCrucibleBatteryRecipe.class, ITMultiblockIngredients.ELECTROLYTIC_CRUCIBLE_BATTERY);
         tankOverlay = helper.drawableBuilder(background, 178, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
         IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 18);
         this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);

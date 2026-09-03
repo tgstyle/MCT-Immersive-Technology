@@ -30,7 +30,6 @@ import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.ITooltipCallback;
-import mezz.jei.api.ingredients.IModIngredientRegistration;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -49,9 +48,6 @@ public class JEIHelper implements IModPlugin {
     public static IModRegistry modRegistry;
     public static IDrawable slotDrawable;
     public static ITooltipCallback<FluidStack> fluidTooltipCallback = new ITFluidTooltipCallback();
-
-    @SuppressWarnings("deprecation")
-    @Override public void registerIngredients(@Nonnull IModIngredientRegistration registry) { registry.register(GenericMultiblockIngredient.class, GenericMultiblockIngredient.list, new GenericMultiblockHelper(), GenericMultiblockRenderer.INSTANCE); }
 
     @SuppressWarnings("rawtypes")
     Map<Class, ITRecipeCategory> categories = new LinkedHashMap<>();
@@ -102,7 +98,7 @@ public class JEIHelper implements IModPlugin {
         if (Multiblocks.enable.enable_radiator) { modRegistry.addRecipes(new ArrayList<Object>((RadiatorRecipe.recipeList)), "it.radiator"); }
         if (Multiblocks.enable.enable_advancedCokeOven) {
             modRegistry.addRecipeCatalyst(new ItemStack(IEContent.blockStoneDevice, 1, BlockTypes_StoneDevices.COKE_OVEN.getMeta()), "ie.cokeoven");
-            modRegistry.addRecipeCatalyst(GenericMultiblockIngredient.ADVANCED_COKE_OVEN, "ie.cokeoven");
+            modRegistry.addRecipeCatalyst(ITMultiblockIngredients.ADVANCED_COKE_OVEN, "ie.cokeoven");
             modRegistry.addRecipeClickArea(GuiAdvancedCokeOven.class, 58, 36, 11, 13, "ie.cokeoven");
         }
     }
