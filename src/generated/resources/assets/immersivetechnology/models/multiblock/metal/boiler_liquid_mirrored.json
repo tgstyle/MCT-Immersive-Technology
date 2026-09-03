@@ -1,0 +1,22 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "inner_model": {
+    "parent": "minecraft:block/block",
+    "ambientocclusion": false,
+    "automatic_culling": false,
+    "emissive_ambient": true,
+    "flip_v": true,
+    "loader": "forge:obj",
+    "model": "immersivetechnology:models/multiblock/metal/boiler_liquid/boiler_liquid.obj",
+    "render_type": "minecraft:cutout_mipped",
+    "shade_quads": true,
+    "textures": {
+      "particle": "immersivetechnology:multiblock/metal/boiler_liquid"
+    }
+  },
+  "loader": "immersivetechnology:mirror",
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/boiler_liquid"
+  }
+}

@@ -77,7 +77,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
     public static final List<BlockPos> EXHAUST_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "exhaust0");
     private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace HEAT_OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_output0");
+    public static final RelativeBlockFace HEAT_OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_output0");
     public static final RelativeBlockFace IGNITION_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "ignition0");
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {

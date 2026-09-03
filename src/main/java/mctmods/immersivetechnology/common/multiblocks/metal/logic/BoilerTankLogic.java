@@ -69,7 +69,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
     public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
     private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
     private static final RelativeBlockFace OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace HEAT_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_input0");
+    public static final RelativeBlockFace HEAT_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "heat_input0");
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 

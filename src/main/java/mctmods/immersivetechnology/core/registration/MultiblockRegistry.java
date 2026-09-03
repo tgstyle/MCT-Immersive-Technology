@@ -29,7 +29,7 @@ import java.util.function.Function;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import com.immersiveconvergence.api.multiblock.MultiblockPartBlockNonMirror;
 import com.immersiveconvergence.api.multiblock.MultiblockPartBlockWithMirror;
-import com.immersiveconvergence.api.multiblock.MultiblockPartBlockNonMirrorActive;
+import com.immersiveconvergence.api.multiblock.MultiblockPartBlockWithMirrorActive;
 import com.immersiveconvergence.api.multiblock.MultiblockBuilder;
 import mctmods.immersivetechnology.common.multiblocks.gui.helper.MultiblockGui;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -74,8 +74,8 @@ public class MultiblockRegistry {
         return complete(base(logic, name).notMirrored().customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockNonMirror<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
     }
 
-    public static <S extends IMultiblockState> MultiblockBuilder<S> metalNoMirrorWithActive(IMultiblockLogic<S> logic, String name) {
-        return complete(base(logic, name).notMirrored().customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockNonMirrorActive<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
+    public static <S extends IMultiblockState> MultiblockBuilder<S> metalWithActive(IMultiblockLogic<S> logic, String name) {
+        return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirrorActive<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
     }
 
     public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
@@ -92,7 +92,7 @@ public class MultiblockRegistry {
                     .build();
 
     public static final MultiblockRegistration<BoilerLiquidLogic.State> BOILER_LIQUID =
-            metalNoMirror(new BoilerLiquidLogic(), "boiler_liquid")
+            metal(new BoilerLiquidLogic(), "boiler_liquid")
                     .structure(() -> getMBTemplate.apply("boiler_liquid"))
                     .redstone(s -> s.rsState, BoilerLiquidLogic.REDSTONE_POI)
                     .component(new BoilerLiquidProcess())
@@ -102,7 +102,7 @@ public class MultiblockRegistry {
                     .build();
 
     public static final MultiblockRegistration<BoilerSolidLogic.State> BOILER_SOLID =
-            metalNoMirrorWithActive(new BoilerSolidLogic(), "boiler_solid")
+            metalWithActive(new BoilerSolidLogic(), "boiler_solid")
                     .structure(() -> getMBTemplate.apply("boiler_solid"))
                     .redstone(s -> s.rsState, BoilerSolidLogic.REDSTONE_POI)
                     .component(new BoilerSolidProcess())
@@ -111,7 +111,7 @@ public class MultiblockRegistry {
                     .build();
 
     public static final MultiblockRegistration<BoilerTankLogic.State> BOILER_TANK =
-            metalNoMirror(new BoilerTankLogic(), "boiler_tank")
+            metal(new BoilerTankLogic(), "boiler_tank")
                     .structure(() -> getMBTemplate.apply("boiler_tank"))
                     .component(new ClearTank<>(BoilerTankLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .component(new MultiblockGui<>(MenuTypes.BOILER_TANK_MENU))
