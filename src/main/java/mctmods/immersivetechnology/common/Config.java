@@ -47,7 +47,6 @@ public class Config {
             public static GasTurbine gasTurbine = new GasTurbine();
             public static HeatExchanger heatExchanger = new HeatExchanger();
             public static HighPressureSteamTurbine highPressureSteamTurbine = new HighPressureSteamTurbine();
-            public static JEI JEI = new JEI();
             public static MeltingCrucible meltingCrucible = new MeltingCrucible();
             public static Radiator radiator = new Radiator();
             public static SolarMelter solarMelter = new SolarMelter();
@@ -236,10 +235,6 @@ public class Config {
                 public float highPressureSteamTurbine_torque = 1.0f;
                 @Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
                 public boolean highPressureSteamTurbine_turbine_material = true;
-            }
-            public static class JEI {
-                @Comment({"Display IT Multiblocks in JEI [Default=true]"})
-                public boolean enableJEIMultiblocks = true;
             }
             public static class MeltingCrucible {
                 @Comment({"Heat loss multiplier for the Melting Crucible. Higher values = faster cooling when unpowered. [Default: 0.2]"})

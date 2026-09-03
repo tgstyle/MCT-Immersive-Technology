@@ -31,7 +31,6 @@ public final class ITMultiblockIngredients {
     private ITMultiblockIngredients() {}
 
     public static void init() {
-        if (!Multiblocks.JEI.enableJEIMultiblocks) { return; }
         if (Multiblocks.enable.enable_steamTurbine) { STEAM_TURBINE = new MultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.STEAM_TURBINE.getMeta())); }
         if (Multiblocks.enable.enable_distiller) { DISTILLER = new MultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.DISTILLER.getMeta())); }
         if (Multiblocks.enable.enable_solarTower) { SOLAR_TOWER = new MultiblockIngredient(new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta())); }
