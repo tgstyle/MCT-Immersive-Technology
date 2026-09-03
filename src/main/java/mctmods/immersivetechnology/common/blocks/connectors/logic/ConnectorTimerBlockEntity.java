@@ -41,7 +41,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
-import com.immersiveconvergence.api.block.FacingLimitation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

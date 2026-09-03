@@ -6,7 +6,7 @@ Verdampfung!
 
 
 §lBetrieb§r
-    - §lWasser§r wird links eingefüllt.
-    - §lDestilliertes Wasser§r wird rechts ausgegeben.
+    - §lWasser§r wird rechts eingefüllt.
+    - §lDestilliertes Wasser§r wird links ausgegeben.
     - Salz wird hinten ausgegeben.
     - Ein Komparator am Bedienfeld gibt ein Signal proportional zur Füllung des internen Flux-Puffers (<config;i;distiller.energy_capacity> Flux) aus.

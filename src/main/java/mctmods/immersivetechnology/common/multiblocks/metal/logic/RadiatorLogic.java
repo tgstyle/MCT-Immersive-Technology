@@ -9,11 +9,12 @@ import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.RadiatorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import com.immersiveconvergence.api.util.RecipeCache;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -49,10 +50,11 @@ import java.util.function.Function;
 import java.util.function.BiFunction;
 
 public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, IServerTickableComponent<RadiatorLogic.State>, IClientTickableComponent<RadiatorLogic.State>, IFluidOutputPump<RadiatorLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("radiator");
     public static final int INPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
     public static final int OUTPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(RadiatorShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("radiator").pointsOfInterest);
 
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
     public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
@@ -203,7 +205,7 @@ public class RadiatorLogic implements IMultiblockLogic<RadiatorLogic.State>, ISe
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return RadiatorShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IDisplayContext {
         public final BiFunction<Level, FluidStack, RadiatorRecipe> recipeGetter = RecipeCache.cached(RadiatorRecipe::findRecipe);

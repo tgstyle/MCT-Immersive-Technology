@@ -10,7 +10,7 @@ import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.SlotRangeItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.AdvancedCokeOvenProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
-import mctmods.immersivetechnology.common.multiblocks.stone.shapes.AdvancedCokeOvenShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
@@ -70,10 +70,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 import com.immersiveconvergence.api.util.ICFluidUtils;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenLogic.State>, IServerTickableComponent<AdvancedCokeOvenLogic.State>, IClientTickableComponent<AdvancedCokeOvenLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("advanced_coke_oven");
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_OUTPUT = 1;
     public static final int SLOT_EMPTY_CONTAINER = 2;
@@ -84,7 +86,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static double baseheaterAdd() { return ServerConfig.advancedCokeOvenBaseheaterSpeedIncrease; }
     public static double baseheaterMult() { return ServerConfig.advancedCokeOvenBaseheaterSpeedMultiplier; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AdvancedCokeOvenShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("advanced_coke_oven").pointsOfInterest);
 
     public static final CapabilityPosition OUTPUT_FLUID_POI = new CapabilityPosition(MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0").get(0), MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0"));
     public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(MultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), MultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").get(0));
@@ -222,7 +224,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AdvancedCokeOvenShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 

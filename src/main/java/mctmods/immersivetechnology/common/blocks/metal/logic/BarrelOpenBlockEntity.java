@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.Random;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nonnull;
 

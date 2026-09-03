@@ -6,7 +6,7 @@ Distillateur
 
 
 §lFonctionnement§r
-    - L'§lEau§r est introduite à gauche.
-    - L'§lEau distillée§r sort à droite.
+    - L'§lEau§r est introduite à droite.
+    - L'§lEau distillée§r sort à gauche.
     - Le sel sort à l'arrière.
     - Un comparateur contre le panneau de contrôle émet un signal proportionnel au remplissage de son tampon Flux interne (<config;i;distiller.energy_capacity> Flux).

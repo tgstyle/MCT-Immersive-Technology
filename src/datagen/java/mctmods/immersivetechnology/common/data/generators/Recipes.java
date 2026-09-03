@@ -8,6 +8,7 @@ import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
 import blusunrize.immersiveengineering.common.register.IEBlocks;
 import blusunrize.immersiveengineering.common.register.IEItems;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.CoolingTowerRecipeBuilder;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
@@ -46,6 +47,7 @@ public class Recipes extends RecipeProvider {
     @Override protected void buildRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
         multiblockRecipes();
         itemRecipes(consumer);
+        recipesAdvancedCokeOven(consumer);
         recipesBoilerLiquid(consumer);
         recipesBoilerSolid(consumer);
         recipesBoilerTank(consumer);
@@ -84,6 +86,12 @@ public class Recipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), 1).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).define('H', IEBlocks.MetalDevices.FURNACE_HEATER.get()).define('R', Items.REDSTONE).pattern("SSS").pattern("HRH").pattern("SSS").unlockedBy("has_furnace_heater", has(IEBlocks.MetalDevices.FURNACE_HEATER.get())).save(consumer, toResourceLocation("advanced_coke_oven_baseheater"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FORMATION_TOOL.get(), 1).define('I', IETags.getTagsFor(EnumMetals.IRON).ingot).define('E', IETags.getTagsFor(EnumMetals.ELECTRUM).ingot).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(IETags.getTagsFor(EnumMetals.IRON).ingot)).save(consumer, toResourceLocation("formation_tool"));
+    }
+
+    private void recipesAdvancedCokeOven(@Nonnull Consumer<FinishedRecipe> out) {
+        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL).addOutput(IETags.coalCoke, 1).setCreosote(500).setTime(600).build(out, toResourceLocation("advanced_coke_oven/coke"));
+        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL_BLOCK).addOutput(IETags.getItemTag(IETags.coalCokeBlock), 1).setCreosote(5000).setTime(5400).build(out, toResourceLocation("advanced_coke_oven/coke_block"));
+        AdvancedCokeOvenRecipeBuilder.builder(ItemTags.LOGS, 1).addOutput(Items.CHARCOAL).setCreosote(250).setTime(600).build(out, toResourceLocation("advanced_coke_oven/charcoal"));
     }
 
     private void recipesBoilerLiquid(@Nonnull Consumer<FinishedRecipe> out) {

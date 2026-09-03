@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.TankPair;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
@@ -64,8 +64,10 @@ import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State>, IServerTickableComponent<SolarMelterLogic.State>, IClientTickableComponent<SolarMelterLogic.State>, IFluidOutputPump<SolarMelterLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("solar_melter");
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -84,7 +86,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
     public static int progressLossOffTemp() { return ServerConfig.solarMelterProgressLossOffTemp; }
     public static float speedMultiplier() { return (float) ServerConfig.solarMelterSpeedMultiplier; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SolarMelterShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("solar_melter").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
@@ -368,7 +370,7 @@ public class SolarMelterLogic implements IMultiblockLogic<SolarMelterLogic.State
         return LazyOptional.empty();
     }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SolarMelterShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 

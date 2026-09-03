@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;

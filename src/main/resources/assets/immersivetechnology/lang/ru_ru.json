@@ -91,8 +91,6 @@
   "gui.immersivetechnology.heat_level": "%s / 100 °C",
   "gui.immersivetechnology.heat_level_detailed": "%.2f / %.2f °C",
   "gui.immersivetechnology.if_per_tick": "%s IF/t",
-  "gui.immersivetechnology.input_tank_cleared": "Входной резервуар очищен",
-  "gui.immersivetechnology.input_tanks_cleared": "Входные резервуары очищены",
   "gui.immersivetechnology.no_gas_allowed": "Газы запрещены",
   "gui.immersivetechnology.seconds": "%s с",
   "gui.immersivetechnology.temperature": "Температура",

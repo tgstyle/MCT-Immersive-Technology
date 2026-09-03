@@ -9,7 +9,6 @@ import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -44,7 +43,6 @@ public class ImmersiveTechnology {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         Reference.IT_LOGGER.info("HELLO FROM COMMON SETUP");
-        MachineTemplateMultiblock.templateModeGate = () -> ServerConfig.DISASSEMBLY_MODE.get() == ServerConfig.DisassemblyMode.TEMPLATE_BLOCKS;
         ClearTank.additionalTool = stack -> stack.getItem() instanceof FormationTool;
         BlockToolGates.isFormationTool = stack -> stack.is(ModTags.formationTools);
         BlockToolGates.isScrewdriver = stack -> stack.is(ModTags.screwdrivers);

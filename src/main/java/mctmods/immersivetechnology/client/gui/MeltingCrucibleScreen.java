@@ -45,11 +45,6 @@ public class MeltingCrucibleScreen extends BaseContainerScreen<MeltingCrucibleMe
     }
 
     @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
-        int energyStored = menu.state.get(1);
-        int energyMax = menu.state.get(2);
-        int stored = energyMax > 0 ? (int) (46 * (energyStored / (float) energyMax)) : 0;
-        graphics.blit(TEXTURE, leftPos + 16, topPos + 22 + (46 - stored), 176, 0, 7, stored);
-
         int heat = menu.state.get(3);
         double max = getMaxHeat();
         int heatBarSize = (int)(51 * Math.min(1.0, heat / max));
@@ -57,9 +52,6 @@ public class MeltingCrucibleScreen extends BaseContainerScreen<MeltingCrucibleMe
     }
 
     @Override protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {
-        if (mouseX >= leftPos + 16 && mouseX < leftPos + 23 && mouseY >= topPos + 22 && mouseY < topPos + 68) {
-            addLine.accept(Component.translatable("gui.immersivetechnology.energy_stored", menu.state.get(1), menu.state.get(2)));
-        }
         if (mouseX >= leftPos + 30 && mouseX < leftPos + 81 && mouseY >= topPos + 9 && mouseY < topPos + 18) {
             int internalHeat = menu.state.get(3);
             double maxHeat = getMaxHeat();

@@ -75,7 +75,7 @@ public class ClientProxy extends CommonProxy {
         ParticleSettings.particleCollide = () -> ClientConfig.particleCollide;
         ParticleSettings.coloredSmokeHeight = () -> ClientConfig.coloredSmokeHeight;
         ParticleSettings.customSmokeHeight = () -> ClientConfig.customSmokeHeight;
-        ColoredSmoke.typeSupplier = () -> Particles.COLORED_SMOKE.get();
+        ColoredSmoke.typeSupplier = Particles.COLORED_SMOKE::get;
         event.enqueueWork(() -> {
             FluidEntry.registerRenderLayers(ModFluids.ALL_ENTRIES);
 

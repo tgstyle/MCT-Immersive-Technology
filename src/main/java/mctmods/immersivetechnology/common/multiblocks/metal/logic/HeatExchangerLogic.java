@@ -7,13 +7,14 @@ import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.HeatExchangerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.HeatExchangerShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
 import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import com.immersiveconvergence.api.util.RecipeCache;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -52,7 +53,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.State>, IServerTickableComponent<HeatExchangerLogic.State>, IClientTickableComponent<HeatExchangerLogic.State>, IFluidOutputPump<HeatExchangerLogic.State> {
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(HeatExchangerShape.DATA.pointsOfInterest);
+    private static final ShapeData SHAPE = ITShapes.get("heat_exchanger");
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("heat_exchanger").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
@@ -192,7 +194,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) {}
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return HeatExchangerShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IDisplayContext, ProcessContext.ProcessContextInMachine<HeatExchangerRecipe> {
         public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, HeatExchangerRecipe> recipeGetter = RecipeCache.cached3(HeatExchangerRecipe::findRecipe);

@@ -6,7 +6,7 @@ Evaporation!
 
 
 §lOperation§r
-    - §lWater§r is input on the left.
-    - §lDistilled Water§r is output on the right.
+    - §lWater§r is input on the right.
+    - §lDistilled Water§r is output on the left.
     - Salt is output in the back.
     - A comparator against the front control panel outputs a signal proportional to how full its internal Flux buffer (<config;i;distiller.energy_capacity> Flux) is.

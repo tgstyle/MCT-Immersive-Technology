@@ -92,8 +92,6 @@
   "gui.immersivetechnology.heat_level": "%s/100 C",
   "gui.immersivetechnology.heat_level_detailed": "%.2f/%.2f°C",
   "gui.immersivetechnology.if_per_tick": "%s IF/t",
-  "gui.immersivetechnology.input_tank_cleared": "Input tank cleared",
-  "gui.immersivetechnology.input_tanks_cleared": "Input tanks cleared",
   "gui.immersivetechnology.no_gas_allowed": "No gas allowed",
   "gui.immersivetechnology.seconds": "%ss",
   "gui.immersivetechnology.temperature": "Temperature",

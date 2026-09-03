@@ -91,8 +91,6 @@
   "gui.immersivetechnology.heat_level": "%s / 100 °C",
   "gui.immersivetechnology.heat_level_detailed": "%.2f / %.2f °C",
   "gui.immersivetechnology.if_per_tick": "%s IF/t",
-  "gui.immersivetechnology.input_tank_cleared": "입력 탱크 비움",
-  "gui.immersivetechnology.input_tanks_cleared": "입력 탱크들 비움",
   "gui.immersivetechnology.no_gas_allowed": "기체 유체는 사용할 수 없습니다",
   "gui.immersivetechnology.seconds": "%s초",
   "gui.immersivetechnology.temperature": "온도",

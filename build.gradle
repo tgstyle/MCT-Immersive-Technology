@@ -91,6 +91,7 @@ ext {
     version_engineered_schematics_curse = versionProps['version_engineered_schematics_curse']
     version_jade_curse = versionProps['version_jade_curse']
     version_top_curse = versionProps['version_top_curse']
+    version_ip_curse = versionProps['version_ip_curse']
     version_journeymap_curse = versionProps['version_journeymap_curse']
     version_puzzleslib_curse = versionProps['version_puzzleslib_curse']
     version_held_item_tooltips_curse = versionProps['version_held_item_tooltips_curse']
@@ -260,6 +261,7 @@ dependencies {
 
     implementation fg.deobf("curse.maven:${version_ie_curse}")
     implementation fg.deobf("curse.maven:${version_engineered_schematics_curse}")
+    runtimeOnly fg.deobf("curse.maven:${version_ip_curse}")
 
     implementation fg.deobf("curse.maven:${version_jade_curse}")
     implementation fg.deobf("curse.maven:${version_top_curse}")

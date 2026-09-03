@@ -7,7 +7,7 @@ import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerLiquidShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.CommonConfig;
@@ -30,6 +30,7 @@ import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -58,6 +59,7 @@ import java.util.function.Function;
 import java.util.function.BiFunction;
 
 public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.State>, IServerTickableComponent<BoilerLiquidLogic.State>, IClientTickableComponent<BoilerLiquidLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("boiler_liquid");
     public static final int INPUT_FUEL_SLOT_FILLED = 0;
     public static final int INPUT_FUEL_SLOT_EMPTY = 1;
 
@@ -65,7 +67,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
     public static double pilotHeat() { return ServerConfig.boilerLiquidPilotHeat; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerLiquidShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("boiler_liquid").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
@@ -251,7 +253,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerLiquidShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IDisplayContext {
         public final BiFunction<Level, FluidStack, BoilerLiquidRecipe> recipeGetter = RecipeCache.cached(BoilerLiquidRecipe::findRecipe);

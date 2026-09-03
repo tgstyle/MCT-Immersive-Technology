@@ -6,7 +6,7 @@ Evaporação!
 
 
 §lOperação§r
-    - A §lÁgua§r é inserida à esquerda.
-    - A §lÁgua destilada§r sai à direita.
+    - A §lÁgua§r é inserida à direita.
+    - A §lÁgua destilada§r sai à esquerda.
     - O sal sai pela parte de trás.
     - Um comparador contra o painel de controlo emite um sinal proporcional a quão cheio está o seu buffer interno de Flux (<config;i;distiller.energy_capacity> Flux).

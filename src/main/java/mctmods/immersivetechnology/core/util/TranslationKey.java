@@ -20,8 +20,6 @@ public enum TranslationKey {
     GUI_DIRECTION_WEST("gui." + Reference.MODID + ".direction_west"),
     GUI_EMPTY("gui." + Reference.MODID + ".empty"),
     GUI_HEAT_LEVEL_DETAILED("gui." + Reference.MODID + ".heat_level_detailed"),
-    GUI_INPUT_TANK_CLEARED("gui." + Reference.MODID + ".input_tank_cleared"),
-    GUI_INPUT_TANKS_CLEARED("gui." + Reference.MODID + ".input_tanks_cleared"),
     GUI_TEMPERATURE("gui." + Reference.MODID + ".temperature"),
     GUI_TIMER("gui." + Reference.MODID + ".timer"),
     GUI_VALVE_FIRST_LINE("gui." + Reference.MODID + ".valve.firstline"),

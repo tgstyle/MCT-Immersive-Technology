@@ -13,8 +13,6 @@ import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlock
 import com.immersiveconvergence.api.block.ModBlockItem;
 import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -26,11 +24,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class ModBlocks {
     public static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, Reference.MODID);
@@ -178,8 +174,6 @@ public class ModBlocks {
         Wooden.init();
         TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);
     }
-
-    public static List<? extends Block> getITBlocks() { return REGISTER.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList()); }
 
     public static void init(IEventBus event) {
         initBlocks();

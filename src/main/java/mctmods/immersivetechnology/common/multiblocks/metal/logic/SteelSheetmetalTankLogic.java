@@ -4,7 +4,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
@@ -45,15 +45,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteelSheetmetalTankShape.DATA;
 import com.immersiveconvergence.api.util.ICFluidUtils;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("steel_sheetmetal_tank");
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("steel_sheetmetal_tank").pointsOfInterest);
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     private static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
     private static final List<CapabilityPosition> IO_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
@@ -214,7 +215,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         return null;
     }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SteelSheetmetalTankShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SHAPE.getter; }
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (posInMultiblock.equals(REDSTONE_POI) && player.getItemInHand(hand).is(IETags.screwdrivers)) {

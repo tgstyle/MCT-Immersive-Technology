@@ -8,7 +8,7 @@ import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerSolidShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import com.immersiveconvergence.api.client.MachineSound;
@@ -29,6 +29,7 @@ import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -59,6 +60,7 @@ import java.util.function.BiFunction;
 import javax.annotation.Nonnull;
 
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("boiler_solid");
     public static final int INPUT_FUEL_SLOT = 0;
 
     public static double heatLossPerTick() { return ServerConfig.boilerSolidHeatLossPerTick; }
@@ -67,10 +69,10 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     public static int pilotMultiplier() { return ServerConfig.boilerSolidPilotMultiplier; }
     public static double defaultHeatPerTick() { return ServerConfig.boilerSolidDefaultHeatPerTick; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(BoilerSolidShape.DATA.pointsOfInterest);
-    private static final int WIDTH = BoilerSolidShape.WIDTH;
-    private static final int LENGTH = BoilerSolidShape.LENGTH;
-    private static final int HEIGHT = BoilerSolidShape.HEIGHT;
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("boiler_solid").pointsOfInterest);
+    private static final int WIDTH = SHAPE.width;
+    private static final int LENGTH = SHAPE.length;
+    private static final int HEIGHT = SHAPE.height;
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     private static final int[] COMPARATOR_POSITIONS_RAW = {0,0,0,0,0,1,0,0,2,0,1,0,0,1,1,0,1,2,0,2,0,0,2,1};
@@ -243,7 +245,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return BoilerSolidShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     private static class FuelItemHandler extends ConstrainedItemHandler {
         private final Supplier<Level> levelSupplier;

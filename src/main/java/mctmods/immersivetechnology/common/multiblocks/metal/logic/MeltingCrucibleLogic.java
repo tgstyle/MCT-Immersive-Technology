@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.MeltingCrucibleShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
@@ -58,8 +58,10 @@ import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, IFluidOutputPump<MeltingCrucibleLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("melting_crucible");
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -75,7 +77,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     private static int energyPerTickToHeat() { return ServerConfig.meltingCrucibleEnergyPerTickToHeat; }
     private static int energyPerTickToMaintain() { return ServerConfig.meltingCrucibleEnergyPerTickToMaintain; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(MeltingCrucibleShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("melting_crucible").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
@@ -219,7 +221,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return MeltingCrucibleShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IProcessContext.ProcessContextInMachine<MeltingRecipe>, IDisplayContext {
         public final BiFunction<Level, FluidStack, MeltingRecipe> recipeGetter = RecipeCache.cached(MeltingRecipe::findRecipe);

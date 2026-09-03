@@ -400,7 +400,7 @@ public class JEIIntegration implements IModPlugin {
         assert Minecraft.getInstance().level != null;
         Level level = Minecraft.getInstance().level;
         AdvancedCokeOvenRecipe.copyIECokeOvenRecipes(level);
-        return new ArrayList<>(CokeOvenRecipe.RECIPES.getRecipes(level));
+        return CokeOvenRecipe.RECIPES.getRecipes(level).stream().filter(r -> AdvancedCokeOvenRecipe.usesIERecipe(level, r)).toList();
     }
     private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenCustomRecipes() {
         assert Minecraft.getInstance().level != null;

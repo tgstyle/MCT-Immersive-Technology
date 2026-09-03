@@ -5,7 +5,6 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.HammerUse;
 import mctmods.immersivetechnology.core.util.Advancements;
 import net.minecraft.ChatFormatting;

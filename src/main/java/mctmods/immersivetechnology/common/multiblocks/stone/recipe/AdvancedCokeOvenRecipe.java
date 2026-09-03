@@ -81,17 +81,19 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
         return null;
     }
 
+    public static boolean usesIERecipe(Level level, CokeOvenRecipe recipe) {
+        ItemStack[] ieStacks = recipe.input.getMatchingStacks();
+        if (ieStacks.length == 0) return false;
+
+        ItemStack testStack = ieStacks[0];
+        return RECIPES.getRecipes(level).stream().noneMatch(j -> j.matches(testStack));
+    }
+
     public static void copyIECokeOvenRecipes(Level level) {
         if (!IE_COPIED_RECIPES.isEmpty()) return;
 
         for (CokeOvenRecipe r : CokeOvenRecipe.RECIPES.getRecipes(level)) {
-            ItemStack[] ieStacks = r.input.getMatchingStacks();
-            if (ieStacks.length == 0) continue;
-
-            ItemStack testStack = ieStacks[0];
-
-            boolean alreadyHas = RECIPES.getRecipes(level).stream().anyMatch(j -> j.matches(testStack));
-            if (!alreadyHas) {
+            if (usesIERecipe(level, r)) {
                 AdvancedCokeOvenRecipe copied = new AdvancedCokeOvenRecipe(
                         ResourceLocation.fromNamespaceAndPath("immersivetechnology", "copied_ie/" + r.getId().getPath()),
                         r.input,

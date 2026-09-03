@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.BoilerTankShape;
+import com.immersiveconvergence.api.multiblock.ShapeData;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
@@ -12,14 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoilerTank extends MachineTemplateMultiblock {
+    private static final ShapeData SHAPE = ITShapes.get("boiler_tank");
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() { super(Reference.rl("multiblocks/boiler_tank"), BoilerTankShape.MASTER_POS, BoilerTankShape.TRIGGER_POS, new BlockPos(BoilerTankShape.WIDTH, BoilerTankShape.HEIGHT, BoilerTankShape.LENGTH), BoilerTankShape.CLIENT_OFFSET, BoilerTankShape.MANUAL_SCALE, MultiblockRegistry.BOILER_TANK); }
+    public BoilerTank() { super(Reference.rl("multiblocks/boiler_tank"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.BOILER_TANK); }
 
     @Override protected List<TriggerPoint> getTriggerPoints() {
         List<TriggerPoint> points = new ArrayList<>();
         points.add(new TriggerPoint(getTriggerOffset(), Rotation.NONE));
-        for (BlockPos symPos : BoilerTankShape.SYMMETRIC_TRIGGER_OFFSETS) { points.add(new TriggerPoint(symPos, Rotation.CLOCKWISE_180)); }
+        for (BlockPos symPos : SHAPE.symmetricTriggerOffsets) { points.add(new TriggerPoint(symPos, Rotation.CLOCKWISE_180)); }
         return points;
     }
 }

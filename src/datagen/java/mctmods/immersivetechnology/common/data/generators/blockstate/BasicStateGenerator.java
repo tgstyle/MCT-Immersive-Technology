@@ -17,9 +17,7 @@ import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -38,7 +36,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nullable;
 

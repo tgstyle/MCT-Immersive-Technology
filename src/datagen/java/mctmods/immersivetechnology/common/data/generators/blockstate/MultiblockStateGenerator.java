@@ -10,7 +10,6 @@ import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.core.Direction;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
@@ -26,7 +24,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -127,14 +124,6 @@ public class MultiblockStateGenerator {
         return ret;
     }
 
-    protected void addParticleTextureFrom(BlockModelBuilder result, ModelBuilder<?> model) {
-        String particles = ModBlockState.generatedParticleTextures.get(model.getLocation());
-        if (particles != null) {
-            result.texture("particle", particles);
-            ModBlockState.generatedParticleTextures.put(result.getLocation(), particles);
-        }
-    }
-
     protected ResourceLocation addModelsPrefix(ResourceLocation in) { return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath()); }
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
@@ -150,8 +139,8 @@ public class MultiblockStateGenerator {
             int angleY = getAngle(dir);
             int angleX = 0;
             if (facing.getPossibleValues().contains(Direction.UP)) { angleX = -90 * dir.getStepY(); angleY = dir.getAxis() != Direction.Axis.Y ? getAngle(dir) : 0; }
-            boolean mirrored = (mirroredState != null) ? state.getValue(mirroredState) : false;
-            boolean active = (activeState != null) ? state.getValue(activeState) : false;
+            boolean mirrored = mirroredState != null && state.getValue(mirroredState);
+            boolean active = activeState != null && state.getValue(activeState);
             ModelFile baseModel = active ? activeMaster : defaultMaster;
             ModelFile model = mirrored ? (active ? activeMirrored : defaultMirrored) : baseModel;
             assert model != null;

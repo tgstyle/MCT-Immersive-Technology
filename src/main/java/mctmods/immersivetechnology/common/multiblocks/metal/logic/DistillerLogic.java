@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.DistillerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.DistillerShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.client.MachineSound;
@@ -60,8 +60,10 @@ import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.util.SlotRangeItemHandler;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, IFluidOutputPump<DistillerLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("distiller");
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -72,7 +74,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static int outputTankCapacity() { return ServerConfig.distillerOutputTankCapacity; }
     public static int energyCapacity() { return ServerConfig.distillerEnergyCapacity; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(DistillerShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("distiller").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
@@ -217,7 +219,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return DistillerShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IProcessContext.ProcessContextInMachine<DistillerRecipe>, IDisplayContext {
         public final BiFunction<Level, FluidStack, DistillerRecipe> recipeGetter = RecipeCache.cached(DistillerRecipe::findRecipe);

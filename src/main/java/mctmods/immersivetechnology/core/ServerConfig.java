@@ -11,8 +11,6 @@ public class ServerConfig {
 
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
-    public static final ForgeConfigSpec.EnumValue<DisassemblyMode> DISASSEMBLY_MODE;
-
     public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_SPEED_BASE;
     public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE;
     public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER;
@@ -50,7 +48,6 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_INPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY;
-    public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT;
 
     public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_PRESSURIZED;
     public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_UNPRESSURIZED;
@@ -83,9 +80,6 @@ public class ServerConfig {
     public static final ForgeConfigSpec.DoubleValue RADIATOR_BIOME_TEMP_FACTOR;
     public static final ForgeConfigSpec.DoubleValue RADIATOR_BIOME_HUMIDITY_FACTOR;
     public static final ForgeConfigSpec.DoubleValue RADIATOR_REFLECTOR_FACTOR;
-    public static final ForgeConfigSpec.IntValue RADIATOR_INPUT_TANK_CAPACITY;
-    public static final ForgeConfigSpec.IntValue RADIATOR_OUTPUT_TANK_CAPACITY;
-    public static final ForgeConfigSpec.DoubleValue RADIATOR_SPEED_MULTIPLIER;
 
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_DAY_MIN_HEAT_LOSS;
     public static final ForgeConfigSpec.DoubleValue SOLAR_MELTER_LOSS_PER_SECTION_DROP;
@@ -119,7 +113,6 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue STEEL_SHEETMETAL_TANK_TRANSFER_SPEED;
 
-    public static DisassemblyMode disassemblyMode = DisassemblyMode.PROCESS_QUEUE;
 
     public static double advancedCokeOvenSpeedBase = 1.0D;
     public static double advancedCokeOvenBaseheaterSpeedIncrease = 0.25D;
@@ -158,7 +151,6 @@ public class ServerConfig {
     public static int electrolyticCrucibleBatteryInputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryOutputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
-    public static int electrolyticCrucibleBatteryEnergyMaxInput = 4096;
 
     public static int fluidPipeAmountPressurized = 2500;
     public static int fluidPipeAmountUnpressurized = 100;
@@ -188,9 +180,6 @@ public class ServerConfig {
     public static int meltingCrucibleEnergyPerTickToHeat = 1000;
     public static int meltingCrucibleEnergyPerTickToMaintain = 512;
 
-    public static int radiatorInputTankCapacity = 8000;
-    public static int radiatorOutputTankCapacity = 8000;
-    public static double radiatorSpeedMultiplier = 1.0D;
     public static double radiatorBiomeTempFactor = 0.5D;
     public static double radiatorBiomeHumidityFactor = 3.0D;
     public static double radiatorReflectorFactor = 1.0D;
@@ -229,8 +218,6 @@ public class ServerConfig {
 
     static {
         BUILDER.push("multiblocks");
-
-        DISASSEMBLY_MODE = BUILDER.defineEnum("disassemblyMode", DisassemblyMode.PROCESS_QUEUE);
 
         BUILDER.push("advanced_coke_oven");
         ADVANCED_COKE_OVEN_SPEED_BASE = BUILDER.defineInRange("speed_base", 1.0D, 0.1D, 10.0D);
@@ -288,7 +275,6 @@ public class ServerConfig {
         ELECTROLYTIC_CRUCIBLE_BATTERY_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 16000, 1000, Integer.MAX_VALUE);
-        ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT = BUILDER.defineInRange("energy_max_input", 4096, 256, 65536);
         BUILDER.pop();
 
         BUILDER.push("gas_turbine");
@@ -323,9 +309,6 @@ public class ServerConfig {
         BUILDER.pop();
 
         BUILDER.push("radiator");
-        RADIATOR_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
-        RADIATOR_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 8000, 1000, Integer.MAX_VALUE);
-        RADIATOR_SPEED_MULTIPLIER = BUILDER.defineInRange("speed_multiplier", 1.0D, 0.1D, 10.0D);
         RADIATOR_BIOME_TEMP_FACTOR = BUILDER
                 .comment("Biome temperature effect strength on radiator speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8.")
                 .defineInRange("biome_temp_factor", 0.5D, 0.0D, 2.0D);
@@ -390,8 +373,6 @@ public class ServerConfig {
     @SubscribeEvent
     public static void onConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC) {
-            disassemblyMode = DISASSEMBLY_MODE.get();
-
             advancedCokeOvenSpeedBase = ADVANCED_COKE_OVEN_SPEED_BASE.get();
             advancedCokeOvenBaseheaterSpeedIncrease = ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE.get();
             advancedCokeOvenBaseheaterSpeedMultiplier = ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER.get();
@@ -429,7 +410,6 @@ public class ServerConfig {
             electrolyticCrucibleBatteryInputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_INPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryOutputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY.get();
-            electrolyticCrucibleBatteryEnergyMaxInput = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_INPUT.get();
 
             fluidPipeAmountPressurized = FLUID_PIPE_AMOUNT_PRESSURIZED.get();
             fluidPipeAmountUnpressurized = FLUID_PIPE_AMOUNT_UNPRESSURIZED.get();
@@ -459,9 +439,6 @@ public class ServerConfig {
             meltingCrucibleEnergyPerTickToHeat = MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT.get();
             meltingCrucibleEnergyPerTickToMaintain = MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_MAINTAIN.get();
 
-            radiatorInputTankCapacity = RADIATOR_INPUT_TANK_CAPACITY.get();
-            radiatorOutputTankCapacity = RADIATOR_OUTPUT_TANK_CAPACITY.get();
-            radiatorSpeedMultiplier = RADIATOR_SPEED_MULTIPLIER.get();
             radiatorBiomeTempFactor = RADIATOR_BIOME_TEMP_FACTOR.get();
             radiatorBiomeHumidityFactor = RADIATOR_BIOME_HUMIDITY_FACTOR.get();
             radiatorReflectorFactor = RADIATOR_REFLECTOR_FACTOR.get();
@@ -500,8 +477,4 @@ public class ServerConfig {
         }
     }
 
-    public enum DisassemblyMode {
-        PROCESS_QUEUE,
-        TEMPLATE_BLOCKS
-    }
 }

@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SteamTurbineShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
@@ -29,6 +29,7 @@ import com.immersiveconvergence.api.capability.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -56,7 +57,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, IFluidOutputPump<SteamTurbineLogic.State> {
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(SteamTurbineShape.DATA.pointsOfInterest);
+    private static final ShapeData SHAPE = ITShapes.get("steam_turbine");
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("steam_turbine").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound_running0").get(0);
@@ -277,7 +279,7 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SteamTurbineShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

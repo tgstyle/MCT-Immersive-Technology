@@ -74,8 +74,6 @@ public class ModBlockState extends BlockStateProvider {
         this.basicGen = new BasicStateGenerator(this, helper);
     }
 
-    public PackOutput getPackOutput() { return packOutput; }
-
     public @Nonnull ResourceLocation modLoc(@Nonnull String name) { return super.modLoc(name); }
 
     public @Nonnull ResourceLocation mcLoc(@Nonnull String name) { return super.mcLoc(name); }

@@ -21,6 +21,7 @@ public class AdvancedCokeOvenRecipeBuilder extends IEFinishedRecipe<AdvancedCoke
 
     public AdvancedCokeOvenRecipeBuilder addOutput(Item output) { return addItem("result", output); }
 
+    @SuppressWarnings("unused")
     public AdvancedCokeOvenRecipeBuilder addOutput(ItemStack output) { return addItem("result", output); }
 
     public AdvancedCokeOvenRecipeBuilder addOutput(TagKey<Item> output, int count) {

@@ -20,10 +20,11 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.mojang.datafixers.util.Pair;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.AlternatorShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -49,8 +50,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("alternator");
     private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(AlternatorShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("alternator").pointsOfInterest);
 
     public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
     public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
@@ -222,7 +224,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return AlternatorShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
         @Override public double getMass() { return ServerConfig.alternatorBaseMass; }

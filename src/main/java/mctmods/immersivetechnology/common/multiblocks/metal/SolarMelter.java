@@ -2,8 +2,9 @@ package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.SolarMelterShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.network.OSDSyncBlock;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
@@ -19,9 +20,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SolarMelter extends MachineTemplateMultiblock {
+    private static final ShapeData SHAPE = ITShapes.get("solar_melter");
     public static final SolarMelter INSTANCE = new SolarMelter();
 
-    public SolarMelter() { super(Reference.rl("multiblocks/solar_melter"), SolarMelterShape.MASTER_POS, SolarMelterShape.TRIGGER_POS, new BlockPos(SolarMelterShape.WIDTH,SolarMelterShape.HEIGHT,SolarMelterShape.LENGTH), SolarMelterShape.CLIENT_OFFSET, SolarMelterShape.MANUAL_SCALE, MultiblockRegistry.SOLAR_MELTER); }
+    public SolarMelter() { super(Reference.rl("multiblocks/solar_melter"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.SOLAR_MELTER); }
 
     @Override public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
         if (world.isClientSide) { return false; }

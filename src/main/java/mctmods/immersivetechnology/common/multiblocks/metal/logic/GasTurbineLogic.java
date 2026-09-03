@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.GasTurbineShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
@@ -31,6 +31,7 @@ import com.immersiveconvergence.api.capability.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -59,7 +60,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, IFluidOutputPump<GasTurbineLogic.State> {
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(GasTurbineShape.DATA.pointsOfInterest);
+    private static final ShapeData SHAPE = ITShapes.get("gas_turbine");
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("gas_turbine").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
@@ -399,7 +401,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return GasTurbineShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IDisplayContext {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();

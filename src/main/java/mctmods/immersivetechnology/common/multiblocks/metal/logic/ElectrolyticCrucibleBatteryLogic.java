@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.shapes.ElectrolyticCrucibleBatteryShape;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.client.MachineSound;
@@ -54,14 +54,16 @@ import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
+import com.immersiveconvergence.api.multiblock.ShapeData;
 
 public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IFluidOutputPump<ElectrolyticCrucibleBatteryLogic.State> {
+    private static final ShapeData SHAPE = ITShapes.get("electrolytic_crucible_battery");
 
     public static int inputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryInputTankCapacity; }
     public static int outputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity; }
     public static int energyCapacity() { return ServerConfig.electrolyticCrucibleBatteryEnergyCapacity; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ElectrolyticCrucibleBatteryShape.DATA.pointsOfInterest);
+    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("electrolytic_crucible_battery").pointsOfInterest);
 
     public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
     public static final List<BlockPos> COMPARATOR_POSITIONS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator0");
@@ -187,7 +189,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ElectrolyticCrucibleBatteryShape.GETTER; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
 
     public static class State implements IMultiblockState, IProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe>, IDisplayContext {
         public final BiFunction<Level, FluidStack, ElectrolyticCrucibleBatteryRecipe> recipeGetter = RecipeCache.cached(ElectrolyticCrucibleBatteryRecipe::findRecipe);

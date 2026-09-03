@@ -6,7 +6,7 @@ Evaporazione!
 
 
 §lFunzionamento§r
-    - L'§lAcqua§r viene inserita a sinistra.
-    - L'§lAcqua distillata§r esce a destra.
+    - L'§lAcqua§r viene inserita a destra.
+    - L'§lAcqua distillata§r esce a sinistra.
     - Il sale esce sul retro.
     - Un comparatore contro il pannello di controllo emette un segnale proporzionale a quanto è pieno il suo buffer Flux interno (<config;i;distiller.energy_capacity> Flux).
