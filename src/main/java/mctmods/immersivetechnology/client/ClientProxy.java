@@ -223,9 +223,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override public void postInit() {
-        ManualHelper.addEntry("technologistsWrench", CAT_IT,
-                new ManualPages.Crafting(ManualHelper.getManual(), "technologistsWrench0", new ItemStack(ITContent.itemFormationTool)),
-                new ManualPages.Text(ManualHelper.getManual(), "technologistsWrench1"));
+        ManualHelper.addEntry("technologistsWrench", CAT_IT, new ManualPages.Crafting(ManualHelper.getManual(), "technologistsWrench0", new ItemStack(ITContent.itemFormationTool)));
 
         if (Multiblocks.enable.enable_advancedCokeOven) {
             ManualHelper.addEntry("advancedCokeOven", CAT_IT,

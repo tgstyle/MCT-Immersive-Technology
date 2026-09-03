@@ -122,7 +122,6 @@ tile.immersivetech.connectors.connectors_timer.name=Temporizzatore Redstone
 ie.manual.entry.technologistsWrench.name=Chiave del tecnologo
 ie.manual.entry.technologistsWrench.subtext=Stringi e allenta
 ie.manual.entry.technologistsWrench0=La §6Chiave del tecnologo§r forma e configura i multiblocchi di Immersive Technology. Fa tutto ciò che fa l’Engineer's Hammer. Forma le strutture, ruota i blocchi e commuta i pannelli di controllo tra redstone normale e invertita.
-ie.manual.entry.technologistsWrench1=Gli ingressi accettano qualsiasi fluido vi venga convogliato, e una macchina con il fluido sbagliato resta ferma finché quel serbatoio non viene svuotato. Accovacciati e usa la Chiave su un ingresso dei fluidi per svuotarlo.<br>Il fluido viene scartato e non restituito, quindi il serbatoio è subito libero per il fluido corretto. Funziona su ogni macchina di Immersive Technology dotata di ingresso fluidi, e al posto della Chiave si può usare l’Engineer's Hammer.
 
 ie.manual.entry.advancedCokeOven.name=Forno a coke avanzato
 ie.manual.entry.alternator.name=Alternatore

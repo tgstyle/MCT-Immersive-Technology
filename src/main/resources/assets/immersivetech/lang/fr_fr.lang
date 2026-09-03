@@ -122,7 +122,6 @@ tile.immersivetech.connectors.connectors_timer.name=Temporisateur Redstone
 ie.manual.entry.technologistsWrench.name=Clé du technologue
 ie.manual.entry.technologistsWrench.subtext=Un bon tour de clé
 ie.manual.entry.technologistsWrench0=La §6Clé du technologue§r forme et configure les multiblocs d’Immersive Technology. Elle fait tout ce que fait l’Engineer's Hammer. Elle forme les structures, fait pivoter les blocs et bascule les panneaux de contrôle entre redstone normale et inversée.
-ie.manual.entry.technologistsWrench1=Les entrées acceptent n’importe quel fluide qu’on y achemine, et une machine contenant le mauvais fluide reste inactive tant que le réservoir n’est pas vidé. Accroupissez-vous et utilisez la Clé sur une entrée de fluide pour la vider.<br>Le fluide est éliminé et non restitué, le réservoir est donc immédiatement libre pour le bon fluide. Cela fonctionne sur toutes les machines d’Immersive Technology dotées d’une entrée de fluide, et l’Engineer's Hammer peut être utilisé à sa place.
 
 ie.manual.entry.advancedCokeOven.name=Four à coke avancé
 ie.manual.entry.alternator.name=Alternateur

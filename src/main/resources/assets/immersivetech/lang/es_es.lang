@@ -122,7 +122,6 @@ tile.immersivetech.connectors.connectors_timer.name=Temporizador de Redstone
 ie.manual.entry.technologistsWrench.name=Llave del tecnólogo
 ie.manual.entry.technologistsWrench.subtext=Aprieta y afloja
 ie.manual.entry.technologistsWrench0=La §6Llave del tecnólogo§r forma y configura los multibloques de Immersive Technology. Hace todo lo que hace el Martillo del ingeniero. Forma estructuras, gira bloques y cambia los paneles de control entre redstone normal e invertida.
-ie.manual.entry.technologistsWrench1=Las entradas aceptan cualquier fluido que se les bombee, y una máquina con el fluido equivocado queda inactiva hasta que se vacía ese tanque. Agáchate y usa la Llave sobre una entrada de fluido para vaciarla.<br>El fluido se descarta en lugar de devolverse, así que el tanque queda libre de inmediato para el fluido correcto. Esto funciona en todas las máquinas de Immersive Technology con entrada de fluidos, y el Martillo del ingeniero sirve igualmente.
 
 ie.manual.entry.advancedCokeOven.name=Horno de coque avanzado
 ie.manual.entry.alternator.name=Alternador
