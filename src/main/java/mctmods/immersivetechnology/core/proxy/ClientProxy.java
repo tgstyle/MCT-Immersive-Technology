@@ -20,6 +20,7 @@ import mctmods.immersivetechnology.core.registration.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import com.immersiveconvergence.api.particles.CampfireSmokeProvider;
 import com.immersiveconvergence.api.particles.ColoredSmokeProvider;
 import com.immersiveconvergence.api.particles.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
@@ -208,6 +209,7 @@ public class ClientProxy extends CommonProxy {
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(Particles.COLORED_SMOKE.get(), ColoredSmokeProvider::new);
         event.registerSpriteSet(Particles.SMOKE_CUSTOM.get(), SmokeCustomProvider::new);
+        event.registerSpriteSet(Particles.CAMPFIRE_SMOKE.get(), CampfireSmokeProvider::new);
     }
 
     @SubscribeEvent
