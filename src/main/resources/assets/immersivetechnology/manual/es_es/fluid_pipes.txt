@@ -1,0 +1,5 @@
+Tuberías de fluido
+Más caudal
+Immersive Technology ajusta el caudal de las tuberías de fluido de Immersive Engineering.
+
+Tuberías sin presión: <config;i;fluid_pipe.unpressurized> mB/t. Tuberías presurizadas: <config;i;fluid_pipe.pressurized> mB/t.

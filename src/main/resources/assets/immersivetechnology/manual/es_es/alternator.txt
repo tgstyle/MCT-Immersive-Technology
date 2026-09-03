@@ -4,7 +4,7 @@ Alternador
 
 
 
-§lFuncionamiento§r
-    - Necesita entrada rotacional de una fuente de energía mecánica — una §lTurbina de vapor§r o §lTurbina de gas§r — conectada en la parte trasera.
-    - La salida está en el frente-izquierda y frente-derecha; produce hasta <config;i;alternator.alternator_max_output> Flux/t según la velocidad del rotor.
-    - El búfer interno contiene <config;i;alternator.alternator_energy_capacity> Flux. Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de energía actual.
+Necesita entrada rotacional de una fuente de energía mecánica — una §lTurbina de vapor§r o §lTurbina de gas§r — conectada en la parte trasera. La salida está en el frente-izquierda y frente-derecha; produce hasta <config;i;alternator.alternator_max_output> Flux/t según la velocidad del rotor. El búfer interno contiene <config;i;alternator.alternator_energy_capacity> Flux. Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de energía actual.
+
+Turbina de vapor con Alternador
+<&diagram>

@@ -4,7 +4,7 @@ Big and Powerful!
 
 
 
-§lOperation§r
-    - Needs rotational input from a mechanical energy source — a §lSteam Turbine§r or §lGas Turbine§r — connected at the rear.
-    - Output is on the front-left and front-right; produces up to <config;i;alternator.alternator_max_output> Flux/t depending on rotor speed.
-    - Internal buffer holds <config;i;alternator.alternator_energy_capacity> Flux. A comparator against any exterior block outputs a signal proportional to the current energy level.
+Needs rotational input from a mechanical energy source — a §lSteam Turbine§r or §lGas Turbine§r — connected at the rear. Output is on the front-left and front-right; produces up to <config;i;alternator.alternator_max_output> Flux/t depending on rotor speed. Internal buffer holds <config;i;alternator.alternator_energy_capacity> Flux. A comparator against any exterior block outputs a signal proportional to the current energy level.
+
+Steam Turbine with Alternator
+<&diagram>

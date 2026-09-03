@@ -1,0 +1,5 @@
+유체 파이프
+더 큰 유량
+Immersive Technology는 Immersive Engineering 유체 파이프의 유량을 조정합니다.
+
+비가압 파이프: <config;i;fluid_pipe.unpressurized> mB/t. 가압 파이프: <config;i;fluid_pipe.pressurized> mB/t.

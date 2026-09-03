@@ -5,8 +5,4 @@ Verdampfung!
 
 
 
-§lBetrieb§r
-    - §lWasser§r wird rechts eingefüllt.
-    - §lDestilliertes Wasser§r wird links ausgegeben.
-    - Salz wird hinten ausgegeben.
-    - Ein Komparator am Bedienfeld gibt ein Signal proportional zur Füllung des internen Flux-Puffers (<config;i;distiller.energy_capacity> Flux) aus.
+§lWasser§r wird rechts eingefüllt. §lDestilliertes Wasser§r wird links ausgegeben. Salz wird hinten ausgegeben. Ein Eimer Wasser ergibt 500 mB Destilliertes Wasser. Die Gegenstandsausgabe erfolgt neben der Flüssigkeitsausgabe nur mit einer gewissen Chance, nicht garantiert. Ein Komparator am Bedienfeld gibt ein Signal proportional zur Füllung des internen Flux-Puffers (<config;i;distiller.energy_capacity> Flux) aus.

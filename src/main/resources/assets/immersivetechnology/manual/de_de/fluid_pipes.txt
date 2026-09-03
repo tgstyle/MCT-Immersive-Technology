@@ -1,0 +1,5 @@
+Flüssigkeitsrohre
+Mehr Durchfluss
+Immersive Technology passt den Durchsatz der Flüssigkeitsrohre von Immersive Engineering an.
+
+Nicht unter Druck: <config;i;fluid_pipe.unpressurized> mB/t. Unter Druck: <config;i;fluid_pipe.pressurized> mB/t.

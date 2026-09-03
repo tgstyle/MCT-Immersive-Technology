@@ -1,0 +1,8 @@
+Destilátor
+Vypařování!
+<&multiblock>Destilátor vypařuje vodu na §ldestilovanou vodu§r se solí jako vedlejším produktem.
+
+
+
+
+§lVoda§r se vkládá zprava. §lDestilovaná voda§r vychází zleva. Sůl vychází zezadu. Z jednoho kbelíku vody vznikne 500 mB destilované vody. Výstup předmětů vedle výstupu tekutiny je věcí náhody, ne jistoty. Komparátor u ovládacího panelu vydává signál úměrný zaplněnosti vnitřního zásobníku Flux (<config;i;distiller.energy_capacity> Flux).

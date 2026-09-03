@@ -2,8 +2,4 @@ Barile metallico in acciaio
 Pieno fino all'orlo
 Un serbatoio fluido a blocco singolo con capacità di 24.000 mB — il doppio del Barile aperto.
 
-§lFunzionamento§r
-    - Sia la parte superiore che quella inferiore possono essere alternate tra ingresso, uscita e spento con un Martello.
-    - Accetta qualsiasi fluido, inclusi i gas.
-    - Un segnale redstone disattiva completamente il trasferimento di fluido finché è attivo.
-    - Un comparatore emette un segnale proporzionale a quanto è pieno.
+Sia la parte superiore che quella inferiore possono essere alternate tra ingresso, uscita e spento con un Martello. Accetta qualsiasi fluido, inclusi i gas. Un segnale redstone disattiva completamente il trasferimento di fluido finché è attivo. Un comparatore emette un segnale proporzionale a quanto è pieno.

@@ -3,8 +3,4 @@ Fusione!
 <&multiblock>Il Crogiolo di Fusione utilizza l'elettricità per fondere i materiali nella loro forma fluida fusa. La velocità di raffreddamento a riposo dipende dalla temperatura ambientale del bioma — si raffredda più lentamente nei biomi caldi.
 
 
-§lFunzionamento§r
-    - §lFluidi§r vengono inseriti sul retro.
-    - §lFluidi Fusi§r vengono estratti nella parte anteriore inferiore.
-    - L'energia viene fornita sul lato. Il buffer interno contiene <config;i;melting_crucible.energy_capacity> Flux.
-    - Un comparatore contro il pannello di controllo emette un segnale proporzionale al livello di calore attuale.
+§lFluidi§r vengono inseriti sul retro. §lFluidi Fusi§r vengono estratti nella parte anteriore inferiore. L'energia viene fornita sul lato. Il buffer interno contiene <config;i;melting_crucible.energy_capacity> Flux. Un comparatore contro il pannello di controllo emette un segnale proporzionale al livello di calore attuale.

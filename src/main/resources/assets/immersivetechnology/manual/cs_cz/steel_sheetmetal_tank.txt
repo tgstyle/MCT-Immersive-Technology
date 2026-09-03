@@ -1,0 +1,10 @@
+Ocelová nádrž
+Naplň ji!
+<&multiblock>Ocelová nádrž je stejně pevná jako tank Abrams.
+
+
+
+
+
+
+§lTekutiny§r se vkládají nahoře nebo dole. §lTekutiny§r se vypouštějí dole nebo po stranách. Pojme až <config;i;steel_sheetmetal_tank.capacity> mB tekutiny. Výstup komparátoru je v levém rohu modelu (naproti straně s trubkami), od jednoho bloku nad základnou až po vrchol nádrže (<config;i;steel_sheetmetal_tank.comparator_height> bloků vysoko). Použij ventily k ovládání výstupu.

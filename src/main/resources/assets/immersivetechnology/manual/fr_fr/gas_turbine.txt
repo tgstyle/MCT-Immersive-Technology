@@ -3,10 +3,4 @@ GAZ GAZ GAZ !
 <&multiblock>La Turbine à gaz utilise du combustible et une source d'allumage des brûleurs internes pour produire un gaz chaud à haute vitesse. Ce gaz fait tourner les pales de la turbine et génère de l'énergie rotative.
 
 
-§lFonctionnement§r
-    - Le §lCombustible liquide§r est introduit par tuyau.
-    - Les §lgaz d'échappement§r sortent sous le rotor.
-    - Le côté avec entrée MV est la bougie d'allumage, qui peut rester alimentée en permanence.
-    - Le côté avec entrée HV est le démarreur, qui nécessite de l'énergie jusqu'à ce que la bougie allume le combustible. Une fois allumé, retirez l'alimentation du démarreur.
-    - Un multibloc utilisant l'énergie mécanique doit être connecté au rotor pour que la turbine fonctionne.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à la vitesse actuelle du rotor.
+Le §lCombustible liquide§r est introduit par tuyau. Les §lgaz d'échappement§r sortent sous le rotor. Le côté avec entrée MV est la bougie d'allumage, qui peut rester alimentée en permanence. Le côté avec entrée HV est le démarreur, qui nécessite de l'énergie jusqu'à ce que la bougie allume le combustible. Une fois allumé, retirez l'alimentation du démarreur. Un multibloc utilisant l'énergie mécanique doit être connecté au rotor pour que la turbine fonctionne. Les gaz de combustion peuvent alimenter un <link;heat_exchanger;§n§oéchangeur§r> pour récupérer plus d'énergie. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à la vitesse actuelle du rotor.

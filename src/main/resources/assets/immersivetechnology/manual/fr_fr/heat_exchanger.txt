@@ -2,6 +2,4 @@
 Chaud ou froid ?
 <&multiblock>L'Échangeur de chaleur est un échangeur à contre-courant — le fluide chaud entre d'un côté et ressort refroidi de l'autre, tandis que le fluide à chauffer circule en sens inverse dans le second circuit.
 
-§lFonctionnement§r
-    - L'§lÉchangeur de chaleur§r a besoin de fluides chauds pour produire d'autres fluides.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au remplissage de son tampon Flux interne (<config;i;heat_exchanger.energy_capacity> Flux).
+L'§lÉchangeur de chaleur§r a besoin de fluides chauds pour produire d'autres fluides. L'échangeur de chaleur traite des fluides chauds porteurs d'énergie avec des fluides plus froids comme l'§lEau§r ou l'§lEau distillée§r pour les chauffer en formes plus utilisables. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au remplissage de son tampon Flux interne (<config;i;heat_exchanger.energy_capacity> Flux).

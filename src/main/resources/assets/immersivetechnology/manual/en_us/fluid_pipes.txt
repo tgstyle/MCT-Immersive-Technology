@@ -1,0 +1,5 @@
+Fluid Pipes
+More throughput
+Immersive Technology adjusts the throughput of Immersive Engineering's fluid pipes.
+
+Unpressurized pipes carry <config;i;fluid_pipe.unpressurized> mB/t. Pressurized pipes carry <config;i;fluid_pipe.pressurized> mB/t.

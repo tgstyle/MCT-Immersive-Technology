@@ -2,7 +2,4 @@ Barril metálico abierto
 Abierto al cielo
 Un tanque de fluido de un solo bloque, abierto por arriba, con capacidad de 12.000 mB. El fluido puede verterse a mano, y se llena lentamente con agua de lluvia cuando está expuesto al cielo abierto.
 
-§lFuncionamiento§r
-    - La parte superior es solo de entrada de forma fija; la inferior puede alternarse entre entrada, salida y apagado con un Martillo.
-    - Solo acepta líquidos, no gases.
-    - Se llena de agua de lluvia si llueve directamente encima y el tanque está vacío o ya contiene agua — más rápido durante una tormenta. En biomas cálidos se evapora en su lugar.
+La parte superior es solo de entrada de forma fija; la inferior puede alternarse entre entrada, salida y apagado con un Martillo. Solo acepta líquidos, no gases. Se llena de agua de lluvia si llueve directamente encima y el tanque está vacío o ya contiene agua — más rápido durante una tormenta. En biomas cálidos se evapora en su lugar.

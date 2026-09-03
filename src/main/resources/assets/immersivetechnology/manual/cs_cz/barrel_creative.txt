@@ -1,0 +1,5 @@
+Kreativní sud na kapalinu
+Nekonečná zásoba
+Blok pouze pro kreativní režim/testování, který dodává neomezené množství zvolené kapaliny. Nepřijímá vstup kapaliny.
+
+Klikni pravým tlačítkem s kbelíkem nebo nádobou kapaliny, aby se nastavila jako výstupní kapalina. Klikni pravým tlačítkem s prázdnou rukou v podřepu, aby se vybraná kapalina vymazala. Jakmile je nastavena, aktivně tlačí kapalinu do všech 6 sousedních bloků každý tik, až do <config;i;barrel_creative.output_amount> mB/t – při výchozím nastavení prakticky neomezeně.

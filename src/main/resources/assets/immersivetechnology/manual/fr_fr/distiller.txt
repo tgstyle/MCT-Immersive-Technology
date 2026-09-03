@@ -5,8 +5,4 @@ Distillateur
 
 
 
-§lFonctionnement§r
-    - L'§lEau§r est introduite à droite.
-    - L'§lEau distillée§r sort à gauche.
-    - Le sel sort à l'arrière.
-    - Un comparateur contre le panneau de contrôle émet un signal proportionnel au remplissage de son tampon Flux interne (<config;i;distiller.energy_capacity> Flux).
+L'§lEau§r est introduite à droite. L'§lEau distillée§r sort à gauche. Le sel sort à l'arrière. Un seau d'eau produit 500 mB d'eau distillée. La sortie d'objets est une chance, pas une garantie, en plus de la sortie de fluide. Un comparateur contre le panneau de contrôle émet un signal proportionnel au remplissage de son tampon Flux interne (<config;i;distiller.energy_capacity> Flux).

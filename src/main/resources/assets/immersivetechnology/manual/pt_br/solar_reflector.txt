@@ -5,7 +5,4 @@ Brilhe!
 
 
 
-§lOperação§r
-    - Coloque acima da base de cimento da torre, nem mais alto nem mais baixo.
-    - Limite de 24 refletores por torre.
-    - Coloque a uma distância mínima de 12 blocos e máxima de 22 blocos de uma Torre solar ou de fundição.
+Coloque acima da base de cimento da torre, nem mais alto nem mais baixo. Limite de 24 refletores por torre. Coloque a uma distância mínima de 12 blocos e máxima de 22 blocos de uma Torre solar ou de fundição.

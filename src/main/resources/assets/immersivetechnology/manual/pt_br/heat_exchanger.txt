@@ -2,6 +2,4 @@ Trocador de Calor
 Está quente ou frio?
 <&multiblock>O Trocador de calor é um trocador de contracorrente — o fluido quente entra de um lado e sai resfriado do outro, enquanto o fluido a ser aquecido flui na direção oposta no segundo circuito.
 
-§lOperação§r
-    - O §lTrocador de calor§r precisa de fluidos quentes para produzir outros fluidos.
-    - Um comparador contra qualquer bloco externo emite um sinal proporcional a quão cheio está seu buffer interno de Flux (<config;i;heat_exchanger.energy_capacity> Flux).
+O §lTrocador de calor§r precisa de fluidos quentes para produzir outros fluidos. O trocador de calor processa fluidos quentes portadores de energia com fluidos mais frios como §lÁgua§r ou §lÁgua Destilada§r para aquecê-los em formas mais usáveis. Um comparador contra qualquer bloco externo emite um sinal proporcional a quão cheio está seu buffer interno de Flux (<config;i;heat_exchanger.energy_capacity> Flux).

@@ -4,7 +4,7 @@ Groß und mächtig!
 
 
 
-§lBetrieb§r
-    - Benötigt Rotationsantrieb von einer mechanischen Energiequelle – §lDampfturbine§r oder §lGasturbine§r – an der Rückseite angeschlossen.
-    - Die Ausgabe erfolgt vorne links und vorne rechts; erzeugt bis zu <config;i;alternator.alternator_max_output> Flux/t, abhängig von der Rotordrehzahl.
-    - Interner Puffer fasst <config;i;alternator.alternator_energy_capacity> Flux. Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Energiestand aus.
+Benötigt Rotationsantrieb von einer mechanischen Energiequelle – §lDampfturbine§r oder §lGasturbine§r – an der Rückseite angeschlossen. Die Ausgabe erfolgt vorne links und vorne rechts; erzeugt bis zu <config;i;alternator.alternator_max_output> Flux/t, abhängig von der Rotordrehzahl. Interner Puffer fasst <config;i;alternator.alternator_energy_capacity> Flux. Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Energiestand aus.
+
+Dampfturbine mit Alternator
+<&diagram>

@@ -3,10 +3,4 @@ GÁS GÁS GÁS!
 <&multiblock>A Turbina a gás usa combustível e ignição dos queimadores internos para produzir gás quente de alta velocidade. Esse gás gira as pás da turbina gerando energia rotacional.
 
 
-§lOperação§r
-    - O §lCombustível líquido§r é inserido por tubo.
-    - Os §lgases de escape§r saem abaixo do rotor.
-    - O lado com entrada de energia MV é a vela de ignição, que pode ficar alimentado permanentemente.
-    - O lado com entrada de energia HV é o motor de partida, que precisa de energia até a vela acender o combustível. Após acender, remova a energia do motor de partida.
-    - Um multibloco que use energia mecânica precisa estar conectado ao rotor para que funcione.
-    - Um comparador contra qualquer bloco externo emite um sinal proporcional à velocidade atual do rotor.
+O §lCombustível líquido§r é inserido por tubo. Os §lgases de escape§r saem abaixo do rotor. O lado com entrada de energia MV é a vela de ignição, que pode ficar alimentado permanentemente. O lado com entrada de energia HV é o motor de partida, que precisa de energia até a vela acender o combustível. Após acender, remova a energia do motor de partida. Um multibloco que use energia mecânica precisa estar conectado ao rotor para que funcione. O gás de combustão pode alimentar um <link;heat_exchanger;§n§otrocador§r> para recuperar mais energia. Um comparador contra qualquer bloco externo emite um sinal proporcional à velocidade atual do rotor.

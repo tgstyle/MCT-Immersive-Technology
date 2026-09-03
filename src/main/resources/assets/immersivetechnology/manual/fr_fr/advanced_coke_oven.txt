@@ -3,7 +3,4 @@ Meilleur coke
 <&multiblock>Le Four à coke avancé est une machine multibloc qui transforme le charbon en §lcoke§r et en §lhuile de créosote§r plus rapidement qu'un four à coke standard.
 
 
-§lFonctionnement§r
-    - Les §lobjets§r combustibles sont insérés par le §lhaut§r ; la sortie fluide (huile de créosote) est extraite à l'§lavant§r.
-    - Jusqu'à deux chauffages de base peuvent être fixés sur les ports latéraux ; chaque chauffage actif consomme <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t et augmente la vitesse de traitement, avec un gain décroissant en combinant les deux.
-    - Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à l'avancement du lot en cours.
+Les §lobjets§r combustibles sont insérés par le §lhaut§r ; la sortie fluide (huile de créosote) est extraite à l'§lavant§r, et le coke de charbon à l'§larrière§r. Jusqu'à deux chauffages de base peuvent être fixés sur les ports latéraux ; chaque chauffage actif consomme <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t et augmente la vitesse de traitement, avec un gain décroissant en combinant les deux. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel à l'avancement du lot en cours.

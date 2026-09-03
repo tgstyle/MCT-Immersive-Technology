@@ -7,9 +7,4 @@ Enche-o!
 
 
 
-§lFuncionamento§r
-    - Os §lFluidos§r são inseridos na parte superior ou inferior.
-    - Os §lFluidos§r são libertados na parte inferior ou nas laterais.
-    - Comporta até <config;i;steel_sheetmetal_tank.capacity> mB de fluido.
-    - A saída do comparador está no canto esquerdo do modelo (oposto ao lado dos tubos), de um bloco acima da base até ao topo do tanque (<config;i;steel_sheetmetal_tank.comparator_height> blocos de altura).
-    - Usa válvulas para controlar a saída.
+Os §lFluidos§r são inseridos na parte superior ou inferior. Os §lFluidos§r são libertados na parte inferior ou nas laterais. Comporta até <config;i;steel_sheetmetal_tank.capacity> mB de fluido. A saída do comparador está no canto esquerdo do modelo (oposto ao lado dos tubos), de um bloco acima da base até ao topo do tanque (<config;i;steel_sheetmetal_tank.comparator_height> blocos de altura). Usa válvulas para controlar a saída.

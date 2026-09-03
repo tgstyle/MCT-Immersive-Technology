@@ -6,8 +6,4 @@ Getting steamy in here!
 
 
 
-§lOperation§r
-    - §lLiquid Fuel§r is input below the combustion chamber.
-    - Light it with a torch or flint and steel on the top exhaust vent.
-    - Runs in pilot mode when idle, consuming a small trickle of fuel to stay lit rather than going cold.
-    - A comparator against any exterior block outputs a signal proportional to current heat level.
+§lLiquid Fuel§r is input below the combustion chamber. Light it with a torch or flint and steel on the top exhaust vent. Runs in pilot mode when idle, consuming a small trickle of fuel to stay lit rather than going cold. A comparator against any exterior block outputs a signal proportional to current heat level.

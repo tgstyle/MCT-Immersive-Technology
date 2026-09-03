@@ -4,7 +4,7 @@ Grande e potente!
 
 
 
-§lFunzionamento§r
-    - Richiede un input rotazionale da una fonte di energia meccanica — una §lTurbina a vapore§r o §lTurbina a gas§r — collegata sul retro.
-    - L'uscita è sul lato anteriore-sinistro e anteriore-destro; produce fino a <config;i;alternator.alternator_max_output> Flux/t in base alla velocità del rotore.
-    - Il buffer interno contiene <config;i;alternator.alternator_energy_capacity> Flux. Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di energia attuale.
+Richiede un input rotazionale da una fonte di energia meccanica — una §lTurbina a vapore§r o §lTurbina a gas§r — collegata sul retro. L'uscita è sul lato anteriore-sinistro e anteriore-destro; produce fino a <config;i;alternator.alternator_max_output> Flux/t in base alla velocità del rotore. Il buffer interno contiene <config;i;alternator.alternator_energy_capacity> Flux. Un comparatore contro qualsiasi blocco esterno emette un segnale proporzionale al livello di energia attuale.
+
+Turbina a vapore con Alternatore
+<&diagram>

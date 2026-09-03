@@ -2,8 +2,4 @@ Bateria de Crisol Eletrolítico
 Eletrólise Avançada
 <&multiblock>A Bateria de Crisol Eletrolítico realiza eletrólise em sais fundidos e outros fluidos, produzindo várias saídas em simultâneo. Consegue processar até 3 lotes em paralelo.
 
-§lOperação§r
-    - §lFluido§r e §lEnergia§r são fornecidos pelo lado. O buffer interno comporta <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
-    - As saídas (fluidos e itens) são recolhidas de vários lados.
-    - Até 3 lotes são processados em paralelo, pelo que o rendimento pode superar o que o tempo de um único lote sugeriria.
-    - Um comparador contra qualquer bloco exterior emite um sinal proporcional a quão cheio está o primeiro tanque de saída de fluido.
+§lFluido§r e §lEnergia§r são fornecidos pelo lado. O buffer interno comporta <config;i;electrolytic_crucible_battery.energy_capacity> Flux. Os dois fluidos separados saem pelas portas superiores na traseira; os itens e o eletrólito gasto pela parte inferior. Até 3 lotes são processados em paralelo, pelo que o rendimento pode superar o que o tempo de um único lote sugeriria. Um comparador contra qualquer bloco exterior emite um sinal proporcional a quão cheio está o primeiro tanque de saída de fluido.

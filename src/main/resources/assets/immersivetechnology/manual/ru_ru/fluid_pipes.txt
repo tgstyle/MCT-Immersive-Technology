@@ -1,0 +1,5 @@
+Жидкостные трубы
+Больше пропускной способности
+Immersive Technology изменяет пропускную способность жидкостных труб Immersive Engineering.
+
+Трубы без давления: <config;i;fluid_pipe.unpressurized> мБ/т. Трубы под давлением: <config;i;fluid_pipe.pressurized> мБ/т.

@@ -7,9 +7,4 @@ Chill!
 
 
 
-§lOperation§r
-    - §lWater§r and §lExhaust Steam§r can go into either input — order doesn't matter.
-    - §lWater§r is output from all outputs.
-    - Up to 3 batches process in parallel, so throughput can exceed what one batch's time alone would suggest.
-    - Efficiency depends on the temperature differential with the environment and nearby obstructions.
-    - A comparator against the block used to form the structure (the one hit with the Hammer) outputs a signal proportional to how full the 3-batch queue is. Cooling Tower has no redstone control panel, so this is the one fixed spot it responds at.
+§lWater§r and §lExhaust Steam§r can go into either input — order doesn't matter. §lWater§r is output from all outputs. Up to 3 batches process in parallel, so throughput can exceed what one batch's time alone would suggest. Efficiency depends on the temperature differential with the environment and nearby obstructions. A comparator against the block used to form the structure (the one hit with the Hammer) outputs a signal proportional to how full the 3-batch queue is. Cooling Tower has no redstone control panel, so this is the one fixed spot it responds at.

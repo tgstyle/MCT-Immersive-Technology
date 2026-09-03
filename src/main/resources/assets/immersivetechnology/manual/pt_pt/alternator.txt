@@ -4,7 +4,7 @@ Grande e poderoso!
 
 
 
-§lOperação§r
-    - Precisa de entrada rotacional de uma fonte de energia mecânica — uma §lTurbina a vapor§r ou §lTurbina a gás§r — ligada na parte traseira.
-    - A saída está na frente-esquerda e frente-direita; produz até <config;i;alternator.alternator_max_output> Flux/t consoante a velocidade do rotor.
-    - O buffer interno comporta <config;i;alternator.alternator_energy_capacity> Flux. Um comparador contra qualquer bloco exterior emite um sinal proporcional ao nível de energia atual.
+Precisa de entrada rotacional de uma fonte de energia mecânica — uma §lTurbina a vapor§r ou §lTurbina a gás§r — ligada na parte traseira. A saída está na frente-esquerda e frente-direita; produz até <config;i;alternator.alternator_max_output> Flux/t consoante a velocidade do rotor. O buffer interno comporta <config;i;alternator.alternator_energy_capacity> Flux. Um comparador contra qualquer bloco exterior emite um sinal proporcional ao nível de energia atual.
+
+Turbina a Vapor com Alternador
+<&diagram>

@@ -1,0 +1,5 @@
+Kapalinové potrubí
+Rychlejší průtok
+Immersive Technology upravuje průtok kapalinového potrubí Immersive Engineering.
+
+Nepřetlakované potrubí: <config;i;fluid_pipe.unpressurized> mB/t. Přetlakované potrubí: <config;i;fluid_pipe.pressurized> mB/t.

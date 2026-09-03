@@ -1,0 +1,5 @@
+Elektrolytická kelímková baterie
+Pokročilá elektrolýza
+<&multiblock>Elektrolytická kelímková baterie provádí elektrolýzu roztavených solí a dalších kapalin a produkuje více výstupů najednou. Dokáže zpracovat až 3 dávky paralelně.
+
+§lKapalina§r a §lEnergie§r se přivádí ze strany. Vnitřní zásobník pojme <config;i;electrolytic_crucible_battery.energy_capacity> Flux. Dvě oddělené kapaliny vycházejí z horních portů vzadu, předměty a vypotřebovaný elektrolyt zespodu. Až 3 dávky se zpracovávají paralelně, takže propustnost může překročit to, co by naznačoval čas jedné dávky. Komparátor u libovolného vnějšího bloku vydává signál úměrný zaplněnosti první výstupní nádrže kapaliny.

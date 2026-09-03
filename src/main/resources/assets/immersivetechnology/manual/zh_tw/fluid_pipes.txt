@@ -1,0 +1,5 @@
+流體管道
+更大流量
+Immersive Technology 會調整 Immersive Engineering 流體管道的流量。
+
+非加壓管道：<config;i;fluid_pipe.unpressurized> mB/t。 加壓管道：<config;i;fluid_pipe.pressurized> mB/t。

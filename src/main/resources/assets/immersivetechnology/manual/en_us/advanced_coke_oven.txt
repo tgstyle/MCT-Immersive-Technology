@@ -3,7 +3,4 @@ Better Coke
 <&multiblock>The Advanced Coke Oven is a multiblock machine that processes coal into §lCoal Coke§r and §lCreosote Oil§r faster than a standard coke oven.
 
 
-§lOperation§r
-    - Fuel items are inserted from the §ltop§r; the fluid output (Creosote Oil) is drawn from the §lfront§r.
-    - Up to two Baseheaters can be attached to the side ports; each active Baseheater consumes <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t and increases processing speed, with diminishing benefit from stacking both.
-    - A comparator against any exterior block outputs a signal proportional to how far along the current batch is.
+Fuel items are inserted from the §ltop§r; the fluid output (Creosote Oil) is drawn from the §lfront§r, and §lCoal Coke§r from the §lback§r. Up to two Baseheaters can be attached to the side ports; each active Baseheater consumes <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t and increases processing speed, with diminishing benefit from stacking both. A comparator against any exterior block outputs a signal proportional to how far along the current batch is.

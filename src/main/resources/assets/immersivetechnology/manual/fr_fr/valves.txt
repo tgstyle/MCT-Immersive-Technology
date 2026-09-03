@@ -1,0 +1,5 @@
+Limiteurs et dispositifs de contrôle
+Le débit est surestimé
+Le §lLimiteur de piles§r, le §lContrôleur de charge§r et la §lVanne à fluide§r limitent le passage des objets, de l'énergie et des fluides.
+
+L'interface définit un plafond cumulé dans le temps, un plafond de ce que la destination peut contenir avant de ne plus être alimentée, et un plafond par transfert ; ils se combinent. Il peut aussi être régulé par la puissance d'un signal Redstone : un mode réduit le débit à mesure que le signal augmente (un signal de 15 coupe tout), l'autre augmente le débit à mesure que le signal augmente. Le mode actif se choisit dans l'interface. Activez le mode Redstone en vous accroupissant avec un Marteau.

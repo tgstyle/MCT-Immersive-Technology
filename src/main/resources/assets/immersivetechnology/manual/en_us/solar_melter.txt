@@ -4,8 +4,4 @@ Melting!
 
 
 
-§lOperation§r
-    - §lHeated Fluids§r are input in the front.
-    - §lMolten Fluids§r are output in the back.
-    - Must be 44 blocks away from other towers.
-    - A comparator against the front control panel outputs a signal proportional to current heat level.
+Requires <link;solar_reflector;§n§oReflectors§r> aimed at the melter. §lHeated Fluids§r are input in the front. §lMolten Fluids§r are output in the back. Keep collectors more than 44 blocks apart so their reflectors do not overlap. A comparator against the front control panel outputs a signal proportional to current heat level.

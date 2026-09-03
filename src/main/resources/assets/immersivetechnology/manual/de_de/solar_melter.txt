@@ -4,8 +4,4 @@ Schmelzen!
 
 
 
-§lBetrieb§r
-    - §lErhitzte Flüssigkeiten§r werden vorne eingefüllt.
-    - §lGeschmolzene Flüssigkeiten§r werden hinten ausgegeben.
-    - Muss mindestens 44 Blöcke von anderen Türmen entfernt stehen.
-    - Ein Komparator am Bedienfeld gibt ein Signal proportional zum aktuellen Wärmestand aus.
+Benötigt auf den Schmelzturm ausgerichtete <link;solar_reflector;§n§oSolarreflektor§r>. §lErhitzte Flüssigkeiten§r werden vorne eingefüllt. §lGeschmolzene Flüssigkeiten§r werden hinten ausgegeben. Halte zwischen Kollektoren mehr als 44 Blöcke Abstand, damit sich ihre Reflektoren nicht überschneiden. Ein Komparator am Bedienfeld gibt ein Signal proportional zum aktuellen Wärmestand aus.

@@ -5,9 +5,4 @@ Es wird hier richtig dampfig!
 
 
 
-§lBetrieb§r
-    - §lWasser§r wird in der Nähe des Tanks an der §llinken Seite§r eingefüllt; §lDampf§r wird oben ausgegeben.
-    - Fasst bis zu <config;i;boiler_tank.tank_capacity> mB Wasser.
-    - Startet eine Charge, sobald die Wärme des angeschlossenen Brenners die Arbeitstemperatur erreicht.
-    - Fällt die Wärme während einer Charge ab, geht der Fortschritt allmählich zurück statt komplett zu verfallen – eine kurze Unterbrechung kostet etwas Fortschritt, nicht alles.
-    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Wärmestand aus.
+§lWasser§r oder §lDestilliertes Wasser§r wird in der Nähe des Tanks an der §llinken Seite§r eingefüllt; §lDampf§r wird oben ausgegeben. Fasst bis zu <config;i;boiler_tank.tank_capacity> mB Wasser. Startet eine Charge, sobald die Wärme des angeschlossenen Brenners die Arbeitstemperatur erreicht. Fällt die Wärme während einer Charge ab, geht der Fortschritt allmählich zurück statt komplett zu verfallen – eine kurze Unterbrechung kostet etwas Fortschritt, nicht alles. Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Wärmestand aus.

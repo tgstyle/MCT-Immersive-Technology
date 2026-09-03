@@ -5,9 +5,4 @@ Tanque de caldera
 
 
 
-§lFuncionamiento§r
-    - El §lAgua§r se introduce cerca del tanque en el §llado izquierdo§r; el §lVapor§r sale por arriba.
-    - Contiene hasta <config;i;boiler_tank.tank_capacity> mB de agua.
-    - Inicia un lote cuando el calor del quemador conectado alcanza la temperatura de trabajo.
-    - Si el calor baja a mitad de lote, el progreso retrocede gradualmente en vez de reiniciarse por completo — una interrupción breve cuesta algo de progreso, no todo.
-    - Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de calor actual.
+El §lAgua§r o el §lAgua destilada§r se introduce cerca del tanque en el §llado izquierdo§r; el §lVapor§r sale por arriba. Contiene hasta <config;i;boiler_tank.tank_capacity> mB de agua. Inicia un lote cuando el calor del quemador conectado alcanza la temperatura de trabajo. Si el calor baja a mitad de lote, el progreso retrocede gradualmente en vez de reiniciarse por completo — una interrupción breve cuesta algo de progreso, no todo. Un comparador contra cualquier bloque exterior emite una señal proporcional al nivel de calor actual.

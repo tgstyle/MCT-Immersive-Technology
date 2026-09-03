@@ -6,8 +6,4 @@ Es wird hier richtig dampfig!
 
 
 
-§lBetrieb§r
-    - §lFestbrennstoff§r wird unten in die Brennkammer eingefüllt.
-    - Zünde ihn mit einer Fackel oder Feuerzeug am oberen Auspuffgitter an.
-    - Läuft im Pilotmodus, wenn inaktiv, und verbraucht dabei nur eine kleine Menge Brennstoff, um nicht zu erlöschen.
-    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Wärmestand aus.
+§lFestbrennstoff§r wird unten in die Brennkammer eingefüllt. Zünde ihn mit einer Fackel oder Feuerzeug am oberen Auspuffgitter an. Läuft im Pilotmodus, wenn inaktiv, und verbraucht dabei nur eine kleine Menge Brennstoff, um nicht zu erlöschen. Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zum aktuellen Wärmestand aus.

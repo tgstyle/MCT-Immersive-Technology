@@ -5,8 +5,4 @@ Destilador
 
 
 
-§lFuncionamiento§r
-    - El §lAgua§r se introduce por la derecha.
-    - El §lAgua destilada§r sale por la izquierda.
-    - La sal sale por la parte trasera.
-    - Un comparador contra el panel de control emite una señal proporcional a cuán lleno está su búfer interno de Flux (<config;i;distiller.energy_capacity> Flux).
+El §lAgua§r se introduce por la derecha. El §lAgua destilada§r sale por la izquierda. La sal sale por la parte trasera. Un cubo de Agua produce 500 mB de Agua destilada. La salida de objetos es una probabilidad, no una garantía, junto con la salida de fluido. Un comparador contra el panel de control emite una señal proporcional a cuán lleno está su búfer interno de Flux (<config;i;distiller.energy_capacity> Flux).

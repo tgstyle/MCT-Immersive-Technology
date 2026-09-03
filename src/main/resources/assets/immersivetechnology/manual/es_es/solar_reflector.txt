@@ -5,7 +5,4 @@ Reflector solar
 
 
 
-§lFuncionamiento§r
-    - Colócalo sobre la base de cemento de la torre, ni más alto ni más bajo.
-    - Límite de 24 reflectores por torre.
-    - Colócalo a una distancia mínima de 12 bloques y máxima de 22 bloques de una Torre solar o de fundición.
+Colócalo sobre la base de cemento de la torre, ni más alto ni más bajo. Límite de 24 reflectores por torre. Colócalo a una distancia mínima de 12 bloques y máxima de 22 bloques de una Torre solar o de fundición.

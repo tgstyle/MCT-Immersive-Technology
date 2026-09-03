@@ -4,7 +4,7 @@ Grand et puissant !
 
 
 
-§lFonctionnement§r
-    - Nécessite une entrée rotative d'une source d'énergie mécanique — une §lTurbine à vapeur§r ou §lTurbine à gaz§r — connectée à l'arrière.
-    - La sortie se fait à l'avant-gauche et à l'avant-droite ; produit jusqu'à <config;i;alternator.alternator_max_output> Flux/t selon la vitesse du rotor.
-    - Le tampon interne contient <config;i;alternator.alternator_energy_capacity> Flux. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau d'énergie actuel.
+Nécessite une entrée rotative d'une source d'énergie mécanique — une §lTurbine à vapeur§r ou §lTurbine à gaz§r — connectée à l'arrière. La sortie se fait à l'avant-gauche et à l'avant-droite ; produit jusqu'à <config;i;alternator.alternator_max_output> Flux/t selon la vitesse du rotor. Le tampon interne contient <config;i;alternator.alternator_energy_capacity> Flux. Un comparateur contre n'importe quel bloc extérieur émet un signal proportionnel au niveau d'énergie actuel.
+
+Turbine à vapeur avec Alternateur
+<&diagram>

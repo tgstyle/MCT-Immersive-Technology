@@ -1,0 +1,5 @@
+Begrenzer und Steuergeräte
+Durchsatz wird überbewertet
+§lStapelbegrenzer§r, §lLastregler§r und §lFlüssigkeitsventil§r begrenzen den Durchsatz von Gegenständen, Energie und Flüssigkeiten.
+
+Im GUI lassen sich ein Gesamtlimit über die Zeit, ein Limit dafür, wie viel das Ziel halten darf, bevor nichts mehr nachkommt, und ein Limit pro Übertragung setzen; alle sind kombinierbar. Er kann außerdem über die Redstone-Signalstärke gedrosselt werden: ein Modus verringert den Durchsatz mit steigendem Signal (ein Signal von 15 bedeutet aus), der andere erhöht den Durchsatz mit steigendem Signal. Welcher Modus aktiv ist, wird in der Oberfläche festgelegt. Der Redstone-Modus wird durch Schleichen mit einem Hammer aktiviert.

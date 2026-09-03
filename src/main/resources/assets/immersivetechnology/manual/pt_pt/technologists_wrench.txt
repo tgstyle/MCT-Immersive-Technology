@@ -1,0 +1,3 @@
+Chave do Tecnólogo
+Aperta e afrouxa
+A §6Chave do Tecnólogo§r forma e configura os multiblocos do Immersive Technology. Faz tudo o que o Engineer's Hammer faz. Forma estruturas, roda blocos e alterna os painéis de controlo entre redstone normal e invertida.

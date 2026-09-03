@@ -1,0 +1,5 @@
+Dispositivos de Limitação e Controle
+Throughput é superestimado
+O §lLimitador de Pilhas§r, o §lControlador de Carga§r e a §lVálvula de Fluido§r limitam a passagem de itens, energia e fluidos.
+
+A GUI define um limite total acumulado, um limite de quanto o destino pode reter antes de parar de receber, e um limite por transferência; podem ser combinados. Também pode ser regulado pela força do sinal de redstone: em um modo um sinal mais forte reduz o rendimento (sinal de 15 é desligado), no outro um sinal mais forte aumenta o rendimento. Qual modo está ativo é definido na GUI. Ative o Modo Redstone agachando com o Martelo.

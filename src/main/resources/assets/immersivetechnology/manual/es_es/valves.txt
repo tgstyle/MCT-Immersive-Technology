@@ -1,0 +1,5 @@
+Dispositivos limitadores y de control
+El caudal está sobrevalorado
+El §lLimitador de pilas§r, el §lControlador de carga§r y la §lVálvula de fluidos§r limitan el paso de objetos, energía y fluidos.
+
+En la GUI se define un tope total acumulado, un tope de cuánto puede retener el destino antes de dejar de recibir, y un tope por transferencia; se pueden combinar. También puede regularse con la intensidad de la señal de redstone: un modo reduce el caudal a medida que aumenta la señal (una señal de 15 lo apaga), el otro aumenta el caudal a medida que aumenta la señal. El modo activo se elige en la interfaz. Activa el modo redstone agachándote con un Martillo.

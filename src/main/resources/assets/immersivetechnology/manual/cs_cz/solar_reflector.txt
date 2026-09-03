@@ -1,0 +1,8 @@
+Solární reflektor
+Zář!
+<&multiblock>Solární reflektor odráží sluneční světlo na Solární věž nebo Solární tavicí věž.
+
+
+
+
+Umístěte nad cementový základ věže, ne výš ani níž. Maximálně 24 reflektorů na jednu věž. Umístěte ve vzdálenosti minimálně 12 bloků a maximálně 22 bloků od Solární věže nebo tavicí věže.

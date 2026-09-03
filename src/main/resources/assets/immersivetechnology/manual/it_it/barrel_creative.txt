@@ -2,7 +2,4 @@ Barile fluido creativo
 Scorta infinita
 Un blocco solo per modalità creativa/test che fornisce una quantità illimitata di un fluido scelto. Non accetta ingresso di fluido.
 
-§lFunzionamento§r
-    - Clic destro con un secchio o contenitore di un fluido per impostarlo come fluido di uscita.
-    - Clic destro in accovacciamento a mani nude per cancellare il fluido selezionato.
-    - Una volta impostato, spinge attivamente il fluido nei 6 blocchi vicini ogni tick, fino a <config;i;barrel_creative.output_amount> mB/t — praticamente illimitato con le impostazioni predefinite.
+Clic destro con un secchio o contenitore di un fluido per impostarlo come fluido di uscita. Clic destro in accovacciamento a mani nude per cancellare il fluido selezionato. Una volta impostato, spinge attivamente il fluido nei 6 blocchi vicini ogni tick, fino a <config;i;barrel_creative.output_amount> mB/t — praticamente illimitato con le impostazioni predefinite.

@@ -3,7 +3,4 @@ Melhor Coque
 <&multiblock>A Fornalha de Coque Avançada é uma máquina multibloco que transforma carvão em §lCoque§r e §lÓleo Creosoto§r mais depressa do que uma fornalha padrão.
 
 
-§lOperação§r
-    - Os §litens§r combustíveis são inseridos pelo §ltopo§r; a saída de fluido (Óleo Creosoto) é retirada pela §lfrente§r.
-    - Até dois Aquecedores base podem ser ligados às portas laterais; cada Aquecedor ativo consome <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t e aumenta a velocidade de processamento, com benefício decrescente ao combinar os dois.
-    - Um comparador contra qualquer bloco exterior emite um sinal proporcional ao progresso do lote atual.
+Os §litens§r combustíveis são inseridos pelo §ltopo§r; a saída de fluido (Óleo Creosoto) é retirada pela §lfrente§r, e o Coque pela §ltraseira§r. Até dois Aquecedores base podem ser ligados às portas laterais; cada Aquecedor ativo consome <config;i;advanced_coke_oven.baseheater_energy_consumption> Flux/t e aumenta a velocidade de processamento, com benefício decrescente ao combinar os dois. Um comparador contra qualquer bloco exterior emite um sinal proporcional ao progresso do lote atual.

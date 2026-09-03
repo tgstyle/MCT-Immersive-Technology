@@ -4,8 +4,4 @@ Torre solar
 
 
 
-§lFuncionamiento§r
-    - Los §lFluidos§r a calentar se introducen por delante.
-    - Los §lFluidos calientes§r salen por detrás.
-    - Debe estar a 44 bloques de distancia de otras torres.
-    - Un comparador contra el panel de control emite una señal proporcional al nivel de calor actual.
+Requiere <link;solar_reflector;§n§oReflector§r> apuntando a la torre. Los §lFluidos§r a calentar se introducen por delante. Los §lFluidos calientes§r salen por detrás. Mantén los colectores a más de 44 bloques entre sí para que sus reflectores no se solapen. Un comparador contra el panel de control emite una señal proporcional al nivel de calor actual.

@@ -2,5 +2,3 @@ Immersive Technology
 スタイリッシュな電力生成！
 
 Immersive TechnologyはImmersive Engineeringを完璧に補完する電力技術アドオンです。
-
-クレジット: tgstyle

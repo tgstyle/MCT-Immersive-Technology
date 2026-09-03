@@ -3,8 +3,4 @@ Melting!
 <&multiblock>The Melting Crucible uses electricity to melt materials into their molten fluid form. Its cooldown rate when idle depends on the biome's ambient temperature — it cools slower in hot biomes.
 
 
-§lOperation§r
-    - §lFluids§r are input on the back.
-    - §lMolten Fluids§r are output on the bottom front.
-    - Energy is input on the side. Internal buffer holds <config;i;melting_crucible.energy_capacity> Flux.
-    - A comparator against the front control panel outputs a signal proportional to current heat level.
+§lFluids§r are input on the back. §lMolten Fluids§r are output on the bottom front. Energy is input on the side. Internal buffer holds <config;i;melting_crucible.energy_capacity> Flux. A comparator against the front control panel outputs a signal proportional to current heat level.

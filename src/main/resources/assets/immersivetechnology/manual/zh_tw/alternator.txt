@@ -4,7 +4,7 @@
 
 
 
-§l運行§r
-    - 需要來自機械能源的旋轉輸入——連接在後方的§l蒸汽渦輪§r或§l燃氣渦輪§r。
-    - 輸出位於前左和前右；根據轉子速度最多產生<config;i;alternator.alternator_max_output> Flux/t。
-    - 內部緩衝區容納<config;i;alternator.alternator_energy_capacity> Flux。靠在任意外部方塊上的比較器會輸出與目前能量水準成比例的訊號。
+需要來自機械能源的旋轉輸入——連接在後方的§l蒸汽渦輪§r或§l燃氣渦輪§r。 輸出位於前左和前右；根據轉子速度最多產生<config;i;alternator.alternator_max_output> Flux/t。 內部緩衝區容納<config;i;alternator.alternator_energy_capacity> Flux。靠在任意外部方塊上的比較器會輸出與目前能量水準成比例的訊號。
+
+蒸汽輪機與交流發電機組合
+<&diagram>

@@ -4,8 +4,4 @@ Derretendo!
 
 
 
-§lOperação§r
-    - Os §lFluidos aquecidos§r são inseridos à frente.
-    - Os §lFluidos derretidos§r saem atrás.
-    - Deve estar a 44 blocos de distância de outras torres.
-    - Um comparador contra o painel de controlo emite um sinal proporcional ao nível de calor atual.
+Requer <link;solar_reflector;§n§oRefletor§r> apontados para o fundidor. Os §lFluidos aquecidos§r são inseridos à frente. Os §lFluidos derretidos§r saem atrás. Mantenha os coletores a mais de 44 blocos de distância entre si para que os seus refletores não se sobreponham. Um comparador contra o painel de controlo emite um sinal proporcional ao nível de calor atual.

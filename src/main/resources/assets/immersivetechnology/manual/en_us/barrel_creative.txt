@@ -2,7 +2,4 @@ Creative Fluid Barrel
 Infinite Supply
 A creative/testing-only block that supplies an unlimited amount of a chosen fluid. It does not accept fluid input.
 
-§lOperation§r
-    - Right-click with a bucket or container of a fluid to set that as the output fluid.
-    - Sneak-right-click with an empty hand to clear the selected fluid.
-    - Once set, it actively pushes fluid into all 6 neighboring blocks every tick, up to <config;i;barrel_creative.output_amount> mB/t — effectively unlimited at default settings.
+Right-click with a bucket or container of a fluid to set that as the output fluid. Sneak-right-click with an empty hand to clear the selected fluid. Once set, it actively pushes fluid into all 6 neighboring blocks every tick, up to <config;i;barrel_creative.output_amount> mB/t — effectively unlimited at default settings.

@@ -2,8 +2,4 @@ Elektrolytische Tiegelbatterie
 Fortgeschrittene Elektrolyse
 <&multiblock>Die Elektrolytische Tiegelbatterie führt Elektrolyse an geschmolzenen Salzen und anderen Flüssigkeiten durch und erzeugt mehrere Ausgaben gleichzeitig. Sie kann bis zu 3 Chargen parallel verarbeiten.
 
-§lBetrieb§r
-    - §lFlüssigkeit§r und §lEnergie§r werden seitlich zugeführt. Interner Puffer fasst <config;i;electrolytic_crucible_battery.energy_capacity> Flux.
-    - Ausgaben (Flüssigkeiten und Gegenstände) werden von mehreren Seiten entnommen.
-    - Bis zu 3 Chargen laufen parallel, daher kann der Durchsatz höher sein, als die Zeit einer einzelnen Charge vermuten lässt.
-    - Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zur Füllung des ersten Flüssigkeitsausgabetanks aus.
+§lFlüssigkeit§r und §lEnergie§r werden seitlich zugeführt. Interner Puffer fasst <config;i;electrolytic_crucible_battery.energy_capacity> Flux. Ausgaben (Flüssigkeiten und Gegenstände) werden von mehreren Seiten entnommen. Bis zu 3 Chargen laufen parallel, daher kann der Durchsatz höher sein, als die Zeit einer einzelnen Charge vermuten lässt. Ein Komparator an einem beliebigen Außenblock gibt ein Signal proportional zur Füllung des ersten Flüssigkeitsausgabetanks aus.

@@ -5,8 +5,4 @@ Evaporation!
 
 
 
-§lOperation§r
-    - §lWater§r is input on the right.
-    - §lDistilled Water§r is output on the left.
-    - Salt is output in the back.
-    - A comparator against the front control panel outputs a signal proportional to how full its internal Flux buffer (<config;i;distiller.energy_capacity> Flux) is.
+§lWater§r is input on the right. §lDistilled Water§r is output on the left. Salt is output in the back. One bucket of Water produces 500 mB of Distilled Water. The item output is a chance, not a guarantee, alongside the fluid output. A comparator against the front control panel outputs a signal proportional to how full its internal Flux buffer (<config;i;distiller.energy_capacity> Flux) is.

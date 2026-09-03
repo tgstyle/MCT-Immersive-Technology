@@ -1,0 +1,5 @@
+Limiter and Control Devices
+Throughput is overrated
+The §lStack Limiter§r, §lLoad Controller§r and §lFluid Valve§r limit items, energy and fluids moving through them.
+
+The GUI sets a running total cap over time, a cap on how much the destination may hold before it stops being fed, and a cap per single transfer; these can be combined. It can also be throttled by Redstone signal strength: one mode reduces throughput as the signal increases (a signal of 15 is off), the other increases throughput as the signal increases. Which mode is active is set in the GUI. Enable Redstone Mode by sneaking with a Hammer.

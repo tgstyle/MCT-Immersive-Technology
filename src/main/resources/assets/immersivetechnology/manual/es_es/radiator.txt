@@ -2,10 +2,4 @@ Radiador
 ¡Refrigeración!
 <&multiblock>El Radiador realiza enfriamiento radiativo de fluidos y gases calientes, similar a la Torre de enfriamiento pero mucho más compacto. Se puede construir tanto vertical como horizontalmente.
 
-§lFuncionamiento§r
-    - Los §lFluidos/Gases calientes§r entran por un extremo.
-    - Los §lFluidos/Gases enfriados§r salen por el extremo opuesto.
-    - Se puede formar verticalmente (1→7→9) u horizontalmente (9→1→7) rotando la estructura.
-    - La eficiencia depende de la diferencia de temperatura con el entorno y las obstrucciones cercanas.
-    - Funciona en el vacío (a diferencia de la Torre de enfriamiento), pero es mucho menos eficiente.
-    - Un comparador contra cualquier bloque exterior emite una señal proporcional al avance del ciclo actual.
+Los §lFluidos/Gases calientes§r entran por un extremo. Los §lFluidos/Gases enfriados§r salen por el extremo opuesto. Se puede formar verticalmente (1→7→9) u horizontalmente (9→1→7) rotando la estructura. La eficiencia depende de la diferencia de temperatura con el entorno y las obstrucciones cercanas. Funciona en el vacío (a diferencia de la Torre de enfriamiento), pero es mucho menos eficiente. El Radiador no produce ningún enfriamiento en el Nether, por mucho espacio abierto que lo rodee. Un comparador contra cualquier bloque exterior emite una señal proporcional al avance del ciclo actual.

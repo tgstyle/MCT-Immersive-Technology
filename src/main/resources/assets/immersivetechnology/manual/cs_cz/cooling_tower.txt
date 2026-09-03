@@ -1,0 +1,10 @@
+Chladicí věž
+Chlaď!
+<&multiblock>Chladicí věž ochlazuje §lvýfukovou páru§r zpět na vodu a dokáže zpracovat až 3 dávky najednou.
+
+
+
+
+
+
+§lVoda§r i §lVýfuková pára§r mohou vstupovat do kteréhokoli vstupu – na pořadí nezáleží. §lVoda§r vychází ze všech výstupů. Až 3 dávky se zpracovávají paralelně, takže propustnost může překročit to, co by naznačoval čas jedné dávky. Účinnost závisí na teplotním rozdílu s okolím a blízkých překážkách. Komparátor u bloku použitého k vytvoření struktury (toho, na který se udeřilo Kladivem) vydává signál úměrný zaplněnosti fronty 3 dávek. Chladicí věž nemá redstonový ovládací panel, takže toto je jediné pevné místo, kde reaguje.

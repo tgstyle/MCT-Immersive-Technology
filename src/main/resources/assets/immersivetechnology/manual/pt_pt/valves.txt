@@ -1,0 +1,5 @@
+Dispositivos de Limitação e Controlo
+O débito é sobrevalorizado
+O §lLimitador de Pilhas§r, o §lControlador de Carga§r e a §lVálvula de Fluido§r limitam a passagem de itens, energia e fluidos.
+
+A GUI define um limite total acumulado, um limite de quanto o destino pode reter antes de parar de receber, e um limite por transferência; podem ser combinados. Também pode ser regulado pela intensidade do sinal de Redstone: num modo, o débito diminui à medida que o sinal aumenta (um sinal de 15 desliga-o); no outro, o débito aumenta com o sinal. O modo ativo é definido na GUI. Ativa o Modo Redstone agachando-te com um Martelo.
