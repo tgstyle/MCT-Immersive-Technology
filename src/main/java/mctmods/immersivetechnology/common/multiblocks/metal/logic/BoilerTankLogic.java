@@ -59,7 +59,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
 
     public static int tankCapacity() { return ServerConfig.boilerTankCapacity; }
     public static int progressLossPerTick() { return ServerConfig.boilerTankProgressLossPerTick; }
-    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
+    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat(); }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("boiler_tank").pointsOfInterest);
 

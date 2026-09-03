@@ -64,7 +64,7 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
     public static final int INPUT_FUEL_SLOT_EMPTY = 1;
 
     public static double heatLossPerTick() { return ServerConfig.boilerLiquidHeatLossPerTick; }
-    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
+    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat(); }
     public static double pilotHeat() { return ServerConfig.boilerLiquidPilotHeat; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("boiler_liquid").pointsOfInterest);

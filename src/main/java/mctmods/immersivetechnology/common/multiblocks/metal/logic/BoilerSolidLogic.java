@@ -64,7 +64,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
     public static final int INPUT_FUEL_SLOT = 0;
 
     public static double heatLossPerTick() { return ServerConfig.boilerSolidHeatLossPerTick; }
-    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat; }
+    public static double defaultWorkingHeatLevel() { return CommonConfig.boilerDefaultWorkingHeat(); }
     public static double pilotHeat() { return ServerConfig.boilerSolidPilotHeat; }
     public static int pilotMultiplier() { return ServerConfig.boilerSolidPilotMultiplier; }
     public static double defaultHeatPerTick() { return ServerConfig.boilerSolidDefaultHeatPerTick; }
