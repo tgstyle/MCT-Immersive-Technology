@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
-import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
@@ -15,9 +14,12 @@ import net.neoforged.neoforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class StyleNOXMenu extends BaseContainerMenu {
+    public static final int FUEL_GRID_X = 67;
+    public static final int FUEL_GRID_Y = 18;
+    public static final int SPENT_X = 149;
+    public static final int SPENT_Y = 18;
     public final StyleNOXLogic.StyleNOXTank tanks;
     public final MutableEnergyStorage energy;
     @Nullable private final IMultiblockContext<StyleNOXLogic.State> mbContext;
@@ -36,7 +38,7 @@ public class StyleNOXMenu extends BaseContainerMenu {
         return new StyleNOXMenu(
                 BaseContainerMenu.clientCtx(type, id),
                 invPlayer,
-                new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), () -> {}),
+                new StyleNOXLogic.FuelChannelHandler(() -> {}),
                 StyleNOXLogic.StyleNOXTank.makeClient(),
                 null,
                 null
@@ -48,9 +50,15 @@ public class StyleNOXMenu extends BaseContainerMenu {
         this.tanks = tanks;
         this.mbContext = mbContext;
         this.energy = new MutableEnergyStorage(StyleNOXLogic.energyCapacity());
-        this.addSlot(new ModSlot.Input(inv, StyleNOXLogic.SLOT_FUEL, 71, 17));
-        this.addSlot(new ModSlot.Output(inv, StyleNOXLogic.SLOT_SPENT, 99, 17));
-        ownSlotCount = 2;
+        int slot = 0;
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (row == 1 && col == 1) { continue; }
+                this.addSlot(new ModSlot.Input(inv, slot++, FUEL_GRID_X + col * 18, FUEL_GRID_Y + row * 18));
+            }
+        }
+        this.addSlot(new ModSlot.Output(inv, StyleNOXLogic.SLOT_SPENT, SPENT_X, SPENT_Y));
+        ownSlotCount = StyleNOXLogic.FUEL_SLOTS + 1;
         addPlayerInventorySlots(inventoryPlayer);
         addGenericData(MenuSyncData.fluid(tanks.water()));
         addGenericData(MenuSyncData.fluid(tanks.steam()));
@@ -67,10 +75,7 @@ public class StyleNOXMenu extends BaseContainerMenu {
         if (mbContext == null || id < 0 || id > StyleNOXLogic.MAX_ROD_LEVEL) { return false; }
         StyleNOXLogic.State state = mbContext.getState();
         state.rodLevel = id;
-        if (id == 0) {
-            state.reactorState = StyleNOXLogic.ReactorState.IDLE;
-            state.startupProgress = 0;
-        }
+        if (id == 0) { state.shutdown(); }
         mbContext.markMasterDirty();
         mbContext.requestMasterBESync();
         return true;

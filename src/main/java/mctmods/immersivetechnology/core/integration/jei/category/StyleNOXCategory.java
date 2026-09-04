@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.core.integration.jei.category;
 
 import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import mctmods.immersivetechnology.common.multiblocks.gui.StyleNOXMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -43,31 +44,31 @@ public class StyleNOXCategory extends BaseRecipeCategory<StyleNOXRecipe> {
     }
 
     @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull StyleNOXRecipe recipe, @Nonnull IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 71, 17)
+        builder.addSlot(RecipeIngredientRole.INPUT, StyleNOXMenu.FUEL_GRID_X, StyleNOXMenu.FUEL_GRID_Y)
                 .addItemStacks(Arrays.asList(recipe.input().getMatchingStacks()));
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 8, 17)
+        builder.addSlot(RecipeIngredientRole.INPUT, 8, 21)
                 .addIngredients(NeoForgeTypes.FLUID_STACK, tagStacks(recipe.waterTag(), recipe.waterAmount()))
                 .setFluidRenderer(Math.max(1, recipe.waterAmount()), false, 16, 47)
                 .addRichTooltipCallback((slotView, tooltip) ->
                         slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
                                 GuiFluidArea.fillTooltip(fs, recipe.waterAmount(), tooltip::add)));
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 27, 17)
+        builder.addSlot(RecipeIngredientRole.INPUT, 27, 21)
                 .addIngredients(NeoForgeTypes.FLUID_STACK, tagStacks(recipe.co2Tag(), recipe.co2Amount()))
                 .setFluidRenderer(Math.max(1, recipe.co2Amount()), false, 16, 47)
                 .addRichTooltipCallback((slotView, tooltip) ->
                         slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
                                 GuiFluidArea.fillTooltip(fs, recipe.co2Amount(), tooltip::add)));
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 134, 17)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 46, 21)
                 .addIngredient(NeoForgeTypes.FLUID_STACK, recipe.steamOutput())
                 .setFluidRenderer(Math.max(1, recipe.steamOutput().getAmount()), false, 16, 47)
                 .addRichTooltipCallback((slotView, tooltip) ->
                         slotView.getDisplayedIngredient(NeoForgeTypes.FLUID_STACK).ifPresent(fs ->
                                 GuiFluidArea.fillTooltip(fs, recipe.steamOutput().getAmount(), tooltip::add)));
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 99, 17)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, StyleNOXMenu.SPENT_X, StyleNOXMenu.SPENT_Y)
                 .addItemStack(recipe.output().get());
     }
 
