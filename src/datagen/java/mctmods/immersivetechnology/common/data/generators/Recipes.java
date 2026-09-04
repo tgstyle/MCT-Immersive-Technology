@@ -137,8 +137,8 @@ public class Recipes extends RecipeProvider {
     }
 
     private void recipesMelting(@Nonnull Consumer<FinishedRecipe> out) {
-        MeltingRecipeBuilder.builder().addInput(ModTags.fluidHeatedSaltSlurry, 1000).addOutput(ModFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_salt"));
-        MeltingRecipeBuilder.builder().addInput(ModTags.fluidHeatedGravelSlurry, 1000).addOutput(Fluids.LAVA, 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("solar_melter/heated_gravel_slurry"));
+        MeltingRecipeBuilder.builder().addInput(ModTags.fluidHeatedSaltSlurry, 1000).addOutput(ModFluids.MOLTEN_SALT.getStill(), 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("melting/heated_salt"));
+        MeltingRecipeBuilder.builder().addInput(ModTags.fluidHeatedGravelSlurry, 1000).addOutput(Fluids.LAVA, 500).setTime(20).setRequiredTemp(1000.0).build(out, toResourceLocation("melting/heated_gravel_slurry"));
     }
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
