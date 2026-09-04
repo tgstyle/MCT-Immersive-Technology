@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBl
 import blusunrize.lib.manual.ManualPages;
 
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.client.split.MultiblockTextureHandler;
 import com.immersiveconvergence.api.client.split.SplitModelHandler;
 import com.immersiveconvergence.api.particles.ParticleSettings;
 
@@ -115,6 +116,7 @@ public class ClientProxy extends CommonProxy {
         ModelLoaderRegistry.registerLoader(IEOBJLoader.instance);
         OBJLoader.INSTANCE.addDomain(ImmersiveTechnology.MODID);
         IEOBJLoader.instance.addDomain(ImmersiveTechnology.MODID);
+        MultiblockTextureHandler.register(ImmersiveTechnology.MODID);
         MinecraftForge.EVENT_BUS.register(this);
         ModelLoaderRegistry.registerLoader(new ModelConfigurableSides.Loader());
         SplitModelHandler.register(ImmersiveTechnology.MODID, "metal_multiblock_alternator", () -> TileEntityITMultiblockPartAlternator.instance);
