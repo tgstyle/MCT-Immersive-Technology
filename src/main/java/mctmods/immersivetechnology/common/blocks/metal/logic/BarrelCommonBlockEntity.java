@@ -36,7 +36,6 @@ import java.util.EnumMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import com.immersiveconvergence.api.util.ICFluidUtils;
-import com.immersiveconvergence.api.block.Enums;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
