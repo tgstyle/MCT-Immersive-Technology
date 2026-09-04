@@ -60,6 +60,7 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s ticks / %s mB",
   "category.immersivetechnology.metal_multiblock.stylenox.energy": "Arranque: %s IF",
   "category.immersivetechnology.metal_multiblock.stylenox.time": "Combustión a plena potencia: %ss",
+  "desc.immersiveengineering.info.mineral.dolomite": "Dolomita",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Caldera",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Intercambiador de calor",
   "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Crisol de fundición",

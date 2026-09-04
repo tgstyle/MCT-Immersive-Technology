@@ -11,6 +11,7 @@ import blusunrize.immersiveengineering.data.recipes.builder.ArcFurnaceRecipeBuil
 import blusunrize.immersiveengineering.data.recipes.builder.CrusherRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.HammerCrushingRecipeBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.MetalPressRecipeBuilder;
+import blusunrize.immersiveengineering.data.recipes.builder.MineralMixBuilder;
 import blusunrize.immersiveengineering.data.recipes.builder.MixerRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
@@ -38,6 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
@@ -191,6 +193,7 @@ public class Recipes extends RecipeProvider {
         oreMetal(output, "magnesium", ModItems.INGOT_MAGNESIUM, ModItems.DUST_MAGNESIUM, ModItems.RAW_MAGNESIUM, ModBlocks.Metal.STORAGE_MAGNESIUM, ModBlocks.Metal.ORE_MAGNESIUM, ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM);
         alloyMetal(output, "stainless_steel", ModItems.INGOT_STAINLESS_STEEL, ModItems.DUST_STAINLESS_STEEL);
         alloyMetal(output, "magnox", ModItems.INGOT_MAGNOX, ModItems.DUST_MAGNOX);
+        MineralMixBuilder.builder().dimensionOverworld().addOverworldSpoils().ore(Blocks.CALCITE, 0.6f).ore(Blocks.DRIPSTONE_BLOCK, 0.2f).ore(cTag("ores/magnesium"), 0.1f).ore(cTag("ores/chromium"), 0.1f).weight(5).failchance(0.2f).build(output, toResourceLocation("mineral/dolomite"));
 
         ArcFurnaceRecipeBuilder.builder().input(IETags.getTagsFor(EnumMetals.STEEL).ingot, 6).additive(new IngredientWithSize(cTag("ingots/chromium"), 2)).additive(IETags.getTagsFor(EnumMetals.NICKEL).ingot).output(cTag("ingots/stainless_steel"), 9).setTime(100).setEnergy(51200).build(output, toResourceLocation("arcfurnace/alloy_stainless_steel"));
         AlloyRecipeBuilder.builder().input(new IngredientWithSize(cTag("ingots/magnesium"), 3)).input(new IngredientWithSize(IETags.getTagsFor(EnumMetals.ALUMINUM).ingot, 1)).output(cTag("ingots/magnox"), 4).build(output, toResourceLocation("alloysmelter/magnox"));

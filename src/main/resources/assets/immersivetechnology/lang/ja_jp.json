@@ -60,6 +60,7 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s tick / %s mB",
   "category.immersivetechnology.metal_multiblock.stylenox.energy": "起動: %s IF",
   "category.immersivetechnology.metal_multiblock.stylenox.time": "全出力燃焼時間: %s秒",
+  "desc.immersiveengineering.info.mineral.dolomite": "ドロマイト",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "ボイラー",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "熱交換器",
   "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "溶解坩堝",

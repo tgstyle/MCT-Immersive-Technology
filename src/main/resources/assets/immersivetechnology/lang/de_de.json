@@ -60,6 +60,7 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s Ticks / %s mB",
   "category.immersivetechnology.metal_multiblock.stylenox.energy": "Anfahren: %s IF",
   "category.immersivetechnology.metal_multiblock.stylenox.time": "Volllast-Brenndauer: %ss",
+  "desc.immersiveengineering.info.mineral.dolomite": "Dolomit",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Kessel",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Wärmetauscher",
   "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Schmelztiegel",

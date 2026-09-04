@@ -60,6 +60,7 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s 틱 / %s mB",
   "category.immersivetechnology.metal_multiblock.stylenox.energy": "시동: %s IF",
   "category.immersivetechnology.metal_multiblock.stylenox.time": "전출력 연소 시간: %s초",
+  "desc.immersiveengineering.info.mineral.dolomite": "백운석",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "보일러",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "열교환기",
   "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "용융 도가니",

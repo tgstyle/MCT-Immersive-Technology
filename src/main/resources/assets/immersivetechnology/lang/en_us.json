@@ -60,6 +60,7 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s ticks / %s mB",
   "category.immersivetechnology.metal_multiblock.stylenox.energy": "Startup: %s IF",
   "category.immersivetechnology.metal_multiblock.stylenox.time": "Full power burn: %ss",
+  "desc.immersiveengineering.info.mineral.dolomite": "Dolomite",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "Boiler",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "Heat Exchanger",
   "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "Melting Crucible",

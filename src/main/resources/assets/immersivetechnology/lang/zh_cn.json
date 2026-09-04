@@ -60,6 +60,7 @@
   "category.immersivetechnology.metal_multiblock.solar_tower.time": "%s tick / %s mB",
   "category.immersivetechnology.metal_multiblock.stylenox.energy": "启动：%s IF",
   "category.immersivetechnology.metal_multiblock.stylenox.time": "满功率燃烧：%s 秒",
+  "desc.immersiveengineering.info.mineral.dolomite": "白云石",
   "desc.immersiveengineering.info.multiblock.IE:Boiler": "锅炉",
   "desc.immersiveengineering.info.multiblock.IT:HeatExchanger": "热交换器",
   "desc.immersiveengineering.info.multiblock.IT:meltingCrucible": "熔炼坩埚",
