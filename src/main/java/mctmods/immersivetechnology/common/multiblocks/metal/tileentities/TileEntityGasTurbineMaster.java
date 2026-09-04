@@ -416,10 +416,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void InitializePoIs() {
         for (PoIJSONSchema poi : TileEntityITMultiblockPartGasTurbine.instance.pointsOfInterest) {
             switch (poi.name) {
-                case "fluidInput0":
+                case "fluid_input0":
                     fluidInputPos0 = new PoICache(facing, poi, mirrored);
                     break;
-                case "fluidOutput0":
+                case "fluid_output0":
                     fluidOutputPos0 = new PoICache(facing, poi, mirrored);
                     outputFront0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
                     break;
