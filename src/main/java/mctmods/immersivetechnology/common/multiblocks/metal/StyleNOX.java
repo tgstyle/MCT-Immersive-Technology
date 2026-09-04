@@ -14,5 +14,5 @@ public class StyleNOX extends MachineTemplateMultiblock {
 
     public StyleNOX() { super(Reference.rl("multiblocks/stylenox"), SHAPE.masterPos, SHAPE.triggerPos,
             new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length),
-            SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.STYLENOX); }
+            SHAPE.manualScale, MultiblockRegistry.STYLENOX); }
 }
