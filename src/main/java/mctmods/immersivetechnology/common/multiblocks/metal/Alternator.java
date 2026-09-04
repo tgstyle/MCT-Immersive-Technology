@@ -11,5 +11,5 @@ public class Alternator extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("alternator");
     public static final Alternator INSTANCE = new Alternator();
 
-    public Alternator() { super(Reference.rl("multiblocks/alternator"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.ALTERNATOR); }
+    public Alternator() { super(Reference.rl("multiblocks/alternator"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.ALTERNATOR); }
 }

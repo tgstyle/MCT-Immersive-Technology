@@ -11,5 +11,5 @@ public class Radiator extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("radiator");
     public static final Radiator INSTANCE = new Radiator();
 
-    public Radiator() { super(Reference.rl("multiblocks/radiator"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.RADIATOR); }
+    public Radiator() { super(Reference.rl("multiblocks/radiator"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.manualScale, MultiblockRegistry.RADIATOR); }
 }

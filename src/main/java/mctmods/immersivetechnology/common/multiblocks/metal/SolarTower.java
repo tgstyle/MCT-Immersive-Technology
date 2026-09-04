@@ -23,7 +23,7 @@ public class SolarTower extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("solar_tower");
     public static final SolarTower INSTANCE = new SolarTower();
 
-    public SolarTower() { super(Reference.rl("multiblocks/solar_tower"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.SOLAR_TOWER); }
+    public SolarTower() { super(Reference.rl("multiblocks/solar_tower"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.SOLAR_TOWER); }
 
     @Override public boolean createStructure(Level world, BlockPos pos, Direction side, Player player) {
         if (world.isClientSide) { return false; }

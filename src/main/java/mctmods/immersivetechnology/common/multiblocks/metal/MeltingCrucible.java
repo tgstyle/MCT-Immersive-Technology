@@ -11,5 +11,5 @@ public class MeltingCrucible extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("melting_crucible");
     public static final MeltingCrucible INSTANCE = new MeltingCrucible();
 
-    public MeltingCrucible() { super(Reference.rl("multiblocks/melting_crucible"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.MELTING_CRUCIBLE); }
+    public MeltingCrucible() { super(Reference.rl("multiblocks/melting_crucible"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.MELTING_CRUCIBLE); }
 }

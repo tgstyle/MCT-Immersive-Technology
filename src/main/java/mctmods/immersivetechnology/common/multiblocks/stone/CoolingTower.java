@@ -11,5 +11,5 @@ public class CoolingTower extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("cooling_tower");
     public static final CoolingTower INSTANCE = new CoolingTower();
 
-    public CoolingTower() { super(Reference.rl("multiblocks/cooling_tower"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.COOLING_TOWER); }
+    public CoolingTower() { super(Reference.rl("multiblocks/cooling_tower"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.COOLING_TOWER); }
 }

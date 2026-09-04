@@ -16,7 +16,7 @@ public class SolarReflector extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("solar_reflector");
     public static final SolarReflector INSTANCE = new SolarReflector();
 
-    public SolarReflector() { super(Reference.rl("multiblocks/solar_reflector"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.SOLAR_REFLECTOR); }
+    public SolarReflector() { super(Reference.rl("multiblocks/solar_reflector"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.SOLAR_REFLECTOR); }
 
     @Override public void disassemble(Level world, BlockPos origin, boolean mirrored, Direction clickDirectionAtCreation) {
         MultiblockOrientation orientation = new MultiblockOrientation(clickDirectionAtCreation, mirrored);

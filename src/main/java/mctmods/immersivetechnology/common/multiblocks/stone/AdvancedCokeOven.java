@@ -11,5 +11,5 @@ public class AdvancedCokeOven extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("advanced_coke_oven");
     public static final AdvancedCokeOven INSTANCE = new AdvancedCokeOven();
 
-    public AdvancedCokeOven() { super(Reference.rl("multiblocks/advanced_coke_oven"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.ADVANCED_COKE_OVEN); }
+    public AdvancedCokeOven() { super(Reference.rl("multiblocks/advanced_coke_oven"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.ADVANCED_COKE_OVEN); }
 }

@@ -23,7 +23,7 @@ public class BoilerSolid extends MachineTemplateMultiblock {
     public static final BoilerSolid INSTANCE = new BoilerSolid();
 
     public BoilerSolid() {
-        super(Reference.rl("multiblocks/boiler_solid"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, ImmutableList.of((expected, found, world, pos) -> {
+        super(Reference.rl("multiblocks/boiler_solid"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, ImmutableList.of((expected, found, world, pos) -> {
             if (expected.getBlock() == Blocks.BLAST_FURNACE) { return BlockMatcher.Result.allow(5); }
             return BlockMatcher.Result.DEFAULT;
         }), MultiblockRegistry.BOILER_SOLID);

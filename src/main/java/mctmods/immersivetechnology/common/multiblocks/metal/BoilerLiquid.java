@@ -19,7 +19,7 @@ public class BoilerLiquid extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("boiler_liquid");
     public static final BoilerLiquid INSTANCE = new BoilerLiquid();
 
-    public BoilerLiquid() { super(Reference.rl("multiblocks/boiler_liquid"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.BOILER_LIQUID); }
+    public BoilerLiquid() { super(Reference.rl("multiblocks/boiler_liquid"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.BOILER_LIQUID); }
 
     @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates, @Nullable Player player) {
         return FormationCandidate.preferFacing(world, candidates, BoilerLiquidLogic.HEAT_OUTPUT_POIS, BoilerLiquidLogic.HEAT_OUTPUT_FACING, HeatCapabilities.HEAT_CONSUMER_CAPABILITY);

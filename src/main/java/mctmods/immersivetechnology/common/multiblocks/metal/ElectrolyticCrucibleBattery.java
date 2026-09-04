@@ -11,5 +11,5 @@ public class ElectrolyticCrucibleBattery extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("electrolytic_crucible_battery");
     public static final ElectrolyticCrucibleBattery INSTANCE = new ElectrolyticCrucibleBattery();
 
-    public ElectrolyticCrucibleBattery() { super(Reference.rl("multiblocks/electrolytic_crucible_battery"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY); }
+    public ElectrolyticCrucibleBattery() { super(Reference.rl("multiblocks/electrolytic_crucible_battery"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.manualScale, MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY); }
 }

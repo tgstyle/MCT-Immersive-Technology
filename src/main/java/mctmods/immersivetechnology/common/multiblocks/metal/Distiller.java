@@ -11,5 +11,5 @@ public class Distiller extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("distiller");
     public static final Distiller INSTANCE = new Distiller();
 
-    public Distiller() { super(Reference.rl("multiblocks/distiller"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.DISTILLER); }
+    public Distiller() { super(Reference.rl("multiblocks/distiller"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width,SHAPE.height,SHAPE.length), SHAPE.manualScale, MultiblockRegistry.DISTILLER); }
 }

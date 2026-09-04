@@ -23,7 +23,7 @@ public class BoilerTank extends MachineTemplateMultiblock {
     private static final ShapeData SHAPE = ITShapes.get("boiler_tank");
     public static final BoilerTank INSTANCE = new BoilerTank();
 
-    public BoilerTank() { super(Reference.rl("multiblocks/boiler_tank"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.clientOffset, SHAPE.manualScale, MultiblockRegistry.BOILER_TANK); }
+    public BoilerTank() { super(Reference.rl("multiblocks/boiler_tank"), SHAPE.masterPos, SHAPE.triggerPos, new BlockPos(SHAPE.width, SHAPE.height, SHAPE.length), SHAPE.manualScale, MultiblockRegistry.BOILER_TANK); }
 
     @Override protected List<TriggerPoint> getTriggerPoints() {
         List<TriggerPoint> points = new ArrayList<>();
