@@ -2,10 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.network.OSDRequestMessage;
-import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
