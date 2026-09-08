@@ -47,7 +47,7 @@ public class MultiblockStateGenerator {
         generateMultiblockConfig("cooling_tower", "stone", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
         generateMultiblockConfig("distiller", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("electrolytic_crucible_battery", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
-        generateMultiblockConfig("gas_turbine", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("gas_turbine", "metal", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
         generateMultiblockConfig("heat_exchanger", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("melting_crucible", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("radiator", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);

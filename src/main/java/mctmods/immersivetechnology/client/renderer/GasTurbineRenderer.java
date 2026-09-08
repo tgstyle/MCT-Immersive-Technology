@@ -30,10 +30,11 @@ import javax.annotation.Nonnull;
 
 public class GasTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
     private static final Quaternionf ROTATION = new Quaternionf();
+    private static final BlockPos ROTOR_CELL = GasTurbineLogic.MECHANICAL_OUTPUT_POIS.getFirst();
 
     public GasTurbineRenderer() {}
 
-    @Override @Nonnull public AABB getRenderBoundingBox(MultiblockBlockEntityMaster<GasTurbineLogic.State> tile) { return new AABB(tile.getBlockPos()).inflate(8); }
+    @Override @Nonnull public AABB getRenderBoundingBox(MultiblockBlockEntityMaster<GasTurbineLogic.State> tile) { return new AABB(tile.getBlockPos()).inflate(13); }
 
     @Override public void render(@Nonnull MultiblockBlockEntityMaster<GasTurbineLogic.State> tile, float partialTicks, @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         IMultiblockBEHelperMaster<GasTurbineLogic.State> helper = tile.getHelper();
@@ -46,12 +47,12 @@ public class GasTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBlockE
         Vec3 axisVec = Vec3.atLowerCornerOf(dir.getNormal());
         double angle = state.animation_fanRotation + state.animation_fanRotationStep * partialTicks;
         if (!ClientConfig.doSpecialRenderGasTurbine) { angle = 0; }
-        Vec3 rotorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(new BlockPos(1, 1, 0)).subtract(pos));
+        ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
+        StandaloneModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
+        Vec3 rotorStart = Vec3.atLowerCornerOf(context.getLevel().toAbsolute(ROTOR_CELL).subtract(pos));
         poseStack.pushPose();
         poseStack.translate(rotorStart.x + 0.5, rotorStart.y + 0.5, rotorStart.z + 0.5);
-        ROTATION.rotationAxis((float)(angle * Mth.DEG_TO_RAD), (float) axisVec.x, (float) axisVec.y, (float) axisVec.z);
         poseStack.mulPose(ROTATION);
-        StandaloneModel selectedModel = (dir == Direction.EAST || dir == Direction.WEST) ? RotorModels.ROTOR_EAST_WEST : RotorModels.ROTOR;
         renderDynamicModel(selectedModel, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }

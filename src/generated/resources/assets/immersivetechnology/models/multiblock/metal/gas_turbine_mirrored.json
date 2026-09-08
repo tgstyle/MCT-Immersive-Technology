@@ -9,6 +9,7 @@
     "flip_v": true,
     "loader": "neoforge:obj",
     "model": "immersivetechnology:models/multiblock/metal/gas_turbine/gas_turbine.obj",
+    "render_type": "minecraft:cutout_mipped",
     "shade_quads": true,
     "textures": {
       "particle": "immersivetechnology:multiblock/metal/gas_turbine"
