@@ -2,7 +2,10 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://maven.parchmentmc.org' }
+        // maven.parchmentmc.org is offline (connection refused); this mirror
+        // serves the same artifacts. Leaving the dead host here fails any
+        // plugin resolve that has to look past the repos listed above it.
+        maven { url = 'https://ldtteam.jfrog.io/artifactory/parchmentmc-public/' }
         mavenCentral()
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     }
