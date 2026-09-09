@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
@@ -8,6 +7,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock2;
 
+import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -31,7 +31,7 @@ import java.util.List;
 
 public class BlockMetalMultiblock2 extends BlockITMultiblock<BlockType_MetalMultiblock2> {
     public BlockMetalMultiblock2() {
-        super("metal_multiblock2", Material.IRON, PropertyEnum.create("type", BlockType_MetalMultiblock2.class), ItemBlockITBase.class, IEProperties.DYNAMICRENDER, IEProperties.BOOLEANS[0], IEProperties.BOOLEANS[1], Properties.AnimationProperty, IEProperties.OBJ_TEXTURE_REMAP);
+        super("metal_multiblock2", Material.IRON, PropertyEnum.create("type", BlockType_MetalMultiblock2.class), ItemBlockITBase.class, ICProperties.DYNAMICRENDER, ICProperties.BOOLEANS[0], ICProperties.BOOLEANS[1], Properties.AnimationProperty, ICProperties.OBJ_TEXTURE_REMAP);
         setHardness(3.0F);
         setResistance(15.0F);
         setMetaBlockLayer(BlockType_MetalMultiblock2.BOILER_SOLID.getMeta(), BlockRenderLayer.CUTOUT);

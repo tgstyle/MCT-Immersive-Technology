@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.common.util.ListUtils;
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.util.ICUtils;
+
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
+public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipeBase {
     public static float timeModifier = 1;
     public static float energyModifier = 1;
     public final FluidStack fluidInput0;
@@ -34,7 +35,7 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
         this.fluidOutputList = Lists.newArrayList(fluidOutput0);
         if (fluidOutput1 != null) { this.fluidOutputList.add(fluidOutput1); }
         if (fluidOutput2 != null) { this.fluidOutputList.add(fluidOutput2); }
-        this.outputList = ListUtils.fromItems(itemOutput);
+        this.outputList = ICUtils.fromItems(itemOutput);
     }
 
     public static ArrayList<ElectrolyticCrucibleBatteryRecipe> recipeList = new ArrayList<>();

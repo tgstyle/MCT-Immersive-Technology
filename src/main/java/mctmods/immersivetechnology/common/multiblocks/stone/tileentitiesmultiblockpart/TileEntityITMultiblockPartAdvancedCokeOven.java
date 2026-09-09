@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
-import mctmods.immersivetechnology.common.util.ITUtils;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,7 +21,7 @@ public class TileEntityITMultiblockPartAdvancedCokeOven extends MachineTemplateM
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartAdvancedCokeOven() { super("IT:AdvancedCokeOven", ITShapes.get("advanced_coke_oven"), ITUtils.stateOf(ITContent.blockStoneMultiblock, BlockType_StoneMultiblock.ADVANCED_COKE_OVEN), ITUtils.stateOf(ITContent.blockStoneMultiblock, BlockType_StoneMultiblock.ADVANCED_COKE_OVEN_SLAVE)); }
+    public TileEntityITMultiblockPartAdvancedCokeOven() { super("IT:AdvancedCokeOven", ITShapes.get("advanced_coke_oven"), ICUtils.stateOf(ITContent.blockStoneMultiblock, BlockType_StoneMultiblock.ADVANCED_COKE_OVEN), ICUtils.stateOf(ITContent.blockStoneMultiblock, BlockType_StoneMultiblock.ADVANCED_COKE_OVEN_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
@@ -36,7 +36,7 @@ public class TileEntityITMultiblockPartAdvancedCokeOven extends MachineTemplateM
         GlStateManager.rotate(-20, 1, 0, 0);
         GlStateManager.scale(4, 4, 4);
         GlStateManager.disableCull();
-        ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
         GlStateManager.enableCull();
     }
 }

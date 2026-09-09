@@ -1,22 +1,23 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import com.immersiveconvergence.api.multiblock.GenericShape;
 
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
+import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
+import com.immersiveconvergence.api.energy.IICFluxReceiver;
+import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.ICFluxStorage;
+import com.immersiveconvergence.api.util.ICInventoryHandler;
+import com.immersiveconvergence.api.util.ICUtils;
+import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
+import mctmods.immersivetechnology.client.ITGUI;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
@@ -32,7 +33,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IFluxReceiver, EnergyHelper.IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
+public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IICFluxReceiver, IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
     private TileEntityDistillerMaster master;
     private int loadGrace = 0;
@@ -47,18 +48,12 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if (!formed) {
-            loadGrace = 0;
-            return;
-        }
+        if (!formed) { loadGrace = 0; return; }
         if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
         super.update();
         TileEntityDistillerMaster m = master();
-        if (m == null) {
-            if (loadGrace++ > 20) invalidate();
-        } else {
-            loadGrace = 0;
-        }
+        if (m == null) { if (loadGrace++ > 20) invalidate(); }
+        else { loadGrace = 0; }
     }
 
     @Override public boolean isDummy() { return true; }
@@ -66,8 +61,8 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
     public TileEntityDistillerMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityDistillerMaster ? (TileEntityDistillerMaster)te : null;
+        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
+        master = te instanceof TileEntityDistillerMaster ? (TileEntityDistillerMaster) te : null;
         return master;
     }
 
@@ -105,7 +100,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<DistillerRecipe> process) { return 1f; }
+    @Override public float getMinProcessDistance(@Nonnull MultiblockProcess<DistillerRecipe> process) { return 1; }
 
     @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntityDistillerMaster m = master();
@@ -131,14 +126,14 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
         return m == null ? this : m;
     }
 
-    @Override @Nonnull public FluxStorage getFluxStorage() {
+    @Override @Nonnull public ICFluxStorage getStorage() {
         TileEntityDistillerMaster m = master();
-        return m == null ? new FluxStorage(0) : m.energyStorage;
+        return m == null ? new ICFluxStorage(0) : m.energyStorage;
     }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) {
+    @Override @Nonnull public ICSideConfig getSideConfig(@Nullable EnumFacing facing) {
         TileEntityDistillerMaster m = master();
-        return formed && m != null && m.isEnergyPosition(facing, posInMultiblock()) ? SideConfig.INPUT : SideConfig.NONE;
+        return formed && m != null && m.isEnergyPosition(facing, posInMultiblock()) ? ICSideConfig.INPUT : ICSideConfig.NONE;
     }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
@@ -174,7 +169,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
             TileEntityDistillerMaster m = master();
             if (m != null && formed) {
                 IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
-                if (accessible.length > 0) return (T)new TileEntityDistillerMaster.DistillerFluidHandler(accessible, m, facing, posInMultiblock());
+                if (accessible.length > 0) return (T) new TileEntityDistillerMaster.DistillerFluidHandler(accessible, m, facing, posInMultiblock());
             }
         }
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
@@ -182,13 +177,20 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
             if (m != null && formed && m.itemOutputPos0 != null && m.itemOutputPos0.isPoI(facing, posInMultiblock())) {
                 boolean[] insert = new boolean[5];
                 boolean[] extract = new boolean[]{false, true, false, true, true};
-                return (T)new IEInventoryHandler(5, this, 0, insert, extract);
+                return (T) new ICInventoryHandler(5, this, 0, insert, extract);
             }
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityDistillerMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new ICForgeEnergyWrapper(this, facing);
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
+
+    @Override public int getComparatorInputOverride() {
+        TileEntityDistillerMaster m = master();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 }

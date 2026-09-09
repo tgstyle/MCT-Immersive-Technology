@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.mixin;
 
+import mctmods.immersivetechnology.core.MCTMixin;
+import mctmods.immersivetechnology.core.MCTMixinConfig;
+import com.immersiveconvergence.common.blocks.conveyors.*;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
 import blusunrize.immersiveengineering.api.tool.ConveyorHandler.IConveyorBelt;
 import com.google.common.collect.Maps;
-import mctmods.immersivetechnology.common.blocks.metal.conveyors.*;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityConveyorBeltAlternative;
-import mctmods.immersivetechnology.core.MCTMixin;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;

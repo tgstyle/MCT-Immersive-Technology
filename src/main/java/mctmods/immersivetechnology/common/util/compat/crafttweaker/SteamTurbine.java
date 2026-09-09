@@ -5,6 +5,7 @@ import crafttweaker.IAction;
 import crafttweaker.api.liquid.ILiquidStack;
 import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
 import net.minecraftforge.fluids.FluidStack;
+import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
@@ -13,13 +14,13 @@ import stanhebben.zenscript.annotations.ZenMethod;
 public class SteamTurbine {
 
     @ZenMethod
-    public static void addFuel(ILiquidStack outputFluid, ILiquidStack inputFluid, int time) {
+    public static void addFuel(ILiquidStack outputFluid, ILiquidStack inputFluid, int time, @Optional double torque) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
         FluidStack fluidIn = CraftTweakerHelper.toFluidStack(inputFluid);
 
         if (fluidIn == null) { return; }
 
-        SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOut, fluidIn, time);
+        SteamTurbineRecipe recipe = new SteamTurbineRecipe(fluidOut, fluidIn, time, torque > 0 ? (float)torque : SteamTurbineRecipe.defaultTorque());
         CraftTweakerAPI.apply(new Add(recipe));
     }
 

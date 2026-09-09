@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.util.compat.jei.solartower;
 
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockRecipeWrapper;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import java.text.DecimalFormat;
 import javax.annotation.Nonnull;
 import mezz.jei.api.gui.ITickTimer;
@@ -13,11 +14,11 @@ import net.minecraft.client.Minecraft;
 
 public class SolarTowerRecipeWrapper extends ITMultiblockRecipeWrapper {
 	public ITickTimer timer;
-	private final MultiblockRecipe recipe;
+	private final MultiblockRecipeBase recipe;
 	private static float speedMult() { return Multiblocks.solarTower.solarTower_speed_multiplier; }
 	private static final DecimalFormat format = new DecimalFormat("#.####");
 
-	public SolarTowerRecipeWrapper(MultiblockRecipe recipe) {
+	public SolarTowerRecipeWrapper(MultiblockRecipeBase recipe) {
 		super(recipe);
 		this.recipe = recipe;
 	}

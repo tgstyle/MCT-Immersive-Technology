@@ -1,16 +1,16 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IConfigurableSides;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ITileDrop;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IConfigurableSides;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
-import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
@@ -93,11 +93,11 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
                 IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
                 if (output != null) {
                     if (sleep == 0) {
-                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed(), tank.getFluidAmount()), false);
+                        FluidStack accepted = ICUtils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed(), tank.getFluidAmount()), false);
                         if (accepted == null) { sleep = 20; return; }
-                        accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+                        accepted.amount = output.fill(ICUtils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
                         if (accepted.amount > 0) {
-                            int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+                            int drained = output.fill(ICUtils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
                             acceptedAmount += drained;
                             tank.drain(drained, true);
                             sleep = 0;
@@ -129,7 +129,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
     public int getComparatorInputOverride() { return (int)(15 * (tank.getFluidAmount() / (float)tank.getCapacity())); }
 
     @Override @Nonnull
-    public SideConfig getSideConfig(int side) { return (side > 1) ? SideConfig.NONE : SideConfig.values()[this.sideConfig[side] + 1]; }
+    public ICSideConfig sideConfig(int side) { return (side > 1) ? ICSideConfig.NONE : ICSideConfig.values()[this.sideConfig[side] + 1]; }
 
     @Override
     public boolean toggleSide(int side, @Nonnull EntityPlayer p) {

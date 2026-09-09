@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ITileDrop;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.client.ITGUI;

@@ -136,7 +136,10 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateM
 
     @Override public double getFriction() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction; }
 
-    @Override public float getTorqueMultiplier() { return outputTorque(); }
+    @Override public float getTorqueMultiplier() {
+        TileEntityHighPressureSteamTurbineMaster m = master();
+        return m == null ? outputTorque() : m.currentTorque;
+    }
 
     @Override public MechanicalEnergyAnimation getAnimation() {
         TileEntityHighPressureSteamTurbineMaster m = master();
@@ -254,5 +257,12 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateM
             }
             return drained;
         }
+    }
+
+    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
+
+    @Override public int getComparatorInputOverride() {
+        TileEntityHighPressureSteamTurbineMaster m = master();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 }

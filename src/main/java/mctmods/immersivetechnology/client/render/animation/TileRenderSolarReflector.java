@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.render.animation;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.ClientUtils;
+
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.ICClientUtils;
 
 import mctmods.immersivetechnology.client.render.ITTESRHelper;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -34,13 +35,13 @@ public class TileRenderSolarReflector extends TileEntitySpecialRenderer<TileEnti
 		IBlockState state = getWorld().getBlockState(blockPos);
 		if (state.getBlock() != ITContent.blockMetalMultiblock) { return; }
 		state = state.getBlock().getActualState(state, getWorld(), blockPos);
-		state = state.withProperty(IEProperties.DYNAMICRENDER, true);
-		IBlockState state1 = state.withProperty(IEProperties.DYNAMICRENDER, false).withProperty(IEProperties.BOOLEANS[0], true);
+		state = state.withProperty(ICProperties.DYNAMICRENDER, true);
+		IBlockState state1 = state.withProperty(ICProperties.DYNAMICRENDER, false).withProperty(ICProperties.BOOLEANS[0], true);
 		IBakedModel supportModel = blockRenderer.getBlockModelShapes().getModelForState(state);
 		IBakedModel mirrorModel = blockRenderer.getBlockModelShapes().getModelForState(state1);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder worldRenderer = tessellator.getBuffer();
-		ClientUtils.bindAtlas();
+		ICClientUtils.bindAtlas();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
 		GlStateManager.translate(.5, .5, .5);

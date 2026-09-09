@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
+
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;

@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.render;
 
+import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.RenderUtils;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig;
 
@@ -24,7 +24,7 @@ public final class ITTESRHelper {
     }
 
     public static void renderQuads(List<BakedQuad> quads, BufferBuilder buffer, World world, BlockPos pos, boolean useCached) {
-        if (ITConfig.Client.render.disableFancyTESR) { ClientUtils.renderModelTESRFast(quads, buffer, world, pos); }
+        if (ITConfig.Client.render.disableFancyTESR) { ICClientUtils.renderModelTESRFast(quads, buffer, world, pos); }
         else { RenderUtils.renderModelTESRFancy(quads, buffer, world, pos, useCached); }
     }
 }

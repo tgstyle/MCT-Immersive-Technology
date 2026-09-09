@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.Utils;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.fluid.IICFluidPipe;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.client.gui.GuiFluidValve;
@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class TileEntityFluidValve extends TileEntityCommonValve implements IFluidHandler, IFluidPipe, IEBlockInterfaces.IBlockBounds {
+public class TileEntityFluidValve extends TileEntityCommonValve implements IFluidHandler, IICFluidPipe, ICBlockInterfaces.IBlockBounds {
 
 	public static final DummyTank dummyTank = new DummyTank();
 
@@ -46,7 +46,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this)); }
 
 	@SideOnly(Side.CLIENT)
-	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform, 0, 90, 270, 2, 2); }
+	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform.orElse(null), 0, 90, 270, 2, 2); }
 
 	public static class DummyTank implements IFluidHandler {
 
@@ -81,7 +81,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	boolean busy = false;
 
 	public IFluidHandler getDestination() {
-		TileEntity dst = Utils.getExistingTileEntity(world, pos.offset(facing, -1));
+		TileEntity dst = ICUtils.getExistingTileEntity(world, pos.offset(facing, -1));
 		if (dst != null && dst.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing)) { return dst.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing); }
 		return null;
 	}

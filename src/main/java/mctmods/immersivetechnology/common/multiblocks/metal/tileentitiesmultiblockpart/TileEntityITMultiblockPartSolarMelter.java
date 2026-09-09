@@ -1,16 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.api.MultiblockHandler;
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+
+import com.immersiveconvergence.api.ICLib;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.multiblock.*;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
-import mctmods.immersivetechnology.common.util.ITUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -23,15 +25,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.immersiveconvergence.api.multiblock.*;
-
 public class TileEntityITMultiblockPartSolarMelter extends MachineTemplateMultiblock<TileEntitySolarMelterSlave> {
     public static TileEntityITMultiblockPartSolarMelter instance = new TileEntityITMultiblockPartSolarMelter();
 
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartSolarMelter() { super("IT:SolarMelter", ITShapes.get("solar_melter"), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.SOLAR_MELTER), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.SOLAR_MELTER_SLAVE)); }
+    public TileEntityITMultiblockPartSolarMelter() { super("IT:SolarMelter", ITShapes.get("solar_melter"), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.SOLAR_MELTER), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.SOLAR_MELTER_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
@@ -46,7 +46,7 @@ public class TileEntityITMultiblockPartSolarMelter extends MachineTemplateMultib
         GlStateManager.rotate(-45, 0, 1, 0);
         GlStateManager.rotate(-20, 1, 0, 0);
         GlStateManager.scale(8, 8, 8);
-        ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
     }
 
     @Override public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
@@ -69,10 +69,10 @@ public class TileEntityITMultiblockPartSolarMelter extends MachineTemplateMultib
             return false;
         }
         BlockPos masterPos = localToWorld(origin, mirror ? (width - 1 - masterX) : masterX, masterY, masterZ, side);
-        ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
-        if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
-        IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
-        IBlockState slaveState = slaveBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, true);
+        ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(ICLib.TOOL_HAMMER)?player.getHeldItemMainhand(): player.getHeldItemOffhand();
+        if (MultiblockRegistry.formationCancelled(player, this, pos, hammer)) return false;
+        IBlockState masterState = masterBlockState.withProperty(ICProperties.FACING_HORIZONTAL, side).withProperty(ICProperties.MULTIBLOCKSLAVE, false);
+        IBlockState slaveState = slaveBlockState.withProperty(ICProperties.FACING_HORIZONTAL, side).withProperty(ICProperties.MULTIBLOCKSLAVE, true);
         for (int h = 0; h < height; h++) for (int l = 0; l < length; l++) for (int w = 0; w < width; w++) {
             if (template.getState(w, h, l) == null) continue;
             int position = h * (width * length) + l * width + w;
@@ -90,7 +90,7 @@ public class TileEntityITMultiblockPartSolarMelter extends MachineTemplateMultib
                 world.addBlockEvent(pos2, slaveBlockState.getBlock(), 255, 0);
             }
         }
-        MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer);
+        MultiblockRegistry.formationDone(player, this, pos, hammer);
         return true;
     }
 }

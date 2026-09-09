@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityGasTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -21,7 +21,7 @@ public class TileEntityITMultiblockPartGasTurbine extends MachineTemplateMultibl
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartGasTurbine() { super("IT:GasTurbine", ITShapes.get("gas_turbine"), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.GAS_TURBINE), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.GAS_TURBINE_SLAVE)); }
+    public TileEntityITMultiblockPartGasTurbine() { super("IT:GasTurbine", ITShapes.get("gas_turbine"), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.GAS_TURBINE), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.GAS_TURBINE_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
@@ -38,7 +38,7 @@ public class TileEntityITMultiblockPartGasTurbine extends MachineTemplateMultibl
         GlStateManager.scale(6.25, 6.25, 6.25);
 
         GlStateManager.disableCull();
-        ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
         GlStateManager.enableCull();
     }
 }

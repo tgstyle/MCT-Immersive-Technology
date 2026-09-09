@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
@@ -15,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class GuiSolarTower extends GuiIEContainerBase {
+public class GuiSolarTower extends GuiICContainerBase {
 	TileEntitySolarTowerMaster tile;
 
 	public GuiSolarTower(InventoryPlayer invPlayer, TileEntitySolarTowerMaster tile) {
@@ -27,22 +28,22 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		super.drawScreen(mx, my, partial);
 
 		ArrayList<String> tooltip = new ArrayList<>();
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 102, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", tooltip);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", tooltip);
+		ICClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 102, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", tooltip);
+		ICClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", tooltip);
 		if (mx >= guiLeft + 16 && mx < guiLeft + 58 && my >= guiTop + 9 && my < guiTop + 17) {
 			DecimalFormat df = new DecimalFormat("0.00");
 			tooltip.add("Temperature");
 			tooltip.add(TextFormatting.RED + df.format(tile.heatLevel) + "/" + df.format(tile.targetTemperature()) + "C");
 		}
 		if (!tooltip.isEmpty()) {
-			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
+			ICClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
 
 	@Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture("immersivetech:textures/gui/solar.png");
+		ICClientUtils.bindTexture("immersivetech:textures/gui/solar.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		int heatBarSize = (int)Math.round(42 * Math.min(1, tile.heatLevel / tile.targetTemperature()));
@@ -52,7 +53,7 @@ public class GuiSolarTower extends GuiIEContainerBase {
 		if (tile.solarIncidenceAngleSection > 1) { this.drawTexturedModalRect(guiLeft + 16, guiTop + 40, 198, 31, 10, 10); }
 		if (tile.solarIncidenceAngleSection > 3) { this.drawTexturedModalRect(guiLeft + 32, guiTop + 56, 198, 31, 10, 10); }
 		if (tile.solarIncidenceAngleSection > 2) { this.drawTexturedModalRect(guiLeft + 48, guiTop + 40, 198, 31, 10, 10); }
-		ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 102, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", null);
-		ClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", null);
+		ICClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 102, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", null);
+		ICClientUtils.handleGuiTank(tile.tanks[1], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/solar.png", null);
 	}
 }

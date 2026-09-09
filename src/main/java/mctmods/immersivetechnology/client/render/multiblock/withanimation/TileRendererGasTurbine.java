@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.render.multiblock.withanimation;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.ClientUtils;
+
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.ICClientUtils;
 
 import mctmods.immersivetechnology.client.render.ITTESRHelper;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -40,11 +41,11 @@ public class TileRendererGasTurbine extends TileEntitySpecialRenderer<TileEntity
         boolean validFacing = te.facing.getAxis() != EnumFacing.Axis.Y;
         EnumFacing rotAxis = validFacing ? te.facing : EnumFacing.NORTH;
         if (validFacing) { state = state.getActualState(getWorld(), blockPos); }
-        state = state.withProperty(IEProperties.DYNAMICRENDER, true);
+        state = state.withProperty(ICProperties.DYNAMICRENDER, true);
         IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(state);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder worldRenderer = tessellator.getBuffer();
-        ClientUtils.bindAtlas();
+        ICClientUtils.bindAtlas();
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         GlStateManager.translate(.5, .5, .5);

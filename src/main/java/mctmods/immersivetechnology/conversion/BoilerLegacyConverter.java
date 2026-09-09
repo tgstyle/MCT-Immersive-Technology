@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.conversion;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.TemplateData;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
@@ -13,7 +14,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -82,7 +82,7 @@ public class BoilerLegacyConverter {
                 continue;
             }
             boolean isMaster = worldPos.equals(liquidMasterPos);
-            IBlockState state = ITUtils.stateOf(ITContent.blockMetalMultiblock1, isMaster ? BlockType_MetalMultiblock1.BOILER_LIQUID : BlockType_MetalMultiblock1.BOILER_LIQUID_SLAVE).withProperty(IEProperties.FACING_HORIZONTAL, facing).withProperty(IEProperties.MULTIBLOCKSLAVE, !isMaster);
+            IBlockState state = ICUtils.stateOf(ITContent.blockMetalMultiblock1, isMaster ? BlockType_MetalMultiblock1.BOILER_LIQUID : BlockType_MetalMultiblock1.BOILER_LIQUID_SLAVE).withProperty(ICProperties.FACING_HORIZONTAL, facing).withProperty(ICProperties.MULTIBLOCKSLAVE, !isMaster);
             world.setBlockState(worldPos, state, 2);
             TileEntity converted = world.getTileEntity(worldPos);
             if (converted instanceof TileEntityBoilerLiquidSlave) {

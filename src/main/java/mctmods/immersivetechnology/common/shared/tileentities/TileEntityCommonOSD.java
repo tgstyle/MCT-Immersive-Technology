@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
+import com.immersiveconvergence.api.block.ICTileEntityBase;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockOverlayText;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 import java.text.DecimalFormat;
 
-public abstract class TileEntityCommonOSD extends TileEntityIEBase implements ITickable, IBlockOverlayText, IBinaryMessageReceiver {
+public abstract class TileEntityCommonOSD extends ICTileEntityBase implements ITickable, IBlockOverlayText, IBinaryMessageReceiver {
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
     public long acceptedAmount = 0;
     public long lastAcceptedAmount = 0;

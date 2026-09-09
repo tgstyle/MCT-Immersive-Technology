@@ -1,13 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler;
-import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.AbstractConnection;
-import blusunrize.immersiveengineering.api.TargetingInfo;
-import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.api.energy.wires.WireType;
-import blusunrize.immersiveengineering.common.util.Utils;
+import com.immersiveconvergence.api.energy.ICTargetingInfo;
+import com.immersiveconvergence.api.energy.ICWireType;
+import com.immersiveconvergence.api.energy.ICWires;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.client.gui.GuiLoadController;
@@ -30,7 +26,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.Set;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
@@ -46,34 +41,33 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	}
 
 	private long bufferedEnergy = 0;
-	private WireType leftCable;
-	private WireType rightCable;
+	private ICWireType leftCable;
+	private ICWireType rightCable;
 	private BlockPos leftEnd;
 	private BlockPos rightEnd;
 
 	private EnumFacing perpDirection() { return facing.getAxis().isVertical() ? EnumFacing.byHorizontalIndex(rotation) : facing.rotateY(); }
 
-	private double getHitPos(TargetingInfo target, EnumFacing perpDir) {
+	private double getHitPos(ICTargetingInfo target, EnumFacing perpDir) {
 		EnumFacing.Axis perpAxis = perpDir.getAxis();
 		double hitPos = perpAxis == EnumFacing.Axis.X ? target.hitX : perpAxis == EnumFacing.Axis.Y ? target.hitY : target.hitZ;
 		if (perpDir.getAxisDirection() != EnumFacing.AxisDirection.POSITIVE) { hitPos = 1 - hitPos; }
 		return hitPos;
 	}
 
-	private boolean targetsRight(TargetingInfo target) {
+	private boolean targetsRight(ICTargetingInfo target) {
 		if (leftCable == null && rightCable != null) { return false; }
 		if (leftCable != null && rightCable == null) { return true; }
 		return getHitPos(target, perpDirection()) >= .5;
 	}
 
-	private boolean isRightConnection(Connection con) {
-		BlockPos other = con.start.equals(pos) ? con.end : con.start;
-		if (other.equals(rightEnd)) { return true; }
-		if (other.equals(leftEnd)) { return false; }
+	private boolean isRightConnection(@Nullable BlockPos other) {
+		if (rightEnd != null && rightEnd.equals(other)) { return true; }
+		if (leftEnd != null && leftEnd.equals(other)) { return false; }
 		return leftCable == null;
 	}
 
-	private Vec3d portOffset(WireType type, boolean right) {
+	private Vec3d portOffset(ICWireType type, boolean right) {
 		double conRadius = type.getRenderDiameter() / 2;
 		boolean vertical = facing.getAxis().isVertical();
 		EnumFacing perpDir = vertical ? EnumFacing.byHorizontalIndex(rotation) : facing.rotateY();
@@ -97,35 +91,36 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 		return new Vec3d(xOff, yOff, zOff);
 	}
 
-	@Override @Nonnull public Vec3d getConnectionOffset(@Nonnull Connection con) { return portOffset(con.cableType, isRightConnection(con)); }
+	@Override @Nonnull public Vec3d connectionOffset(@Nonnull ICWireType cable, @Nullable BlockPos otherEnd) { return portOffset(cable, isRightConnection(otherEnd)); }
 
-	@Override @Nonnull public Vec3d getConnectionOffset(@Nonnull Connection con, TargetingInfo target, Vec3i offsetLink) { return portOffset(con.cableType, targetsRight(target)); }
+	@Override @Nonnull public Vec3d connectionOffset(@Nonnull ICWireType cable, @Nonnull ICTargetingInfo target) { return portOffset(cable, targetsRight(target)); }
 
-	@Override public boolean canConnectCable(WireType cableType, TargetingInfo target, @Nonnull Vec3i offset) {
-		String category = cableType.getCategory();
-		if (!WireType.LV_CATEGORY.equals(category) && !WireType.MV_CATEGORY.equals(category) && !WireType.HV_CATEGORY.equals(category)) { return false; }
+	@Override public Boolean canConnectCable(@Nonnull ICWireType cable, @Nonnull ICTargetingInfo target, @Nonnull Vec3i offset) {
+		String category = cable.getCategory();
+		if (!ICWireType.LV_CATEGORY.equals(category) && !ICWireType.MV_CATEGORY.equals(category) && !ICWireType.HV_CATEGORY.equals(category)) { return false; }
 		return (targetsRight(target) ? rightCable : leftCable) == null;
 	}
 
-	@Override public void connectCable(WireType cableType, TargetingInfo target, IImmersiveConnectable other) {
-		BlockPos otherPos = other.getConnectionMaster(cableType, target);
-		if (targetsRight(target)) { rightCable = cableType; rightEnd = otherPos; }
-		else { leftCable = cableType; leftEnd = otherPos; }
+	@Override public boolean connectCable(@Nonnull ICWireType cable, @Nonnull ICTargetingInfo target, BlockPos otherMaster) {
+		if (targetsRight(target)) { rightCable = cable; rightEnd = otherMaster; }
+		else { leftCable = cable; leftEnd = otherMaster; }
+		return true;
 	}
 
-	@Override public WireType getCableLimiter(@Nonnull TargetingInfo target) { return targetsRight(target) ? rightCable : leftCable; }
+	@Override public ICWireType cableLimiter(@Nonnull ICTargetingInfo target) { return targetsRight(target) ? rightCable : leftCable; }
 
-	@Override public void removeCable(Connection connection) {
-		if (connection == null) { leftCable = null; rightCable = null; leftEnd = null; rightEnd = null; }
-		else if (isRightConnection(connection)) { rightCable = null; rightEnd = null; }
+	@Override public boolean removeCable(@Nullable BlockPos otherEnd, boolean all) {
+		if (all) { leftCable = null; rightCable = null; leftEnd = null; rightEnd = null; }
+		else if (isRightConnection(otherEnd)) { rightCable = null; rightEnd = null; }
 		else { leftCable = null; leftEnd = null; }
 		markContainingBlockForUpdate(null);
+		return true;
 	}
 
 	@Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
 		super.readCustomNBT(nbt, descPacket);
-		leftCable = nbt.hasKey("leftCable") ? ApiUtils.getWireTypeFromNBT(nbt, "leftCable") : null;
-		rightCable = nbt.hasKey("rightCable") ? ApiUtils.getWireTypeFromNBT(nbt, "rightCable") : null;
+		leftCable = ICWireType.readFromNBT(nbt, "leftCable");
+		rightCable = ICWireType.readFromNBT(nbt, "rightCable");
 		leftEnd = nbt.hasKey("leftEnd") ? BlockPos.fromLong(nbt.getLong("leftEnd")) : null;
 		rightEnd = nbt.hasKey("rightEnd") ? BlockPos.fromLong(nbt.getLong("rightEnd")) : null;
 		bufferedEnergy = nbt.getLong("bufferedEnergy");
@@ -148,7 +143,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	@Override public boolean isEnergyOutput() { return true; }
 
-	@Override public boolean allowEnergyToPass(Connection con) { return false; }
+	@Override public boolean allowEnergyToPass() { return false; }
 
 	private int transferLimit(IEnergyStorage outputStorage) {
 		int canAccept = Integer.MAX_VALUE;
@@ -181,31 +176,14 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 			if (moved > 0) { bufferedEnergy -= moved; countOut(moved); }
 		}
 		if (bufferedEnergy <= 0) { return; }
-		Set<AbstractConnection> outputs = ImmersiveNetHandler.INSTANCE.getIndirectEnergyConnections(pos, world, true);
-		for (AbstractConnection con : outputs) {
-			if (bufferedEnergy <= 0) { break; }
-			if (!con.isEnergyOutput || con.cableType == null) { continue; }
-			if (leavesByInputPort(con)) { continue; }
-			IImmersiveConnectable end = ApiUtils.toIIC(con.end, world);
-			if (end == null) { continue; }
-			int offer = longToInt(Math.min(bufferedEnergy, con.cableType.getTransferRate()));
-			int moved = end.outputEnergy(offer, false, 0);
-			if (moved > 0) { bufferedEnergy -= moved; countOut(moved); }
-		}
-	}
-
-	private boolean leavesByInputPort(AbstractConnection con) {
-		if (con.subConnections == null || con.subConnections.length == 0) { return false; }
-		BlockPos firstHop = con.subConnections[0].end;
-		BlockPos inputEnd = inputEnd();
-		return inputEnd != null && firstHop.equals(inputEnd);
+		ICWires.distributeToNetwork(world, pos, inputEnd(), () -> longToInt(bufferedEnergy), moved -> { bufferedEnergy -= moved; countOut(moved); });
 	}
 
 	private boolean rightIsInput() { return facing.getAxis().isVertical(); }
 
-	private WireType inputCable() { return rightIsInput() ? rightCable : leftCable; }
+	private ICWireType inputCable() { return rightIsInput() ? rightCable : leftCable; }
 
-	private WireType outputCable() { return rightIsInput() ? leftCable : rightCable; }
+	private ICWireType outputCable() { return rightIsInput() ? leftCable : rightCable; }
 
 	private BlockPos inputEnd() { return rightIsInput() ? rightEnd : leftEnd; }
 
@@ -249,7 +227,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiLoadController(this)); }
 
 	@SideOnly(Side.CLIENT)
-	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform, 270, 180, 0, 0, 1); }
+	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform.orElse(null), 270, 180, 0, 0, 1); }
 
 	public static class DummyBattery implements IEnergyStorage {
 
@@ -288,7 +266,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	private IEnergyStorage getSource() {
 		EnumFacing in = inputDir();
-		TileEntity src = Utils.getExistingTileEntity(world, pos.offset(in));
+		TileEntity src = ICUtils.getExistingTileEntity(world, pos.offset(in));
 		if (src != null && src.hasCapability(CapabilityEnergy.ENERGY, in.getOpposite())) { return src.getCapability(CapabilityEnergy.ENERGY, in.getOpposite()); }
 		return null;
 	}
@@ -297,7 +275,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	public IEnergyStorage getDestination() {
 		EnumFacing out = outputDir();
-		TileEntity dst = Utils.getExistingTileEntity(world, pos.offset(out));
+		TileEntity dst = ICUtils.getExistingTileEntity(world, pos.offset(out));
 		if (dst != null && dst.hasCapability(CapabilityEnergy.ENERGY, out.getOpposite())) { return dst.getCapability(CapabilityEnergy.ENERGY, out.getOpposite()); }
 		return null;
 	}

@@ -1,18 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import com.immersiveconvergence.api.multiblock.GenericShape;
 
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
+import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
+import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.client.ITGUI;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
@@ -28,7 +27,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IEBlockInterfaces.IGuiTile, IIEInventory {
+public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, ICBlockInterfaces.IGuiTile, IICInventory {
 
     private int loadGrace = 0;
 
@@ -68,7 +67,7 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
         if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntitySolarMelterMaster ? (TileEntitySolarMelterMaster)te : null;
         return master;
     }
@@ -182,5 +181,12 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
             if (tanks.length > 0) return (T)new TileEntitySolarMelterMaster.SolarMelterFluidHandler(this, facing);
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
+
+    @Override public int getComparatorInputOverride() {
+        TileEntitySolarMelterMaster m = master();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 }

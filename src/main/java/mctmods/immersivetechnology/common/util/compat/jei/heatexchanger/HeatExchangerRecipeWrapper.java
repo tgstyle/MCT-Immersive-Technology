@@ -1,18 +1,19 @@
 package mctmods.immersivetechnology.common.util.compat.jei.heatexchanger;
 
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockRecipeWrapper;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class HeatExchangerRecipeWrapper extends ITMultiblockRecipeWrapper {
-    public MultiblockRecipe recipe;
+    public MultiblockRecipeBase recipe;
 
-    public HeatExchangerRecipeWrapper(MultiblockRecipe recipe) {
+    public HeatExchangerRecipeWrapper(MultiblockRecipeBase recipe) {
         super(recipe);
         this.recipe = recipe;
     }

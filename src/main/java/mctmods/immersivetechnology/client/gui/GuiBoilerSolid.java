@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
+
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidMaster;
 import mctmods.immersivetechnology.common.gui.ContainerBoilerSolid;
 import net.minecraft.client.renderer.RenderHelper;
@@ -12,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-public class GuiBoilerSolid extends GuiIEContainerBase {
+public class GuiBoilerSolid extends GuiICContainerBase {
 	private static final String TEXTURE = "immersivetech:textures/gui/boiler_solid.png";
 	TileEntityBoilerSolidMaster tile;
 
@@ -30,14 +31,14 @@ public class GuiBoilerSolid extends GuiIEContainerBase {
 			tooltip.add(TextFormatting.RED + "" + (int)tile.heatLevel + "/" + (int)tile.workingHeatLevel);
 		}
 		if (!tooltip.isEmpty()) {
-			ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, - 1);
+			ICClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, - 1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
 
 	@Override protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture(TEXTURE);
+		ICClientUtils.bindTexture(TEXTURE);
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		int heatBarSize = MathHelper.clamp((int)Math.round(41 * (tile.heatLevel / tile.workingHeatLevel)), 0, 41);

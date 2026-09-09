@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.api.crafting;
 
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
 import mctmods.immersivetechnology.common.Config;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SolarTowerRecipe extends MultiblockRecipe {
+public class SolarTowerRecipe extends MultiblockRecipeBase {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;

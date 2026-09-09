@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import blusunrize.immersiveengineering.common.util.compat.opencomputers.ManagedEnvironmentIE;
+import com.immersiveconvergence.api.compat.opencomputers.ManagedEnvironmentIC;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -35,7 +35,7 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 		return TileEntitySolarTowerSlave.class;
 	}
 
-	public static class SolarTowerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntitySolarTowerMaster> {
+	public static class SolarTowerEnvironment extends ManagedEnvironmentIC.ManagedEnvMultiblock<TileEntitySolarTowerMaster> {
 		public SolarTowerEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntitySolarTowerMaster.class);
 		}

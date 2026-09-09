@@ -161,7 +161,7 @@ public class Config {
                 public boolean enable_coolingTower = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Distiller Multiblock structure be built ? [Default=true]"})
                 public boolean enable_distiller = true;
-                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Electrolytic Crucible Battery Multiblock structures be built ? [Default=false]"})
+                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Electrolytic Crucible Battery Multiblock structures be built ? [Default=true]"})
                 public boolean enable_electrolyticCrucibleBattery = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Gas Turbine Multiblock structures be built ? [Default=true]"})
                 public boolean enable_gasTurbine = true;
@@ -169,11 +169,11 @@ public class Config {
                 public boolean enable_heatExchanger = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the High Pressure Steam Turbine Multiblock structures be built ? [Default=false]"})
                 public boolean enable_highPressureSteamTurbine = false;
-                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=false]"})
+                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Melting Crucible Multiblock structures be built ? [Default=true]"})
                 public boolean enable_meltingCrucible = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Radiator Multiblock structures be built ? [Default=true]"})
                 public boolean enable_radiator = true;
-                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Melter Multiblock structures be built ? [Default=false]"})
+                @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Melter Multiblock structures be built ? [Default=true]"})
                 public boolean enable_solarMelter = true;
                 @Comment({"**WARNING** disable this before you load a new world or break the multiblocks before you do this!!! Can the Solar Tower / Solar Reflector Multiblock structures be built ? [Default=true]"})
                 public boolean enable_solarTower = true;
@@ -203,7 +203,7 @@ public class Config {
                 public int gasTurbine_sparkplug_consumption = 1024;
                 @Comment({"The capacity of the spark plug for the Gas Turbine [Default=2048]"})
                 public int gasTurbine_sparkplug_size = 2048;
-                @Comment({"How much of the maximum alternator output power should the Gas Turbine generate [Default=1.0]"})
+                @Comment({"How much of the maximum alternator output power a Gas Turbine fuel drives, for any recipe that does not name a torque of its own [Default=1.0]"})
                 public float gasTurbine_torque = 1.0f;
             }
             public static class HeatExchanger {
@@ -231,7 +231,7 @@ public class Config {
                 public double highPressureSteamTurbine_friction = 0.0;
                 @Comment({"Fraction of the maximum tolerated RPM the High Pressure Steam Turbine can reach. Above 1.0 it overdrives the alternator past its rated output [Default=1.0]"})
                 public float highPressureSteamTurbine_speed_maxFactor = 1.0f;
-                @Comment({"How much of the maximum alternator output power should the Steam Turbine generate [Default=1.0]"})
+                @Comment({"How much of the maximum alternator output power a High Pressure Steam Turbine fuel drives, for any recipe that does not name a torque of its own [Default=1.0]"})
                 public float highPressureSteamTurbine_torque = 1.0f;
                 @Comment({"Should the steam turbine use tungsten, if it exists? Otherwise the turbine will use nickel [Default=true]"})
                 public boolean highPressureSteamTurbine_turbine_material = true;
@@ -263,6 +263,8 @@ public class Config {
                 public float radiator_speed_multiplier = 1;
                 @Comment({"Biome temperature effect strength on radiator speed (0 = disabled). Cold biomes faster, hot slower. Neutral ~0.8 [Default=0.5]"})
                 public double radiator_biome_temp_factor = 0.5;
+                @Comment({"How strongly missing reflector blocks cut the Radiator's speed. 0 disables the check entirely [Default=1.0]"})
+                public double radiator_reflector_factor = 1.0;
                 @Comment({"How much the local biome's humidity affects Radiator efficiency. 0 disables the effect entirely. Drier biomes give a bonus, wetter biomes a penalty [Default=3.0]"})
                 public double radiator_biome_humidity_factor = 3.0;
             }
@@ -285,19 +287,27 @@ public class Config {
                 public int solarReflector_minRange = 12;
             }
             public static class SolarTower {
-                @Comment({"How fast the Solar Tower cools down per tick when turned off or at night [Default=1.0]"})
+                @Comment({"Baseline heat lost per tick by the Solar Tower, before the daylight and temperature terms [Default=0.0]"})
+                public double solarTower_heat_dayMinLoss = 0.0;
+                @Comment({"Extra heat lost per tick for each step the sun is below its peak [Default=0.035]"})
+                public double solarTower_heat_lossPerSectionDrop = 0.035;
+                @Comment({"Fraction of the Solar Tower's current heat lost per tick [Default=0.00036]"})
+                public double solarTower_heat_tempDependentLossFactor = 0.00036;
+                @Comment({"Heat gained per tick per point of reflector strength, per step of sun elevation [Default=0.00568]"})
+                public double solarTower_heat_increaseFactor = 0.00568;
+                @Comment({"Scales the Solar Tower's total heat loss per tick [Default=1.0]"})
                 public double solarTower_heat_loss_multiplier = 1.0;
                 @Comment({"A Solar Tower can only start processing recipes once it reaches this temperature [Default=400.0]"})
                 public double solarTower_heat_workingTemperature = 400.0;
                 @Comment({"The capacity of the input tank for the Solar Tower [Default=12000]"})
                 public int solarTower_input_tankSize = 12000;
-                @Comment({"The maximum strength of the reflectors. Decreasing this reduces the amount of reflectors needed to achieve max processing speed. [Default=227.5]"})
+                @Comment({"Unused by the Solar Tower since its process rate stopped scaling with reflector strength; reflectors feed the heat instead. Kept so existing configs still load [Default=227.5]"})
                 public double solarTower_maximum_reflector_strength = 227.5;
                 @Comment({"The capacity of the output tank for the Solar Tower [Default=12000]"})
                 public int solarTower_output_tankSize = 12000;
-                @Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=1]"})
-                public int solarTower_progress_lossInTicks = 1;
-                @Comment({"The heat speed multiplier applied to all Solar Tower recipes (with a single reflector) [Default=1]"})
+                @Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=2]"})
+                public int solarTower_progress_lossInTicks = 2;
+                @Comment({"How many ticks of progress the Solar Tower makes each tick. Truncated to a whole number, so anything below 1 stops it [Default=1]"})
                 public float solarTower_speed_multiplier = 1;
             }
             public static class SteamTurbine {
@@ -315,7 +325,7 @@ public class Config {
                 public double steamTurbine_friction = 0.0;
                 @Comment({"Fraction of the maximum tolerated RPM the Steam Turbine can reach [Default=1.0]"})
                 public float steamTurbine_speed_maxFactor = 1.0f;
-                @Comment({"How much of the maximum alternator output power should the Steam Turbine generate [Default=1.0]"})
+                @Comment({"How much of the maximum alternator output power a Steam Turbine fuel drives, for any recipe that does not name a torque of its own [Default=1.0]"})
                 public float steamTurbine_torque = 1.0f;
             }
             public static class SteelTank {
@@ -346,6 +356,8 @@ public class Config {
                 public double multiblockSpecialRenderDistanceModifier = 2.5;
                 @Comment({"Should the animations and special client rendering apply to the Solar Reflector [Default=true]"})
                 public boolean solar_reflector_renderer = true;
+                @Comment({"Should a Solar Reflector drive to its aim over a few seconds rather than snapping to it [Default=true]"})
+                public boolean solar_reflector_animate = true;
                 @Comment({"Should the animations and special client rendering apply to the Steam Turbines [Default=true]"})
                 public boolean steam_turbine_renderer = true;
             }

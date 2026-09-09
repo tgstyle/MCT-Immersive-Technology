@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.IngredientStack;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -11,9 +11,7 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.Collections;
 import java.util.List;
 
-public class DummyRecipe implements IMultiblockRecipe {
-    @Override public List<IngredientStack> getItemInputs() { return Collections.emptyList(); }
-
+public class DummyRecipe implements ICMultiblockRecipe {
     @Override public List<FluidStack> getFluidInputs() { return Collections.emptyList(); }
 
     @Override public NonNullList<ItemStack> getItemOutputs() { return NonNullList.create(); }

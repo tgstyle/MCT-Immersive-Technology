@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock2;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.multiblock.FormationCandidate;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +28,7 @@ public class TileEntityITMultiblockPartBoilerSolid extends MachineTemplateMultib
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartBoilerSolid() { super("IT:BoilerSolid", ITShapes.get("boiler_solid"), ITUtils.stateOf(ITContent.blockMetalMultiblock2, BlockType_MetalMultiblock2.BOILER_SOLID), ITUtils.stateOf(ITContent.blockMetalMultiblock2, BlockType_MetalMultiblock2.BOILER_SOLID_SLAVE)); }
+    public TileEntityITMultiblockPartBoilerSolid() { super("IT:BoilerSolid", ITShapes.get("boiler_solid"), ICUtils.stateOf(ITContent.blockMetalMultiblock2, BlockType_MetalMultiblock2.BOILER_SOLID), ICUtils.stateOf(ITContent.blockMetalMultiblock2, BlockType_MetalMultiblock2.BOILER_SOLID_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
@@ -44,7 +44,7 @@ public class TileEntityITMultiblockPartBoilerSolid extends MachineTemplateMultib
         GlStateManager.rotate(-20, 1, 0, 0);
         GlStateManager.scale(5.88, 5.88, 5.88);
         GlStateManager.disableCull();
-        ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
         GlStateManager.enableCull();
     }
 

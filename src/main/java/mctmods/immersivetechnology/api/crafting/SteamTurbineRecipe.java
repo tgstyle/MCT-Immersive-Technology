@@ -1,6 +1,9 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
+import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -9,25 +12,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SteamTurbineRecipe extends MultiblockRecipe {
+public class SteamTurbineRecipe extends MultiblockRecipeBase {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;
     int totalProcessTime;
+    public final float torque;
 
-    public SteamTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) {
+    public SteamTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time) { this(fluidOutput, fluidInput, time, defaultTorque()); }
+
+    public SteamTurbineRecipe(FluidStack fluidOutput, FluidStack fluidInput, int time, float torque) {
         this.fluidOutput = fluidOutput;
         this.fluidInput = fluidInput;
         this.totalProcessTime = (int) Math.floor(time * timeModifier);
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
         this.fluidOutputList = Lists.newArrayList();
         if (this.fluidOutput != null) { this.fluidOutputList.add(this.fluidOutput); }
+        this.torque = torque;
     }
+
+    public static float defaultTorque() { return Multiblocks.steamTurbine.steamTurbine_torque; }
 
     public static ArrayList<SteamTurbineRecipe> recipeList = new ArrayList<>();
     private static final Map<Fluid, SteamTurbineRecipe> recipeMap = new HashMap<>();
 
     public static void addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time) { addFuel(new SteamTurbineRecipe(fluidOutput, fluidInput, time)); }
+
+    public static void addFuel(FluidStack fluidOutput, FluidStack fluidInput, int time, float torque) { addFuel(new SteamTurbineRecipe(fluidOutput, fluidInput, time, torque)); }
 
     public static SteamTurbineRecipe addFuel(SteamTurbineRecipe recipe) {
         recipeList.add(recipe);

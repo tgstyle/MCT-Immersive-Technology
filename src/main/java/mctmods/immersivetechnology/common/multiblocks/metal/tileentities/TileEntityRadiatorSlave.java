@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import com.immersiveconvergence.api.multiblock.GenericShape;
 
+import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.common.util.Utils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
@@ -75,7 +75,7 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
             master = null;
             return null;
         }
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntityRadiatorMaster ? (TileEntityRadiatorMaster)te : null;
         return master;
     }
@@ -133,7 +133,7 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
 
     @Override public int getComparatorInputOverride() {
         TileEntityRadiatorMaster m = master();
-        return m == null ? 0 : m.getComparatorInputOverride();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

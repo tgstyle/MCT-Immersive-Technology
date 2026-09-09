@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import com.immersiveconvergence.api.capability.IHeatProvider;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implements ICFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
+public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implements ICFluidTank.TankListener, IComparatorOverride, IICInventory, IBinaryMessageReceiver {
 
     private static int tankSize() { return Multiblocks.boilerTank.boilerTank_tankSize; }
     private static int progressLossPerTick() { return Multiblocks.boilerTank.boilerTank_progress_lossInTicks; }
@@ -85,7 +85,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
             heatLevel = 0;
             processTimeRemaining = nbt.getInteger("processTimeRemaining");
             processTimeMax = nbt.getInteger("processTimeMax");
-            NonNullList<ItemStack> legacyInventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
+            NonNullList<ItemStack> legacyInventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), 6);
             for (int slot = 0; slot < slotCount; slot++) { inventory.set(slot, legacyInventory.get(slot + 2)); }
             if (processTimeRemaining > 0) { cachedRecipe = BoilerTankRecipe.findRecipe(tanks[0].getFluid()); }
             if (processTimeRemaining > 0 && cachedRecipe == null) processTimeRemaining = 0;
@@ -99,7 +99,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
             processTimeMax = nbt.getInteger("processTimeMax");
             oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
             if (!descPacket) {
-                inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+                inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
                 if (nbt.hasKey("cachedRecipe")) cachedRecipe = BoilerTankRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
                 if (processTimeRemaining > 0 && cachedRecipe == null) processTimeRemaining = 0;
             }
@@ -120,7 +120,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
         nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         if (!descPacket) {
-            nbt.setTag("inventory", Utils.writeInventory(inventory));
+            nbt.setTag("inventory", ICUtils.writeInventory(inventory));
             if (cachedRecipe != null) nbt.setTag("cachedRecipe", cachedRecipe.writeToNBT(new NBTTagCompound()));
         }
     }
@@ -206,10 +206,10 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
             }
             world.markChunkDirty(getPos(), this);
         }
-        int comp = getComparatorInputOverride();
+        int comp = comparatorValue();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            world.updateComparatorOutputLevel(getPos(), getBlockType());
+            notifyComparators();
         }
         if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
         else if (changed) { throttledBlockUpdate(); }
@@ -237,11 +237,16 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
                 if (gainProgress()) update = true;
             }
             else if (tanks[0].getFluidAmount() > 0) {
-                cachedRecipe = (cachedRecipe != null && Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(cachedRecipe.fluidInput)) ? cachedRecipe : BoilerTankRecipe.findRecipe(tanks[0].getFluid());
-                if (cachedRecipe != null && heatLevel >= cachedRecipe.requiredHeat && cachedRecipe.fluidInput.amount <= tanks[0].getFluidAmount() && cachedRecipe.fluidOutput.amount == tanks[1].fillInternal(cachedRecipe.fluidOutput, false)) {
-                    processTimeRemaining = cachedRecipe.getTotalProcessTime();
-                    processTimeMax = processTimeRemaining;
-                    if (gainProgress()) update = true;
+                BoilerTankRecipe recipe = (cachedRecipe != null && Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(cachedRecipe.fluidInput)) ? cachedRecipe : BoilerTankRecipe.findRecipe(tanks[0].getFluid());
+                cachedRecipe = recipe;
+                if (recipe != null && heatLevel >= recipe.requiredHeat && recipe.fluidInput.amount <= tanks[0].getFluidAmount() && recipe.fluidOutput.amount == tanks[1].fillInternal(recipe.fluidOutput, false)) {
+                    FluidStack drained = tanks[0].drain(recipe.fluidInput.amount, true);
+                    if (drained != null && drained.amount == recipe.fluidInput.amount && drained.isFluidEqual(recipe.fluidInput)) {
+                        cachedRecipe = recipe;
+                        processTimeRemaining = recipe.getTotalProcessTime();
+                        processTimeMax = processTimeRemaining;
+                        if (gainProgress()) update = true;
+                    }
                 }
             }
         }
@@ -254,7 +259,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
     private boolean outputTankLogic() {
         boolean update = false;
         if (tanks[1].getFluidAmount() > 0) {
-            ItemStack filled = Utils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
+            ItemStack filled = ICUtils.fillFluidContainer(tanks[1], inventory.get(2), inventory.get(3), null);
             if (!filled.isEmpty()) {
                 if (!inventory.get(3).isEmpty() && OreDictionary.itemMatches(inventory.get(3), filled, true)) inventory.get(3).grow(filled.getCount());
                 else if (inventory.get(3).isEmpty()) inventory.set(3, filled.copy());
@@ -269,7 +274,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
 
     private boolean inputTankLogic() {
         int prev = tanks[0].getFluidAmount();
-        ItemStack empty = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
+        ItemStack empty = ICUtils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
         if (prev != tanks[0].getFluidAmount()) {
             if (!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), empty, true)) inventory.get(1).grow(empty.getCount());
             else if (inventory.get(1).isEmpty()) inventory.set(1, empty.copy());
@@ -294,7 +299,6 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
             BoilerTankRecipe completingRecipe = cachedRecipe;
             cachedRecipe = null;
             processTimeMax = 0;
-            tanks[0].drain(completingRecipe.fluidInput.amount, true);
             tanks[1].fillInternal(completingRecipe.fluidOutput, true);
             return true;
         }
@@ -310,14 +314,14 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
         int accepted = output.fill(out, false);
         if (accepted <= 0) return false;
         assert out != null;
-        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        int drained = output.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[1].drain(drained, true);
         return drained > 0;
     }
 
     @Override public void disassemble() {
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
         }
         super.disassemble();
@@ -352,7 +356,9 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
         markContainingBlockForUpdate(null);
     }
 
-    @Override public int getComparatorInputOverride() { return workingHeatLevel > 0 ? (int)Math.min(15, 15 * (heatLevel / workingHeatLevel)) : 0; }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return workingHeatLevel > 0 ? (int)Math.min(15, 15 * (heatLevel / workingHeatLevel)) : 0; }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 

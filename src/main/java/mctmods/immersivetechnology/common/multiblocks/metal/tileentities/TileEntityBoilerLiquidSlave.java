@@ -2,19 +2,18 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.GenericShape;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerLiquid;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.IICInventory;
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
+import mctmods.immersivetechnology.client.ITGUI;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerLiquid;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +30,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityBoilerLiquidSlave extends TileEntityTemplateMultiblock<TileEntityBoilerLiquidSlave, DummyRecipe, TileEntityBoilerLiquidMaster>
-        implements IEBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
-        IIEInventory, IEBlockInterfaces.IComparatorOverride, IHeatProvider {
+        implements ICBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
+        IICInventory, ICBlockInterfaces.IComparatorOverride, IHeatProvider {
 
     private TileEntityBoilerLiquidMaster cachedMaster;
     private int loadGrace = 0;
@@ -138,7 +137,7 @@ public class TileEntityBoilerLiquidSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override public int getComparatorInputOverride() {
         TileEntityBoilerLiquidMaster m = master();
-        return m == null ? 0 : m.getComparatorInputOverride();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

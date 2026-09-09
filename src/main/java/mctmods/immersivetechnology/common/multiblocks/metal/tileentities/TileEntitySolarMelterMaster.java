@@ -1,12 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
@@ -14,6 +11,9 @@ import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICInventoryHandler;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -59,7 +59,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
+public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IICInventory, IComparatorOverride {
 
     private static int outputTankSize() { return Multiblocks.solarMelter.solarMelter_output_tankSize; }
     private static int solarMaxRange() { return Multiblocks.solarReflector.solarReflector_maxRange; }
@@ -110,7 +110,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private boolean needsPoIInit = true;
     private boolean needsNotify = false;
 
-    public IItemHandler insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+    public IItemHandler insertionHandler = new ICInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
 
     public void efficientMarkDirty() {
         world.getChunk(getPos()).markDirty();
@@ -124,7 +124,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         heatLevel = nbt.getDouble("heatLevel");
         reflectorStrength = nbt.getDouble("reflectorStrength");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
-        inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         if (!descPacket) {
             if (nbt.hasKey("cachedRecipe")) cachedSolarMelterRecipe = MeltingCrucibleRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
             if (processTimeRemaining > 0 && cachedSolarMelterRecipe == null) processTimeRemaining = 0;
@@ -148,7 +148,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         nbt.setDouble("heatLevel", heatLevel);
         nbt.setDouble("reflectorStrength", reflectorStrength);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
-        nbt.setTag("inventory", Utils.writeInventory(inventory));
+        nbt.setTag("inventory", ICUtils.writeInventory(inventory));
         nbt.setBoolean("registered", registered);
         nbt.setBoolean("savedRegistered", savedRegistered);
         nbt.setBoolean("reCheckOnLoad", reCheckOnLoad);
@@ -167,9 +167,8 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.02f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.02f, targetSoundLevel); }
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }else {
-            double distance = Math.sqrt(distanceSqToTE);
-            float attenuation = Math.max((float)distance / 16f, 1f);
-            ITSounds.solarMelter.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+            float attenuation = Math.max((float)distanceSqToTE / 8f, 1f);
+            ITSounds.solarMelter.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, 1f);
         }
     }
 
@@ -185,7 +184,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack.copy());
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack.copy());
             inventory.clear();
             detachMirrors();
             SolarRegistry.unregisterTower(world, basePos0);
@@ -256,7 +255,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private void notifyIONeighbors() {
         if (fluidOutputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidOutputPos0.position), getBlockType(), true);
         if (itemInputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(itemInputPos0.position), getBlockType(), true);
-        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+        notifyComparators();
         needsNotify = false;
     }
 
@@ -440,7 +439,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     private boolean outputTankLogic() {
         boolean update = false;
-        ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
+        ItemStack filled = ICUtils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!filled.isEmpty()) {
             if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
             else if (inventory.get(2).isEmpty()) inventory.set(2, filled.copy());
@@ -450,7 +449,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
             doGraphicalUpdates(2);
             update = true;
         }
-        ItemStack drained = Utils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
+        ItemStack drained = ICUtils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!drained.isEmpty()) {
             if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), drained, true)) inventory.get(2).grow(drained.getCount());
             else if (inventory.get(2).isEmpty()) inventory.set(2, drained.copy());
@@ -473,7 +472,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
                 FluidStack sim = out.copy();
                 int accepted = handler.fill(sim, false);
                 if (accepted > 0) {
-                    FluidStack push = Utils.copyFluidStackWithAmount(out, accepted, false);
+                    FluidStack push = ICUtils.copyFluidStackWithAmount(out, accepted, false);
                     int pushed = handler.fill(push, true);
                     tanks[0].drain(pushed, true);
                     changed = true;
@@ -532,9 +531,10 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         boolean wasRunning = isRunning;
         isRunning = soundGracePeriod > 0;
         if (isRunning != wasRunning) notifyNearbyClients();
-        int comp = getComparatorInputOverride();
+        int comp = comparatorValue();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
+            notifyComparators();
             update = true;
         }
         if (update) {
@@ -555,7 +555,9 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return power > 0;
     }
 
-    @Override public int getComparatorInputOverride() {
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() {
         return (int)Math.min(15, 15 * heatLevel / targetTemperature());
     }
 

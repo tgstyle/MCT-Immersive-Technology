@@ -1,19 +1,19 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import com.immersiveconvergence.api.multiblock.GenericShape;
 
+import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockOverlayText;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.util.Utils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -81,7 +81,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
     @Override protected boolean useMirroredShape() { return false; }
 
     @Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
-        if (Utils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
+        if (ICUtils.isFluidRelatedItemStack(player.getHeldItem(EnumHand.MAIN_HAND))) {
             TileEntitySteelSheetmetalTankMaster m = master();
             FluidStack fs = m != null ? m.tank.getFluid() : null;
             if (fs == null || fs.getFluid() == null) return new String[]{TranslationKey.GUI_EMPTY.text()};
@@ -92,9 +92,11 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
 
     @Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
 
+    @Override protected String[] comparatorPoINames() { return new String[]{"comparator_base0", "comparator_layer0"}; }
+
     @Override public int getComparatorInputOverride() {
         TileEntitySteelSheetmetalTankMaster m = master();
-        return m != null ? m.getComparatorInputOverride() : 0;
+        return m != null && isComparatorPos() ? m.comparatorOutputFor(posInMultiblock()) : 0;
     }
 
     @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }

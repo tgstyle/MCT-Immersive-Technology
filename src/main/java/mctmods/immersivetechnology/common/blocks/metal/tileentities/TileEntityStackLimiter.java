@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.util.Utils;
+
+import com.immersiveconvergence.api.util.ICUtils;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
@@ -65,7 +66,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	boolean busy = false;
 
 	public IItemHandler getDestination() {
-		TileEntity dst = Utils.getExistingTileEntity(world, pos.offset(facing, -1));
+		TileEntity dst = ICUtils.getExistingTileEntity(world, pos.offset(facing, -1));
 		if (dst != null && dst.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)) { return dst.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing); }
 		return null;
 	}

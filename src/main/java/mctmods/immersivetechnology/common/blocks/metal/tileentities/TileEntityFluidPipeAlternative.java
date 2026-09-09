@@ -1,5 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
+import mctmods.immersivetechnology.common.ITContent;
+import mctmods.immersivetechnology.common.util.ITIPipe;
+import mctmods.immersivetechnology.mixin.MixinIETileEntityFluidPipe;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -13,11 +17,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
-import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.util.ITIPipe;
-import mctmods.immersivetechnology.common.util.ITUtils;
-import mctmods.immersivetechnology.mixin.MixinIETileEntityFluidPipe;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -61,7 +61,6 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
     private static Map<BlockPos, List<ITDirectionalFluidOutput>> getIndirectConnectionsForWorld(World world) { return indirectConnections.computeIfAbsent(world.provider.getDimension(), k -> new HashMap<>()); }
 
     public EnumDyeColor getColor() { return color; }
-    public void setColor(EnumDyeColor color) { this.color = color; }
 
     @SuppressWarnings("unchecked")
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
@@ -98,7 +97,7 @@ public class TileEntityFluidPipeAlternative extends TileEntityFluidPipe implemen
         EnumFacing dir = EnumFacing.getFacingFromVector(otherPos.getX() - pos.getX(), otherPos.getY() - pos.getY(), otherPos.getZ() - pos.getZ());
         boolean changed = updateConnectionByte(dir);
         if (changed) {
-            ITUtils.improvedMarkBlockForUpdate(world, pos, null, EnumSet.complementOf(EnumSet.of(dir)));
+            ICUtils.improvedMarkBlockForUpdate(world, pos, null, EnumSet.complementOf(EnumSet.of(dir)));
             invalidateNetworkCache(pos);
             markContainingBlockForUpdate(null);
             if (!world.isRemote) {

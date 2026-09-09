@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.crafttweaker;
 
-import blusunrize.immersiveengineering.api.crafting.IngredientStack;
+import com.immersiveconvergence.api.crafting.ICIngredientStack;
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.IAction;
 import crafttweaker.api.item.IIngredient;
@@ -20,7 +20,7 @@ public class MeltingCrucible {
     @ZenMethod
     public static void addRecipe(ILiquidStack outputFluid, IIngredient inputItem, int time, @Optional double requiredTemp) {
         FluidStack fluidOut = CraftTweakerHelper.toFluidStack(outputFluid);
-        IngredientStack itemIn = CraftTweakerHelper.toIEIngredientStack(inputItem);
+        ICIngredientStack itemIn = CraftTweakerHelper.toICIngredientStack(inputItem);
 
         if (fluidOut == null || itemIn == null || itemIn.inputSize <= 0) { return; }
 

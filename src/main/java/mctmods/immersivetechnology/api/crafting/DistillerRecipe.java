@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.common.util.ListUtils;
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.util.ICUtils;
+
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DistillerRecipe extends MultiblockRecipe {
+public class DistillerRecipe extends MultiblockRecipeBase {
     public static float energyModifier = 1;
     public static float timeModifier = 1;
     public float chance;
@@ -32,7 +33,7 @@ public class DistillerRecipe extends MultiblockRecipe {
         this.chance = chance;
         this.fluidInputList = Lists.newArrayList(this.fluidInput);
         this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
-        this.outputList = ListUtils.fromItems(this.itemOutput);
+        this.outputList = ICUtils.fromItems(this.itemOutput);
     }
 
     public static ArrayList<DistillerRecipe> recipeList = new ArrayList<>();
@@ -79,6 +80,6 @@ public class DistillerRecipe extends MultiblockRecipe {
 
     @Override public NonNullList<ItemStack> getActualItemOutputs(TileEntity tile) {
         if (tile.getWorld().rand.nextFloat() <= chance) { return outputList; }
-        else { return ListUtils.fromItems(); }
+        else { return ICUtils.fromItems(); }
     }
 }

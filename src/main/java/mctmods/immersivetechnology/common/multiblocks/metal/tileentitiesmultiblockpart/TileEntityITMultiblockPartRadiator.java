@@ -1,18 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.MultiblockHandler;
-import blusunrize.immersiveengineering.client.ClientUtils;
 
+
+import com.immersiveconvergence.api.ICLib;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.multiblock.*;
-
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.ITContent;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityRadiatorSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.util.ITUtils;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -33,7 +33,7 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartRadiator() { super("IT:Radiator", ITShapes.get("radiator"), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.RADIATOR), ITUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.RADIATOR_SLAVE)); }
+    public TileEntityITMultiblockPartRadiator() { super("IT:Radiator", ITShapes.get("radiator"), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.RADIATOR), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.RADIATOR_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
@@ -64,7 +64,7 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
         GlStateManager.rotate(-45, 0, 1, 0);
         GlStateManager.rotate(-20, 1, 0, 0);
         GlStateManager.scale(8, 8, 8);
-        ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
     }
 
     private static final class Orientation {
@@ -113,11 +113,11 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
 
         BlockPos masterPos = localToWorld(orientation.origin, orientation.transposed ? -orientation.masterX : orientation.masterX, orientation.masterY, orientation.masterZ, side, orientation.transposed);
 
-        ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(Lib.TOOL_HAMMER) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
-        if (MultiblockHandler.fireMultiblockFormationEventPre(player, this, pos, hammer).isCanceled()) return false;
+        ItemStack hammer = player.getHeldItemMainhand().getItem().getToolClasses(player.getHeldItemMainhand()).contains(ICLib.TOOL_HAMMER) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
+        if (MultiblockRegistry.formationCancelled(player, this, pos, hammer)) return false;
 
-        IBlockState masterState = masterBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, false);
-        IBlockState slaveState = slaveBlockState.withProperty(IEProperties.FACING_HORIZONTAL, side).withProperty(IEProperties.MULTIBLOCKSLAVE, true);
+        IBlockState masterState = masterBlockState.withProperty(ICProperties.FACING_HORIZONTAL, side).withProperty(ICProperties.MULTIBLOCKSLAVE, false);
+        IBlockState slaveState = slaveBlockState.withProperty(ICProperties.FACING_HORIZONTAL, side).withProperty(ICProperties.MULTIBLOCKSLAVE, true);
 
         for (int eff_h = 0; eff_h < orientation.height; eff_h++) for (int l = 0; l < length; l++) for (int eff_w = 0; eff_w < orientation.width; eff_w++) {
             int orig_h = orientation.transposed ? eff_w : eff_h;
@@ -138,7 +138,7 @@ public class TileEntityITMultiblockPartRadiator extends MachineTemplateMultibloc
                 world.addBlockEvent(pos2, slaveBlockState.getBlock(), 255, 0);
             }
         }
-        MultiblockHandler.fireMultiblockFormationEventPost(player, this, pos, hammer);
+        MultiblockRegistry.formationDone(player, this, pos, hammer);
         return true;
     }
 

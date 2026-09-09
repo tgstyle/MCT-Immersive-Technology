@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
@@ -8,6 +7,7 @@ import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHe
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
 import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 
 import net.minecraft.block.material.Material;
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice> {
 
     public BlockMetalDevice() {
-        super("metal_device", Material.IRON, PropertyEnum.create("type", BlockType_MetalDevice.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE, IEProperties.BOOLEANS[0], IEProperties.DYNAMICRENDER, IEProperties.TILEENTITY_PASSTHROUGH);
+        super("metal_device", Material.IRON, PropertyEnum.create("type", BlockType_MetalDevice.class), ItemBlockITBase.class, ICProperties.FACING_ALL, ICProperties.MULTIBLOCKSLAVE, ICProperties.BOOLEANS[0], ICProperties.DYNAMICRENDER, ICProperties.TILEENTITY_PASSTHROUGH);
         this.setHardness(3.0F);
         this.setResistance(15.0F);
         lightOpacity = 0;
@@ -65,8 +65,8 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityAdvancedCokeOvenBaseheater) {
             TileEntityAdvancedCokeOvenBaseheater heater = (TileEntityAdvancedCokeOvenBaseheater) te;
-            state = state.withProperty(IEProperties.BOOLEANS[0], heater.getIsActive());
-            state = state.withProperty(IEProperties.MULTIBLOCKSLAVE, heater.dummy);
+            state = state.withProperty(ICProperties.BOOLEANS[0], heater.getIsActive());
+            state = state.withProperty(ICProperties.MULTIBLOCKSLAVE, heater.dummy);
         }
         return state;
     }
@@ -76,7 +76,7 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState extended = (IExtendedBlockState) state;
             TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileEntityAdvancedCokeOvenBaseheater) { extended = extended.withProperty(IEProperties.TILEENTITY_PASSTHROUGH, te); }
+            if (te instanceof TileEntityAdvancedCokeOvenBaseheater) { extended = extended.withProperty(ICProperties.TILEENTITY_PASSTHROUGH, te); }
             return extended;
         }
         return state;

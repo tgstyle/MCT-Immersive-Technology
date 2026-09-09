@@ -1,12 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
@@ -15,6 +13,8 @@ import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.particles.ParticleFlameCustom;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -62,7 +62,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave implements ICFluidTank.TankListener, IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
+public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave implements ICFluidTank.TankListener, IComparatorOverride, IICInventory, IBinaryMessageReceiver {
 
     private static int fuelTankSize() { return Multiblocks.boilerLiquid.boilerLiquid_fuel_tankSize; }
     private static double heatLossPerTick() { return Multiblocks.boilerLiquid.boilerLiquid_heat_lossPerTick; }
@@ -101,7 +101,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
         if (nbt.hasKey("workingHeatLevel")) { workingHeatLevel = nbt.getDouble("workingHeatLevel"); }
         pilotLit = nbt.getBoolean("pilotLit");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
-        if (!descPacket) { inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
+        if (!descPacket) { inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
         if (formed && !descPacket) {
             needsPoIInit = true;
             needsNotify = true;
@@ -116,7 +116,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
         nbt.setDouble("workingHeatLevel", workingHeatLevel);
         nbt.setBoolean("pilotLit", pilotLit);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
-        if (!descPacket) { nbt.setTag("inventory", Utils.writeInventory(inventory)); }
+        if (!descPacket) { nbt.setTag("inventory", ICUtils.writeInventory(inventory)); }
     }
 
     void InitializePoIs() {
@@ -157,7 +157,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
         heatLevel = scaledHeat;
         pilotLit = legacyNbt.getInteger("fuelBurnRemaining") > 0 || scaledHeat > 0;
         redstoneControlInverted = legacyNbt.getBoolean("redstoneControlInverted");
-        NonNullList<ItemStack> legacyInventory = Utils.readInventory(legacyNbt.getTagList("inventory", 10), 6);
+        NonNullList<ItemStack> legacyInventory = ICUtils.readInventory(legacyNbt.getTagList("inventory", 10), 6);
         inventory.set(0, legacyInventory.get(0));
         inventory.set(1, legacyInventory.get(1));
     }
@@ -169,11 +169,11 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
         boolean torch = Block.getBlockFromItem(heldItem.getItem()) == Blocks.TORCH;
         boolean flintAndSteel = heldItem.getItem() == Items.FLINT_AND_STEEL;
         if (!torch && !flintAndSteel) return false;
-        if (pilotLit) return true;
-        if (tanks[0].getFluidAmount() <= 0 || BoilerLiquidRecipe.findFuel(tanks[0].getFluid()) == null) return true;
+        if (pilotLit) return false;
+        if (tanks[0].getFluidAmount() <= 0 || BoilerLiquidRecipe.findFuel(tanks[0].getFluid()) == null) return false;
         if (!world.isRemote) {
             pilotLit = true;
-            heatLevel = Math.max(heatLevel, pilotHeat());
+            heatLevel = pilotHeat();
             world.playSound(null, getPos(), ITSounds.gasIgnite, SoundCategory.BLOCKS, 0.5f, 1.0f);
             if (torch) { heldItem.shrink(1); }
             else { heldItem.damageItem(1, player); }
@@ -186,7 +186,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
 
     private void notifyIONeighbors() {
         if (fluidInputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidInputPos0.position), getBlockType(), true);
-        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+        notifyComparators();
     }
 
     private void notifyNearbyClients() {
@@ -240,7 +240,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
                     exhaustPos0.getX() + 0.5, exhaustPos0.getY() + 0.1, exhaustPos0.getZ() + 0.5,
                     rand.nextFloat() * 0.0625f - 0.03125f, 0.0625f, rand.nextFloat() * 0.0625f - 0.03125f));
         }
-        if (pilotLit && heatLevel > pilotHeat()) {
+        if (pilotLit && heatLevel > pilotHeat() && !isRSDisabled() && consumerHasWater()) {
             ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
                     exhaustPos0.getX() + 0.5,
                     exhaustPos0.getY() + 1.25,
@@ -249,6 +249,15 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
             cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
             Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private boolean consumerHasWater() {
+        if (heatConsumerTEPos0 == null) { return false; }
+        TileEntity te = world.getTileEntity(heatConsumerTEPos0);
+        if (!(te instanceof TileEntityBoilerTankSlave)) { return false; }
+        TileEntityBoilerTankMaster tank = ((TileEntityBoilerTankSlave)te).master();
+        return tank != null && tank.tanks[0].getFluidAmount() > 0;
     }
 
     @SideOnly(Side.CLIENT)
@@ -267,7 +276,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(exhaustPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), exhaustPos0.getX(), exhaustPos0.getY(), exhaustPos0.getZ(), 0));
         }
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
         }
         super.disassemble();
@@ -302,10 +311,10 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
             }
             world.markChunkDirty(getPos(), this);
         }
-        int comp = getComparatorInputOverride();
+        int comp = comparatorValue();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+            notifyComparators();
         }
         if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
         else if (changed) { throttledBlockUpdate(); }
@@ -337,13 +346,14 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
                 workingHeatLevel = defaultWorkingHeatLevel();
             }
             else {
-                targetHeat = cachedFuelRecipe.targetHeat;
+                BoilerLiquidRecipe fuel = cachedFuelRecipe;
+                targetHeat = fuel.targetHeat;
                 workingHeatLevel = targetHeat;
                 if (isFullMode()) {
-                    int drainAmount = cachedFuelRecipe.fluidInput.amount;
+                    int drainAmount = fuel.fluidInput.amount;
                     FluidStack drained = tanks[0].drain(drainAmount, true);
                     if (drained != null && drained.amount == drainAmount) {
-                        if (heatLevel < targetHeat) { heatLevel = Math.min(heatLevel + cachedFuelRecipe.heatPerTick, targetHeat); }
+                        if (heatLevel < targetHeat) { heatLevel = Math.min(heatLevel + fuel.heatPerTick, targetHeat); }
                         else { heatLevel = Math.max(heatLevel - heatLossPerTick(), targetHeat); }
                     }
                     else { pilotBurn(); }
@@ -365,7 +375,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
 
     private boolean fuelTankLogic() {
         int prev = tanks[0].getFluidAmount();
-        ItemStack empty = Utils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
+        ItemStack empty = ICUtils.drainFluidContainer(tanks[0], inventory.get(0), inventory.get(1), null);
         if (prev != tanks[0].getFluidAmount()) {
             if (!inventory.get(1).isEmpty() && OreDictionary.itemMatches(inventory.get(1), empty, true)) inventory.get(1).grow(empty.getCount());
             else if (inventory.get(1).isEmpty()) inventory.set(1, empty.copy());
@@ -403,7 +413,9 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
         markContainingBlockForUpdate(null);
     }
 
-    @Override public int getComparatorInputOverride() { return workingHeatLevel > 0 ? (int)Math.min(15, 15 * (heatLevel / workingHeatLevel)) : 0; }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return workingHeatLevel > 0 ? (int)Math.min(15, 15 * (heatLevel / workingHeatLevel)) : 0; }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 

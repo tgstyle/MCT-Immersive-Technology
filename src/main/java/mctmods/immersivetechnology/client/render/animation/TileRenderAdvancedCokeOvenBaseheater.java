@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.render.animation;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.ClientUtils;
+
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.ICClientUtils;
 
 import mctmods.immersivetechnology.client.render.ITTESRHelper;
 import mctmods.immersivetechnology.common.ITContent;
@@ -31,7 +32,7 @@ public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRende
         if (state.getBlock() != ITContent.blockMetalDevice) { return; }
         state = state.getBlock().getActualState(state, getWorld(), blockPos);
 
-        IBlockState dynamicState = state.withProperty(IEProperties.DYNAMICRENDER, true);
+        IBlockState dynamicState = state.withProperty(ICProperties.DYNAMICRENDER, true);
         IBakedModel fanModel = blockRenderer.getModelForState(dynamicState);
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -47,7 +48,7 @@ public class TileRenderAdvancedCokeOvenBaseheater extends TileEntitySpecialRende
         float rot = te.getFanRotation(partialTicks);
         GlStateManager.rotate(rot, te.facing.rotateY().getXOffset(), te.facing.rotateY().getYOffset(), te.facing.rotateY().getZOffset());
 
-        ClientUtils.bindAtlas();
+        ICClientUtils.bindAtlas();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
         worldRenderer.setTranslation(-0.5, -0.5, -0.5);
         ITTESRHelper.renderQuads(fanModel.getQuads(dynamicState, null, 0L), worldRenderer, te.getWorld(), blockPos, false);

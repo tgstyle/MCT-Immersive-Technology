@@ -1,15 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
+import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
@@ -19,6 +17,7 @@ import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICFluxStorage;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.core.ICCommonConfig;
 
 import io.netty.buffer.ByteBuf;
@@ -91,13 +90,18 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
     public int fuelBurnRemaining = 0;
+    private boolean isShutdown = false;
     public int speed;
     public int ignitionGracePeriod = 0;
     public boolean ignited;
     public boolean starterRunning = false;
+    public float currentTorque = Multiblocks.gasTurbine.gasTurbine_torque;
+    private boolean stall = false;
+    private boolean everIgnited = false;
 
-    private float targetSoundLevel;
-    private float soundVolume = 0f;
+    private int effectiveMaxSpeed = maxSpeed();
+    private float currentLevel = 0f;
+    private float currentPitch = 0f;
     private int soundGracePeriod = 0;
     private int igniteSoundDelay = 0;
     private int tickCountdown = 5;
@@ -121,9 +125,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         speed = nbt.getInteger("speed");
         starterRunning = nbt.getBoolean("starter");
+        stall = nbt.getBoolean("stall");
+        everIgnited = nbt.getBoolean("everIgnited");
         ignitionGracePeriod = nbt.getInteger("ignitionGracePeriod");
         animation.readFromNBT(nbt);
         fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
+        isShutdown = nbt.getBoolean("isShutdown");
         starterStorage.readFromNBT(nbt.getCompoundTag("starterStorage"));
         sparkplugStorage.readFromNBT(nbt.getCompoundTag("sparkplugStorage"));
         redstoneControlInverted = nbt.getBoolean("redstoneControlInverted");
@@ -131,10 +138,6 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         isRunning = nbt.getBoolean("isRunning");
         if (formed && !descPacket) needsPoIInit = true;
-        if (world.isRemote) {
-            targetSoundLevel = (float)speed / maxSpeed();
-            soundVolume = targetSoundLevel;
-        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -143,9 +146,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("speed", speed);
         nbt.setBoolean("starter", starterRunning);
+        nbt.setBoolean("stall", stall);
+        nbt.setBoolean("everIgnited", everIgnited);
         nbt.setInteger("ignitionGracePeriod", ignitionGracePeriod);
         animation.writeToNBT(nbt);
         nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
+        nbt.setBoolean("isShutdown", isShutdown);
         nbt.setTag("starterStorage", starterStorage.writeToNBT(new NBTTagCompound()));
         nbt.setTag("sparkplugStorage", sparkplugStorage.writeToNBT(new NBTTagCompound()));
         nbt.setBoolean("redstoneControlInverted", redstoneControlInverted);
@@ -157,10 +163,10 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
         if (particle0 == null) InitializePoIs();
-        if (!starterRunning || speed < maxSpeed() / 4) return;
+        if (!starterRunning || speed < effectiveMaxSpeed / 4) return;
         Random rand = new Random();
-        if (rand.nextInt(40) != 0) return;
-        int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
+        if (rand.nextInt(40) == 0) return;
+        int lessParticleSetting = ICClientUtils.mc().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (particle0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
@@ -169,7 +175,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 particle0.getY() + 0.5f,
                 particle0.getZ() + 2 - rand.nextFloat() * 3,
                 0, 0.02f, 0);
-        ClientUtils.mc().effectRenderer.addEffect(particle);
+        ICClientUtils.mc().effectRenderer.addEffect(particle);
     }
 
     @SideOnly(Side.CLIENT)
@@ -178,14 +184,16 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (smokePos1 == null || !isRunning || world.getTotalWorldTime() % 2 != 0) return;
         if (FluidUtil.getFluidHandler(world, outputFront0, fluidOutputPos0.facing.getOpposite()) != null) return;
         Random rand = new Random();
-        int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
+        int lessParticleSetting = ICClientUtils.mc().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         if (smokePos1.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
-        float normSpeed = Math.max(0f, ITUtils.remapRange(100f, maxSpeed(), 0f, 1f, speed));
+        float normSpeed = Math.max(0f, ITUtils.remapRange(100f, effectiveMaxSpeed, 0f, 1f, speed));
         double dirVelHoriz = 0.125 * normSpeed;
+        double dirVelVert = 0.1 * normSpeed;
         double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
         double velX = facing.getXOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        double velY = facing.getYOffset() * dirVelVert + baseUp;
         double velZ = facing.getZOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
         FluidStack outFluid = tanks[1].getFluid();
         float r = 0.5F, g = 0.5F, b = 0.5F;
@@ -196,22 +204,31 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             b = (tint & 0xFF) / 255f;
         }
         ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
-                smokePos1.getX() + 0.5, smokePos1.getY() + 0.5, smokePos1.getZ() + 0.5, velX, baseUp, velZ, ITConfig.Client.particles.colored_smoke_height);
+                smokePos1.getX() + 0.5, smokePos1.getY() + 0.5, smokePos1.getZ() + 0.5, velX, velY, velZ, ITConfig.Client.particles.colored_smoke_height);
         cloud.setRBGColorF(r, g, b);
-        ClientUtils.mc().effectRenderer.addEffect(cloud);
+        ICClientUtils.mc().effectRenderer.addEffect(cloud);
     }
+
+    @SideOnly(Side.CLIENT)
+    private static float soundAttenuation(EntityPlayerSP player, BlockPos pos, float divisor) { return Math.max((float)player.getDistanceSq(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5) / divisor, 1); }
 
     @SideOnly(Side.CLIENT)
     private void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float att = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 64, 1);
-        float level = ITUtils.remapRange(0, 1, 0.5f, 1.5f, soundVolume);
-        if (speed == 0) ICSoundHandler.stopSound(soundPos0);
-        else ITSounds.gasTurbineRunning.PlayRepeating(soundPos0, (level - 0.5f) / att, level);
+        float targetLevel = ITUtils.remapRange(0, effectiveMaxSpeed, 0.2f, 1.0f, speed);
+        if (currentLevel == 0f) { currentLevel = targetLevel; }
+        else { currentLevel = currentLevel * 0.9f + targetLevel * 0.1f; }
+        float targetPitch = ITUtils.remapRange(0, effectiveMaxSpeed, 0.5f, 1.5f, speed);
+        if (currentPitch == 0f) { currentPitch = targetPitch; }
+        else { currentPitch = currentPitch * 0.95f + targetPitch * 0.05f; }
+        if (currentPitch < 0.5f) { currentPitch = 0.5f; }
+        boolean runningAudible = speed > 0 && ((everIgnited && !starterRunning) || (stall && ignited));
+        if (!runningAudible) { ICSoundHandler.stopSound(soundPos0); }
+        else { ITSounds.gasTurbineRunning.PlayRepeating(soundPos0, (8 * (currentLevel - 0.2f)) / soundAttenuation(player, soundPos0, 32f), currentPitch); }
         if (starterRunning) {
-            ITSounds.gasTurbineStarter.PlayRepeating(soundPos3, Math.min((level - .5f) / att, .2f), 1);
-            if (speed >= maxSpeed() / 4) ITSounds.gasTurbineArc.PlayRepeating(soundPos1, Math.min((level - .5f) / att, .2f), 1);
+            ITSounds.gasTurbineStarter.PlayRepeating(soundPos3, Math.min(currentLevel / soundAttenuation(player, soundPos3, 64f), 0.4f), 1);
+            if (speed >= effectiveMaxSpeed / 4) { ITSounds.gasTurbineArc.PlayRepeating(soundPos1, Math.min(currentLevel / soundAttenuation(player, soundPos1, 64f), 0.4f), 1); }
         } else {
             ICSoundHandler.stopSound(soundPos3);
             ICSoundHandler.stopSound(soundPos1);
@@ -250,9 +267,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         }
         else {
             speed = buf.readInt();
+            effectiveMaxSpeed = buf.readInt();
             starterRunning = buf.readBoolean();
-            targetSoundLevel = (float)speed / maxSpeed();
             isRunning = buf.readBoolean();
+            stall = buf.readBoolean();
+            everIgnited = buf.readBoolean();
+            ignited = buf.readBoolean();
         }
     }
 
@@ -261,8 +281,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(speed);
+        buf.writeInt(effectiveMax());
         buf.writeBoolean(starterRunning);
         buf.writeBoolean(isRunning);
+        buf.writeBoolean(stall);
+        buf.writeBoolean(everIgnited);
+        buf.writeBoolean(ignited);
         BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
     }
 
@@ -274,11 +298,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         super.update();
         if (!formed || world.isRemote) {
             if (world.isRemote) {
-                float rotationSpeed = speed == 0 ? 0f : ((float)speed / (float)maxSpeed()) * maxRotationSpeed();
+                float rotationSpeed = speed == 0 || effectiveMaxSpeed <= 0 ? 0f : ((float)speed / (float)effectiveMaxSpeed) * maxRotationSpeed();
                 animation.setAnimationRotation(animation.getAnimationRotation() + animation.getAnimationMomentum());
                 animation.setAnimationMomentum(rotationSpeed);
-                if (soundVolume < targetSoundLevel) { soundVolume = Math.min(targetSoundLevel, soundVolume + 0.01f); }
-                else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(targetSoundLevel, soundVolume - 0.01f); }
                 handleSounds();
                 spawnParticles();
                 spawnVentSmoke();
@@ -297,13 +319,41 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         int prevSpeed = speed;
         boolean wasRunning = isRunning;
 
-        if (speed < maxSpeed() / 4) {
-            if (canRun) {
+        boolean wasStall = stall;
+        if (speed <= 0) {
+            speed = 0;
+            isShutdown = false;
+            stall = false;
+            everIgnited = false;
+            currentTorque = Multiblocks.gasTurbine.gasTurbine_torque;
+        }
+        if (!canRun) {
+            isShutdown = true;
+            ignitionGracePeriod = 0;
+            fuelBurnRemaining = 0;
+            stall = false;
+        }
+
+        if (speed < effectiveMax() / 4) {
+            if (canRun && !isShutdown) {
                 if (ignitionGracePeriod > 0) ignitionGracePeriod--;
                 speedUp();
             } else speedDown();
+        } else if (!isShutdown && starterRunning) {
+                if (canIgnite()) {
+                stall = true;
+                if (!wasStall) ignite();
+                else ignitionGracePeriod = 60;
+                speed = effectiveMax() / 4;
+                if (ignitionGracePeriod > 0) ignitionGracePeriod--;
+            } else {
+                stall = false;
+                speedDown();
+            }
         } else {
-            if (fuelBurnRemaining > 0 && (ignited || canIgnite())) {
+            stall = false;
+            if (isShutdown) speedDown();
+            else if (fuelBurnRemaining > 0 && (ignited || canIgnite())) {
                 fuelBurnRemaining--;
                 if (!ignited) ignite();
                 speedUp();
@@ -311,6 +361,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
                 if (lastRecipe == null || !Objects.requireNonNull(tanks[0].getFluid()).isFluidEqual(lastRecipe.fluidInput)) cachedFuelRecipe = GasTurbineRecipe.findFuel(tanks[0].getFluid());
                 GasTurbineRecipe recipe = lastRecipe = cachedFuelRecipe;
                 if (recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
+                    currentTorque = recipe.torque;
                     fuelBurnRemaining = recipe.getTotalProcessTime() - 1;
                     tanks[0].drain(recipe.fluidInput.amount, true);
                     if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
@@ -338,7 +389,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         animation.setAnimationMomentum(rotationSpeed);
         animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
 
-        boolean changed = animation.getAnimationMomentum() != oldMomentum || starterRunning != prevStarterRunning || prevSpeed != speed || isRunning != (speed > 0);
+        boolean changed = animation.getAnimationMomentum() != oldMomentum || starterRunning != prevStarterRunning || prevSpeed != speed || isRunning != (speed > 0) || stall != wasStall;
         if (changed && tickCountdown-- <= 0) {
             notifyNearbyClients();
             tickCountdown = 5;
@@ -349,24 +400,17 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
             else { throttledBlockUpdate(); }
         }
 
-        int comp = getComparatorInputOverride();
+        int comp = comparatorValue();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            if (redstonePos0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
-                world.updateComparatorOutputLevel(rsPos, getBlockType());
-            }
+            notifyComparators();
         }
     }
 
     private void speedUp() {
-        if (starterRunning) {
-            if (speed >= maxSpeed() / 4) speed = Math.max(Math.min(effectiveMax(), speed + speedGainPerTick() - speedLossPerTick()), maxSpeed() / 4);
-            else speed = Math.min(maxSpeed() / 4, speed + speedGainPerTick());
-        } else {
-            if (speed >= maxSpeed() / 4) speed = Math.min(effectiveMax(), speed + speedGainPerTick());
-            else speedDown();
-        }
+        if (starterRunning) speed = Math.min(effectiveMax() / 4, speed + speedGainPerTick());
+        else if (speed >= effectiveMax() / 4) speed = Math.min(effectiveMax(), speed + speedGainPerTick());
+        else speedDown();
     }
 
     private void speedDown() {
@@ -389,9 +433,12 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void ignite() {
         sparkplugStorage.modifyEnergyStored(-sparkplugConsumption());
         ignited = true;
+        everIgnited = true;
         ignitionGracePeriod = 60;
-        BinaryTileSyncMessage.sendToAllTracking(world, getPos(), Unpooled.buffer());
-        igniteSoundDelay = 3;
+        if (speed < effectiveMax() / 2) {
+            BinaryTileSyncMessage.sendToAllTracking(world, getPos(), Unpooled.buffer());
+            igniteSoundDelay = 3;
+        }
     }
 
     private boolean canIgnite() {
@@ -408,7 +455,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (out == null) return false;
         int accepted = output.fill(out, false);
         if (accepted == 0) return false;
-        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        int drained = output.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[1].drain(drained, true);
         return drained > 0;
     }
@@ -488,7 +535,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return false;
     }
 
-    @Override public int getComparatorInputOverride() { return maxSpeed() <= 0 ? 0 : 15 * speed / maxSpeed(); }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return maxSpeed() <= 0 ? 0 : 15 * speed / maxSpeed(); }
 
     @Override public boolean isDummy() { return false; }
 
@@ -527,7 +576,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return null;
     }
 
-    public FluxStorage getFluxStorageAtPosition(BlockPos position) {
+    public ICFluxStorage getFluxStorageAtPosition(BlockPos position) {
         if (energyInputPos0 == null) InitializePoIs();
         return energyInputPos1.position.equals(position) ? sparkplugStorage : starterStorage;
     }

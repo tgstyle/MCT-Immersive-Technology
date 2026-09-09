@@ -1,19 +1,18 @@
 package mctmods.immersivetechnology.common.items;
 
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.MultiblockHandler;
-import blusunrize.immersiveengineering.api.tool.ITool;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
-import blusunrize.immersiveengineering.common.util.RotationUtil;
-import blusunrize.immersiveengineering.common.util.advancements.IEAdvancements;
+import com.immersiveconvergence.api.ICLib;
+import com.immersiveconvergence.api.IICTool;
+import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.util.ICNBT;
+import com.immersiveconvergence.api.util.ICUtils;
+
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -32,26 +31,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.Set;
 
-public class ItemFormationTool extends ItemITBase implements ITool {
+public class ItemFormationTool extends ItemITBase implements IICTool {
     public ItemFormationTool() { super("formation_tool", 1); }
 
     @SideOnly(Side.CLIENT)
     @Override public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        addInfo(tooltip, Lib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
-        addInfo(tooltip, Lib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
+        addInfo(tooltip, ICLib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
+        addInfo(tooltip, ICLib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
 
     @SideOnly(Side.CLIENT)
     private void addInfo(List<String> tooltip, String titleKey, ItemStack stack, String nbtKey) {
-        if (!ItemNBTHelper.hasKey(stack, nbtKey)) { return; }
-        NBTTagList tagList = ItemNBTHelper.getTag(stack).getTagList(nbtKey, Constants.NBT.TAG_STRING);
+        if (!ICNBT.hasKey(stack, nbtKey)) { return; }
+        NBTTagList tagList = ICNBT.getTag(stack).getTagList(nbtKey, Constants.NBT.TAG_STRING);
         String title = I18n.format(titleKey);
-        if (!GuiScreen.isShiftKeyDown()) { tooltip.add(title + " " + I18n.format(Lib.DESC_INFO + "holdShift")); }
+        if (!GuiScreen.isShiftKeyDown()) { tooltip.add(title + " " + I18n.format(ICLib.DESC_INFO + "holdShift")); }
         else {
             tooltip.add(title);
-            for (int i = 0; i < tagList.tagCount(); i++) { tooltip.add(TextFormatting.DARK_GRAY + " " + I18n.format(Lib.DESC_INFO + "multiblock." + tagList.getStringTagAt(i))); }
+            for (int i = 0; i < tagList.tagCount(); i++) { tooltip.add(TextFormatting.DARK_GRAY + " " + I18n.format(ICLib.DESC_INFO + "multiblock." + tagList.getStringTagAt(i))); }
         }
     }
 
@@ -59,55 +59,38 @@ public class ItemFormationTool extends ItemITBase implements ITool {
         ItemStack stack = player.getHeldItem(hand);
         List<String> permittedMultiblocks = null;
         List<String> interdictedMultiblocks = null;
-        if (ItemNBTHelper.hasKey(stack, "multiblockPermission")) {
-            permittedMultiblocks = parseMultiblockNames(ItemNBTHelper.getTag(stack).getTagList("multiblockPermission", Constants.NBT.TAG_STRING), player, "permission");
+        if (ICNBT.hasKey(stack, "multiblockPermission")) {
+            permittedMultiblocks = parseMultiblockNames(ICNBT.getTag(stack).getTagList("multiblockPermission", Constants.NBT.TAG_STRING), player, "permission");
             if (permittedMultiblocks == null) { return EnumActionResult.FAIL; }
         }
-        if (ItemNBTHelper.hasKey(stack, "multiblockInterdiction")) {
-            interdictedMultiblocks = parseMultiblockNames(ItemNBTHelper.getTag(stack).getTagList("multiblockInterdiction", Constants.NBT.TAG_STRING), player, "interdiction");
+        if (ICNBT.hasKey(stack, "multiblockInterdiction")) {
+            interdictedMultiblocks = parseMultiblockNames(ICNBT.getTag(stack).getTagList("multiblockInterdiction", Constants.NBT.TAG_STRING), player, "interdiction");
             if (interdictedMultiblocks == null) { return EnumActionResult.FAIL; }
         }
         EnumFacing multiblockSide = side.getAxis() == EnumFacing.Axis.Y ? EnumFacing.fromAngle(player.rotationYaw).getOpposite() : side;
-        for (MultiblockHandler.IMultiblock multiblock : MultiblockHandler.getMultiblocks()) {
-            if (!multiblock.isBlockTrigger(world.getBlockState(pos))) { continue; }
-            boolean isAllowed;
-            if (permittedMultiblocks != null) { isAllowed = containsIgnoreCase(permittedMultiblocks, multiblock.getUniqueName()); }
-            else if (interdictedMultiblocks != null) { isAllowed = !containsIgnoreCase(interdictedMultiblocks, multiblock.getUniqueName()); }
-            else { isAllowed = true; }
-            if (!isAllowed) { continue; }
-            if (MultiblockHandler.fireMultiblockFormationEventPre(player, multiblock, pos, stack).isCanceled()) { continue; }
-            if (multiblock.createStructure(world, pos, multiblockSide, player)) {
-                if (player instanceof EntityPlayerMP) { IEAdvancements.TRIGGER_MULTIBLOCK.trigger((EntityPlayerMP)player, multiblock, stack); }
-                return EnumActionResult.SUCCESS;
-            }
-        }
-        return EnumActionResult.PASS;
+        final List<String> permitted = permittedMultiblocks;
+        final List<String> interdicted = interdictedMultiblocks;
+        Predicate<String> allowed = name -> permitted != null ? containsIgnoreCase(permitted, name) : interdicted == null || !containsIgnoreCase(interdicted, name);
+        return MultiblockRegistry.formFirstMatching(world, pos, multiblockSide, player, stack, allowed) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
     }
 
     @Nonnull @Override public EnumActionResult onItemUse(@Nonnull EntityPlayer player, World world, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof IEBlockInterfaces.IDirectionalTile || tile instanceof IEBlockInterfaces.IHammerInteraction || tile instanceof IEBlockInterfaces.IConfigurableSides) { return EnumActionResult.PASS; }
-        return RotationUtil.rotateBlock(world, pos, side) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+        if (tile instanceof ICBlockInterfaces.IDirectionalTile || tile instanceof ICBlockInterfaces.IHammerInteraction || tile instanceof ICBlockInterfaces.IConfigurableSides) { return EnumActionResult.PASS; }
+        return ICUtils.rotateBlock(world, pos, side) ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
     }
 
     @Nullable private static List<String> parseMultiblockNames(NBTTagList data, EntityPlayer player, String prefix) {
         List<String> result = new ArrayList<>();
         for (int i = 0; i < data.tagCount(); i++) {
             String entry = data.getStringTagAt(i);
-            if (findMultiblock(entry) == null) {
+            if (!MultiblockRegistry.exists(entry)) {
                 if (!player.getEntityWorld().isRemote) { player.sendMessage(new TextComponentString("Invalid " + prefix + " entry: " + entry)); }
                 return null;
             }
             result.add(entry);
         }
         return result;
-    }
-
-    @Nullable private static MultiblockHandler.IMultiblock findMultiblock(String uniqueName) {
-        for (MultiblockHandler.IMultiblock multiblock : MultiblockHandler.getMultiblocks()) {
-            if (multiblock.getUniqueName().equalsIgnoreCase(uniqueName)) { return multiblock; }
-        }
-        return null;
     }
 
     private static boolean containsIgnoreCase(List<String> names, String uniqueName) {
@@ -131,7 +114,7 @@ public class ItemFormationTool extends ItemITBase implements ITool {
 
     @Override public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) { return false; }
 
-    @Nonnull @Override public Set<String> getToolClasses(@Nonnull ItemStack stack) { return ImmutableSet.of(Lib.TOOL_HAMMER); }
+    @Nonnull @Override public Set<String> getToolClasses(@Nonnull ItemStack stack) { return ImmutableSet.of(ICLib.TOOL_HAMMER); }
 
     @Override public boolean isTool(ItemStack item) { return true; }
 }

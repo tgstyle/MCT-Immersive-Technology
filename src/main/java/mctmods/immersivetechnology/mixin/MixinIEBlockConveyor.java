@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.mixin;
 
 import blusunrize.immersiveengineering.common.blocks.metal.BlockConveyor;
+import mctmods.immersivetechnology.core.MCTMixinConfig;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_Conveyor;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityConveyorBeltAlternative;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;

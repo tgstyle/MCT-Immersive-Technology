@@ -1,19 +1,20 @@
 package mctmods.immersivetechnology.common.util.compat.jei.radiator;
 
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockRecipeWrapper;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import java.text.DecimalFormat;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 
 public class RadiatorRecipeWrapper extends ITMultiblockRecipeWrapper {
-	private final MultiblockRecipe recipe;
+	private final MultiblockRecipeBase recipe;
 	private static float speedMult() { return Multiblocks.radiator.radiator_speed_multiplier; }
 	private static final DecimalFormat format = new DecimalFormat("#.####");
 
-	public RadiatorRecipeWrapper(MultiblockRecipe recipe) {
+	public RadiatorRecipeWrapper(MultiblockRecipeBase recipe) {
 		super(recipe);
 		this.recipe = recipe;
 	}

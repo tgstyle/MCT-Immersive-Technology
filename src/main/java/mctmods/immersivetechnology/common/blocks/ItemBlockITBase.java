@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks;
 
 import com.immersiveconvergence.api.block.ICBlockBase;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.client.ICModels;
+import com.immersiveconvergence.api.util.ICNBT;
 
-import blusunrize.immersiveengineering.client.ClientProxy;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -50,19 +50,19 @@ public class ItemBlockITBase extends ItemBlock {
     @Override @Nonnull public String getTranslationKey(@Nonnull ItemStack stack) { return ((ICBlockBase<?>) this.block).getTranslationKey(stack); }
 
     @SideOnly(Side.CLIENT)
-    @Override public FontRenderer getFontRenderer(@Nonnull ItemStack stack) { return ClientProxy.itemFont; }
+    @Override public FontRenderer getFontRenderer(@Nonnull ItemStack stack) { return ICModels.itemFont(); }
 
     @Override public void addInformation(@Nonnull ItemStack stack, World worldIn, @Nonnull List<String> list, @Nonnull ITooltipFlag advInfo) {
         if (((ICBlockBase<?>) block).hasFlavour(stack)) {
-            String subName = ITUtils.stateOf((ICBlockBase<?>) this.block, stack.getItemDamage()).getValue(((ICBlockBase<?>) this.block).property).toString().toLowerCase(Locale.US);
+            String subName = ICUtils.stateOf(this.block, stack.getItemDamage()).getValue(((ICBlockBase<?>) this.block).property).toString().toLowerCase(Locale.US);
             String flavourKey = "desc." + ImmersiveTechnology.MODID + ".flavor." + ((ICBlockBase<?>) this.block).name + "." + subName;
             list.add(TextFormatting.GRAY + I18n.format(flavourKey));
         }
         super.addInformation(stack, worldIn, list, advInfo);
 
-        if (ItemNBTHelper.hasKey(stack, "energyStorage")) list.add(I18n.format("desc.immersiveengineering.info.energyStored", ItemNBTHelper.getInt(stack, "energyStorage")));
-        if (ItemNBTHelper.hasKey(stack, "tank")) {
-            FluidStack fs = FluidStack.loadFluidStackFromNBT(ItemNBTHelper.getTagCompound(stack, "tank"));
+        if (ICNBT.hasKey(stack, "energyStorage")) list.add(I18n.format("desc.immersiveengineering.info.energyStored", ICNBT.getInt(stack, "energyStorage")));
+        if (ICNBT.hasKey(stack, "tank")) {
+            FluidStack fs = FluidStack.loadFluidStackFromNBT(ICNBT.getTagCompound(stack, "tank"));
             if (fs != null) list.add(fs.getLocalizedName() + ": " + fs.amount + "mB");
         }
     }
@@ -109,7 +109,7 @@ public class ItemBlockITBase extends ItemBlock {
     private boolean canBlockBePlaced(World w, BlockPos pos, EnumFacing side, ItemStack stack) {
         ICBlockBase<?> blockIn = (ICBlockBase<?>) this.block;
         Block block = w.getBlockState(pos).getBlock();
-        AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox(ITUtils.stateOf(blockIn, stack.getItemDamage()), w, pos);
+        AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox(ICUtils.stateOf(blockIn, stack.getItemDamage()), w, pos);
         if (axisalignedbb != null && !w.checkNoEntityCollision(axisalignedbb.offset(pos), null)) return false;
         return block.isReplaceable(w, pos) && blockIn.canPlaceBlockOnSide(w, pos, side);
     }

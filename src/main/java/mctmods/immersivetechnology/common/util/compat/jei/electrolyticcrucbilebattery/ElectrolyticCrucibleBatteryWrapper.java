@@ -1,18 +1,19 @@
 package mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery;
 
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
 import mctmods.immersivetechnology.common.util.TranslationKey;
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockRecipeWrapper;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ElectrolyticCrucibleBatteryWrapper extends ITMultiblockRecipeWrapper {
-    public MultiblockRecipe recipe;
+    public MultiblockRecipeBase recipe;
 
-    public ElectrolyticCrucibleBatteryWrapper(MultiblockRecipe recipe) {
+    public ElectrolyticCrucibleBatteryWrapper(MultiblockRecipeBase recipe) {
         super(recipe);
         this.recipe = recipe;
     }

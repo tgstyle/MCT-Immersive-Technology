@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.shared.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
+import com.immersiveconvergence.api.block.ICTileEntityBase;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityITSlab extends TileEntityIEBase {
+public class TileEntityITSlab extends ICTileEntityBase {
 	public int slabType = 0;
 
 	@Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {

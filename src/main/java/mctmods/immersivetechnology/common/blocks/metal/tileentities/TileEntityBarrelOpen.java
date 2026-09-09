@@ -1,15 +1,14 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.api.ICLib;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import javax.annotation.Nonnull;
 
 import java.util.Random;
 
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.util.ChatUtils;
-import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
 
@@ -29,7 +28,6 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     private static int tankSize() { return Blocks.barrels.barrel_open_tankSize; }
     private static int transferSpeed() { return Blocks.barrels.barrel_open_transferSpeed; }
 
-    private int lastRandom = 0;
     private int sleep = 0;
 
     private static final Random RANDOM = new Random();
@@ -43,21 +41,16 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     public void update() {
         super.update();
         if (world.isRemote) { return; }
-        if (tank.getFluidAmount() != tank.getCapacity()) {
-            int random = 1 + RANDOM.nextInt(100);
-            if (random == lastRandom) {
-                if (tank.getFluid() == null || tank.getFluid().getFluid() == FluidRegistry.WATER) {
-                    float temp = world.getBiomeProvider().getTemperatureAtHeight(world.getBiome(pos).getTemperature(pos), pos.getY());
-                    if (world.isRaining() && world.canSeeSky(pos) && temp > 0.05F && temp < 2.0F) {
-                        int amount = 100;
-                        if (world.isThundering()) { amount = 200; }
-                        tank.fill(new FluidStack(FluidRegistry.WATER, amount), true);
-                    } else if (temp >= 2.0F) {
-                        tank.drain(Math.min(100, tank.getFluidAmount()), true);
-                    }
+        if (tank.getFluidAmount() < tank.getCapacity() && RANDOM.nextInt(20) == 0) {
+            if (tank.getFluid() == null || tank.getFluid().getFluid() == FluidRegistry.WATER) {
+                float temp = world.getBiome(pos).getDefaultTemperature();
+                if (world.isRainingAt(pos.up()) && world.canSeeSky(pos.up()) && temp > 0.05F && temp < 2.0F) {
+                    int amount = world.isThundering() ? 200 : 100;
+                    tank.fill(new FluidStack(FluidRegistry.WATER, amount), true);
+                } else if (temp >= 2.0F) {
+                    tank.drain(Math.min(100, tank.getFluidAmount()), true);
                 }
             }
-            lastRandom = random;
         }
         doFluidOutput();
     }
@@ -70,11 +63,11 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
                 IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
                 if (output != null) {
                     if (sleep == 0) {
-                        FluidStack accepted = Utils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed(), tank.getFluidAmount()), false);
+                        FluidStack accepted = ICUtils.copyFluidStackWithAmount(tank.getFluid(), Math.min(transferSpeed(), tank.getFluidAmount()), false);
                         assert accepted != null;
-                        accepted.amount = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
+                        accepted.amount = output.fill(ICUtils.copyFluidStackWithAmount(accepted, accepted.amount, true), false);
                         if (accepted.amount > 0) {
-                            int drained = output.fill(Utils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
+                            int drained = output.fill(ICUtils.copyFluidStackWithAmount(accepted, accepted.amount, false), true);
                             acceptedAmount += drained;
                             tank.drain(drained, true);
                             sleep = 0;
@@ -86,7 +79,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     }
 
     @Override
-    public boolean toggleSide(int side, @Nonnull EntityPlayer p) { return false; }
+    public boolean toggleSide(int side, @Nonnull EntityPlayer p) { return side == 0 && super.toggleSide(side, p); }
 
     @Override
     public boolean isFluidInvalid(FluidStack fluid) { return fluid != null && fluid.getFluid() != null && !fluid.getFluid().isGaseous(fluid); }
@@ -95,7 +88,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack fluid = FluidUtil.getFluidContained(heldItem);
         if (!isFluidInvalid(fluid)) {
-            ChatUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(Lib.CHAT_INFO + "noGasAllowed"));
+            ICUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(ICLib.CHAT_INFO + "noGasAllowed"));
             return true;
         }
         return FluidUtil.interactWithFluidHandler(player, hand, tank);

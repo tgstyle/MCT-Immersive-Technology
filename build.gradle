@@ -150,6 +150,8 @@ dependencies {
 
     runtimeOnly rfg.deobf("${common.ctwk_version}")
     runtimeOnly rfg.deobf("curse.maven:${common.mkce_version}")
+    compileOnly rfg.deobf("curse.maven:${common.imin_version}")
+    runtimeOnly rfg.deobf("curse.maven:${common.imin_version}")
 
     implementation rfg.deobf("curse.maven:${common.ppfx_version}")
     implementation rfg.deobf("curse.maven:${common.cfga_version}")
@@ -213,28 +215,6 @@ tasks.register('optimizePng') {
             if (newSize < size) {
                 System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
                         file, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
-            }
-        }
-    }
-}
-
-tasks.register('optimizeOgg') {
-    def soundsDir = file('src/main/resources/assets/immersivetech/sounds')
-    def oggFiles = fileTree(dir: soundsDir, includes: ["**/*.ogg"]).files as List
-    def scriptPath = "${System.getProperty('user.home')}/.optivorbis/optivorbis-inplace.sh"
-    doLast {
-        oggFiles.each { File oggFile ->
-            long size = oggFile.length()
-            def process = new ProcessBuilder(scriptPath, oggFile.absolutePath)
-                    .redirectErrorStream(true)
-                    .start()
-            def output = process.inputStream.text
-            int exitCode = process.waitFor()
-            if (exitCode != 0) { throw new GradleException("optivorbis-inplace.sh failed for ${oggFile}: ${output}") }
-            long newSize = oggFile.length()
-            if (newSize < size) {
-                System.out.format("Reduced File size of %s from %d bytes to %d bytes (reduced by %.2f%%)\n",
-                        oggFile, size, newSize, ((double) (size - newSize)) / ((double) size) * 100.0)
             }
         }
     }

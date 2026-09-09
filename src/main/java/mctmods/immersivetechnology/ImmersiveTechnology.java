@@ -1,14 +1,16 @@
 package mctmods.immersivetechnology;
 
-import blusunrize.immersiveengineering.common.Config;
+import com.immersiveconvergence.api.ICIntegration;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
+
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -34,7 +36,7 @@ public class ImmersiveTechnology {
 
     @EventHandler public void preInit(FMLPreInitializationEvent event) {
         ITLogger.logger = event.getModLog();
-        Config.preInit(event);
+        ICIntegration.refreshConfig(event);
         ITContent.preInit();
         proxy.preInit();
         ITCompatModule.doModulesPreInit();
@@ -60,7 +62,7 @@ public class ImmersiveTechnology {
 
     @EventHandler public void serverStarted(FMLServerStartedEvent event) { }
 
-    @EventHandler public void serverStopping(FMLServerStoppingEvent event) { TileEntityFluidPipeAlternative.indirectConnections.clear(); }
+    @EventHandler public void serverStopping(FMLServerStoppingEvent event) { if (Loader.isModLoaded("immersiveengineering")) { TileEntityFluidPipeAlternative.indirectConnections.clear(); } }
 
     public static CreativeTabs creativeTab = new CreativeTabs(MODID) {
         @Override @Nonnull public ItemStack createIcon() { return new ItemStack(ITContent.blockValve, 1, 0); }

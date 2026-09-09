@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
 
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -21,7 +21,7 @@ public class TileEntityITMultiblockPartDistiller extends MachineTemplateMultiblo
     @SideOnly(Side.CLIENT)
     static ItemStack renderStack;
 
-    public TileEntityITMultiblockPartDistiller() { super("IT:Distiller", ITShapes.get("distiller"), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.DISTILLER), ITUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.DISTILLER_SLAVE)); }
+    public TileEntityITMultiblockPartDistiller() { super("IT:Distiller", ITShapes.get("distiller"), ICUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.DISTILLER), ICUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.DISTILLER_SLAVE)); }
 
     @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
 
@@ -36,7 +36,7 @@ public class TileEntityITMultiblockPartDistiller extends MachineTemplateMultiblo
         GlStateManager.rotate(-20, 1, 0, 0);
         GlStateManager.scale(4, 4, 4);
         GlStateManager.disableCull();
-        ClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
+        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
         GlStateManager.enableCull();
     }
 }

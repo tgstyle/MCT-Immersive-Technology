@@ -1,19 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICFluxStorageAdvanced;
+import com.immersiveconvergence.api.util.ICInventoryHandler;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -45,7 +44,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IIEInventory, IComparatorOverride {
+public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IICInventory, IComparatorOverride {
 
     private static int outputTankSize() { return Multiblocks.meltingCrucible.meltingCrucible_output_tankSize; }
     private static int energyCapacity() { return Multiblocks.meltingCrucible.meltingCrucible_energy_size; }
@@ -58,7 +57,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     private static final int progressResolution = 64;
     public static final int slotCount = 3;
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
+    public ICFluxStorageAdvanced energyStorage = new ICFluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public ICFluidTank[] tanks = new ICFluidTank[1];
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
     public IItemHandler insertionHandler;
@@ -85,14 +84,14 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     public TileEntityMeltingCrucibleMaster() {
         tanks[0] = new ICFluidTank(outputTankSize(), this);
-        insertionHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+        insertionHandler = new ICInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     }
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt.getCompoundTag("energy"));
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
-        if (nbt.hasKey("inventory")) inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        if (nbt.hasKey("inventory")) inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         processTimeRemaining = nbt.getInteger("processTimeRemaining");
         processTimeMax = nbt.getInteger("processTimeMax");
         heatLevel = nbt.getDouble("heatLevel");
@@ -113,7 +112,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         super.writeCustomNBT(nbt, descPacket);
         nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
-        nbt.setTag("inventory", Utils.writeInventory(inventory));
+        nbt.setTag("inventory", ICUtils.writeInventory(inventory));
         nbt.setInteger("processTimeRemaining", processTimeRemaining);
         nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setDouble("heatLevel", heatLevel);
@@ -139,8 +138,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         else if (soundVolume > target) { soundVolume = Math.max(soundVolume - 0.02f, target); }
         if (soundVolume <= 0f) ICSoundHandler.stopSound(soundPos0);
         else {
-            float distance = (float)Math.sqrt(dSq);
-            float attenuation = Math.max(distance / 16f, 1f);
+            float attenuation = Math.max((float)dSq / 32f, 1f);
             ITSounds.meltingCrucible.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
@@ -158,7 +156,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), tp);
         }
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
         }
         super.disassemble();
@@ -216,10 +214,10 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
             else { throttledBlockUpdate(); }
         }
-        int comparator = getComparatorInputOverride();
+        int comparator = comparatorValue();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+            notifyComparators();
             update = true;
         }
         if (update) {
@@ -290,7 +288,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     private boolean outputTankLogic() {
         boolean update = false;
-        ItemStack filled = Utils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
+        ItemStack filled = ICUtils.fillFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!filled.isEmpty()) {
             if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), filled, true)) inventory.get(2).grow(filled.getCount());
             else if (inventory.get(2).isEmpty()) inventory.set(2, filled);
@@ -301,7 +299,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
             efficientMarkDirty();
             update = true;
         }
-        ItemStack empty = Utils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
+        ItemStack empty = ICUtils.drainFluidContainer(tanks[0], inventory.get(1), inventory.get(2), null);
         if (!empty.isEmpty()) {
             if (!inventory.get(2).isEmpty() && OreDictionary.itemMatches(inventory.get(2), empty, true)) inventory.get(2).grow(empty.getCount());
             else if (inventory.get(2).isEmpty()) inventory.set(2, empty);
@@ -325,7 +323,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         if (out == null) return false;
         int accepted = output.fill(out.copy(), false);
         if (accepted <= 0) return false;
-        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        int drained = output.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         if (drained > 0) tanks[0].drain(drained, true);
         return drained > 0;
     }
@@ -358,7 +356,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         if (energyInputPos0 != null) notifyPort(energyInputPos0);
         if (itemInputPos0 != null) notifyPort(itemInputPos0);
         if (fluidOutputPos0 != null) notifyPort(fluidOutputPos0);
-        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+        notifyComparators();
     }
 
     private void notifyPort(PoICache cache) { world.notifyNeighborsOfStateChange(getBlockPosForPos(cache.position), getBlockType(), true); }
@@ -375,7 +373,9 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return redstoneControlInverted != (power > 0);
     }
 
-    @Override public int getComparatorInputOverride() { return (int)Math.min(15, 15 * heatLevel / targetTemperature()); }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return (int)Math.min(15, 15 * heatLevel / targetTemperature()); }
 
     @Override public boolean isDummy() { return false; }
 
@@ -405,7 +405,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{0}; }
 
-    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
+    @Override @Nonnull public ICFluxStorageAdvanced getStorage() { return energyStorage; }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 

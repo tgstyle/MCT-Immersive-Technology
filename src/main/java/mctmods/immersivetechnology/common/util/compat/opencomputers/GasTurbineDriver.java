@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import blusunrize.immersiveengineering.common.util.compat.opencomputers.ManagedEnvironmentIE;
+import com.immersiveconvergence.api.compat.opencomputers.ManagedEnvironmentIC;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -32,7 +32,7 @@ public class GasTurbineDriver extends DriverSidedTileEntity {
         return TileEntityGasTurbineSlave.class;
     }
 
-    public static class SteamTurbineEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityGasTurbineMaster> {
+    public static class SteamTurbineEnvironment extends ManagedEnvironmentIC.ManagedEnvMultiblock<TileEntityGasTurbineMaster> {
         public SteamTurbineEnvironment(World world, BlockPos pos) {
             super(world, pos, TileEntityGasTurbineMaster.class);
         }

@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
+
+import com.immersiveconvergence.api.client.IICOBJModelCallback;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -9,7 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-public class ItemBlockValve extends ItemBlockITBase implements IOBJModelCallback<ItemStack> {
+public class ItemBlockValve extends ItemBlockITBase implements IICOBJModelCallback<ItemStack> {
 
 	public ItemBlockValve(Block b) { super(b); }
 

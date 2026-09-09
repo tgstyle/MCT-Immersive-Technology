@@ -1,19 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.Utils;
-
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.util.ICFluxStorageAdvanced;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.core.ICCommonConfig;
 
 import io.netty.buffer.ByteBuf;
@@ -53,7 +51,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
     private static final int rfPerTickPerPort = rfPerTick() / 6;
     private static boolean soundRPM() { return Multiblocks.alternator.alternator_sound_RPM; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick(), rfPerTickPerPort);
+    public ICFluxStorageAdvanced energyStorage = new ICFluxStorageAdvanced(Multiblocks.alternator.alternator_energy_capacitorSize, rfPerTick(), rfPerTickPerPort);
     public int speed = 0;
     public int effectiveMaxSpeed = maxSpeed();
     public float torqueMult = 1f;
@@ -110,9 +108,8 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float att = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8f, 1f);
-            float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
-            ITSounds.alternator.PlayRepeating(soundPos0, 5f * soundVolume / att, level);
+            float att = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 32f, 1f);
+            ITSounds.alternator.PlayRepeating(soundPos0, 11f * soundVolume / att, ITUtils.remapRange(0, effectiveMaxSpeed, 0.5f, 1.25f, speed));
         }
     }
 
@@ -168,11 +165,11 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             for (int i = 0; i < 6; i++) {
                 BlockPos outPos = energyOutputTEPos0[i];
                 if (outPos == null) continue;
-                TileEntity te = Utils.getExistingTileEntity(world, outPos);
+                TileEntity te = ICUtils.getExistingTileEntity(world, outPos);
                 if (te == null) continue;
                 outputs[i] = te;
                 sides[i] = energyOutputsPos0[i].facing.getOpposite();
-                simulated[i] = EnergyHelper.insertFlux(te, sides[i], budget, true);
+                simulated[i] = ICUtils.insertFlux(te, sides[i], budget, true);
                 ports.add(i);
             }
             ports.sort(Comparator.comparingInt(i -> simulated[i]));
@@ -181,7 +178,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
             for (int i : ports) {
                 if (remaining <= 0) break;
                 int possibleOutput = (int)Math.ceil((double)remaining / remainingOutputs);
-                int inserted = EnergyHelper.insertFlux(outputs[i], sides[i], possibleOutput, false);
+                int inserted = ICUtils.insertFlux(outputs[i], sides[i], possibleOutput, false);
                 energyStorage.modifyEnergyStored(-inserted);
                 remaining -= inserted;
                 remainingOutputs--;
@@ -214,13 +211,10 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         oldSpeed = speed;
         oldMaxSpeed = effectiveMaxSpeed;
 
-        int comparator = getComparatorInputOverride();
+        int comparator = comparatorValue();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstonePos0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
-                world.updateComparatorOutputLevel(rsPos, getBlockType());
-            }
+            notifyComparators();
         }
     }
 
@@ -250,10 +244,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                 world.notifyNeighborsOfStateChange(p, block, true);
             }
         }
-        if (redstonePos0 != null) {
-            BlockPos p = getBlockPosForPos(redstonePos0.position);
-            world.updateComparatorOutputLevel(p, block);
-        }
+        notifyComparators();
     }
 
     @Override public void receiveMessageFromServer(ByteBuf buf) {
@@ -306,7 +297,9 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         return true;
     }
 
-    @Override public int getComparatorInputOverride() {
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() {
         if (!formed) return 0;
         return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
     }
@@ -334,7 +327,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
                 toFlatIndex(energyOutputsPos0[3].position), toFlatIndex(energyOutputsPos0[4].position), toFlatIndex(energyOutputsPos0[5].position)};
     }
 
-    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
+    @Override @Nonnull public ICFluxStorageAdvanced getStorage() { return energyStorage; }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
 

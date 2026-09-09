@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.opencomputers;
 
-import blusunrize.immersiveengineering.common.util.compat.opencomputers.ManagedEnvironmentIE;
+import com.immersiveconvergence.api.compat.opencomputers.ManagedEnvironmentIC;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -35,7 +35,7 @@ public class DistillerDriver extends DriverSidedTileEntity {
 		return TileEntityDistillerSlave.class;
 	}
 
-	public static class DistillerEnvironment extends ManagedEnvironmentIE.ManagedEnvMultiblock<TileEntityDistillerMaster> {
+	public static class DistillerEnvironment extends ManagedEnvironmentIC.ManagedEnvMultiblock<TileEntityDistillerMaster> {
 		public DistillerEnvironment(World world, BlockPos pos) {
 			super(world, pos, TileEntityDistillerMaster.class);
 		}

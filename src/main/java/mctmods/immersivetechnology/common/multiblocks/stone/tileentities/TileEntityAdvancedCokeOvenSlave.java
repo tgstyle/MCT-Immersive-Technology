@@ -1,21 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.multiblock.GenericShape;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IActiveState;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
+import mctmods.immersivetechnology.client.ITGUI;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IActiveState;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
@@ -30,7 +27,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultiblock<TileEntityAdvancedCokeOvenSlave, IMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
+public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultiblock<TileEntityAdvancedCokeOvenSlave, ICMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
     private int loadGrace = 0;
 
@@ -88,8 +85,6 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
         return m != null && m.active;
     }
 
-    @Override @Nonnull public IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
-
     @Override public NonNullList<ItemStack> getInventory() {
         TileEntityAdvancedCokeOvenMaster m = master();
         return m != null ? m.getInventory() : NonNullList.create();
@@ -118,7 +113,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
 
-    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<IMultiblockRecipe> process) { return true; }
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<ICMultiblockRecipe> process) { return true; }
 
     @Override public int getMaxProcessPerTick() { return 1; }
 
@@ -147,7 +142,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
 
     @Override public int getComparatorInputOverride() {
         TileEntityAdvancedCokeOvenMaster m = master();
-        return m != null ? m.getComparatorInputOverride() : 0;
+        return m != null && isComparatorPos() ? m.comparatorValue() : 0;
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

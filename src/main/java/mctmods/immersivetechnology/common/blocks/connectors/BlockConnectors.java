@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.energy.wires.TileEntityImmersiveConnectable;
-import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
+
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.IICOBJModelCallback;
+import com.immersiveconvergence.api.energy.ICTileEntityConnectable;
+import com.immersiveconvergence.api.energy.ICTileEntityConnectorRedstone;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
@@ -37,7 +38,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     public static final PropertyInteger ROTATION = PropertyInteger.create("rotation", 0, 3);
 
     public BlockConnectors() {
-        super("connectors", Material.IRON, PropertyEnum.create("type", BlockType_Connectors.class), ItemBlockITBase.class, IEProperties.FACING_ALL, IEProperties.BOOLEANS[0], IEProperties.BOOLEANS[1], IOBJModelCallback.PROPERTY, ROTATION);
+        super("connectors", Material.IRON, PropertyEnum.create("type", BlockType_Connectors.class), ItemBlockITBase.class, ICProperties.FACING_ALL, ICProperties.BOOLEANS[0], ICProperties.BOOLEANS[1], IICOBJModelCallback.PROPERTY, ROTATION);
         setHardness(3.0F);
         setResistance(15.0F);
         lightOpacity = 0;
@@ -50,7 +51,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         BlockStateContainer base = super.createBlockState();
         IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState) base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
         unlisted = Arrays.copyOf(unlisted, unlisted.length+1);
-        unlisted[unlisted.length-1] = IEProperties.CONNECTIONS;
+        unlisted[unlisted.length-1] = ICProperties.CONNECTIONS;
         return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
     }
 
@@ -59,8 +60,8 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         if (state instanceof IExtendedBlockState) {
             IExtendedBlockState ext = (IExtendedBlockState) state;
             TileEntity te = world.getTileEntity(pos);
-            if (!(te instanceof TileEntityImmersiveConnectable)) return state;
-            state = ext.withProperty(IEProperties.CONNECTIONS, ((TileEntityImmersiveConnectable)te).genConnBlockstate());
+            if (!(te instanceof ICTileEntityConnectable)) return state;
+            state = ext.withProperty(ICProperties.CONNECTIONS, ((ICTileEntityConnectable)te).genConnBlockstate());
         }
         return state;
     }
@@ -69,8 +70,8 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         super.neighborChanged(state, world, pos, blockIn, fromPos);
         TileEntity te = world.getTileEntity(pos);
 
-        if (te instanceof TileEntityConnectorRedstone) {
-            TileEntityConnectorRedstone connector = (TileEntityConnectorRedstone) te;
+        if (te instanceof ICTileEntityConnectorRedstone) {
+            ICTileEntityConnectorRedstone connector = (ICTileEntityConnectorRedstone) te;
             if (world.isAirBlock(pos.offset(connector.facing))) {
                 this.dropBlockAsItem(connector.getWorld(), pos, world.getBlockState(pos), 0);
                 connector.getWorld().setBlockToAir(pos);
@@ -83,7 +84,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     @SuppressWarnings("deprecation")
     @Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedSide, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer) {
         IBlockState state = super.getStateForPlacement(world, pos, clickedSide, hitX, hitY, hitZ, meta, placer);
-        state = state.withProperty(IEProperties.FACING_ALL, clickedSide.getOpposite());
+        state = state.withProperty(ICProperties.FACING_ALL, clickedSide.getOpposite());
         if (BlockType_Connectors.values()[meta] == BlockType_Connectors.CONNECTORS_TIMER) {
             float yaw = placer.rotationYaw;
             if (yaw < 0) yaw += 360f;

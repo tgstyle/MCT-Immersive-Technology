@@ -1,6 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ITileDrop;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -8,13 +11,10 @@ import javax.annotation.Nullable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.ITileDrop;
-import blusunrize.immersiveengineering.common.util.Utils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.ITIPipe;
+import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
 import net.minecraft.block.state.IBlockState;
@@ -48,7 +48,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
 
     private FluidStack getStack(int amount, boolean pressurized) {
         if (selectedFluid == null) { return null; }
-        FluidStack stack = Utils.copyFluidStackWithAmount(selectedFluid, amount, true);
+        FluidStack stack = ICUtils.copyFluidStackWithAmount(selectedFluid, amount, true);
         if (pressurized) {
             if (stack.tag == null) { stack.tag = new NBTTagCompound(); }
             stack.tag.setBoolean("pressurized", true);
@@ -57,7 +57,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     }
 
     public void setSelectedFluid(@Nullable FluidStack stack) {
-        if (stack != null && stack.amount != 1) { stack = Utils.copyFluidStackWithAmount(stack, 1, true); }
+        if (stack != null && stack.amount != 1) { stack = ICUtils.copyFluidStackWithAmount(stack, 1, true); }
         boolean changed = (selectedFluid != null && stack != null && !selectedFluid.isFluidStackIdentical(stack))
                 || (selectedFluid != null && stack == null)
                 || (selectedFluid == null && stack != null);
@@ -109,12 +109,12 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             EnumFacing face = EnumFacing.byIndex(index);
             IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
             if (output != null) {
-                TileEntity tile = Utils.getExistingTileEntity(world, getPos().offset(face));
+                TileEntity tile = ICUtils.getExistingTileEntity(world, getPos().offset(face));
                 FluidStack toOffer = getStack(Blocks.barrels.barrel_creative_outputAmount, tile instanceof ITIPipe);
                 if (toOffer == null) { continue; }
                 int accepted = output.fill(toOffer, false);
                 if (accepted <= 0) { continue; }
-                acceptedAmount += output.fill(Utils.copyFluidStackWithAmount(toOffer, accepted, true), true);
+                acceptedAmount += output.fill(ICUtils.copyFluidStackWithAmount(toOffer, accepted, true), true);
             }
         }
     }
@@ -142,14 +142,14 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     public FluidStack drain(FluidStack resource, boolean doDrain) {
         if (selectedFluid == null || resource == null || !resource.isFluidEqual(selectedFluid)) { return null; }
         if (doDrain) { acceptedAmount += resource.amount; }
-        return Utils.copyFluidStackWithAmount(selectedFluid, resource.amount, true);
+        return ICUtils.copyFluidStackWithAmount(selectedFluid, resource.amount, true);
     }
 
     @Override @Nullable
     public FluidStack drain(int maxDrain, boolean doDrain) {
         if (selectedFluid == null) { return null; }
         if (doDrain) { acceptedAmount += maxDrain; }
-        return Utils.copyFluidStackWithAmount(selectedFluid, maxDrain, true);
+        return ICUtils.copyFluidStackWithAmount(selectedFluid, maxDrain, true);
     }
 
     @Override
@@ -183,7 +183,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem);
         if (contained != null && contained.amount > 0) {
-            FluidStack toSet = Utils.copyFluidStackWithAmount(contained, 1, true);
+            FluidStack toSet = ICUtils.copyFluidStackWithAmount(contained, 1, true);
             setSelectedFluid(toSet);
             if (!world.isRemote) {
                 SoundEvent sound = contained.getFluid().getEmptySound(contained);

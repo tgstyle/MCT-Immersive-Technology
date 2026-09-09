@@ -1,19 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
-
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICFluxStorageAdvanced;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -49,14 +47,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IComparatorOverride {
+public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, ICBlockInterfaces.IMirrorAble, ICBlockInterfaces.IUsesBooleanProperty, IComparatorOverride {
 
     private static int inputTankSize() { return Multiblocks.heatExchanger.heatExchanger_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.heatExchanger.heatExchanger_output_tankSize; }
     private static int energyCapacity() { return Multiblocks.heatExchanger.heatExchanger_energy_size; }
     private static int energyMaxInput() { return Multiblocks.heatExchanger.heatExchanger_energy_maxInput; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
+    public ICFluxStorageAdvanced energyStorage = new ICFluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public FluidTank[] tanks = new FluidTank[]{
             new ICFluidTank(inputTankSize(), this),
             new ICFluidTank(inputTankSize(), this),
@@ -137,7 +135,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 32, 1);
             ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
@@ -194,8 +192,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
         p = getBlockPosForPos(fluidOutputPos1.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(redstonePos0.position);
-        world.updateComparatorOutputLevel(p, world.getBlockState(p).getBlock());
+        notifyComparators();
     }
 
     @Override public void update() {
@@ -280,13 +277,10 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
             else { throttledBlockUpdate(); }
         }
-        int comparator = getComparatorInputOverride();
+        int comparator = comparatorValue();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstonePos0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
-                world.updateComparatorOutputLevel(rsPos, world.getBlockState(rsPos).getBlock());
-            }
+            notifyComparators();
         }
         oldEnergy = currentEnergy;
         oldIsRunning = isRunning;
@@ -339,7 +333,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                 if (out != null) {
                     int accepted = handler.fill(out, false);
                     if (accepted > 0) {
-                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        int drained = handler.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[2].drain(drained, true);
                         update |= drained > 0;
                     }
@@ -353,7 +347,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
                 if (out != null) {
                     int accepted = handler.fill(out, false);
                     if (accepted > 0) {
-                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        int drained = handler.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[3].drain(drained, true);
                         update |= drained > 0;
                     }
@@ -382,7 +376,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return false;
     }
 
-    @Override public int getComparatorInputOverride() {
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() {
         if (!formed) return 0;
         return 15 * energyStorage.getEnergyStored() / energyStorage.getMaxEnergyStored();
     }
@@ -408,11 +404,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return energyInputPos0.isPoI(facing, position);
     }
 
-    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
+    @Override @Nonnull public ICFluxStorageAdvanced getStorage() { return energyStorage; }
 
     @Override public boolean getIsMirrored() { return mirrored; }
-
-    @Override @Nonnull public IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;

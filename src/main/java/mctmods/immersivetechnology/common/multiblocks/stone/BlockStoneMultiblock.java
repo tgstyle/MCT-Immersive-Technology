@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.stone;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
@@ -9,6 +8,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEnt
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
+import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 
 import net.minecraft.block.material.Material;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMultiblock> {
     public BlockStoneMultiblock() {
-        super("stone_multiblock", Material.ROCK, PropertyEnum.create("type", BlockType_StoneMultiblock.class), ItemBlockITBase.class, IEProperties.DYNAMICRENDER, IEProperties.BOOLEANS[0], Properties.AnimationProperty, IEProperties.OBJ_TEXTURE_REMAP);
+        super("stone_multiblock", Material.ROCK, PropertyEnum.create("type", BlockType_StoneMultiblock.class), ItemBlockITBase.class, ICProperties.DYNAMICRENDER, ICProperties.BOOLEANS[0], Properties.AnimationProperty, ICProperties.OBJ_TEXTURE_REMAP);
         setHardness(2.0F);
         setResistance(20f);
         this.setAllNotNormalBlock();

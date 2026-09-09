@@ -13,8 +13,5 @@ public class MCTMixinConfig {
 
         @Config.Comment("Replace IE conveyors with IT's optimized version. [Default=true]")
         public boolean replace_IE_conveyors = true;
-
-        @Config.Comment("Fix IE wire rendering for vertical/near-vertical wires and chunk-border cases [Default=true]")
-        public boolean fix_IE_wires = true;
     }
 }

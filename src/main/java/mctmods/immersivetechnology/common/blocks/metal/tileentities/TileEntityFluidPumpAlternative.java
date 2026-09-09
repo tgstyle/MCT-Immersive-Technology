@@ -1,5 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
+import mctmods.immersivetechnology.common.util.ITIPipe;
+import mctmods.immersivetechnology.common.util.TranslationKey;
 import javax.annotation.Nonnull;
 
 import java.util.ArrayDeque;
@@ -14,9 +17,6 @@ import blusunrize.immersiveengineering.common.util.ChatUtils;
 import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 import blusunrize.immersiveengineering.common.util.Utils;
 
-import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
-import mctmods.immersivetechnology.common.util.ITIPipe;
-import mctmods.immersivetechnology.common.util.TranslationKey;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,14 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import blusunrize.immersiveengineering.common.IEContent;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
-
 import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.ICIntegration;
+import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
@@ -16,6 +12,9 @@ import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICInventoryHandler;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
 
 import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -55,7 +54,7 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ICFluidTank.TankListener, IIEInventory, IComparatorOverride, ITileSyncReceiver {
+public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ICFluidTank.TankListener, IICInventory, IComparatorOverride, ITileSyncReceiver {
 
     private static int tankSize() { return Multiblocks.advancedCokeOven.advancedCokeOven_tankSize; }
     public static float baseSpeed = Multiblocks.advancedCokeOven.advancedCokeOven_speed_base;
@@ -70,8 +69,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     public boolean active = false;
 
     private float soundVolume = 0;
-    private CokeOvenRecipe cachedRecipe;
+    private ICCokeOvenRecipe cachedRecipe;
     private int soundGracePeriod = 0;
+    private int oldComparatorOutput = -1;
     private boolean isRunning = false;
     private boolean needsPoIInit = false;
 
@@ -86,8 +86,8 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     BlockPos itemOutputTEPos0;
     BlockPos fluidOutputTEPos0;
 
-    final IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
-    final IItemHandler outputHandler = new IEInventoryHandler(1, this, 1, new boolean[]{false}, new boolean[]{true});
+    final IItemHandler inputHandler = new ICInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+    final IItemHandler outputHandler = new ICInventoryHandler(1, this, 1, new boolean[]{false}, new boolean[]{true});
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
 
@@ -97,7 +97,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         processTimeMax = nbt.getInteger("processTimeMax");
         active = nbt.getBoolean("active");
         tank.readFromNBT(nbt.getCompoundTag("tank"));
-        inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount);
+        inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (formed && !descPacket) needsPoIInit = true;
@@ -109,7 +109,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         nbt.setInteger("processTimeMax", processTimeMax);
         nbt.setBoolean("active", active);
         nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
-        nbt.setTag("inventory", Utils.writeInventory(inventory));
+        nbt.setTag("inventory", ICUtils.writeInventory(inventory));
         nbt.setBoolean("isRunning", isRunning);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
@@ -230,12 +230,12 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
             if (cachedRecipe != null && processTimeRemaining <= 0) {
                 if (tank.getFluidAmount() + cachedRecipe.creosoteOutput <= tank.getCapacity() && inventory.get(1).getCount() + cachedRecipe.output.getCount() <= getSlotLimit(1)) {
-                    Utils.modifyInvStackSize(inventory, 0, -1);
+                    ICUtils.modifyInvStackSize(inventory, 0, -cachedRecipe.inputSize);
                     doGraphicalUpdates(0);
                     if (inventory.get(1).isEmpty()) inventory.set(1, cachedRecipe.output.copy());
                     else inventory.get(1).grow(cachedRecipe.output.getCount());
                     doGraphicalUpdates(1);
-                    tank.fill(new FluidStack(IEContent.fluidCreosote, cachedRecipe.creosoteOutput), true);
+                    tank.fill(new FluidStack(ICIntegration.creosote(), cachedRecipe.creosoteOutput), true);
                     cachedRecipe = getRecipe();
                     if (cachedRecipe != null) {
                         processTimeRemaining = processTimeMax = cachedRecipe.time;
@@ -264,16 +264,16 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             notifyNearbyClients();
             setHeatersActive();
         }
-        if (tank.getFluidAmount() > 0 && (inventory.get(3).isEmpty() || ItemHandlerHelper.canItemStacksStack(inventory.get(3), Utils.fillFluidContainer(tank, inventory.get(2), inventory.get(3), null)))) {
-            ItemStack filled = Utils.fillFluidContainer(tank, inventory.get(2), inventory.get(3), null);
+        if (tank.getFluidAmount() > 0 && (inventory.get(3).isEmpty() || ItemHandlerHelper.canItemStacksStack(inventory.get(3), ICUtils.fillFluidContainer(tank, inventory.get(2), inventory.get(3), null)))) {
+            ItemStack filled = ICUtils.fillFluidContainer(tank, inventory.get(2), inventory.get(3), null);
             if (!filled.isEmpty()) {
-                if (inventory.get(2).getCount() == 1 && !Utils.isFluidContainerFull(filled)) {
+                if (inventory.get(2).getCount() == 1 && !ICUtils.isFluidContainerFull(filled)) {
                     inventory.set(2, filled);
                     doGraphicalUpdates(2);
                 } else {
                     if (inventory.get(3).isEmpty()) inventory.set(3, filled);
                     else inventory.get(3).grow(filled.getCount());
-                    Utils.modifyInvStackSize(inventory, 2, -filled.getCount());
+                    ICUtils.modifyInvStackSize(inventory, 2, -filled.getCount());
                     doGraphicalUpdates(2);
                     doGraphicalUpdates(3);
                 }
@@ -296,6 +296,11 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
         }
         if (pumpOutputOut()) update = true;
+        int comp = comparatorValue();
+        if (comp != oldComparatorOutput) {
+            oldComparatorOutput = comp;
+            notifyComparators();
+        }
         if (active) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
         isRunning = soundGracePeriod > 0;
@@ -315,15 +320,16 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         if (available == null) return false;
         int accepted = output.fill(available, false);
         if (accepted <= 0) return false;
-        FluidStack toPush = Utils.copyFluidStackWithAmount(available, accepted, false);
+        FluidStack toPush = ICUtils.copyFluidStackWithAmount(available, accepted, false);
         int filled = output.fill(toPush, true);
         if (filled > 0) tank.drain(filled, true);
         return filled > 0;
     }
 
-    private CokeOvenRecipe getRecipe() {
-        CokeOvenRecipe recipe = CokeOvenRecipe.findRecipe(inventory.get(0));
+    private ICCokeOvenRecipe getRecipe() {
+        ICCokeOvenRecipe recipe = ICCokeOvenRecipe.findRecipe(inventory.get(0));
         if (recipe == null) return null;
+        if (inventory.get(0).getCount() < recipe.inputSize) return null;
         if (inventory.get(1).isEmpty() || (OreDictionary.itemMatches(inventory.get(1), recipe.output, false) && inventory.get(1).getCount() + recipe.output.getCount() <= getSlotLimit(1)))
             if (tank.getFluidAmount() + recipe.creosoteOutput <= tank.getCapacity()) return recipe;
         return null;
@@ -335,10 +341,10 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         for (PoICache poi : heaters) {
             if (poi == null) continue;
             BlockPos pos = getBlockPosForPos(poi.position).offset(poi.facing);
-            TileEntity tile = Utils.getExistingTileEntity(world, pos);
+            TileEntity tile = ICUtils.getExistingTileEntity(world, pos);
             if (!(tile instanceof TileEntityAdvancedCokeOvenBaseheater)) continue;
             TileEntityAdvancedCokeOvenBaseheater heater = (TileEntityAdvancedCokeOvenBaseheater)tile;
-            if (heater.facing != poi.facing.getOpposite() || !heater.doSpeedup()) continue;
+            if (!heater.doSpeedup()) continue;
             activeBaseheaters++;
         }
         return (baseSpeed + activeBaseheaters * baseheaterAdd) * (1 + activeBaseheaters * (baseheaterMult - 1));
@@ -349,7 +355,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         for (PoICache poi : heaters) {
             if (poi == null) continue;
             BlockPos pos = getBlockPosForPos(poi.position).offset(poi.facing);
-            TileEntity tile = Utils.getExistingTileEntity(world, pos);
+            TileEntity tile = ICUtils.getExistingTileEntity(world, pos);
             if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) {
                 TileEntityAdvancedCokeOvenBaseheater heater = (TileEntityAdvancedCokeOvenBaseheater)tile;
                 if (heater.active) {
@@ -408,7 +414,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         markContainingBlockForUpdate(null);
     }
 
-    @Override public int getComparatorInputOverride() {
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() {
         if (!formed || processTimeMax <= 0) return 0;
         return 15 * (processTimeMax - processTimeRemaining) / processTimeMax;
     }

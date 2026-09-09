@@ -1,13 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
-import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
@@ -15,6 +12,9 @@ import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.particles.ParticleFlameCustom;
+import com.immersiveconvergence.api.util.ICInventoryHandler;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.util.IICInventory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave implements IComparatorOverride, IIEInventory, IBinaryMessageReceiver {
+public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave implements IComparatorOverride, IICInventory, IBinaryMessageReceiver {
 
     private static double heatLossPerTick() { return Multiblocks.boilerSolid.boilerSolid_heat_lossPerTick; }
     private static double pilotHeat() { return Multiblocks.boilerSolid.boilerSolid_heat_pilot; }
@@ -63,7 +63,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
 
     public static int slotCount = 1;
     public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
-    final IItemHandler inputHandler = new IEInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
+    final IItemHandler inputHandler = new ICInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
 
     public double heatLevel = 0;
     public double heatPerTick = 0;
@@ -95,7 +95,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         totalBurnTime = nbt.getInteger("totalBurnTime");
         pilotLit = nbt.getBoolean("pilotLit");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
-        if (!descPacket) { inventory = Utils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
+        if (!descPacket) { inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
         if (formed && !descPacket) {
             needsPoIInit = true;
             needsNotify = true;
@@ -112,7 +112,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         nbt.setInteger("totalBurnTime", totalBurnTime);
         nbt.setBoolean("pilotLit", pilotLit);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
-        if (!descPacket) { nbt.setTag("inventory", Utils.writeInventory(inventory)); }
+        if (!descPacket) { nbt.setTag("inventory", ICUtils.writeInventory(inventory)); }
     }
 
     void InitializePoIs() {
@@ -155,11 +155,11 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         boolean torch = Block.getBlockFromItem(heldItem.getItem()) == Blocks.TORCH;
         boolean flintAndSteel = heldItem.getItem() == Items.FLINT_AND_STEEL;
         if (!torch && !flintAndSteel) return false;
-        if (pilotLit) return true;
-        if (findBurnTime(inventory.get(0)) <= 0) return true;
+        if (pilotLit) return false;
+        if (findBurnTime(inventory.get(0)) <= 0) return false;
         if (!world.isRemote) {
             pilotLit = true;
-            heatLevel = Math.max(heatLevel, pilotHeat());
+            heatLevel = pilotHeat();
             world.playSound(null, getPos(), ITSounds.gasIgnite, SoundCategory.BLOCKS, 0.5f, 1.0f);
             if (torch) { heldItem.shrink(1); }
             else { heldItem.damageItem(1, player); }
@@ -181,7 +181,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
 
     private void notifyIONeighbors() {
         if (itemInputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(itemInputPos0.position), getBlockType(), true);
-        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+        notifyComparators();
     }
 
     private void notifyNearbyClients() {
@@ -235,7 +235,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
                     exhaustPos0.getX() + 0.5, exhaustPos0.getY() + 0.1, exhaustPos0.getZ() + 0.5,
                     rand.nextFloat() * 0.0625f - 0.03125f, 0.0625f, rand.nextFloat() * 0.0625f - 0.03125f));
         }
-        if (pilotLit && heatLevel > pilotHeat()) {
+        if (pilotLit && heatLevel > pilotHeat() && !isRSDisabled() && consumerHasWater()) {
             ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
                     exhaustPos0.getX() + 0.5,
                     exhaustPos0.getY() + 1.25,
@@ -244,6 +244,15 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
             cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
             Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private boolean consumerHasWater() {
+        if (heatConsumerTEPos0 == null) { return false; }
+        TileEntity te = world.getTileEntity(heatConsumerTEPos0);
+        if (!(te instanceof TileEntityBoilerTankSlave)) { return false; }
+        TileEntityBoilerTankMaster tank = ((TileEntityBoilerTankSlave)te).master();
+        return tank != null && tank.tanks[0].getFluidAmount() > 0;
     }
 
     @SideOnly(Side.CLIENT)
@@ -258,7 +267,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
         if (!world.isRemote) {
-            for (ItemStack stack : inventory) if (!stack.isEmpty()) Utils.dropStackAtPos(world, getPos(), stack);
+            for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
         }
         super.disassemble();
@@ -292,10 +301,10 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
             }
             world.markChunkDirty(getPos(), this);
         }
-        int comp = getComparatorInputOverride();
+        int comp = comparatorValue();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+            notifyComparators();
         }
         if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
         else if (changed) { throttledBlockUpdate(); }
@@ -371,7 +380,9 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
 
     @Override public TileEntity getGuiMaster() { return this; }
 
-    @Override public int getComparatorInputOverride() { return workingHeatLevel > 0 ? (int)Math.min(15, 15 * (heatLevel / workingHeatLevel)) : 0; }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return workingHeatLevel > 0 ? (int)Math.min(15, 15 * (heatLevel / workingHeatLevel)) : 0; }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
 

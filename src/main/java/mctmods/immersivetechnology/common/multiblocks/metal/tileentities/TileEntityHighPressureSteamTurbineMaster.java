@@ -1,19 +1,19 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.core.ICCommonConfig;
 
 import io.netty.buffer.ByteBuf;
@@ -56,6 +56,11 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private double connectedMass = -1;
     private double connectedFriction = -1;
     private int inertiaMax = -1;
+    private int effectiveMaxSpeed = maxSpeed();
+    private transient int fanFadeIn = 0;
+    private transient boolean wasRunningClient = false;
+    private boolean speedChanged = false;
+
     private RotationInertiaProcess inertia(double mass, double friction, int effectiveMax) {
         if (inertia == null || mass != connectedMass || friction != connectedFriction || effectiveMax != inertiaMax) {
             connectedMass = mass;
@@ -67,12 +72,17 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     }
     private static float maxRotationSpeed() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_speed_maxRotation; }
 
+    private static final int FAN_FADE_IN_TICKS = 80;
+
     public FluidTank[] tanks = new FluidTank[] {new ICFluidTank(inputTankSize(), this), new ICFluidTank(outputTankSize(), this)};
-    public int fuelBurnRemaining = 0;
+    private float accumConsume = 0f;
+    public float currentTorque = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque;
+    private float outAccum = 0f;
     public int speed = 0;
     public MechanicalEnergyAnimation animation = new MechanicalEnergyAnimation();
 
-    private float soundVolume = 0f;
+    private float currentLevel = 0f;
+    private float currentPitch = 0f;
     private int soundGracePeriod = 0;
     private boolean isRunning = false;
     private int tickCountdown = 5;
@@ -98,7 +108,8 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         speed = nbt.getInteger("speed");
         if (!descPacket) animation.readFromNBT(nbt);
-        fuelBurnRemaining = nbt.getInteger("fuelBurnRemaining");
+        accumConsume = nbt.getFloat("accumConsume");
+        outAccum = nbt.getFloat("outAccum");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         effectiveRatio = nbt.getFloat("effectiveRatio");
@@ -114,7 +125,8 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
         nbt.setInteger("speed", speed);
         if (!descPacket) animation.writeToNBT(nbt);
-        nbt.setInteger("fuelBurnRemaining", fuelBurnRemaining);
+        nbt.setFloat("accumConsume", accumConsume);
+        nbt.setFloat("outAccum", outAccum);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
         nbt.setFloat("effectiveRatio", effectiveRatio);
@@ -123,13 +135,18 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
         if (soundPos0 == null) InitializePoIs();
-        float targetSoundLevel = isRunning ? (float)speed / maxSpeed() : 0f;
-        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }else {
+        float targetLevel = ITUtils.remapRange(0, effectiveMaxSpeed, 0.5f, 1.0f, speed);
+        if (currentLevel == 0f) { currentLevel = targetLevel; }
+        else { currentLevel = currentLevel * 0.9f + targetLevel * 0.1f; }
+        float targetPitch = ITUtils.remapRange(0, effectiveMaxSpeed, 0.5f, 1.5f, speed);
+        if (currentPitch == 0f) { currentPitch = targetPitch; }
+        else { currentPitch = currentPitch * 0.95f + targetPitch * 0.05f; }
+        if (currentPitch < 0.5f) { currentPitch = 0.5f; }
+        if (!isRunning) { ICSoundHandler.stopSound(soundPos0); }
+        else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8f, 1f);
-            float level = ITUtils.remapRange(0f, 1f, 0.5f, 1.0f, soundVolume);
-            ITSounds.steamTurbine.PlayRepeating(soundPos0, (11f * (level - 0.5f)) / attenuation, level);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 32f, 1f);
+            ITSounds.steamTurbine.PlayRepeating(soundPos0, (11f * (currentLevel - 0.5f)) / attenuation, currentPitch);
         }
     }
 
@@ -151,6 +168,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private void notifyNearbyClients() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeInt(speed);
+        buf.writeInt(effectiveMaxSpeed);
         buf.writeBoolean(isRunning);
         BinaryTileSyncMessage.sendToAllTracking(world, getPos(), buf);
     }
@@ -164,6 +182,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         }
         else {
             speed = buf.readInt();
+            effectiveMaxSpeed = buf.readInt();
             isRunning = buf.readBoolean();
         }
     }
@@ -184,7 +203,13 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         }
 
         if (world.isRemote) {
-            float rotationSpeed = speed == 0 ? 0f : ((float)speed / maxSpeed()) * maxRotationSpeed();
+            if (isRunning && !wasRunningClient) fanFadeIn = FAN_FADE_IN_TICKS;
+            wasRunningClient = isRunning;
+            float rotationSpeed = speed == 0 || effectiveMaxSpeed <= 0 ? 0f : ((float)speed / effectiveMaxSpeed) * maxRotationSpeed();
+            if (fanFadeIn > 0) {
+                rotationSpeed -= ((float)fanFadeIn / FAN_FADE_IN_TICKS) * rotationSpeed;
+                fanFadeIn--;
+            }
             float oldMomentum = animation.getAnimationMomentum();
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             animation.setAnimationMomentum(rotationSpeed);
@@ -193,16 +218,16 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         }
 
         boolean changed = false;
+        speedChanged = false;
         int prevSpeed = speed;
         boolean wasActive = active;
         active = false;
         boolean currentlyEnabled = !isRSDisabled();
 
-        if (fuelBurnRemaining > 0) {
-            fuelBurnRemaining--;
-            changed = true;
-            active = true;
-        } else if (currentlyEnabled && tanks[0].getFluidAmount() > 0 && isValidAlternator()) {
+        boolean canRun = currentlyEnabled && isValidAlternator();
+        float ratio = 0f;
+        if (canRun) { currentTorque = Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_torque; }
+        if (canRun && tanks[0].getFluidAmount() > 0) {
             FluidStack fluid = tanks[0].getFluid();
 
             HighPressureSteamTurbineRecipe recipe;
@@ -213,16 +238,32 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
                 cachedTurbineRecipe = recipe;
             }
 
-            if (recipe != null && recipe.fluidInput.amount <= tanks[0].getFluidAmount()) {
-                fuelBurnRemaining = recipe.getTotalProcessTime() - 1;
-                tanks[0].drain(recipe.fluidInput.amount, true);
-                if (recipe.fluidOutput != null) tanks[1].fill(recipe.fluidOutput, true);
-                changed = true;
-                active = true;
+            if (recipe != null && recipe.getTotalProcessTime() > 0) {
+                currentTorque = recipe.torque;
+                float fluidPerTick = (float)recipe.fluidInput.amount / recipe.getTotalProcessTime();
+                accumConsume += fluidPerTick;
+                int toDrain = (int)accumConsume;
+                if (toDrain > 0) {
+                    FluidStack drainedStack = tanks[0].drain(toDrain, true);
+                    int drained = drainedStack == null ? 0 : drainedStack.amount;
+                    accumConsume -= drained;
+                    ratio = drained / fluidPerTick;
+                    if (drained > 0) { changed = true; }
+                    if (recipe.fluidOutput != null && drained > 0) {
+                        outAccum += ratio * ((float)recipe.fluidOutput.amount / recipe.getTotalProcessTime());
+                        if (outAccum >= 1) {
+                            FluidStack out = recipe.fluidOutput.copy();
+                            out.amount = (int)outAccum;
+                            outAccum -= tanks[1].fill(out, true);
+                        }
+                    }
+                }
             }
         }
 
-        applyInertia();
+        applyInertia(canRun, ratio);
+        active = effectiveRatio > 0.001f;
+        if (active != wasActive) { changed = true; }
 
         if (pressureReleaseCooldown > 0) { pressureReleaseCooldown--; }
         boolean triggerRelease = (!wasActive && active) || (!wasEnabled && currentlyEnabled);
@@ -232,7 +273,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         }
         wasEnabled = currentlyEnabled;
 
-        if (speed != prevSpeed) changed = true;
+        if (speed != prevSpeed || speedChanged) changed = true;
         if (pumpOutputOut()) changed = true;
 
         boolean didWork = speed > 0;
@@ -252,13 +293,10 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
             this.markDirty();
         }
 
-        int comparator = getComparatorInputOverride();
+        int comparator = comparatorValue();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstonePos0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
-                world.updateComparatorOutputLevel(rsPos, getBlockType());
-            }
+            notifyComparators();
         }
     }
 
@@ -271,18 +309,19 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         if (out == null) return false;
         int accepted = handler.fill(out, false);
         if (accepted <= 0) return false;
-        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+        int drained = handler.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
         tanks[1].drain(drained, true);
         return drained > 0;
     }
 
-    private void applyInertia() {
+    private void applyInertia(boolean canRun, float ratio) {
         boolean connected = isValidAlternator();
         double mass = connected ? alternator.getMass() : 0;
         double friction = connected ? alternator.getFriction() : 0;
         int effectiveMax = connected ? Math.min(maxSpeed(), alternator.getMaxSpeed()) : maxSpeed();
-        effectiveRatio = effectiveRatio * 0.9f + (active ? 1f : 0f) * 0.1f;
-        accumDelta += inertia(mass, friction, effectiveMax).getAlpha(effectiveRatio, speed);
+        if (effectiveMaxSpeed != effectiveMax) { effectiveMaxSpeed = effectiveMax; speedChanged = true; }
+        effectiveRatio = effectiveRatio * 0.9f + ratio * 0.1f;
+        accumDelta += inertia(mass, friction, effectiveMax).getAlpha(canRun ? effectiveRatio : 0f, speed);
         int delta = (int)Math.round(accumDelta);
         accumDelta -= delta;
         speed = Math.max(0, Math.min(effectiveMax, speed + delta));
@@ -329,7 +368,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     private void notifyIONeighbors() {
         if (fluidInputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidInputPos0.position), getBlockType(), true);
         if (fluidOutputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(fluidOutputPos0.position), getBlockType(), true);
-        if (redstonePos0 != null) world.updateComparatorOutputLevel(getBlockPosForPos(redstonePos0.position), getBlockType());
+        notifyComparators();
     }
 
     @Override public void TankContentsChanged() {
@@ -351,7 +390,9 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
         return false;
     }
 
-    @Override public int getComparatorInputOverride() { return maxSpeed() <= 0 ? 0 : 15 * speed / maxSpeed(); }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return effectiveMaxSpeed <= 0 ? 0 : 15 * speed / effectiveMaxSpeed; }
 
     @Override public boolean isDummy() { return false; }
 

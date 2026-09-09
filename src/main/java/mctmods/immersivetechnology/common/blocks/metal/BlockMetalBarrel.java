@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.IEProperties;
+import com.immersiveconvergence.api.block.ICProperties;
+
 import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelCreative;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
 
 public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel> {
 	public BlockMetalBarrel() {
-		super("metal_barrel", Material.IRON, PropertyEnum.create("type", BlockType_MetalBarrel.class), ItemBlockITBase.class, IEProperties.SIDECONFIG[0], IEProperties.SIDECONFIG[1]);
+		super("metal_barrel", Material.IRON, PropertyEnum.create("type", BlockType_MetalBarrel.class), ItemBlockITBase.class, ICProperties.SIDECONFIG[0], ICProperties.SIDECONFIG[1]);
 		this.setHardness(3.0F);
 		this.setResistance(15.0F);
 		lightOpacity = 0;

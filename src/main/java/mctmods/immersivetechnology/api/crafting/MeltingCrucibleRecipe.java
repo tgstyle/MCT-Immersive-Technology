@@ -2,19 +2,19 @@ package mctmods.immersivetechnology.api.crafting;
 
 import mctmods.immersivetechnology.common.Config;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.crafting.IngredientStack;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICIngredientStack;
+import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 
-public class MeltingCrucibleRecipe extends MultiblockRecipe {
+public class MeltingCrucibleRecipe extends MultiblockRecipeBase {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
-    public final IngredientStack itemInput;
+    public final ICIngredientStack itemInput;
     public final double requiredTemp;
     int totalProcessTime;
 
@@ -22,7 +22,7 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
 
     public MeltingCrucibleRecipe(FluidStack fluidOutput, Object itemInput, int time, double requiredTemp) {
         this.fluidOutput = fluidOutput;
-        this.itemInput = ApiUtils.createIngredientStack(itemInput);
+        this.itemInput = ICIngredientStack.of(itemInput);
         this.requiredTemp = requiredTemp;
         this.inputList = new ArrayList<>();
         this.inputList.add(this.itemInput);
@@ -53,7 +53,7 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
         return null;
     }
 
-    public static MeltingCrucibleRecipe findRecipe(IngredientStack itemInput) {
+    public static MeltingCrucibleRecipe findRecipe(ICIngredientStack itemInput) {
         if (itemInput == null) { return null; }
         for (MeltingCrucibleRecipe r : recipeList) {
             if (r.itemInput.equals(itemInput)) { return r; }
@@ -71,7 +71,7 @@ public class MeltingCrucibleRecipe extends MultiblockRecipe {
     }
 
     public static MeltingCrucibleRecipe loadFromNBT(NBTTagCompound nbt) {
-        IngredientStack itemInput = IngredientStack.readFromNBT(nbt.getCompoundTag("input"));
+        ICIngredientStack itemInput = ICIngredientStack.readFromNBT(nbt.getCompoundTag("input"));
         return findRecipe(itemInput);
     }
 }

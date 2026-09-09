@@ -1,17 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.connectors.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.ICLib;
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.energy.ICTileEntityConnectorRedstone;
+import com.immersiveconvergence.api.energy.ICWireType;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAttachedIntegerProperies;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IHammerInteraction;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
-
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.energy.wires.IImmersiveConnectable;
-import blusunrize.immersiveengineering.api.energy.wires.ImmersiveNetHandler.Connection;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHammerInteraction;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IAttachedIntegerProperies;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConnectorRedstone;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
@@ -41,8 +39,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public class TileEntityTimer extends TileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperies, ITileSyncReceiver {
+public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperies, ITileSyncReceiver {
+    private static final int PULSE_LENGTH = 2;
+
     private int lastOutput = 0;
+    private int pulseRemaining = 0;
     private int target = 40;
     private int rotation = 0;
     private EnumFacing inputSide;
@@ -119,12 +120,14 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
                 currentInput = wireNetwork.getPowerOutput(redstoneChannel);
             }
 
-            int desiredOutput = currentInput > 0 && (world.getTotalWorldTime() % (long) target == 0) ? 15 : 0;
+            if (currentInput > 0 && world.getTotalWorldTime() % (long) target == 0) { pulseRemaining = PULSE_LENGTH; }
+            int desiredOutput = pulseRemaining > 0 ? 15 : 0;
+            if (pulseRemaining > 0) { pulseRemaining--; }
 
             if (desiredOutput != lastOutput) {
                 lastOutput = desiredOutput;
                 rsDirty = true;
-                if (isRSOutput()) onChange();
+                onChange();
             }
         }
         super.update();
@@ -135,7 +138,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
     @Override public boolean isRSOutput() { return ioMode == 1; }
 
     @Override public void updateInput(@Nonnull byte[] signals) {
-        if (isRSInput()) {
+        if (isRSInput() || isRSOutput()) {
             signals[redstoneChannel] = (byte) Math.max(lastOutput, signals[redstoneChannel]);
         }
         rsDirty = false;
@@ -169,15 +172,14 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
         if (message.hasKey("target")) target = message.getInteger("target");
     }
 
-    @SuppressWarnings("deprecation")
-    @Override public Vec3d getRaytraceOffset(IImmersiveConnectable link) {
+    @Override public Vec3d raytraceOffset() {
         EnumFacing side = facing.getOpposite();
         return new Vec3d(.5 + side.getXOffset() * .375, .5 + side.getYOffset() * .375, .5 + side.getZOffset() * .375);
     }
 
-    @Override @Nonnull public Vec3d getConnectionOffset(@Nonnull Connection con) {
+    @Override public Vec3d connectionOffset(@Nonnull ICWireType cable) {
         EnumFacing side = facing.getOpposite();
-        double conRadius = con.cableType.getRenderDiameter() / 2;
+        double conRadius = cable.getRenderDiameter() / 2;
         return new Vec3d(.5 + side.getXOffset() * (.375 - conRadius), .5 + side.getYOffset() * (.375 - conRadius), .5 + side.getZOffset() * (.375 - conRadius));
     }
 
@@ -187,8 +189,8 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
         if (!hammer) return new String[0];
         float time = (float) this.target / 20;
         EnumDyeColor color = EnumDyeColor.byMetadata(redstoneChannel);
-        String channelInfo = I18n.format(Lib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + color.getTranslationKey()));
-        String modeInfo = I18n.format(Lib.DESC_INFO + "blockSide.io." + this.ioMode);
+        String channelInfo = I18n.format(ICLib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + color.getTranslationKey()));
+        String modeInfo = I18n.format(ICLib.DESC_INFO + "blockSide.io." + this.ioMode);
         String delayInfo = String.format("%.1f Sec.", time);
         return new String[]{channelInfo, modeInfo, delayInfo};
     }
@@ -234,7 +236,7 @@ public class TileEntityTimer extends TileEntityConnectorRedstone implements IGui
 
     @SideOnly(Side.CLIENT)
     @Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, String group, Optional<TRSRTransformation> transform) {
-        EnumFacing facing = object.getValue(IEProperties.FACING_ALL);
+        EnumFacing facing = object.getValue(ICProperties.FACING_ALL);
         int rot = object.getValue(BlockConnectors.ROTATION);
         int angleX = facing.getAxis() == EnumFacing.Axis.Y ? (facing == EnumFacing.DOWN ? 0 : 180) : -90;
         int angleY = rot * 90;

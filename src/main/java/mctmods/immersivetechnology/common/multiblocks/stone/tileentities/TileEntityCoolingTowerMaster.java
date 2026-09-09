@@ -1,30 +1,27 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-import blusunrize.immersiveengineering.common.util.Utils;
-
 import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleSmokeCustom;
+import com.immersiveconvergence.api.util.ICFluidTank.TankListener;
 import com.immersiveconvergence.api.util.ICFluidTank;
-
+import com.immersiveconvergence.api.util.ICUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.ITContent;
+import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.conversion.CoolingTowerLegacyConverter;
-import com.immersiveconvergence.api.util.ICFluidTank.TankListener;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
@@ -34,6 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -69,6 +67,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     private CoolingTowerRecipe cachedCoolingRecipe;
 
+    public final List<CoolingTowerProcess> processQueue = new ArrayList<>();
+
     private float soundVolume = 0f;
     private int soundGracePeriod = 0;
     private boolean isRunning = false;
@@ -89,6 +89,12 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
         tanks[3].readFromNBT(nbt.getCompoundTag("tank3"));
         tanks[4].readFromNBT(nbt.getCompoundTag("tank4"));
+        processQueue.clear();
+        NBTTagList queue = nbt.getTagList("processQueue", 10);
+        for (int i = 0; i < queue.tagCount(); i++) {
+            CoolingTowerProcess process = CoolingTowerProcess.readFromNBT(queue.getCompoundTagAt(i));
+            if (process != null) { processQueue.add(process); }
+        }
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && formed) {
@@ -104,6 +110,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         nbt.setTag("tank2", tanks[2].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank3", tanks[3].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank4", tanks[4].writeToNBT(new NBTTagCompound()));
+        NBTTagList queue = new NBTTagList();
+        for (CoolingTowerProcess process : processQueue) { queue.appendTag(process.writeToNBT()); }
+        nbt.setTag("processQueue", queue);
         nbt.setInteger("oldComparatorOutput", oldComparatorOutput);
         nbt.setInteger("soundGracePeriod", soundGracePeriod);
     }
@@ -113,18 +122,21 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (!isRunning) return;
         if (particlePos0 == null) InitializePoIs();
         Random rand = new Random();
-        if (rand.nextInt(40) == 0) return;
-        int lessParticleSetting = ClientUtils.mc().gameSettings.particleSetting;
+        int lessParticleSetting = ICClientUtils.mc().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         double distanceLimit = 64;
         if (particlePos0.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
-        ParticleSmokeCustom cloud = new ParticleSmokeCustom(world,
-                particlePos0.getX() + 2 - rand.nextFloat() * 3,
-                particlePos0.getY(),
-                particlePos0.getZ() + 2 - rand.nextFloat() * 3, 0, 0.02f * ITConfig.Client.particles.custom_smoke_height, 0, 7);
-        cloud.setRBGColorF(1, 1, 1);
-        ClientUtils.mc().effectRenderer.addEffect(cloud);
+        double height = ITConfig.Client.particles.custom_smoke_height;
+        for (int i = 0; i < 3; i++) {
+            ParticleSmokeCustom cloud = new ParticleSmokeCustom(world,
+                    particlePos0.getX() + .5 + (rand.nextFloat() * 4f - 2f),
+                    particlePos0.getY() + .5 + rand.nextFloat() * 2f,
+                    particlePos0.getZ() + .5 + (rand.nextFloat() * 4f - 2f),
+                    (rand.nextFloat() - 0.5) * 0.02, (0.01 + rand.nextFloat() * 0.02) * height, (rand.nextFloat() - 0.5) * 0.02, 7);
+            cloud.setRBGColorF(1, 1, 1);
+            ICClientUtils.mc().effectRenderer.addEffect(cloud);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -136,8 +148,8 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
-            ITSounds.coolingTower.PlayRepeating(soundPos0, (10 * soundVolume) / attenuation, 1);
+            double distance = Math.sqrt(player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5));
+            ITSounds.coolingTower.PlayRepeating(soundPos0, soundVolume * (float)Math.max(1 - distance / 16, 0), 1);
         }
     }
 
@@ -184,39 +196,11 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             spawnParticles();
             return;
         }
-        if (ITCompatModule.isAdvancedRocketryLoaded && AdvancedRocketryHelper.isAtmosphereUnsuitableForCooling(world, getPos())) return;
-        if (Multiblocks.coolingTower.coolingTower_biome_temp_factor > 0 && world.provider.isNether()) return;
         super.update();
         boolean update = pumpOutputOut();
         boolean prevIsRunning = isRunning;
-        if (processQueue.size() < getProcessQueueMaxLength() && (tanks[0].getFluidAmount() > 0 || tanks[1].getFluidAmount() > 0)) {
-            FluidStack in0 = tanks[0].getFluid();
-            FluidStack in1 = tanks[1].getFluid();
-            cachedCoolingRecipe = CoolingTowerRecipe.findRecipe(in0, in1);
-            boolean swapped = false;
-            if (cachedCoolingRecipe == null) {
-                cachedCoolingRecipe = CoolingTowerRecipe.findRecipe(in1, in0);
-                swapped = true;
-            }
-            if (cachedCoolingRecipe != null) {
-                boolean canOutput = true;
-                if (cachedCoolingRecipe.fluidOutput0 != null) canOutput &= tanks[2].fill(cachedCoolingRecipe.fluidOutput0, false) == cachedCoolingRecipe.fluidOutput0.amount;
-                if (cachedCoolingRecipe.fluidOutput1 != null) canOutput &= tanks[3].fill(cachedCoolingRecipe.fluidOutput1, false) == cachedCoolingRecipe.fluidOutput1.amount;
-                if (cachedCoolingRecipe.fluidOutput2 != null) canOutput &= tanks[4].fill(cachedCoolingRecipe.fluidOutput2, false) == cachedCoolingRecipe.fluidOutput2.amount;
-                if (canOutput) {
-                    @SuppressWarnings("unchecked")
-                    MultiblockProcessInMachine<CoolingTowerRecipe> process = new MultiblockProcessInMachine<>(cachedCoolingRecipe).setInputTanks(swapped ? 1 : 0, swapped ? 0 : 1);
-                    if (ITCompatModule.isAdvancedRocketryLoaded) process.maxTicks = Math.max(1, (int)(process.maxTicks / AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos())));
-                    process.maxTicks = Math.max(1, (int)(process.maxTicks / getBiomeSpeedMultiplier()));
-                    if (addProcessToQueue(process, true)) {
-                        addProcessToQueue(process, false);
-                        update = true;
-                    }
-                }
-            }
-        }
-        boolean didWork = tickedProcesses > 0;
-        if (didWork) soundGracePeriod = 60;
+        update |= recipeLogic();
+        if (!processQueue.isEmpty()) soundGracePeriod = 60;
         else if (soundGracePeriod > 0) soundGracePeriod--;
         isRunning = soundGracePeriod > 0;
 
@@ -230,10 +214,10 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
             if (isRunning != prevIsRunning) { markContainingBlockForUpdate(null); }
             else { throttledBlockUpdate(); }
         }
-        int comp = getComparatorInputOverride();
+        int comp = comparatorValue();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
-            world.updateComparatorOutputLevel(getPos(), getBlockType());
+            notifyComparators();
         }
     }
 
@@ -250,7 +234,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
                     if (out == null) continue;
                     int accepted = output.fill(out, false);
                     if (accepted > 0) {
-                        int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        int drained = output.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[indices[i]].drain(drained, true);
                         if (drained > 0) changed = true;
                     }
@@ -260,27 +244,47 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return changed;
     }
 
-    private double getBiomeSpeedMultiplier() {
+    private boolean recipeLogic() {
+        boolean update = false;
+        double speed = getSpeedMultiplier();
+        for (int i = processQueue.size() - 1; i >= 0; i--) {
+            CoolingTowerProcess process = processQueue.get(i);
+            process.tick(tanks, speed);
+            if (process.isComplete()) { processQueue.remove(i); }
+            update = true;
+        }
+        if (speed <= 0 || processQueue.size() >= getProcessQueueMaxLength()) { return update; }
+        FluidStack in0 = tanks[0].getFluid();
+        FluidStack in1 = tanks[1].getFluid();
+        cachedCoolingRecipe = CoolingTowerRecipe.findRecipe(in0, in1);
+        boolean swapped = false;
+        if (cachedCoolingRecipe == null) {
+            cachedCoolingRecipe = CoolingTowerRecipe.findRecipe(in1, in0);
+            swapped = true;
+        }
+        if (cachedCoolingRecipe == null) { return update; }
+        boolean canOutput = true;
+        if (cachedCoolingRecipe.fluidOutput0 != null) canOutput &= tanks[2].fill(cachedCoolingRecipe.fluidOutput0, false) == cachedCoolingRecipe.fluidOutput0.amount;
+        if (cachedCoolingRecipe.fluidOutput1 != null) canOutput &= tanks[3].fill(cachedCoolingRecipe.fluidOutput1, false) == cachedCoolingRecipe.fluidOutput1.amount;
+        if (cachedCoolingRecipe.fluidOutput2 != null) canOutput &= tanks[4].fill(cachedCoolingRecipe.fluidOutput2, false) == cachedCoolingRecipe.fluidOutput2.amount;
+        if (!canOutput) { return update; }
+        processQueue.add(new CoolingTowerProcess(cachedCoolingRecipe, swapped));
+        return true;
+    }
+
+    private double getSpeedMultiplier() {
+        if (ITCompatModule.isAdvancedRocketryLoaded && AdvancedRocketryHelper.isAtmosphereUnsuitableForCooling(world, getPos())) { return 0; }
         double tempFactor = Multiblocks.coolingTower.coolingTower_biome_temp_factor;
         double humidityFactor = Multiblocks.coolingTower.coolingTower_biome_humidity_factor;
-        if (tempFactor <= 0 && humidityFactor <= 0) { return 1.0; }
+        if (tempFactor > 0 && world.provider.isNether()) { return 0; }
         double multiplier = 1.0;
-        if (tempFactor > 0) { multiplier -= (world.getBiome(getPos()).getDefaultTemperature() - 0.8) * tempFactor; }
-        if (humidityFactor > 0) { multiplier += 0.075 * humidityFactor * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5); }
-        return Math.max(multiplier, 0.01);
-    }
-
-    @Override @Nonnull protected NBTTagCompound writeProcessToNBT(@Nonnull TileEntityMultiblockMetal.MultiblockProcess process) {
-        NBTTagCompound tag = super.writeProcessToNBT(process);
-        tag.setInteger("process_maxTicks", process.maxTicks);
-        return tag;
-    }
-
-    @Override @Nonnull protected TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> loadProcessFromNBT(@Nonnull NBTTagCompound tag) {
-        @SuppressWarnings("unchecked")
-        TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> process = super.loadProcessFromNBT(tag);
-        if (tag.hasKey("process_maxTicks")) { process.maxTicks = tag.getInteger("process_maxTicks"); }
-        return process;
+        if (tempFactor > 0 || humidityFactor > 0) {
+            if (tempFactor > 0) { multiplier -= (world.getBiome(getPos()).getDefaultTemperature() - 0.8) * tempFactor; }
+            if (humidityFactor > 0) { multiplier += 0.075 * humidityFactor * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5); }
+            multiplier = Math.max(multiplier, 0.01);
+        }
+        if (ITCompatModule.isAdvancedRocketryLoaded) { multiplier *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()); }
+        return Math.max(multiplier, 0);
     }
 
     private void InitializePoIs() {
@@ -325,12 +329,14 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     private void notifyNeighbor(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, getBlockType(), true); }
 
     @Override public void TankContentsChanged() {
-        cachedCoolingRecipe = null;
+        if (processQueue.isEmpty()) { cachedCoolingRecipe = null; }
         efficientMarkDirty();
         markContainingBlockForUpdate(null);
     }
 
-    @Override public int getComparatorInputOverride() { return 15 * processQueue.size() / getProcessQueueMaxLength(); }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() { return 15 * processQueue.size() / getProcessQueueMaxLength(); }
 
     @Override public boolean isDummy() { return false; }
 

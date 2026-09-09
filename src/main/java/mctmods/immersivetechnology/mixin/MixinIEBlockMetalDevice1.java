@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.mixin;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import mctmods.immersivetechnology.common.util.ITIPipe;
+import mctmods.immersivetechnology.core.MCTMixinConfig;
 import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
 import blusunrize.immersiveengineering.common.blocks.BlockIETileProvider;
 import blusunrize.immersiveengineering.common.blocks.ItemBlockIEBase;
@@ -9,8 +11,6 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevic
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
-import mctmods.immersivetechnology.common.util.ITIPipe;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;

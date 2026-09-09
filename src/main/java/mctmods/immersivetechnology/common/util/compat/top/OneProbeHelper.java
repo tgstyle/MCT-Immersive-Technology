@@ -1,21 +1,20 @@
 package mctmods.immersivetechnology.common.util.compat.top;
 
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-
 import mcjty.theoneprobe.api.*;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
+import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 
+import com.immersiveconvergence.api.ICLib;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.core.ICCommonConfig;
@@ -25,9 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -49,7 +46,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         assert input != null;
         input.registerProvider(new MechanicalEnergyProvider());
         input.registerProvider(new AdvancedCokeOvenProvider());
-        input.registerProvider(new AlternatorProvider());
         input.registerProvider(new BoilerTankProvider());
         input.registerProvider(new BoilerLiquidProvider());
         input.registerProvider(new BoilerSolidProvider());
@@ -80,7 +76,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
     private static void addEnergyDisplay(IProbeInfo probeInfo, int stored, int max) {
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
-                .progress(stored, max, probeInfo.defaultProgressStyle().suffix(" IF").filledColor(Lib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(Lib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
+                .progress(stored, max, probeInfo.defaultProgressStyle().suffix(" IF").filledColor(ICLib.COLOUR_I_ImmersiveOrange).alternateFilledColor(0xff994f20).borderColor(ICLib.COLOUR_I_ImmersiveOrangeShadow).numberFormat(NumberFormat.COMPACT));
     }
 
     private static void addRPMDisplay(IProbeInfo probeInfo, int speed, int max) {
@@ -110,15 +106,16 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
-            if (te instanceof TileEntityMultiblockPart<?>) {
-                TileEntityMultiblockPart<?> part = (TileEntityMultiblockPart<?>)te;
+            if (te instanceof TileEntityTemplateMultiblock<?, ?, ?>) {
+                TileEntityTemplateMultiblock<?, ?, ?> part = (TileEntityTemplateMultiblock<?, ?, ?>)te;
                 TileEntity master = part.master();
                 if (master instanceof IMechanicalEnergyProvider) {
                     IMechanicalEnergyProvider mechanical = (IMechanicalEnergyProvider)master;
                     addRPMDisplay(probeInfo, mechanical.getSpeed(), mechanical.getMaxSpeed());
                 }
                 else if (master instanceof IMechanicalEnergyConsumer) {
-                    addRPMDisplay(probeInfo, ((IMechanicalEnergyConsumer)master).getSpeed(), maxSpeed());
+                    IMechanicalEnergyConsumer mechanical = (IMechanicalEnergyConsumer)master;
+                    addRPMDisplay(probeInfo, mechanical.getSpeed(), mechanical.getEffectiveMaxSpeed());
                 }
             }
         }
@@ -139,22 +136,6 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             addFluidTankDisplay(probeInfo, master.tank);
             int currentProg = (master.processTimeRemaining > 0 && master.processTimeMax > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
             addProcessPercent(probeInfo, currentProg);
-        }
-    }
-
-    public static class AlternatorProvider implements IProbeInfoProvider {
-        @Override public String getID() { return ImmersiveTechnology.MODID + ":" + "AlternatorInfo"; }
-
-        @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
-            TileEntity te = world.getTileEntity(data.getPos());
-            TileEntityAlternatorMaster master;
-            if (te instanceof TileEntityAlternatorMaster) {
-                master = (TileEntityAlternatorMaster)te;
-            } else if (te instanceof TileEntityAlternatorSlave) {
-                master = ((TileEntityAlternatorSlave)te).master();
-                if (master == null) return;
-            } else return;
-            if (mode == ProbeMode.EXTENDED) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
         }
     }
 
@@ -223,10 +204,9 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            for (TileEntityMultiblockMetal.MultiblockProcess<CoolingTowerRecipe> process : master.processQueue) {
-                if (process.maxTicks <= 0) continue;
-                int currentProg = process.processTick * 100 / process.maxTicks;
-                addProcessPercent(probeInfo, currentProg);
+            for (CoolingTowerProcess process : master.processQueue) {
+                if (process.getTotalProcessTime() <= 0) continue;
+                addProcessPercent(probeInfo, process.getTicksProcessed() * 100 / process.getTotalProcessTime());
             }
         }
     }
@@ -255,21 +235,14 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityElectrolyticCrucibleBatteryMaster master;
-            BlockPos posInMB;
             if (te instanceof TileEntityElectrolyticCrucibleBatteryMaster) {
                 master = (TileEntityElectrolyticCrucibleBatteryMaster)te;
-                posInMB = master.posInMultiblock();
             } else if (te instanceof TileEntityElectrolyticCrucibleBatterySlave) {
-                TileEntityElectrolyticCrucibleBatterySlave slave = (TileEntityElectrolyticCrucibleBatterySlave)te;
-                master = slave.master();
+                master = ((TileEntityElectrolyticCrucibleBatterySlave)te).master();
                 if (master == null) return;
-                posInMB = slave.posInMultiblock();
             } else return;
-            EnumFacing facing = data.getSideHit();
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, posInMB);
-            if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
-            for (TileEntityMultiblockMetal.MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process : master.processQueue) {
+            for (TileEntityTemplateMultiblock.MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process : master.processQueue) {
                 if (process.maxTicks <= 0) continue;
                 int currentProg = process.processTick * 100 / process.maxTicks;
                 addProcessPercent(probeInfo, currentProg);
@@ -303,19 +276,13 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         @Override public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, EntityPlayer player, World world, IBlockState blockState, IProbeHitData data) {
             TileEntity te = world.getTileEntity(data.getPos());
             TileEntityHeatExchangerMaster master;
-            BlockPos posInMB;
             if (te instanceof TileEntityHeatExchangerMaster) {
                 master = (TileEntityHeatExchangerMaster)te;
-                posInMB = master.posInMultiblock();
             } else if (te instanceof TileEntityHeatExchangerSlave) {
                 master = ((TileEntityHeatExchangerSlave)te).master();
                 if (master == null) return;
-                posInMB = ((TileEntityHeatExchangerSlave)te).posInMultiblock();
             } else return;
-            EnumFacing facing = data.getSideHit();
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            boolean showEnergy = mode == ProbeMode.EXTENDED || master.isEnergyPosition(facing, posInMB);
-            if (showEnergy) addEnergyDisplay(probeInfo, master.energyStorage.getEnergyStored(), master.energyStorage.getMaxEnergyStored());
             int currentProg = (master.processTimeRemaining > 0 && master.processTimeMax > 0) ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
             addProcessPercent(probeInfo, currentProg);
         }
@@ -371,8 +338,10 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            int currentProg = (master.processTimeRemaining > 0 && master.processTimeTotal > 0) ? (master.processTimeTotal - master.processTimeRemaining) * 100 / master.processTimeTotal : 0;
-            addProcessPercent(probeInfo, currentProg);
+            for (RadiatorProcess process : master.processQueue) {
+                if (process.getTotalProcessTime() <= 0) continue;
+                addProcessPercent(probeInfo, process.getTicksProcessed() * 100 / process.getTotalProcessTime());
+            }
             probeInfo.text("Reflector efficiency");
             addProcessPercent(probeInfo, (int)Math.round(master.getRadiationEfficiency() * 100.0));
         }

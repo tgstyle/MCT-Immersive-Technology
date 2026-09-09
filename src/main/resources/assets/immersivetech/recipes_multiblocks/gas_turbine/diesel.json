@@ -14,5 +14,6 @@
     "amount": 1000,
     "fluid": "fluegas"
   },
-  "time": 10
+  "time": 10,
+  "torque": 1.0
 }

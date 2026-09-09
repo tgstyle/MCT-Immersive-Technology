@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.Utils;
 
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.ITIPipe;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +25,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmetalTankSlave implements ICFluidTank.TankListener, IComparatorOverride {
 
@@ -37,6 +39,9 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     private final List<PoICache> fluidInputs0 = new ArrayList<>();
     private final List<PoICache> fluidOutputs0 = new ArrayList<>();
     private PoICache redstonePos0;
+    private BlockPos comparatorBasePos0;
+    private final List<List<BlockPos>> comparatorLayers = new ArrayList<>();
+    private int[] oldLayerOutputs = new int[0];
     private boolean needsPoIInit = false;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -72,7 +77,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                 }
                 int accepted = handler.fill(drainable, false);
                 if (accepted <= 0) { continue; }
-                FluidStack toDrain = Utils.copyFluidStackWithAmount(drainable, accepted, false);
+                FluidStack toDrain = ICUtils.copyFluidStackWithAmount(drainable, accepted, false);
                 if (isITPipe) {
                     toDrain.tag = new NBTTagCompound();
                     toDrain.tag.setBoolean("pressurized", true);
@@ -94,6 +99,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     private void InitializePoIs() {
+        Map<Integer, List<BlockPos>> layers = new TreeMap<>();
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSteelSheetmetalTank.instance.pointsOfInterest) {
             PoICache cache = new PoICache(facing, poi, mirrored);
             switch (poi.name) {
@@ -107,8 +113,17 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                 case "redstone0":
                     redstonePos0 = cache;
                     break;
+                case "comparator_base0":
+                    comparatorBasePos0 = poi.position;
+                    break;
+                case "comparator_layer0":
+                    layers.computeIfAbsent(poi.position.getY(), y -> new ArrayList<>()).add(poi.position);
+                    break;
             }
         }
+        comparatorLayers.clear();
+        comparatorLayers.addAll(layers.values());
+        if (oldLayerOutputs.length != comparatorLayers.size()) { oldLayerOutputs = new int[comparatorLayers.size()]; }
         if (!world.isRemote) { notifyIONeighbors(); }
     }
 
@@ -123,13 +138,44 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     @Override public void TankContentsChanged() {
+        updateComparators();
+        efficientMarkDirty();
+        markContainingBlockForUpdate(null);
+    }
+
+    private void updateComparators() {
+        if (!formed || world == null) { return; }
+        if (comparatorBasePos0 == null || comparatorLayers.isEmpty()) { InitializePoIs(); }
         int comp = getComparatorInputOverride();
         if (comp != oldComparatorOutput) {
             oldComparatorOutput = comp;
             world.updateComparatorOutputLevel(getPos(), getBlockType());
         }
-        efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        for (int layer = 0; layer < comparatorLayers.size(); layer++) {
+            int output = layerComparatorOutput(layer);
+            if (output == oldLayerOutputs[layer]) { continue; }
+            oldLayerOutputs[layer] = output;
+            for (BlockPos posInMultiblock : comparatorLayers.get(layer)) {
+                BlockPos worldPos = getBlockPosForPos(posInMultiblock);
+                world.updateComparatorOutputLevel(worldPos, world.getBlockState(worldPos).getBlock());
+            }
+        }
+    }
+
+    private int layerComparatorOutput(int layer) {
+        int layerCount = comparatorLayers.size();
+        if (!formed || layerCount == 0 || tank.getCapacity() <= 0) { return 0; }
+        double layerSize = (double)tank.getCapacity() / layerCount;
+        double layerValue = tank.getFluidAmount() - layer * layerSize;
+        return (int)Math.max(0, Math.min(15, 15 * layerValue / layerSize));
+    }
+
+    public int comparatorOutputFor(BlockPos posInMultiblock) {
+        if (comparatorBasePos0 == null || comparatorLayers.isEmpty()) { InitializePoIs(); }
+        for (int layer = 0; layer < comparatorLayers.size(); layer++) {
+            if (comparatorLayers.get(layer).contains(posInMultiblock)) { return layerComparatorOutput(layer); }
+        }
+        return getComparatorInputOverride();
     }
 
     @Override public int getComparatorInputOverride() {

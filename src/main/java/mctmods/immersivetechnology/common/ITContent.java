@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common;
 
-import blusunrize.immersiveengineering.api.tool.ConveyorHandler;
-import blusunrize.immersiveengineering.common.Config;
-
+import com.immersiveconvergence.api.ICConveyors;
+import com.immersiveconvergence.api.ICIntegration;
 import com.immersiveconvergence.api.block.ICBlockBase;
+import com.immersiveconvergence.api.client.ICModels;
 import com.immersiveconvergence.api.multiblock.BlockMatcher;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
+import com.immersiveconvergence.common.blocks.conveyors.*;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -15,7 +16,7 @@ import mctmods.immersivetechnology.common.blocks.BlockValve;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.*;
-import mctmods.immersivetechnology.common.blocks.metal.conveyors.*;
+import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
@@ -50,6 +51,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -58,10 +60,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @EventBusSubscriber(modid = ImmersiveTechnology.MODID)
@@ -340,7 +340,7 @@ public class ITContent {
         registerTile(TileEntitySteelSheetmetalTankMaster.class);
         MultiblockRegistry.register(TileEntityITMultiblockPartSteelSheetmetalTank.instance);
         multiblockSteelSheetmetalTank = TileEntityITMultiblockPartSteelSheetmetalTank.instance;
-        if (MCTMixinConfig.mixinSettings.replace_IE_pipes) {
+        if (MCTMixinConfig.mixinSettings.replace_IE_pipes && Loader.isModLoaded("immersiveengineering")) {
             normallyPressurized.add(FluidRegistry.getFluid("water"));
             normallyPressurized.add(FluidRegistry.getFluid("steam"));
             normallyPressurized.add(FluidRegistry.getFluid("fluegas"));
@@ -386,17 +386,17 @@ public class ITContent {
     }
 
     public static void registerVariables() {
-        Config.manual_int.put("barrel_creative_outputAmount", ITConfig.Blocks.barrels.barrel_creative_outputAmount);
-        Config.manual_int.put("cokeOvenBaseheater_consumption", ITConfig.Multiblocks.advancedCokeOvenBaseheater.advancedCokeOvenBaseheater_energy_consumption);
-        Config.manual_int.put("alternator_energyPerTickPerPort", (ITConfig.Multiblocks.alternator.alternator_energy_perTick / 6));
-        Config.manual_int.put("alternator_energyStorage", ITConfig.Multiblocks.alternator.alternator_energy_capacitorSize);
-        Config.manual_int.put("alternator_energyPerTick", ITConfig.Multiblocks.alternator.alternator_energy_perTick);
-        Config.manual_int.put("boilerTank_tankSize", ITConfig.Multiblocks.boilerTank.boilerTank_tankSize);
-        Config.manual_int.put("solarTower_minRange", ITConfig.Multiblocks.solarReflector.solarReflector_minRange);
-        Config.manual_int.put("solarTower_maxRange", ITConfig.Multiblocks.solarReflector.solarReflector_maxRange);
-        Config.manual_int.put("steamTurbine_timeToMax", secondsToFullSpeed(ITConfig.Multiblocks.steamTurbine.steamTurbine_baseMass, ITConfig.Multiblocks.steamTurbine.steamTurbine_driveTorque, ITConfig.Multiblocks.steamTurbine.steamTurbine_friction, TileEntitySteamTurbineMaster.maxSpeed()));
-        Config.manual_int.put("highPressureSteamTurbine_timeToMax", secondsToFullSpeed(ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_baseMass, ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_driveTorque, ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction, TileEntityHighPressureSteamTurbineMaster.maxSpeed()));
-        Config.manual_int.put("steelTank_tankSize", ITConfig.Multiblocks.steelTank.steelTank_tankSize);
+        ICIntegration.putManualInt("barrel_creative_outputAmount", ITConfig.Blocks.barrels.barrel_creative_outputAmount);
+        ICIntegration.putManualInt("cokeOvenBaseheater_consumption", ITConfig.Multiblocks.advancedCokeOvenBaseheater.advancedCokeOvenBaseheater_energy_consumption);
+        ICIntegration.putManualInt("alternator_energyPerTickPerPort", (ITConfig.Multiblocks.alternator.alternator_energy_perTick / 6));
+        ICIntegration.putManualInt("alternator_energyStorage", ITConfig.Multiblocks.alternator.alternator_energy_capacitorSize);
+        ICIntegration.putManualInt("alternator_energyPerTick", ITConfig.Multiblocks.alternator.alternator_energy_perTick);
+        ICIntegration.putManualInt("boilerTank_tankSize", ITConfig.Multiblocks.boilerTank.boilerTank_tankSize);
+        ICIntegration.putManualInt("solarTower_minRange", ITConfig.Multiblocks.solarReflector.solarReflector_minRange);
+        ICIntegration.putManualInt("solarTower_maxRange", ITConfig.Multiblocks.solarReflector.solarReflector_maxRange);
+        ICIntegration.putManualInt("steamTurbine_timeToMax", secondsToFullSpeed(ITConfig.Multiblocks.steamTurbine.steamTurbine_baseMass, ITConfig.Multiblocks.steamTurbine.steamTurbine_driveTorque, ITConfig.Multiblocks.steamTurbine.steamTurbine_friction, TileEntitySteamTurbineMaster.maxSpeed()));
+        ICIntegration.putManualInt("highPressureSteamTurbine_timeToMax", secondsToFullSpeed(ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_baseMass, ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_driveTorque, ITConfig.Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction, TileEntityHighPressureSteamTurbineMaster.maxSpeed()));
+        ICIntegration.putManualInt("steelTank_tankSize", ITConfig.Multiblocks.steelTank.steelTank_tankSize);
     }
 
     private static int secondsToFullSpeed(double mass, double torque, double friction, int maxSpeed) {
@@ -405,48 +405,27 @@ public class ITContent {
         return (int)Math.round(Math.log(100) * (mass / drag) / 20);
     }
 
-    @SuppressWarnings("unchecked")
     public static void registerConveyors() {
-        if (!MCTMixinConfig.mixinSettings.replace_IE_conveyors) { return; }
+        if (!MCTMixinConfig.mixinSettings.replace_IE_conveyors || !Loader.isModLoaded("immersiveengineering")) { return; }
 
         try {
-            Field classRegistryField = ConveyorHandler.class.getDeclaredField("classRegistry");
-            Field reverseClassRegistryField = ConveyorHandler.class.getDeclaredField("reverseClassRegistry");
-
-            classRegistryField.setAccessible(true);
-            reverseClassRegistryField.setAccessible(true);
-
-            Map<ResourceLocation, Class<?>> classRegistry = (Map<ResourceLocation, Class<?>>) classRegistryField.get(null);
-            Map<Class<?>, ResourceLocation> reverseClassRegistry = (Map<Class<?>, ResourceLocation>) reverseClassRegistryField.get(null);
-
-            registerBelt(classRegistry, reverseClassRegistry, "conveyor",         ConveyorBasicAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "uncontrolled",     ConveyorUncontrolledAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "splitter",         ConveyorSplitAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "covered",          ConveyorCoveredAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "dropper",          ConveyorDropAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "droppercovered",   ConveyorDropCoveredAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "extract",          ConveyorExtractAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "extractcovered",   ConveyorExtractCoveredAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "vertical",         ConveyorVerticalAlternative.class);
-            registerBelt(classRegistry, reverseClassRegistry, "verticalcovered",  ConveyorVerticalCoveredAlternative.class);
+            ICConveyors.registerBelt("conveyor",         ConveyorBasicAlternative.class);
+            ICConveyors.registerBelt("uncontrolled",     ConveyorUncontrolledAlternative.class);
+            ICConveyors.registerBelt("splitter",         ConveyorSplitAlternative.class);
+            ICConveyors.registerBelt("covered",          ConveyorCoveredAlternative.class);
+            ICConveyors.registerBelt("dropper",          ConveyorDropAlternative.class);
+            ICConveyors.registerBelt("droppercovered",   ConveyorDropCoveredAlternative.class);
+            ICConveyors.registerBelt("extract",          ConveyorExtractAlternative.class);
+            ICConveyors.registerBelt("extractcovered",   ConveyorExtractCoveredAlternative.class);
+            ICConveyors.registerBelt("vertical",         ConveyorVerticalAlternative.class);
+            ICConveyors.registerBelt("verticalcovered",  ConveyorVerticalCoveredAlternative.class);
 
             if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isClient()) {
-                try {
-                    blusunrize.immersiveengineering.client.models.ModelConveyor.modelCache.clear();
-                    Field itemCacheField = blusunrize.immersiveengineering.client.models.ModelConveyor.class.getDeclaredField("itemModelCache");
-                    itemCacheField.setAccessible(true);
-                    ((java.util.HashMap<?, ?>) itemCacheField.get(null)).clear();
-                }
+                try { ICModels.clearConveyorModelCaches(); }
                 catch (Exception e) { ITLogger.error("Failed to clear ModelConveyor caches", e); }
             }
             ITLogger.info("IT Conveyor Override Active");
         }
         catch (Exception e) { ITLogger.error("Failed to register IT conveyor replacements!", e); }
-    }
-
-    private static void registerBelt(Map<ResourceLocation, Class<?>> classRegistry, Map<Class<?>, ResourceLocation> reverseClassRegistry, String path, Class<?> beltClass) {
-        ResourceLocation rl = new ResourceLocation("immersiveengineering", path);
-        classRegistry.put(rl, beltClass);
-        reverseClassRegistry.put(beltClass, rl);
     }
 }

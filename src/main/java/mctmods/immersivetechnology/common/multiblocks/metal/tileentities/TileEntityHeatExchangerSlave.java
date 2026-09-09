@@ -1,21 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
+import com.immersiveconvergence.api.energy.IICFluxReceiver;
+import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;
-
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.ICFluxStorage;
+import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHeatExchanger;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IComparatorOverride;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
-import blusunrize.immersiveengineering.common.util.Utils;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +30,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IFluxReceiver, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
+public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IICFluxReceiver, IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
 
     TileEntityHeatExchangerMaster master;
     private int loadGrace;
@@ -59,9 +58,9 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
     public TileEntityHeatExchangerMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos) ) return null;
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityHeatExchangerMaster ? (TileEntityHeatExchangerMaster)te : null;
+        if (!world.isBlockLoaded(masterPos)) return null;
+        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
+        master = te instanceof TileEntityHeatExchangerMaster ? (TileEntityHeatExchangerMaster) te : null;
         return master;
     }
 
@@ -126,24 +125,24 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T)new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new ICForgeEnergyWrapper(this, facing);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
             if (m != null && formed) {
                 IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
-                if (accessible.length > 0) return (T)new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, posInMultiblock());
+                if (accessible.length > 0) return (T) new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, posInMultiblock());
             }
         }
         return super.getCapability(capability, facing);
     }
 
-    @Override @Nonnull public FluxStorage getFluxStorage() {
+    @Override @Nonnull public ICFluxStorage getStorage() {
         TileEntityHeatExchangerMaster m = master();
-        return m == null ? new FluxStorage(0) : m.energyStorage;
+        return m == null ? new ICFluxStorage(0) : m.energyStorage;
     }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? SideConfig.INPUT : SideConfig.NONE; }
+    @Override @Nonnull public ICSideConfig getSideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? ICSideConfig.INPUT : ICSideConfig.NONE; }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityHeatExchangerMaster m = master();
@@ -156,5 +155,5 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
         return received;
     }
 
-    @Override public int getComparatorInputOverride() { return Objects.requireNonNull(master()).getComparatorInputOverride(); }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? Objects.requireNonNull(master()).comparatorValue() : 0; }
 }

@@ -136,7 +136,10 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override public double getFriction() { return Multiblocks.steamTurbine.steamTurbine_friction; }
 
-    @Override public float getTorqueMultiplier() { return outputTorque(); }
+    @Override public float getTorqueMultiplier() {
+        TileEntitySteamTurbineMaster m = master();
+        return m == null ? outputTorque() : m.currentTorque;
+    }
 
     @Override public MechanicalEnergyAnimation getAnimation() {
         TileEntitySteamTurbineMaster m = master();
@@ -254,5 +257,12 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
             }
             return drained;
         }
+    }
+
+    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
+
+    @Override public int getComparatorInputOverride() {
+        TileEntitySteamTurbineMaster m = master();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 }

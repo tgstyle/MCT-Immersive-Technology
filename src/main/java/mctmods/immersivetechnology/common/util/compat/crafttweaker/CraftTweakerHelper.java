@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.common.util.compat.crafttweaker;
 
+import com.immersiveconvergence.api.crafting.ICIngredientStack;
 import crafttweaker.api.item.IIngredient;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.core.MCTMixinConfig;
+import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -53,19 +54,19 @@ public class CraftTweakerHelper extends ITCompatModule {
         if (iStack instanceof IngredientStack) {
             IIngredient ingr = ReflectionHelper.getPrivateValue(IngredientStack.class, (IngredientStack)iStack, "ingredient");
             Object o = toObject(ingr);
-            if (o instanceof String) { return new blusunrize.immersiveengineering.api.crafting.IngredientStack((String)o, iStack.getAmount()); }
+            if (o instanceof String) { return new ICIngredientStack((String)o, iStack.getAmount()); }
             return o;
         }
         return null;
     }
 
-    public static blusunrize.immersiveengineering.api.crafting.IngredientStack toIEIngredientStack(IIngredient iStack) {
+    public static ICIngredientStack toICIngredientStack(IIngredient iStack) {
         if (iStack == null) { return null; }
-        if (iStack instanceof IOreDictEntry) { return new blusunrize.immersiveengineering.api.crafting.IngredientStack(((IOreDictEntry)iStack).getName()); }
-        if (iStack instanceof IItemStack) { return new blusunrize.immersiveengineering.api.crafting.IngredientStack(toStack((IItemStack)iStack)); }
+        if (iStack instanceof IOreDictEntry) { return new ICIngredientStack(((IOreDictEntry)iStack).getName()); }
+        if (iStack instanceof IItemStack) { return new ICIngredientStack(toStack((IItemStack)iStack)); }
         if (iStack instanceof IngredientStack) {
             IIngredient ingr = ReflectionHelper.getPrivateValue(IngredientStack.class, (IngredientStack)iStack, "ingredient");
-            blusunrize.immersiveengineering.api.crafting.IngredientStack ingrStack = toIEIngredientStack(ingr);
+            ICIngredientStack ingrStack = toICIngredientStack(ingr);
             ingrStack.inputSize = iStack.getAmount();
             return ingrStack;
         }

@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.client.render.fluid;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
+
+import com.immersiveconvergence.api.client.ICClientUtils;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteelSheetmetalTankMaster;
 
@@ -22,7 +23,7 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 		GlStateManager.translate(0, 3.5f, 0);
 		float baseScale = .0625f;
 		GlStateManager.scale(baseScale, -baseScale, baseScale);
-		double playerDistanceSq = ClientUtils.mc().player.getDistanceSq(tile.getPos());
+		double playerDistanceSq = ICClientUtils.mc().player.getDistanceSq(tile.getPos());
 		float offset = playerDistanceSq < 64 ? .001f : playerDistanceSq < 2304 ? .004f : .015f;
 		float xx = -.5f;
 		float zz = 1.5f - offset;
@@ -36,13 +37,13 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 			GlStateManager.disableLighting();
-			BufferBuilder worldrenderer = ClientUtils.tes().getBuffer();
+			BufferBuilder worldrenderer = ICClientUtils.tes().getBuffer();
 			worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 			worldrenderer.pos(-4, -4, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
 			worldrenderer.pos(-4, 20, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
 			worldrenderer.pos(20, 20, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
 			worldrenderer.pos(20, -4, 0).color(0x22, 0x22, 0x22, 0xff).endVertex();
-			ClientUtils.tes().draw();
+			ICClientUtils.tes().draw();
 			GlStateManager.shadeModel(GL11.GL_FLAT);
 			GlStateManager.disableBlend();
 			GlStateManager.enableAlpha();
@@ -53,7 +54,7 @@ public class TileRenderSteelSheetmetalTank extends TileEntitySpecialRenderer<Til
 				GlStateManager.translate(0, 0, .004f);
 				GlStateManager.enableBlend();
 				OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-				ClientUtils.drawRepeatedFluidSprite(fs, 0, 0 + (1 - h) * 16, 16, h * 16);
+				ICClientUtils.drawRepeatedFluidSprite(fs, 0, 0 + (1 - h) * 16, 16, h * 16);
 				GlStateManager.disableBlend();
 				GlStateManager.translate(0, 0, -.004f);
 				GlStateManager.depthMask(true);

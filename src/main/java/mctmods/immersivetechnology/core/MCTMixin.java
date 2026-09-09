@@ -26,6 +26,7 @@ public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LOGGER.info("Entering preInit - syncing config now");
+
         ConfigManager.sync("mct_mixin", Type.INSTANCE);
 
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
@@ -33,10 +34,10 @@ public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {
             t.printStackTrace(System.err);
         });
 
-        LOGGER.info("Loaded config: replace_IE_pipes={}, replace_IE_conveyors={}, fix_IE_wires={}",
+        LOGGER.info("Loaded config: replace_IE_pipes={}, replace_IE_conveyors={}",
                 MCTMixinConfig.mixinSettings.replace_IE_pipes,
-                MCTMixinConfig.mixinSettings.replace_IE_conveyors,
-                MCTMixinConfig.mixinSettings.fix_IE_wires);
+                MCTMixinConfig.mixinSettings.replace_IE_conveyors);
+
     }
 
     @Override public String[] getASMTransformerClass() { return new String[0]; }

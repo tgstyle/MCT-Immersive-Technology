@@ -1,18 +1,19 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-import blusunrize.immersiveengineering.common.util.Utils;
-
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.PoICache;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
+import com.immersiveconvergence.api.util.ICInventoryHandler;
+import com.immersiveconvergence.api.util.IICInventory;
+import com.immersiveconvergence.api.util.ICFluxStorageAdvanced;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -29,6 +30,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -43,7 +47,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorageAdvanced;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,14 +54,17 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IEBlockInterfaces.IMirrorAble, IEBlockInterfaces.IUsesBooleanProperty, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElectrolyticCrucibleBatterySlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, ICBlockInterfaces.IMirrorAble, ICBlockInterfaces.IUsesBooleanProperty, ICBlockInterfaces.IComparatorOverride, IICInventory {
 
     private static int inputTankSize() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_output_tankSize; }
     private static int energyCapacity() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_size; }
     private static int energyMaxInput() { return Multiblocks.electrolyticCrucibleBattery.electrolyticCrucibleBattery_energy_maxInput; }
 
-    public FluxStorageAdvanced energyStorage = new FluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
+    public static final int slotCount = 1;
+    public NonNullList<ItemStack> inventory = NonNullList.withSize(slotCount, ItemStack.EMPTY);
+    public final IItemHandler extractionHandler = new ICInventoryHandler(slotCount, this, 0, new boolean[]{false}, new boolean[]{true});
+    public ICFluxStorageAdvanced energyStorage = new ICFluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
     public FluidTank[] tanks = new FluidTank[]{
             new ICFluidTank(inputTankSize(), this),
             new ICFluidTank(outputTankSize(), this),
@@ -90,6 +96,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         energyStorage.readFromNBT(nbt.getCompoundTag("energy"));
+        if (nbt.hasKey("inventory")) inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         tanks[0].readFromNBT(nbt.getCompoundTag("tank0"));
         tanks[1].readFromNBT(nbt.getCompoundTag("tank1"));
         tanks[2].readFromNBT(nbt.getCompoundTag("tank2"));
@@ -107,6 +114,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
+        nbt.setTag("inventory", ICUtils.writeInventory(inventory));
         nbt.setTag("energy", energyStorage.writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank0", tanks[0].writeToNBT(new NBTTagCompound()));
         nbt.setTag("tank1", tanks[1].writeToNBT(new NBTTagCompound()));
@@ -127,8 +135,8 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
-            ITSounds.electrolyticCrucibleBattery.PlayRepeating(soundPos0, (2 * soundVolume) / attenuation, soundVolume);
+            float attenuation = Math.max((float) player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 32, 1);
+            ITSounds.electrolyticCrucibleBattery.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
         }
     }
 
@@ -149,8 +157,36 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         super.onChunkUnload();
     }
 
+    private boolean pushItemOut() {
+        if (inventory.get(0).isEmpty()) return false;
+        if (itemOutputPos0 == null) InitializePoIs();
+        TileEntity target = world.getTileEntity(itemOutputTEPos0);
+        if (target == null) return false;
+        ItemStack before = inventory.get(0).copy();
+        ItemStack remaining = ICUtils.insertStackIntoInventory(target, before, itemOutputPos0.facing.getOpposite());
+        inventory.set(0, remaining == null ? ItemStack.EMPTY : remaining);
+        return inventory.get(0).getCount() != before.getCount();
+    }
+
+    public boolean isItemOutputPoI(@Nullable EnumFacing side, BlockPos position) {
+        if (itemOutputPos0 == null) InitializePoIs();
+        return itemOutputPos0 != null && itemOutputPos0.isPoI(side, position);
+    }
+
+    @Override @Nonnull public NonNullList<ItemStack> getInventory() { return inventory; }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
+
+    @Override public int getSlotLimit(int slot) { return 64; }
+
+    @Override public void doGraphicalUpdates(int slot) { efficientMarkDirty(); }
+
     @Override public void disassemble() {
         if (soundPos0 == null) InitializePoIs();
+        if (!world.isRemote) {
+            for (ItemStack stack : inventory) { if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack); }
+            inventory.clear();
+        }
         if (soundPos0 != null) {
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         }
@@ -193,6 +229,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         }
         super.update();
         boolean update = pumpOutputOut();
+        if (pushItemOut()) update = true;
         boolean wasRunning = isRunning;
         if (processQueue.size() < getProcessQueueMaxLength()) {
             FluidStack input = tanks[0].getFluid();
@@ -223,13 +260,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
             else { throttledBlockUpdate(); }
         }
-        int comparator = getComparatorInputOverride();
+        int comparator = comparatorValue();
         if (comparator != oldComparatorOutput) {
             oldComparatorOutput = comparator;
-            if (redstonePos0 != null) {
-                BlockPos rsPos = getBlockPosForPos(redstonePos0.position);
-                world.updateComparatorOutputLevel(rsPos, world.getBlockState(rsPos).getBlock());
-            }
+            notifyComparators();
         }
         oldEnergy = currentEnergy;
         oldIsRunning = isRunning;
@@ -300,8 +334,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
         p = getBlockPosForPos(itemOutputPos0.position);
         world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(redstonePos0.position);
-        world.updateComparatorOutputLevel(p, world.getBlockState(p).getBlock());
+        notifyComparators();
     }
 
     private boolean pumpOutputOut() {
@@ -314,7 +347,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                 if (out != null) {
                     int accepted = handler.fill(out, false);
                     if (accepted > 0) {
-                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        int drained = handler.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[1].drain(drained, true);
                         update |= drained > 0;
                     }
@@ -328,7 +361,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                 if (out != null) {
                     int accepted = handler.fill(out, false);
                     if (accepted > 0) {
-                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        int drained = handler.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[2].drain(drained, true);
                         update |= drained > 0;
                     }
@@ -342,7 +375,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
                 if (out != null) {
                     int accepted = handler.fill(out, false);
                     if (accepted > 0) {
-                        int drained = handler.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
+                        int drained = handler.fill(ICUtils.copyFluidStackWithAmount(out, Math.min(out.amount, accepted), false), true);
                         tanks[3].drain(drained, true);
                         update |= drained > 0;
                     }
@@ -370,7 +403,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return false;
     }
 
-    @Override public int getComparatorInputOverride() {
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
+
+    public int comparatorValue() {
         if (!formed) return 0;
         return 15 * tanks[1].getFluidAmount() / tanks[1].getCapacity();
     }
@@ -396,11 +431,9 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return energyInputPos0.isPoI(facing, position) || energyInputPos1.isPoI(facing, position) || energyInputPos2.isPoI(facing, position);
     }
 
-    @Override @Nonnull public FluxStorageAdvanced getFluxStorage() { return energyStorage; }
+    @Override @Nonnull public ICFluxStorageAdvanced getStorage() { return energyStorage; }
 
     @Override public boolean getIsMirrored() { return mirrored; }
-
-    @Override @Nonnull public IEProperties.PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override public int getProcessQueueMaxLength() { return 3; }
 
@@ -412,11 +445,10 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         if (process.recipe.fluidOutput1 != null) tanks[2].fillInternal(process.recipe.fluidOutput1, true);
         if (process.recipe.fluidOutput2 != null) tanks[3].fillInternal(process.recipe.fluidOutput2, true);
         if (process.recipe.itemOutput != null && !process.recipe.itemOutput.isEmpty()) {
-            TileEntity inventoryTile = world.getTileEntity(itemOutputTEPos0);
-            ItemStack remaining = Utils.insertStackIntoInventory(inventoryTile, process.recipe.itemOutput.copy(), itemOutputPos0.facing.getOpposite());
-            if (!remaining.isEmpty()) {
-                Utils.dropStackAtPos(world, itemOutputTEPos0, remaining, itemOutputPos0.facing);
-            }
+            ItemStack buffered = inventory.get(0);
+            ItemStack produced = process.recipe.itemOutput.copy();
+            if (buffered.isEmpty()) { inventory.set(0, produced); }
+            else if (ItemHandlerHelper.canItemStacksStack(buffered, produced)) { buffered.grow(produced.getCount()); }
         }
     }
 
@@ -480,14 +512,14 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return tag;
     }
 
-    static class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {
+    static class ElectrolyticCrucibleBatteryProcess extends ProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {
         public ElectrolyticCrucibleBatteryProcess(ElectrolyticCrucibleBatteryRecipe recipe, int... inputSlots) { super(recipe, inputSlots); }
 
         private int getEnergyPerTick() { return (int) Math.floor((float) recipe.getTotalProcessEnergy() / recipe.getTotalProcessTime()); }
 
         @Override @Nonnull public ElectrolyticCrucibleBatteryProcess setInputTanks(@Nonnull int... tanks) { super.setInputTanks(tanks); return this; }
 
-        @Override public boolean canProcess(@Nonnull TileEntityMultiblockMetal multiblock) {
+        @Override public boolean canProcess(TileEntityTemplateMultiblock<?, ?, ?> multiblock) {
             TileEntityElectrolyticCrucibleBatteryMaster master = (TileEntityElectrolyticCrucibleBatteryMaster) multiblock;
             if (recipe == null) return false;
             int energyPerTick = getEnergyPerTick();
@@ -497,7 +529,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
             return recipe.fluidOutput2 == null || recipe.fluidOutput2.getFluid() == null || master.tanks[3].fillInternal(recipe.fluidOutput2, false) == recipe.fluidOutput2.amount;
         }
 
-        @Override public void doProcessTick(@Nonnull TileEntityMultiblockMetal multiblock) {
+        @Override public void doProcessTick(TileEntityTemplateMultiblock<?, ?, ?> multiblock) {
             if (recipe == null) return;
             int energyPerTick = getEnergyPerTick();
             if (energyPerTick > 0) ((TileEntityElectrolyticCrucibleBatteryMaster) multiblock).energyStorage.extractEnergy(energyPerTick, false);

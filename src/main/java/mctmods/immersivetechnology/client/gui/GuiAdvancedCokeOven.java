@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
+
 import mctmods.immersivetechnology.common.gui.ContainerAdvancedCokeOven;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import net.minecraft.client.renderer.RenderHelper;
@@ -10,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-public class GuiAdvancedCokeOven extends GuiIEContainerBase {
+public class GuiAdvancedCokeOven extends GuiICContainerBase {
     TileEntityAdvancedCokeOvenMaster tile;
 
     public GuiAdvancedCokeOven(InventoryPlayer inventoryPlayer, TileEntityAdvancedCokeOvenMaster tile) {
@@ -22,16 +23,16 @@ public class GuiAdvancedCokeOven extends GuiIEContainerBase {
         super.drawScreen(mx, my, partial);
 
         ArrayList<String> tooltip = new ArrayList<>();
-        ClientUtils.handleGuiTank(tile.tank, guiLeft + 129, guiTop + 20, 16, 47, 176, 31, 20, 51, mx, my, "immersiveengineering:textures/gui/coke_oven.png", tooltip);
+        ICClientUtils.handleGuiTank(tile.tank, guiLeft + 129, guiTop + 20, 16, 47, 176, 31, 20, 51, mx, my, "immersiveengineering:textures/gui/coke_oven.png", tooltip);
         if (!tooltip.isEmpty()) {
-            ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
+            ICClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
             RenderHelper.enableGUIStandardItemLighting();
         }
     }
 
     @Override protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        ClientUtils.bindTexture("immersiveengineering:textures/gui/coke_oven.png");
+        ICClientUtils.bindTexture("immersiveengineering:textures/gui/coke_oven.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         if (tile.processTimeMax > 0 && (tile.processTimeMax - tile.processTimeRemaining) > 0) {
@@ -39,6 +40,6 @@ public class GuiAdvancedCokeOven extends GuiIEContainerBase {
             this.drawTexturedModalRect(guiLeft + 59, guiTop + 37 + 12 - h, 179, 1 + 12 - h, 9, h);
         }
 
-        ClientUtils.handleGuiTank(tile.tank, guiLeft + 129, guiTop + 20, 16, 47, 176, 31, 20, 51, mx, my, "immersiveengineering:textures/gui/coke_oven.png", null);
+        ICClientUtils.handleGuiTank(tile.tank, guiLeft + 129, guiTop + 20, 16, 47, 176, 31, 20, 51, mx, my, "immersiveengineering:textures/gui/coke_oven.png", null);
     }
 }

@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.client.gui;
 
 import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.client.gui.ICGuiButton;
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
-import blusunrize.immersiveengineering.client.gui.elements.GuiButtonIE;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.gui.ContainerTimer;
 import net.minecraft.client.gui.GuiButton;
@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 
-public class GuiTimer extends GuiIEContainerBase {
+public class GuiTimer extends GuiICContainerBase {
 	TileEntityTimer tile;
 
 	public GuiTimer(InventoryPlayer inventoryPlayer, TileEntityTimer tile) {
@@ -26,8 +26,8 @@ public class GuiTimer extends GuiIEContainerBase {
 	@Override public void initGui() {
 		super.initGui();
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButtonIE(0, guiLeft + 39, guiTop + 35, 16, 16, "+", "immersivetech:textures/gui/timer.png", 176, 0));
-		this.buttonList.add(new GuiButtonIE(1, guiLeft + 120, guiTop + 35, 16, 16, "-", "immersivetech:textures/gui/timer.png", 176, 16));
+		this.buttonList.add(new ICGuiButton(0, guiLeft + 39, guiTop + 35, 16, 16, "+", "immersivetech:textures/gui/timer.png", 176, 0));
+		this.buttonList.add(new ICGuiButton(1, guiLeft + 120, guiTop + 35, 16, 16, "-", "immersivetech:textures/gui/timer.png", 176, 16));
 	}
 
 	@Override protected void actionPerformed(@Nonnull GuiButton button) {
@@ -39,7 +39,7 @@ public class GuiTimer extends GuiIEContainerBase {
 
 	@Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		ClientUtils.bindTexture("immersivetech:textures/gui/timer.png");
+		ICClientUtils.bindTexture("immersivetech:textures/gui/timer.png");
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		float time = (float)tile.getTarget() / 20;

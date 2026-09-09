@@ -1,24 +1,21 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.IEProperties.PropertyBoolInverted;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IActiveState;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IHasDummyBlocks;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IUsesBooleanProperty;
-import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IEForgeEnergyWrapper;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.api.block.ICTileEntityBase;
 import com.immersiveconvergence.api.client.ICSoundHandler;
+import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
+import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IActiveState;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IDirectionalTile;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IHasDummyBlocks;
 import com.immersiveconvergence.api.network.MessageStopSound;
+import com.immersiveconvergence.api.util.ICFluxStorage;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -35,10 +32,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase implements IIEInternalFluxHandler, IDirectionalTile, IHasDummyBlocks, IActiveState, ITickable {
+public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase implements IICInternalFluxHandler, IDirectionalTile, IHasDummyBlocks, IActiveState, ITickable {
     private static int cokeOvenConsumption() { return Multiblocks.advancedCokeOvenBaseheater.advancedCokeOvenBaseheater_energy_consumption; }
     public EnumFacing facing = EnumFacing.NORTH;
-    public FluxStorage energyStorage = new FluxStorage(8000);
+    public ICFluxStorage energyStorage = new ICFluxStorage(8000);
     public boolean dummy = false;
     public boolean active = false;
     public BlockPos masterPos;
@@ -98,13 +95,13 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
         world.notifyBlockUpdate(dummyPos, dummyState, dummyState, 3);
     }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(EnumFacing facing) {
-        return !dummy && facing == EnumFacing.UP ? SideConfig.INPUT : SideConfig.NONE;
+    @Override @Nonnull public ICSideConfig getSideConfig(EnumFacing facing) {
+        return !dummy && facing == EnumFacing.UP ? ICSideConfig.INPUT : ICSideConfig.NONE;
     }
 
-    IEForgeEnergyWrapper wrapper = new IEForgeEnergyWrapper(this, EnumFacing.UP);
+    ICForgeEnergyWrapper wrapper = new ICForgeEnergyWrapper(this, EnumFacing.UP);
 
-    @Override public IEForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
+    @Override public ICForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
         if (!dummy && facing == EnumFacing.UP) { return wrapper; }
         return null;
     }
@@ -196,18 +193,16 @@ public class TileEntityAdvancedCokeOvenBaseheater extends TileEntityIEBase imple
         return requester.getPos().equals(dummyPos);
     }
 
-    @Override @Nonnull public FluxStorage getFluxStorage() {
+    @Override @Nonnull public ICFluxStorage getStorage() {
         if (dummy) {
             if (masterPos == null) { findMaster(); }
             TileEntity tile = world.getTileEntity(masterPos);
-            if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) { return ((TileEntityAdvancedCokeOvenBaseheater)tile).getFluxStorage(); }
+            if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) { return ((TileEntityAdvancedCokeOvenBaseheater)tile).getStorage(); }
         }
         return energyStorage;
     }
 
     @Override public boolean getIsActive() { return active; }
-
-    @Override @Nonnull public PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IUsesBooleanProperty> inf) { return IEProperties.BOOLEANS[0]; }
 
     @Override public void update() {
         if (!world.isRemote && !dummy) {

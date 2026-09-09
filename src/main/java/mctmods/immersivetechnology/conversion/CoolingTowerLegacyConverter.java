@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.conversion;
 
-import blusunrize.immersiveengineering.api.IEProperties;
+
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.util.ICUtils;
 
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +34,7 @@ public class CoolingTowerLegacyConverter {
         NBTTagCompound nbt = part.writeToNBT(new NBTTagCompound());
         boolean isMaster = part instanceof TileEntityCoolingTowerMaster;
         part.formed = false;
-        IBlockState state = ITUtils.stateOf(ITContent.blockStoneMultiblock, isMaster ? BlockType_StoneMultiblock.COOLING_TOWER : BlockType_StoneMultiblock.COOLING_TOWER_SLAVE).withProperty(IEProperties.FACING_HORIZONTAL, part.facing).withProperty(IEProperties.MULTIBLOCKSLAVE, !isMaster);
+        IBlockState state = ICUtils.stateOf(ITContent.blockStoneMultiblock, isMaster ? BlockType_StoneMultiblock.COOLING_TOWER : BlockType_StoneMultiblock.COOLING_TOWER_SLAVE).withProperty(ICProperties.FACING_HORIZONTAL, part.facing).withProperty(ICProperties.MULTIBLOCKSLAVE, !isMaster);
         world.setBlockState(position, state, 2);
         TileEntity converted = world.getTileEntity(position);
         if (converted != null) {

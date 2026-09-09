@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.gui;
 
-import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.client.gui.GuiIEContainerBase;
+
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityMeltingCrucibleMaster;
 import mctmods.immersivetechnology.common.gui.ContainerMeltingCrucible;
@@ -15,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class GuiMeltingCrucible extends GuiIEContainerBase {
+public class GuiMeltingCrucible extends GuiICContainerBase {
     TileEntityMeltingCrucibleMaster tile;
 
     public GuiMeltingCrucible(InventoryPlayer invPlayer, TileEntityMeltingCrucibleMaster tile) {
@@ -28,7 +29,7 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
 
         ArrayList<String> tooltip = new ArrayList<>();
 
-        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 15, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", tooltip);
+        ICClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 15, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", tooltip);
 
         if (mx > guiLeft + 16 && mx < guiLeft + 23 && my > guiTop + 21 && my < guiTop + 68)
             tooltip.add(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF");
@@ -38,22 +39,22 @@ public class GuiMeltingCrucible extends GuiIEContainerBase {
             tooltip.add(TextFormatting.RED + df.format(tile.heatLevel) + "/" + df.format(tile.targetTemperature()) + "C");
         }
         if (!tooltip.isEmpty()) {
-            ClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
+            ICClientUtils.drawHoveringText(tooltip, mx, my, fontRenderer, guiLeft + xSize, -1);
             RenderHelper.enableGUIStandardItemLighting();
         }
     }
 
     @Override protected void drawGuiContainerBackgroundLayer(float partialTicks, int mx, int my) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        ClientUtils.bindTexture("immersivetech:textures/gui/melting_crucible.png");
+        ICClientUtils.bindTexture("immersivetech:textures/gui/melting_crucible.png");
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         int stored = (int)(46 * (tile.getEnergyStored(null) / (float)tile.getMaxEnergyStored(null)));
-        ClientUtils.drawGradientRect(guiLeft + 16, guiTop + 22 + (46 - stored), guiLeft + 23, guiTop + 68, 0xffb51500, 0xff600b00);
+        ICClientUtils.drawGradientRect(guiLeft + 16, guiTop + 22 + (46 - stored), guiLeft + 23, guiTop + 68, 0xffb51500, 0xff600b00);
 
         int heatBarSize = (int)(51 * Math.min(1, tile.heatLevel / tile.targetTemperature()));
         this.drawTexturedModalRect(guiLeft + 30, guiTop + 9, 176, 0, heatBarSize, 9);
 
-        ClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", null);
+        ICClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 16, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", null);
     }
 }

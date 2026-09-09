@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.models.IOBJModelCallback;
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.IICOBJModelCallback;
+
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
@@ -63,7 +64,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 	}
 
 	public BlockValve() {
-		super("valve", Material.IRON, PropertyEnum.create("type", BlockType_Valve.class), ItemBlockValve.class, IEProperties.FACING_ALL, IEProperties.BOOLEANS[0], IOBJModelCallback.PROPERTY, ROTATION);
+		super("valve", Material.IRON, PropertyEnum.create("type", BlockType_Valve.class), ItemBlockValve.class, ICProperties.FACING_ALL, ICProperties.BOOLEANS[0], IICOBJModelCallback.PROPERTY, ROTATION);
 		this.setHardness(3.0F);
 		this.setResistance(15.0F);
 		lightOpacity = 0;
@@ -77,7 +78,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		BlockStateContainer base = super.createBlockState();
 		IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState)base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
 		unlisted = Arrays.copyOf(unlisted, unlisted.length + 1);
-		unlisted[unlisted.length - 1] = IEProperties.CONNECTIONS;
+		unlisted[unlisted.length - 1] = ICProperties.CONNECTIONS;
 		return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
 	}
 
@@ -85,7 +86,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		state = super.getExtendedState(state, world, pos);
 		if (state instanceof IExtendedBlockState) {
 			TileEntity te = world.getTileEntity(pos);
-			if (te instanceof TileEntityCommonValve) { state = ((IExtendedBlockState)state).withProperty(IEProperties.CONNECTIONS, ((TileEntityCommonValve)te).genConnBlockstate()); }
+			if (te instanceof TileEntityCommonValve) { state = ((IExtendedBlockState)state).withProperty(ICProperties.CONNECTIONS, ((TileEntityCommonValve)te).genConnBlockstate()); }
 		}
 		return state;
 	}

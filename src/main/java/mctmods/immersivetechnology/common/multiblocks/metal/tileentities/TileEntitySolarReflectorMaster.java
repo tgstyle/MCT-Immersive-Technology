@@ -10,6 +10,7 @@ import com.immersiveconvergence.api.particles.BeamParticles;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 
@@ -30,12 +31,33 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     private float[] animationRotations = new float[2];
 
+    private static final int PHASE_PARKED = -4;
+    private static final int PHASE_RETURNING = -1;
+    private static final int PHASE_ROTATING = 0;
+    private static final int PHASE_TILTING = 1;
+    private static final int PHASE_TRACKING = 2;
+    private static final int MOVE_TICKS = 60;
+
+    @SideOnly(Side.CLIENT) private float animSupportRotation;
+    @SideOnly(Side.CLIENT) private float animMirrorTilt;
+    @SideOnly(Side.CLIENT) private float startSupportRotation;
+    @SideOnly(Side.CLIENT) private float deltaSupportRotation;
+    @SideOnly(Side.CLIENT) private float startMirrorTilt;
+    @SideOnly(Side.CLIENT) private float deltaMirrorTilt;
+    @SideOnly(Side.CLIENT) private int animMaxTicks = MOVE_TICKS;
+    @SideOnly(Side.CLIENT) private int animTicks;
+    @SideOnly(Side.CLIENT) private int animPhase = PHASE_PARKED;
+    @SideOnly(Side.CLIENT) private boolean animStarted;
+    @SideOnly(Side.CLIENT) private boolean prevMirrorTaken;
+    @SideOnly(Side.CLIENT) private BlockPos prevCollectorPosition;
+
     boolean isMirrorTaken = false;
     private boolean initialized = false;
     private boolean needsPoIInit = false;
 
     private PoICache link0;
     private PoICache beam0;
+    private PoICache sun0;
     private BlockPos collectorPosition0;
 
     public BlockPos getCollectorPosition() { return collectorPosition0 != null ? collectorPosition0 : getPos(); }
@@ -100,6 +122,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         super.update();
         if (!formed) return;
         if (world.isRemote) {
+            clientAnimationTick();
             spawnBeamParticles();
             return;
         }
@@ -131,6 +154,82 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     }
 
     @SideOnly(Side.CLIENT)
+    private void clientAnimationTick() {
+        float targetRotation = animationRotations[0];
+        float targetTilt = animationRotations[1];
+        if (!ITConfig.Client.render.solar_reflector_animate) {
+            animSupportRotation = isMirrorTaken ? targetRotation : 0;
+            animMirrorTilt = isMirrorTaken ? targetTilt : 0;
+            animTicks = 0;
+            animPhase = isMirrorTaken ? PHASE_TRACKING : PHASE_PARKED;
+            animStarted = true;
+            prevMirrorTaken = isMirrorTaken;
+            prevCollectorPosition = getCollectorPosition();
+            return;
+        }
+        if (!animStarted) {
+            animStarted = true;
+            animSupportRotation = isMirrorTaken ? targetRotation : 0;
+            animMirrorTilt = isMirrorTaken ? targetTilt : 0;
+            animPhase = isMirrorTaken ? PHASE_TRACKING : PHASE_PARKED;
+            prevMirrorTaken = isMirrorTaken;
+            prevCollectorPosition = getCollectorPosition();
+            return;
+        }
+        BlockPos collector = getCollectorPosition();
+        if (isMirrorTaken != prevMirrorTaken || !collector.equals(prevCollectorPosition)) {
+            if (isMirrorTaken) { beginRotate(targetRotation); }
+            else {
+                startSupportRotation = animSupportRotation;
+                deltaSupportRotation = 0;
+                startMirrorTilt = animMirrorTilt;
+                deltaMirrorTilt = -animMirrorTilt;
+                animMaxTicks = MOVE_TICKS;
+                animTicks = MOVE_TICKS;
+                animPhase = PHASE_RETURNING;
+            }
+            prevMirrorTaken = isMirrorTaken;
+            prevCollectorPosition = collector;
+        }
+        if (animTicks > 0) {
+            float progress = (animMaxTicks - animTicks) / (float)animMaxTicks;
+            float eased = (float)(Math.cos(progress * Math.PI) * -0.5 + 0.5);
+            animSupportRotation = startSupportRotation + deltaSupportRotation * eased;
+            animMirrorTilt = startMirrorTilt + deltaMirrorTilt * eased;
+            animTicks--;
+            if (animTicks == 0) { advanceAnimationPhase(targetRotation, targetTilt); }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void beginRotate(float targetRotation) {
+        float delta = (targetRotation - animSupportRotation + 540) % 360 - 180;
+        startSupportRotation = animSupportRotation;
+        deltaSupportRotation = delta;
+        startMirrorTilt = animMirrorTilt;
+        deltaMirrorTilt = 0;
+        animMaxTicks = MOVE_TICKS;
+        animTicks = MOVE_TICKS;
+        animPhase = PHASE_ROTATING;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void advanceAnimationPhase(float targetRotation, float targetTilt) {
+        if (animPhase == PHASE_RETURNING) {
+            if (isMirrorTaken) { beginRotate(targetRotation); }
+            else { animPhase = PHASE_PARKED; }
+        } else if (animPhase == PHASE_ROTATING) {
+            startSupportRotation = animSupportRotation;
+            deltaSupportRotation = 0;
+            startMirrorTilt = animMirrorTilt;
+            deltaMirrorTilt = targetTilt - animMirrorTilt;
+            animMaxTicks = MOVE_TICKS;
+            animTicks = MOVE_TICKS;
+            animPhase = PHASE_TILTING;
+        } else if (animPhase == PHASE_TILTING) { animPhase = PHASE_TRACKING; }
+    }
+
+    @SideOnly(Side.CLIENT)
     private void spawnBeamParticles() {
         if (!isMirrorTaken || collectorPosition0 == null) { return; }
         if (beam0 == null) { InitializePoIs(); }
@@ -155,6 +254,9 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     }
 
     public boolean setTowerCollectorPosition(BlockPos position) {
+        int dx = position.getX() - getPos().getX();
+        int dz = position.getZ() - getPos().getZ();
+        if (dx == 0 && dz == 0) { return false; }
         collectorPosition0 = position;
         if (!isMirrorTaken) {
             isMirrorTaken = true;
@@ -188,24 +290,40 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     }
 
     public double getSolarCollectorStrength() {
+        if (sun0 == null) { InitializePoIs(); }
+        BlockPos centre = (sun0 == null ? getPos() : getBlockPosForPos(sun0.position)).up();
+        EnumFacing right = getFacing().rotateY();
+        EnumFacing back = getFacing().getOpposite();
         int numClear = 0;
         for (int l = -1; l < 2; l++) {
             for (int w = -1; w < 2; w++) {
-                BlockPos pos = getPos().offset(EnumFacing.NORTH, l).offset(EnumFacing.EAST, w).up();
-                if (world.canBlockSeeSky(pos)) numClear++;
+                if (world.canBlockSeeSky(centre.offset(back, l).offset(right, w))) numClear++;
             }
         }
         return numClear / 9.0;
     }
 
-    public float[] getAnimationRotations() { return animationRotations; }
+    public float[] getAnimationRotations() {
+        if (world != null && world.isRemote) { return new float[] {animSupportRotation, animMirrorTilt}; }
+        return animationRotations;
+    }
 
     private void InitializePoIs() {
         link0 = null;
         beam0 = null;
+        sun0 = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarReflector.instance.pointsOfInterest) {
-            if (poi.name.equals("link0")) { link0 = new PoICache(facing, poi, mirrored); }
-            else if (poi.name.equals("beam0")) { beam0 = new PoICache(facing, poi, mirrored); }
+            switch (poi.name) {
+                case "link0":
+                    link0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "beam0":
+                    beam0 = new PoICache(facing, poi, mirrored);
+                    break;
+                case "sun0":
+                    sun0 = new PoICache(facing, poi, mirrored);
+                    break;
+            }
         }
     }
 

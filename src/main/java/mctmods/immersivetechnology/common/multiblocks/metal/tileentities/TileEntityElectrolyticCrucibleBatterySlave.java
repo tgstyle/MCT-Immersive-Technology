@@ -1,21 +1,19 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
+import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
+import com.immersiveconvergence.api.energy.IICFluxReceiver;
+import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;
-
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.ICFluxStorage;
+import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.api.IEEnums.SideConfig;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.FluxStorage;
-import blusunrize.immersiveengineering.api.energy.immersiveflux.IFluxReceiver;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.EnergyHelper;
-import blusunrize.immersiveengineering.common.util.EnergyHelper.IIEInternalFluxHandler;
-import blusunrize.immersiveengineering.common.util.Utils;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +29,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTemplateMultiblock<TileEntityElectrolyticCrucibleBatterySlave, ElectrolyticCrucibleBatteryRecipe, TileEntityElectrolyticCrucibleBatteryMaster> implements IFluxReceiver, IIEInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IEBlockInterfaces.IComparatorOverride {
+public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTemplateMultiblock<TileEntityElectrolyticCrucibleBatterySlave, ElectrolyticCrucibleBatteryRecipe, TileEntityElectrolyticCrucibleBatteryMaster> implements IICFluxReceiver, IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, ICBlockInterfaces.IComparatorOverride {
 
     TileEntityElectrolyticCrucibleBatteryMaster master;
     private int loadGrace;
@@ -60,7 +59,7 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTempla
     public TileEntityElectrolyticCrucibleBatteryMaster master() {
         if (master != null && !master.tileEntityInvalid) return master;
         BlockPos masterPos = getPos().subtract(new Vec3i(offset[0], offset[1], offset[2]));
-        TileEntity te = Utils.getExistingTileEntity(world, masterPos);
+        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
         master = te instanceof TileEntityElectrolyticCrucibleBatteryMaster ? (TileEntityElectrolyticCrucibleBatteryMaster) te : null;
         return master;
     }
@@ -130,6 +129,11 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTempla
             if (m == null || !formed) return false;
             return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0;
         }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            TileEntityElectrolyticCrucibleBatteryMaster m = master();
+            if (m == null || !formed) return false;
+            return m.isItemOutputPoI(facing, posInMultiblock());
+        }
         return super.hasCapability(capability, facing);
     }
 
@@ -137,7 +141,7 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTempla
     @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new EnergyHelper.IEForgeEnergyWrapper(this, facing);
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new ICForgeEnergyWrapper(this, facing);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityElectrolyticCrucibleBatteryMaster m = master();
@@ -146,15 +150,19 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTempla
                 if (accessible.length > 0) return (T) new TileEntityElectrolyticCrucibleBatteryMaster.ElectrolyticCrucibleBatteryFluidHandler(accessible, m, facing, posInMultiblock());
             }
         }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
+            TileEntityElectrolyticCrucibleBatteryMaster m = master();
+            if (m != null && formed && m.isItemOutputPoI(facing, posInMultiblock())) return (T) m.extractionHandler;
+        }
         return super.getCapability(capability, facing);
     }
 
-    @Override @Nonnull public FluxStorage getFluxStorage() {
+    @Override @Nonnull public ICFluxStorage getStorage() {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();
-        return m == null ? new FluxStorage(0) : m.getFluxStorage();
+        return m == null ? new ICFluxStorage(0) : m.getStorage();
     }
 
-    @Override @Nonnull public SideConfig getEnergySideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? SideConfig.INPUT : SideConfig.NONE; }
+    @Override @Nonnull public ICSideConfig getSideConfig(@Nullable EnumFacing facing) { return formed && master() != null && Objects.requireNonNull(master()).isEnergyPosition(facing, posInMultiblock()) ? ICSideConfig.INPUT : ICSideConfig.NONE; }
 
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityElectrolyticCrucibleBatteryMaster m = master();
@@ -167,5 +175,5 @@ public class TileEntityElectrolyticCrucibleBatterySlave extends TileEntityTempla
         return received;
     }
 
-    @Override public int getComparatorInputOverride() { return Objects.requireNonNull(master()).getComparatorInputOverride(); }
+    @Override public int getComparatorInputOverride() { return isComparatorPos() ? Objects.requireNonNull(master()).comparatorValue() : 0; }
 }

@@ -1,7 +1,8 @@
 package mctmods.immersivetechnology.client.render.multiblock.withanimation;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.client.ClientUtils;
+
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.ICClientUtils;
 
 import mctmods.immersivetechnology.client.render.ITTESRHelper;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -35,7 +36,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         BlockPos masterPos = te.getPos();
-        ClientUtils.bindAtlas();
+        ICClientUtils.bindAtlas();
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
         RenderHelper.disableStandardItemLighting();
@@ -52,7 +53,7 @@ public class TileRenderHighPressureSteamTurbine extends TileEntitySpecialRendere
         IBlockState state = te.getWorld().getBlockState(masterPos);
         if (state.getBlock() == ITContent.blockMetalMultiblock1) {
             if (validFacing) { state = state.getActualState(te.getWorld(), masterPos); }
-            state = state.withProperty(IEProperties.DYNAMICRENDER, true);
+            state = state.withProperty(ICProperties.DYNAMICRENDER, true);
             IBakedModel model = blockRenderer.getModelForState(state);
             ITTESRHelper.renderQuads(model.getQuads(state, null, 0L), buffer, te.getWorld(), masterPos, false);
         }

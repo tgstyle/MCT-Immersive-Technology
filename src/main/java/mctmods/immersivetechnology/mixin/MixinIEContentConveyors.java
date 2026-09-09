@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.mixin;
 
+import mctmods.immersivetechnology.core.MCTMixin;
+import mctmods.immersivetechnology.core.MCTMixinConfig;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConveyorBelt;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityConveyorVertical;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityConveyorBeltAlternative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityConveyorVerticalAlternative;
-import mctmods.immersivetechnology.core.MCTMixin;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;

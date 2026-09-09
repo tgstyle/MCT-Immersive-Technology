@@ -2,21 +2,18 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.capability.IHeatProvider;
 import com.immersiveconvergence.api.multiblock.GenericShape;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.api.crafting.DummyRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.IICInventory;
+import mctmods.immersivetechnology.api.crafting.DummyRecipe;
+import mctmods.immersivetechnology.client.ITGUI;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import blusunrize.immersiveengineering.api.IEProperties;
-import blusunrize.immersiveengineering.api.IEProperties.PropertyBoolInverted;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
-import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,8 +30,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<TileEntityBoilerSolidSlave, DummyRecipe, TileEntityBoilerSolidMaster>
-        implements IEBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
-        IIEInventory, IEBlockInterfaces.IComparatorOverride, IEBlockInterfaces.IActiveState, IHeatProvider {
+        implements ICBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
+        IICInventory, ICBlockInterfaces.IComparatorOverride, ICBlockInterfaces.IActiveState, IHeatProvider {
 
     private TileEntityBoilerSolidMaster cachedMaster;
     private int loadGrace = 0;
@@ -70,7 +67,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("boiler_solid"); }
 
-    @Override @Nonnull public PropertyBoolInverted getBoolProperty(@Nonnull Class<? extends IEBlockInterfaces.IUsesBooleanProperty> inf) { return inf == IEBlockInterfaces.IActiveState.class ? IEProperties.BOOLEANS[1] : super.getBoolProperty(inf); }
+    @Override public int booleanPropertyIndex(boolean activeState) { return activeState ? 1 : 0; }
 
     @Override public boolean getIsActive() {
         TileEntityBoilerSolidMaster m = master();
@@ -147,7 +144,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
 
     @Override public int getComparatorInputOverride() {
         TileEntityBoilerSolidMaster m = master();
-        return m == null ? 0 : m.getComparatorInputOverride();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

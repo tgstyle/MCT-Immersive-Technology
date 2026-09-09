@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.mixin;
 
+import mctmods.immersivetechnology.core.MCTMixin;
+import mctmods.immersivetechnology.core.MCTMixinConfig;
 import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityFluidPump;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPumpAlternative;
-import mctmods.immersivetechnology.core.MCTMixin;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
