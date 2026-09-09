@@ -301,8 +301,6 @@ public class Config {
                 public double solarTower_heat_workingTemperature = 400.0;
                 @Comment({"The capacity of the input tank for the Solar Tower [Default=12000]"})
                 public int solarTower_input_tankSize = 12000;
-                @Comment({"Unused by the Solar Tower since its process rate stopped scaling with reflector strength; reflectors feed the heat instead. Kept so existing configs still load [Default=227.5]"})
-                public double solarTower_maximum_reflector_strength = 227.5;
                 @Comment({"The capacity of the output tank for the Solar Tower [Default=12000]"})
                 public int solarTower_output_tankSize = 12000;
                 @Comment({"How fast the the Solar Tower loses progress in ticks when the heat drops below processing heat level [Default=2]"})
