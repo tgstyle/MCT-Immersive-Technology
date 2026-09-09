@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common;
 
 
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
+import com.immersiveconvergence.common.blocks.pipes.TileEntityFluidPipeAlternative;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.client.ITGUI;

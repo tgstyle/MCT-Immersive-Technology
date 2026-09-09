@@ -52,7 +52,7 @@ public class TileEntityTrashFluid extends TileEntityCommonOSD implements IFluidT
     @Override public FluidStack drain(int maxDrain, boolean doDrain) { return null; }
 
     @Override public TranslationKey text() {
-        return Settings.experimental.per_tick_trash_cans ?
+        return Settings.per_tick_trash_cans ?
                 TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_ALTERNATIVE :
                 TranslationKey.OVERLAY_OSD_TRASH_FLUID_NORMAL_FIRST_LINE;
     }

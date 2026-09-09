@@ -54,8 +54,6 @@ import java.util.List;
 
 public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver {
 
-    protected long onlyLocalDissassembly = -1;
-
     private static int inputTankSize() { return Multiblocks.radiator.radiator_input_tankSize; }
     private static int outputTankSize() { return Multiblocks.radiator.radiator_output_tankSize; }
     private static float speedMult() { return Multiblocks.radiator.radiator_speed_multiplier; }
@@ -233,8 +231,8 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         if (triggerPos == null) triggerPos = getPos();
 
         long time = world.getTotalWorldTime();
-        if (time == onlyLocalDissassembly) return;
-        onlyLocalDissassembly = time;
+        if (time == onlyLocalDisassembly) return;
+        onlyLocalDisassembly = time;
 
         if (soundPos0 != null) {
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
@@ -288,7 +286,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
                     TileEntity te = world.getTileEntity(pos2);
                     if (te instanceof TileEntityRadiatorSlave) {
                         TileEntityRadiatorSlave part = (TileEntityRadiatorSlave) te;
-                        if (time != part.onlyLocalDissassembly) {
+                        if (time != part.onlyLocalDisassembly) {
                             ItemStack originalStack = part.getOriginalBlock();
                             IBlockState originalState = ICUtils.getStateFromItemStack(originalStack);
                             if (originalState != null) {
@@ -297,7 +295,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
                                 drops.add(originalStack.copy());
                             }
                             part.formed = false;
-                            part.onlyLocalDissassembly = time;
+                            part.onlyLocalDisassembly = time;
                         }
                     }
                 }
@@ -477,7 +475,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     @Override public boolean isRSDisabled() {
-        if (computerOn.isPresent()) return !computerOn.get();
+        if (computerOn != null) return !computerOn;
         int[] rs = getRedstonePos();
         if (rs.length < 1) return false;
         for (int p : rs) {

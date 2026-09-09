@@ -7,7 +7,7 @@ import crafttweaker.api.item.IngredientStack;
 import crafttweaker.api.liquid.ILiquidStack;
 import crafttweaker.api.oredict.IOreDictEntry;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
+import com.immersiveconvergence.common.blocks.pipes.ICPipeRegistry;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -35,7 +35,7 @@ public class CraftTweakerHelper extends ITCompatModule {
         if (Multiblocks.enable.enable_electrolyticCrucibleBattery) { CraftTweakerAPI.registerClass(ElectrolyticCrucibleBattery.class); }
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { CraftTweakerAPI.registerClass(MeltingCrucible.class); }
         if (Multiblocks.enable.enable_radiator) { CraftTweakerAPI.registerClass(Radiator.class); }
-        if (MCTMixinConfig.mixinSettings.replace_IE_pipes) { CraftTweakerAPI.registerClass(PressurizedFluid.class); }
+        if (ICPipeRegistry.replacing()) { CraftTweakerAPI.registerClass(PressurizedFluid.class); }
     }
 
     @Override public void init() { }

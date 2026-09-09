@@ -8,7 +8,7 @@ import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICUtils;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.util.ITIPipe;
+import com.immersiveconvergence.api.fluid.IICPipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
@@ -70,7 +70,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
                 FluidStack drainable = tank.drain(Math.min(transferSpeed(), tank.getFluidAmount()), false);
                 if (drainable == null || drainable.amount <= 0) { continue; }
                 TileEntity tile = world.getTileEntity(outPos);
-                boolean isITPipe = tile instanceof ITIPipe;
+                boolean isITPipe = tile instanceof IICPipe;
                 if (isITPipe) {
                     drainable.tag = new NBTTagCompound();
                     drainable.tag.setBoolean("pressurized", true);

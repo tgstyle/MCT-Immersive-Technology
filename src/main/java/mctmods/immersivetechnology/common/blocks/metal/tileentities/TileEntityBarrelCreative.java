@@ -13,7 +13,7 @@ import io.netty.buffer.Unpooled;
 
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
-import mctmods.immersivetechnology.common.util.ITIPipe;
+import com.immersiveconvergence.api.fluid.IICPipe;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
@@ -110,7 +110,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
             if (output != null) {
                 TileEntity tile = ICUtils.getExistingTileEntity(world, getPos().offset(face));
-                FluidStack toOffer = getStack(Blocks.barrels.barrel_creative_outputAmount, tile instanceof ITIPipe);
+                FluidStack toOffer = getStack(Blocks.barrels.barrel_creative_outputAmount, tile instanceof IICPipe);
                 if (toOffer == null) { continue; }
                 int accepted = output.fill(toOffer, false);
                 if (accepted <= 0) { continue; }

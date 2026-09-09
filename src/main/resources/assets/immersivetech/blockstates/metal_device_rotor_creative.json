@@ -6,7 +6,7 @@
       "flip-v": true
     },
     "textures": {
-      "particle": "immersiveengineering:blocks/storage_steel"
+      "particle": "immersivetech:block/metal/technology_engineering"
     }
   },
   "variants": {
@@ -33,7 +33,7 @@
     ],
     "type": {
       "rotor_creative": {
-        "model": "immersiveengineering:ie_empty"
+        "model": "immersiveconvergence:ic_empty"
       }
     },
     "_0multiblockslave": {

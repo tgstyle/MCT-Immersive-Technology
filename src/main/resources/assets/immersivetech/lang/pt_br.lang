@@ -157,26 +157,26 @@ gui.immersivetech.stack_limiter.limittime=Itens por segundo
 gui.immersivetech.stack_limiter.limitdestination=Itens no armazenamento de saída
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=Destilador
-desc.immersiveengineering.info.multiblock.IT:SolarTower=Torre Solar
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=Refletor Solar
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Turbina a Vapor
-desc.immersiveengineering.info.multiblock.IT:BoilerTank=Tanque da Caldeira
-desc.immersiveengineering.info.multiblock.IT:BoilerLiquid=Queimador de Combustível Líquido (Caldeira)
-desc.immersiveengineering.info.multiblock.IT:BoilerSolid=Queimador de Combustível Sólido (Caldeira)
-desc.immersiveengineering.info.multiblock.IT:Alternator=Alternador
-desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Tanque de Fluido de Aço
-desc.immersiveengineering.info.multiblock.IT:CoolingTower=Torre de Resfriamento
-desc.immersiveengineering.info.multiblock.IT:GasTurbine=Turbina a Gás
-desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Trocador de Calor
-desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=Turbina a Vapor de Alta Pressão
-desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=Bateria de Crisol Eletrolítico
-desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Crisol de Fusão
-desc.immersiveengineering.info.multiblock.IT:Radiator=Radiador
-desc.immersiveengineering.info.multiblock.IT:SolarMelter=Crisol de Fusão Solar
+desc.immersiveconvergence.info.multiblock.IT:Distiller=Destilador
+desc.immersiveconvergence.info.multiblock.IT:SolarTower=Torre Solar
+desc.immersiveconvergence.info.multiblock.IT:SolarReflector=Refletor Solar
+desc.immersiveconvergence.info.multiblock.IT:SteamTurbine=Turbina a Vapor
+desc.immersiveconvergence.info.multiblock.IT:BoilerTank=Tanque da Caldeira
+desc.immersiveconvergence.info.multiblock.IT:BoilerLiquid=Queimador de Combustível Líquido (Caldeira)
+desc.immersiveconvergence.info.multiblock.IT:BoilerSolid=Queimador de Combustível Sólido (Caldeira)
+desc.immersiveconvergence.info.multiblock.IT:Alternator=Alternador
+desc.immersiveconvergence.info.multiblock.IT:SteelSheetmetalTank=Tanque de Fluido de Aço
+desc.immersiveconvergence.info.multiblock.IT:CoolingTower=Torre de Resfriamento
+desc.immersiveconvergence.info.multiblock.IT:GasTurbine=Turbina a Gás
+desc.immersiveconvergence.info.multiblock.IT:HeatExchanger=Trocador de Calor
+desc.immersiveconvergence.info.multiblock.IT:HighPressureSteamTurbine=Turbina a Vapor de Alta Pressão
+desc.immersiveconvergence.info.multiblock.IT:electrolyticCrucibleBattery=Bateria de Crisol Eletrolítico
+desc.immersiveconvergence.info.multiblock.IT:meltingCrucible=Crisol de Fusão
+desc.immersiveconvergence.info.multiblock.IT:Radiator=Radiador
+desc.immersiveconvergence.info.multiblock.IT:SolarMelter=Crisol de Fusão Solar
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=Forno de Coque Avançado
+desc.immersiveconvergence.info.multiblock.IT:AdvancedCokeOven=Forno de Coque Avançado
 
 #SOLAR
 chat.immersivetech.solar_tower_vertical_fail=Torres Solares Não Podem Ser Empilhadas Verticalmente

@@ -363,7 +363,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     }
 
     @Override public boolean isRSDisabled() {
-        if (computerOn.isPresent()) return !computerOn.get();
+        if (computerOn != null) return !computerOn;
         int[] rs = getRedstonePos();
         if (rs.length < 1) return false;
         for (int p : rs) {

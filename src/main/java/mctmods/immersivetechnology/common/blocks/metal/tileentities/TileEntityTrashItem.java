@@ -90,5 +90,5 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 
     @Override public TileEntity getGuiMaster() { return this; }
 
-    @Override public TranslationKey text() { return Settings.experimental.per_tick_trash_cans ? TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE; }
+    @Override public TranslationKey text() { return Settings.per_tick_trash_cans ? TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_ALTERNATIVE : TranslationKey.OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE; }
 }

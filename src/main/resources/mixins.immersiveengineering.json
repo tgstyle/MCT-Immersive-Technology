@@ -5,13 +5,6 @@
   "refmap": "mixins.immersivetech.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinIEBlockConveyor",
-    "MixinIEBlockMetalDevice0",
-    "MixinIEBlockMetalDevice1",
-    "MixinIEContentConveyors",
-    "MixinIEConveyorHandler",
-    "MixinIEIEContent",
-    "MixinIERecipeCategory",
-    "MixinIETileEntityFluidPipe"
+    "MixinIERecipeCategory"
   ]
 }

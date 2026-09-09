@@ -75,7 +75,7 @@ public class ModelConfigurableSides implements IBakedModel {
 			IExtendedBlockState extended = (IExtendedBlockState)state;
 			for (int i = 0; i < ICProperties.SIDECONFIG.length; i++) {
 				if (extended.getUnlistedNames().contains(ICProperties.SIDECONFIG[i])) {
-					ICSideConfig config = ICSideConfig.fromIE(extended.getValue(ICProperties.SIDECONFIG[i]));
+					ICSideConfig config = extended.getValue(ICProperties.SIDECONFIG[i]);
 					if (config != null) {
 						int c = config.ordinal();
 						tex[i] = this.textures[i][c];

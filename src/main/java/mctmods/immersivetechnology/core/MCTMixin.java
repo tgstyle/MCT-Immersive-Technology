@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.core;
 
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.common.config.Config.Type;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -25,19 +23,10 @@ public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        LOGGER.info("Entering preInit - syncing config now");
-
-        ConfigManager.sync("mct_mixin", Type.INSTANCE);
-
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             System.err.println("Uncaught exception in thread " + thread.getName() + ":");
             t.printStackTrace(System.err);
         });
-
-        LOGGER.info("Loaded config: replace_IE_pipes={}, replace_IE_conveyors={}",
-                MCTMixinConfig.mixinSettings.replace_IE_pipes,
-                MCTMixinConfig.mixinSettings.replace_IE_conveyors);
-
     }
 
     @Override public String[] getASMTransformerClass() { return new String[0]; }

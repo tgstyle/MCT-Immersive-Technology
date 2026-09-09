@@ -39,7 +39,7 @@ public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnerg
     @Override public boolean canReceive() { return true; }
 
     @Override public TranslationKey text() {
-        return Settings.experimental.per_tick_trash_cans ?
+        return Settings.per_tick_trash_cans ?
                 TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_ALTERNATIVE :
                 TranslationKey.OVERLAY_OSD_TRASH_ENERGY_NORMAL_FIRST_LINE;
     }

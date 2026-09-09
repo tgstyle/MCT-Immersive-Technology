@@ -44,6 +44,12 @@ public class ItemFormationTool extends ItemITBase implements IICTool {
     }
 
     @SideOnly(Side.CLIENT)
+    private static String multiblockNameKey(String uniqueName) {
+        String key = ICLib.DESC_INFO + "multiblock." + uniqueName;
+        return I18n.hasKey(key) ? key : ICLib.DESC_INFO_IE + "multiblock." + uniqueName;
+    }
+
+    @SideOnly(Side.CLIENT)
     private void addInfo(List<String> tooltip, String titleKey, ItemStack stack, String nbtKey) {
         if (!ICNBT.hasKey(stack, nbtKey)) { return; }
         NBTTagList tagList = ICNBT.getTag(stack).getTagList(nbtKey, Constants.NBT.TAG_STRING);
@@ -51,7 +57,7 @@ public class ItemFormationTool extends ItemITBase implements IICTool {
         if (!GuiScreen.isShiftKeyDown()) { tooltip.add(title + " " + I18n.format(ICLib.DESC_INFO + "holdShift")); }
         else {
             tooltip.add(title);
-            for (int i = 0; i < tagList.tagCount(); i++) { tooltip.add(TextFormatting.DARK_GRAY + " " + I18n.format(ICLib.DESC_INFO + "multiblock." + tagList.getStringTagAt(i))); }
+            for (int i = 0; i < tagList.tagCount(); i++) { tooltip.add(TextFormatting.DARK_GRAY + " " + I18n.format(multiblockNameKey(tagList.getStringTagAt(i)))); }
         }
     }
 

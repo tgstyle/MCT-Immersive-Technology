@@ -157,26 +157,26 @@ gui.immersivetech.stack_limiter.limittime=Предметов за секунду
 gui.immersivetech.stack_limiter.limitdestination=Предметов в выходном хранилище
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=Дистиллятор
-desc.immersiveengineering.info.multiblock.IT:SolarTower=Солнечная башня
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=Солнечный отражатель
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=Паровая турбина
-desc.immersiveengineering.info.multiblock.IT:BoilerTank=Резервуар котла
-desc.immersiveengineering.info.multiblock.IT:BoilerLiquid=Горелка котла на жидком топливе
-desc.immersiveengineering.info.multiblock.IT:BoilerSolid=Топка котла на твёрдом топливе
-desc.immersiveengineering.info.multiblock.IT:Alternator=Альтернатор
-desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=Стальной резервуар жидкости
-desc.immersiveengineering.info.multiblock.IT:CoolingTower=Охлаждающая башня
-desc.immersiveengineering.info.multiblock.IT:GasTurbine=Газовая турбина
-desc.immersiveengineering.info.multiblock.IT:HeatExchanger=Теплообменник
-desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=Паровая турбина высокого давления
-desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=Электролитическая тигельная батарея
-desc.immersiveengineering.info.multiblock.IT:meltingCrucible=Тигель плавления
-desc.immersiveengineering.info.multiblock.IT:Radiator=Радиатор
-desc.immersiveengineering.info.multiblock.IT:SolarMelter=Солнечный тигель плавления
+desc.immersiveconvergence.info.multiblock.IT:Distiller=Дистиллятор
+desc.immersiveconvergence.info.multiblock.IT:SolarTower=Солнечная башня
+desc.immersiveconvergence.info.multiblock.IT:SolarReflector=Солнечный отражатель
+desc.immersiveconvergence.info.multiblock.IT:SteamTurbine=Паровая турбина
+desc.immersiveconvergence.info.multiblock.IT:BoilerTank=Резервуар котла
+desc.immersiveconvergence.info.multiblock.IT:BoilerLiquid=Горелка котла на жидком топливе
+desc.immersiveconvergence.info.multiblock.IT:BoilerSolid=Топка котла на твёрдом топливе
+desc.immersiveconvergence.info.multiblock.IT:Alternator=Альтернатор
+desc.immersiveconvergence.info.multiblock.IT:SteelSheetmetalTank=Стальной резервуар жидкости
+desc.immersiveconvergence.info.multiblock.IT:CoolingTower=Охлаждающая башня
+desc.immersiveconvergence.info.multiblock.IT:GasTurbine=Газовая турбина
+desc.immersiveconvergence.info.multiblock.IT:HeatExchanger=Теплообменник
+desc.immersiveconvergence.info.multiblock.IT:HighPressureSteamTurbine=Паровая турбина высокого давления
+desc.immersiveconvergence.info.multiblock.IT:electrolyticCrucibleBattery=Электролитическая тигельная батарея
+desc.immersiveconvergence.info.multiblock.IT:meltingCrucible=Тигель плавления
+desc.immersiveconvergence.info.multiblock.IT:Radiator=Радиатор
+desc.immersiveconvergence.info.multiblock.IT:SolarMelter=Солнечный тигель плавления
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=Улучшенная коксовая печь
+desc.immersiveconvergence.info.multiblock.IT:AdvancedCokeOven=Улучшенная коксовая печь
 
 #SOLAR
 chat.immersivetech.solar_tower_vertical_fail=Солнечные башни нельзя ставить вертикально друг на друга
@@ -416,3 +416,10 @@ desc.engineered_schematics.multiblock.IT:SteamTurbine=Паровая турби�
 desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Стальной резервуар жидкости
 desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Электролитическая тигельная батарея
 desc.engineered_schematics.multiblock.IT:meltingCrucible=Тигель плавления
+chat.immersiveconvergence.info.noGasAllowed=Этот контейнер не может хранить газы!
+desc.immersiveconvergence.info.multiblocksAllowed=Разрешённые мультиблоки:
+desc.immersiveconvergence.info.multiblockForbidden=Запрещённые мультиблоки:
+desc.immersiveconvergence.info.holdShift=§6зажмите кнопку КР§r
+desc.immersiveconvergence.info.blockSide.io.-1=Нет соединения
+desc.immersiveconvergence.info.blockSide.io.0=Вход
+desc.immersiveconvergence.info.blockSide.io.1=Выход

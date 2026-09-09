@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.client;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.ICIntegration;
 import com.immersiveconvergence.api.client.ICModels;
@@ -317,6 +318,7 @@ public class ClientProxy extends CommonProxy {
                     ICManual.text("radiator1"),
                     ICManual.text("radiator2"));
         }
+        if (ICMods.immersiveEngineering()) {
         ICManual.addEntry("controlBlocks", CAT_IT,
                 ICManual.crafting("controlBlocks0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())),
                 ICManual.text("controlBlocks0a"),
@@ -327,6 +329,7 @@ public class ClientProxy extends CommonProxy {
         ICManual.addEntry("redstone", CAT_IT,
                 ICManual.crafting("redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())),
                 ICManual.text("redstone1"));
+        }
         ICManual.addEntry("openBarrel", CAT_IT,
                 ICManual.crafting("openBarrel0", new ItemStack(ITContent.blockMetalBarrel, 1, BlockType_MetalBarrel.BARREL_OPEN.getMeta())),
                 ICManual.text("openBarrel1"));

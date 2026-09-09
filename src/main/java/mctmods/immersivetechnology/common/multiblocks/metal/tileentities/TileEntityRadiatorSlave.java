@@ -26,8 +26,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
-    protected long onlyLocalDissassembly = -1;
-
     private int loadGrace = 0;
 
     public TileEntityRadiatorSlave() {

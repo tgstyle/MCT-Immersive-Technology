@@ -1,12 +1,10 @@
 package mctmods.immersivetechnology.common;
 
-import com.immersiveconvergence.api.ICConveyors;
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.ICIntegration;
 import com.immersiveconvergence.api.block.ICBlockBase;
-import com.immersiveconvergence.api.client.ICModels;
 import com.immersiveconvergence.api.multiblock.BlockMatcher;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
-import com.immersiveconvergence.common.blocks.conveyors.*;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.Config.ITConfig;
@@ -16,7 +14,8 @@ import mctmods.immersivetechnology.common.blocks.BlockValve;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.*;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
+import com.immersiveconvergence.api.fluid.ICPipes;
+import com.immersiveconvergence.common.blocks.pipes.ICPipeRegistry;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
@@ -40,7 +39,6 @@ import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITRecipeLoader;
-import mctmods.immersivetechnology.core.MCTMixinConfig;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -123,7 +121,6 @@ public class ITContent {
     public static Fluid fluidSuperheatedMoltenSodium;
     public static Fluid fluidChlorine;
 
-    public static Set<Fluid> normallyPressurized = new HashSet<>();
 
     public static TileEntityITMultiblockPartAdvancedCokeOven multiblockAdvancedCokeOven;
     public static TileEntityITMultiblockPartBoilerTank multiblockBoilerTank;
@@ -145,8 +142,6 @@ public class ITContent {
     public static TileEntityITMultiblockPartSteelSheetmetalTank multiblockSteelSheetmetalTank;
 
     public static void preInit() {
-        /*CONVEYORS*/
-        registerConveyors();
 
         /*MULTIBLOCKS*/
         blockMetalMultiblock = new BlockMetalMultiblock();
@@ -155,12 +150,12 @@ public class ITContent {
         blockStoneMultiblock = new BlockStoneMultiblock();
 
         /*CONNECTORS*/
-        blockConnectors = new BlockConnectors();
+        if (ICMods.immersiveEngineering()) { blockConnectors = new BlockConnectors(); }
 
         /*METAL*/
         blockMetalTrash = new BlockMetalTrash();
         blockMetalBarrel = new BlockMetalBarrel();
-        blockValve = new BlockValve();
+        if (ICMods.immersiveEngineering()) { blockValve = new BlockValve(); }
         if (ITConfig.Multiblocks.enable.enable_advancedCokeOven) { blockMetalDevice = new BlockMetalDevice(); }
 
         blockMetalDecoration = new BlockMetalDecoration();
@@ -209,7 +204,6 @@ public class ITContent {
 
         /*TILE ENTITIES*/
         registerTile(TileEntityITSlab.class);
-        registerTile(TileEntityTimer.class);
         registerTile(TileEntityTrashItem.class);
         registerTile(TileEntityTrashFluid.class);
         registerTile(TileEntityTrashEnergy.class);
@@ -217,9 +211,12 @@ public class ITContent {
         registerTile(TileEntityBarrelOpen.class);
         registerTile(TileEntityBarrelSteel.class);
         registerTile(TileEntityCrate.class);
-        registerTile(TileEntityFluidValve.class);
-        registerTile(TileEntityLoadController.class);
-        registerTile(TileEntityStackLimiter.class);
+        if (ICMods.immersiveEngineering()) {
+            registerTile(TileEntityTimer.class);
+            registerTile(TileEntityFluidValve.class);
+            registerTile(TileEntityLoadController.class);
+            registerTile(TileEntityStackLimiter.class);
+        }
         registerTile(TileEntityRotorCreative.class);
         registerTile(TileEntityHeatCreative.class);
 
@@ -340,14 +337,12 @@ public class ITContent {
         registerTile(TileEntitySteelSheetmetalTankMaster.class);
         MultiblockRegistry.register(TileEntityITMultiblockPartSteelSheetmetalTank.instance);
         multiblockSteelSheetmetalTank = TileEntityITMultiblockPartSteelSheetmetalTank.instance;
-        if (MCTMixinConfig.mixinSettings.replace_IE_pipes && Loader.isModLoaded("immersiveengineering")) {
-            normallyPressurized.add(FluidRegistry.getFluid("water"));
-            normallyPressurized.add(FluidRegistry.getFluid("steam"));
-            normallyPressurized.add(FluidRegistry.getFluid("fluegas"));
-            normallyPressurized.add(FluidRegistry.getFluid("exhauststeam"));
-            normallyPressurized.add(FluidRegistry.getFluid("highpressuresteam"));
-            TileEntityFluidPipeAlternative.initCovers();
-            ITLogger.info("IT Pipes Override Active");
+        if (ICPipeRegistry.replacing()) {
+            ICPipes.addNormallyPressurized(FluidRegistry.getFluid("water"));
+            ICPipes.addNormallyPressurized(FluidRegistry.getFluid("steam"));
+            ICPipes.addNormallyPressurized(FluidRegistry.getFluid("fluegas"));
+            ICPipes.addNormallyPressurized(FluidRegistry.getFluid("exhauststeam"));
+            ICPipes.addNormallyPressurized(FluidRegistry.getFluid("highpressuresteam"));
         }
     }
 
@@ -405,27 +400,4 @@ public class ITContent {
         return (int)Math.round(Math.log(100) * (mass / drag) / 20);
     }
 
-    public static void registerConveyors() {
-        if (!MCTMixinConfig.mixinSettings.replace_IE_conveyors || !Loader.isModLoaded("immersiveengineering")) { return; }
-
-        try {
-            ICConveyors.registerBelt("conveyor",         ConveyorBasicAlternative.class);
-            ICConveyors.registerBelt("uncontrolled",     ConveyorUncontrolledAlternative.class);
-            ICConveyors.registerBelt("splitter",         ConveyorSplitAlternative.class);
-            ICConveyors.registerBelt("covered",          ConveyorCoveredAlternative.class);
-            ICConveyors.registerBelt("dropper",          ConveyorDropAlternative.class);
-            ICConveyors.registerBelt("droppercovered",   ConveyorDropCoveredAlternative.class);
-            ICConveyors.registerBelt("extract",          ConveyorExtractAlternative.class);
-            ICConveyors.registerBelt("extractcovered",   ConveyorExtractCoveredAlternative.class);
-            ICConveyors.registerBelt("vertical",         ConveyorVerticalAlternative.class);
-            ICConveyors.registerBelt("verticalcovered",  ConveyorVerticalCoveredAlternative.class);
-
-            if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isClient()) {
-                try { ICModels.clearConveyorModelCaches(); }
-                catch (Exception e) { ITLogger.error("Failed to clear ModelConveyor caches", e); }
-            }
-            ITLogger.info("IT Conveyor Override Active");
-        }
-        catch (Exception e) { ITLogger.error("Failed to register IT conveyor replacements!", e); }
-    }
 }

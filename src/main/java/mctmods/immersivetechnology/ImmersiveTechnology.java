@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology;
 
 import com.immersiveconvergence.api.ICIntegration;
-import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidPipeAlternative;
+import com.immersiveconvergence.common.blocks.pipes.TileEntityFluidPipeAlternative;
 
 import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
@@ -65,6 +65,6 @@ public class ImmersiveTechnology {
     @EventHandler public void serverStopping(FMLServerStoppingEvent event) { if (Loader.isModLoaded("immersiveengineering")) { TileEntityFluidPipeAlternative.indirectConnections.clear(); } }
 
     public static CreativeTabs creativeTab = new CreativeTabs(MODID) {
-        @Override @Nonnull public ItemStack createIcon() { return new ItemStack(ITContent.blockValve, 1, 0); }
+        @Override @Nonnull public ItemStack createIcon() { return new ItemStack(ITContent.blockValve != null ? ITContent.blockValve : ITContent.blockMetalDecoration, 1, 0); }
     };
 }

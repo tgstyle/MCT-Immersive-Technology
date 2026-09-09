@@ -154,7 +154,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
 
     @Override public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) { return false; }
 
-    @Override public boolean canRotate(@Nonnull EnumFacing axis) { return false; }
+    @Override public boolean cannotRotate(@Nonnull EnumFacing axis) { return true; }
 
     @Override @Nonnull public EnumFacing getFacingForPlacement(@Nonnull EntityLivingBase placer, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ) { return placer.getHorizontalFacing(); }
 

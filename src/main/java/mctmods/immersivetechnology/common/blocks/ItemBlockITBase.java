@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks;
 
+import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.block.ICBlockBase;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.client.ICModels;
@@ -60,7 +61,7 @@ public class ItemBlockITBase extends ItemBlock {
         }
         super.addInformation(stack, worldIn, list, advInfo);
 
-        if (ICNBT.hasKey(stack, "energyStorage")) list.add(I18n.format("desc.immersiveengineering.info.energyStored", ICNBT.getInt(stack, "energyStorage")));
+        if (ICNBT.hasKey(stack, "energyStorage")) list.add(I18n.format(ICLib.DESC_INFO + "energyStored", ICNBT.getInt(stack, "energyStorage")));
         if (ICNBT.hasKey(stack, "tank")) {
             FluidStack fs = FluidStack.loadFluidStackFromNBT(ICNBT.getTagCompound(stack, "tank"));
             if (fs != null) list.add(fs.getLocalizedName() + ": " + fs.amount + "mB");

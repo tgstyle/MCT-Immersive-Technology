@@ -390,7 +390,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
     }
 
     @Override public boolean isRSDisabled() {
-        if (computerOn.isPresent()) return !computerOn.get();
+        if (computerOn != null) return !computerOn;
         int[] rs = getRedstonePos();
         if (rs.length < 1) return false;
         for (int p : rs) {
@@ -506,7 +506,7 @@ public class TileEntityElectrolyticCrucibleBatteryMaster extends TileEntityElect
         return process;
     }
 
-    @Override @Nonnull protected NBTTagCompound writeProcessToNBT(@Nonnull MultiblockProcess process) {
+    @Override @Nonnull protected NBTTagCompound writeProcessToNBT(@Nonnull MultiblockProcess<ElectrolyticCrucibleBatteryRecipe> process) {
         NBTTagCompound tag = super.writeProcessToNBT(process);
         tag.setInteger("process_maxTicks", process.maxTicks);
         return tag;

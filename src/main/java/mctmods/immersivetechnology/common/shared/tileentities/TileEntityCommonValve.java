@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public abstract class TileEntityCommonValve extends ICTileEntityConnectable implements ICBlockInterfaces.IDirectionalTile, ITickable, ICBlockInterfaces.IBlockOverlayText, ICBlockInterfaces.IPlayerInteraction, ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IActiveState, ICBlockInterfaces.IAttachedIntegerProperies, IICOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
+public abstract class TileEntityCommonValve extends ICTileEntityConnectable implements ICBlockInterfaces.IDirectionalTile, ITickable, ICBlockInterfaces.IBlockOverlayText, ICBlockInterfaces.IPlayerInteraction, ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IActiveState, ICBlockInterfaces.IAttachedIntegerProperties, IICOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
 
 	final TranslationKey overlayNormal;
 	final TranslationKey overlaySneakingFirstLine;
@@ -293,7 +293,7 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 
 	@Override public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) { return !entity.isSneaking(); }
 
-	@Override public boolean canRotate(@Nonnull EnumFacing axis) { return true; }
+	@Override public boolean cannotRotate(@Nonnull EnumFacing axis) { return false; }
 
 	@Override @Nonnull public String getCacheKey(@Nonnull IBlockState object) { return rotation + ";" + facing.getIndex() + ";" + open; }
 

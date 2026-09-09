@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.energy.ICTileEntityConnectorRedstone;
 import com.immersiveconvergence.api.energy.ICWireType;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAttachedIntegerProperies;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAttachedIntegerProperties;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IHammerInteraction;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
@@ -39,7 +39,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperies, ITileSyncReceiver {
+public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperties, ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
 
     private int lastOutput = 0;
@@ -47,7 +47,6 @@ public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IG
     private int target = 40;
     private int rotation = 0;
     private EnumFacing inputSide;
-    private int ioMode = 0;
     private transient int outputClient = 0;
 
     @Override public void onLoad() {

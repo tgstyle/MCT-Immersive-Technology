@@ -157,26 +157,26 @@ gui.immersivetech.stack_limiter.limittime=物品 每秒
 gui.immersivetech.stack_limiter.limitdestination=物品 在輸出存儲
 
 #METAL MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:Distiller=蒸餾器
-desc.immersiveengineering.info.multiblock.IT:SolarTower=太陽能集熱塔
-desc.immersiveengineering.info.multiblock.IT:SolarReflector=太陽能反射鏡
-desc.immersiveengineering.info.multiblock.IT:SteamTurbine=蒸汽輪機
-desc.immersiveengineering.info.multiblock.IT:BoilerTank=鍋爐儲罐
-desc.immersiveengineering.info.multiblock.IT:BoilerLiquid=液體燃料鍋爐燃燒室
-desc.immersiveengineering.info.multiblock.IT:BoilerSolid=固體燃料鍋爐燃燒室
-desc.immersiveengineering.info.multiblock.IT:Alternator=交流發電機
-desc.immersiveengineering.info.multiblock.IT:SteelSheetmetalTank=鋼製流體儲罐
-desc.immersiveengineering.info.multiblock.IT:CoolingTower=冷卻塔
-desc.immersiveengineering.info.multiblock.IT:GasTurbine=燃氣輪機
-desc.immersiveengineering.info.multiblock.IT:HeatExchanger=熱交換器
-desc.immersiveengineering.info.multiblock.IT:HighPressureSteamTurbine=高壓蒸汽輪機
-desc.immersiveengineering.info.multiblock.IT:electrolyticCrucibleBattery=電解池
-desc.immersiveengineering.info.multiblock.IT:meltingCrucible=電熔煉爐
-desc.immersiveengineering.info.multiblock.IT:Radiator=散熱板
-desc.immersiveengineering.info.multiblock.IT:SolarMelter=太陽能熔煉塔
+desc.immersiveconvergence.info.multiblock.IT:Distiller=蒸餾器
+desc.immersiveconvergence.info.multiblock.IT:SolarTower=太陽能集熱塔
+desc.immersiveconvergence.info.multiblock.IT:SolarReflector=太陽能反射鏡
+desc.immersiveconvergence.info.multiblock.IT:SteamTurbine=蒸汽輪機
+desc.immersiveconvergence.info.multiblock.IT:BoilerTank=鍋爐儲罐
+desc.immersiveconvergence.info.multiblock.IT:BoilerLiquid=液體燃料鍋爐燃燒室
+desc.immersiveconvergence.info.multiblock.IT:BoilerSolid=固體燃料鍋爐燃燒室
+desc.immersiveconvergence.info.multiblock.IT:Alternator=交流發電機
+desc.immersiveconvergence.info.multiblock.IT:SteelSheetmetalTank=鋼製流體儲罐
+desc.immersiveconvergence.info.multiblock.IT:CoolingTower=冷卻塔
+desc.immersiveconvergence.info.multiblock.IT:GasTurbine=燃氣輪機
+desc.immersiveconvergence.info.multiblock.IT:HeatExchanger=熱交換器
+desc.immersiveconvergence.info.multiblock.IT:HighPressureSteamTurbine=高壓蒸汽輪機
+desc.immersiveconvergence.info.multiblock.IT:electrolyticCrucibleBattery=電解池
+desc.immersiveconvergence.info.multiblock.IT:meltingCrucible=電熔煉爐
+desc.immersiveconvergence.info.multiblock.IT:Radiator=散熱板
+desc.immersiveconvergence.info.multiblock.IT:SolarMelter=太陽能熔煉塔
 
 #STONE MULTIBLOCKS
-desc.immersiveengineering.info.multiblock.IT:AdvancedCokeOven=高級焦爐
+desc.immersiveconvergence.info.multiblock.IT:AdvancedCokeOven=高級焦爐
 
 #SOLAR
 chat.immersivetech.solar_tower_vertical_fail=太陽能塔不能垂直堆疊
@@ -416,3 +416,10 @@ desc.engineered_schematics.multiblock.IT:SteamTurbine=蒸汽輪機
 desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=鋼製流體儲罐
 desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=電解池
 desc.engineered_schematics.multiblock.IT:meltingCrucible=電熔煉爐
+chat.immersiveconvergence.info.noGasAllowed=此容器無法承裝氣體!
+desc.immersiveconvergence.info.multiblocksAllowed=可用多方塊結構：
+desc.immersiveconvergence.info.multiblockForbidden=禁用多方塊結構：
+desc.immersiveconvergence.info.holdShift=§6按住Shift§r
+desc.immersiveconvergence.info.blockSide.io.-1=無連接
+desc.immersiveconvergence.info.blockSide.io.0=輸入
+desc.immersiveconvergence.info.blockSide.io.1=輸出

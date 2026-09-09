@@ -58,7 +58,7 @@ public abstract class TileEntityCommonOSD extends ICTileEntityBase implements IT
     abstract public TranslationKey text();
 
     protected String formattedAmount() {
-        double value = Settings.experimental.per_tick_trash_cans ? lastAcceptedAmount / 20.0 : lastAcceptedAmount;
+        double value = Settings.per_tick_trash_cans ? lastAcceptedAmount / 20.0 : lastAcceptedAmount;
         return NUMBER_FORMAT.format(value);
     }
 

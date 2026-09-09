@@ -361,18 +361,8 @@ public class Config {
             }
         }
         public static class Settings {
-            public static Experimental experimental = new Experimental();
-
-            public static class Experimental {
-                @Comment({"Should the text overlay for trash cans be per tick rather than per second? [Default=false]"})
-                public boolean per_tick_trash_cans = false;
-                @Comment({"Should pipes use round robin (false), which is more CPU intensive, or last served (true), which remembers the last valid path (closest first) [Default=false]"})
-                public boolean pipe_last_served = false;
-                @Comment({"How much should the pipes be capable of transferring when pressurized, in mb. [Default=2500]"})
-                public int pipe_pressurized_transfer_rate = 2500;
-                @Comment({"How much should the pipes be capable of transferring, in mb. [Default=100]"})
-                public int pipe_transfer_rate = 100;
-            }
+            @Comment({"Should the text overlay for trash cans be per tick rather than per second? [Default=false]"})
+            public static boolean per_tick_trash_cans = false;
         }
     }
 }
