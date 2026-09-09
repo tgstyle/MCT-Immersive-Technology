@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.client.gui;
 
-import blusunrize.immersiveengineering.api.IEApi;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
@@ -11,15 +10,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOvenMenu> {
-    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("immersiveengineering", "coke_oven");
-    private static final ResourceLocation TANK = IEApi.ieLoc("coke_oven/tank_overlay");
-    private static final ResourceLocation FLAME = IEApi.ieLoc("coke_oven/flame");
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("advanced_coke_oven");
 
     public AdvancedCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
@@ -27,10 +25,12 @@ public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOven
         int processMax = menu.getMaxProcessTime();
         int process = menu.getRemainingProcessTime();
         if (processMax > 0 && process > 0) {
-            int h = (int) (12 * (process / (float) processMax));
-            graphics.blitSprite(FLAME, 9, 12, 0, 12 - h, leftPos + 59, topPos + 37 + 12 - h, 9, h);
+            int k = Mth.clamp(13 * process / processMax, 0, 13);
+            graphics.blit(TEXTURE, leftPos + 59, topPos + 36 + 13 - k, 176, 12 + (13 - k), 14, k + 1);
         }
     }
 
-    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() { return ImmutableList.of( new GuiFluidArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 20, 51, TANK) ); }
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
+        return ImmutableList.of(new GuiFluidArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE));
+    }
 }
