@@ -10,13 +10,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOvenMenu> {
-    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("immersiveengineering", "coke_oven");
+    private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("advanced_coke_oven");
 
     public AdvancedCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
@@ -24,8 +25,8 @@ public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOven
         int processMax = menu.getMaxProcessTime();
         int process = menu.getRemainingProcessTime();
         if (processMax > 0 && process > 0) {
-            int h = (int) (12 * (process / (float) processMax));
-            graphics.blit(TEXTURE, leftPos + 59, topPos + 37 + 12 - h, 179, 1 + 12 - h, 9, h);
+            int k = Mth.clamp(13 * process / processMax, 0, 13);
+            graphics.blit(TEXTURE, leftPos + 59, topPos + 36 + 13 - k, 176, 12 + (13 - k), 14, k + 1);
         }
     }
 
