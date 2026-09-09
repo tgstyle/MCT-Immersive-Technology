@@ -287,14 +287,21 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         double baseX = particlePos0.getX() + 0.5;
         double baseZ = particlePos0.getZ() + 0.5;
         if (time % 4 == 0) {
-            double py = particlePos0.getY() + 1;
-            for (int i = 0; i < 3; i++) {
-                float g = rand.nextFloat();
-                ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
-                        baseX + rand.nextGaussian() * 0.1, py, baseZ + rand.nextGaussian() * 0.1,
-                        0, 0.21, 0, ITConfig.Client.particles.colored_smoke_height);
-                cloud.setRBGColorF(1F, g, 0F);
-                Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
+            int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            double distanceLimit = 64;
+            if (lessParticleSetting != 2
+                    && !(lessParticleSetting == 1 && rand.nextInt(3) == 0)
+                    && particlePos0.distanceSq(player.posX, player.posY, player.posZ) <= distanceLimit * distanceLimit) {
+                double py = particlePos0.getY() + 1;
+                for (int i = 0; i < 3; i++) {
+                    float g = rand.nextFloat();
+                    ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
+                            baseX + rand.nextGaussian() * 0.1, py, baseZ + rand.nextGaussian() * 0.1,
+                            0, 0.21, 0, ITConfig.Client.particles.colored_smoke_height);
+                    cloud.setRBGColorF(1F, g, 0F);
+                    Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
+                }
             }
         }
         if (time % 10 == 0) {
