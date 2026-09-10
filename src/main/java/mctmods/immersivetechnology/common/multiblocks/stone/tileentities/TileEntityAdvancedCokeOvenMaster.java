@@ -118,7 +118,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     private void spawnParticles() {
         if (smokePos0 == null) InitializePoIs();
         if (smokePos0 == null || !isRunning) return;
-        Random rand = new Random();
+        Random rand = world.rand;
         int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -451,7 +451,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (!formed) return super.getCapability(capability, facing);
         if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {

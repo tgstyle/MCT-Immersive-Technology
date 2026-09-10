@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -57,7 +59,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		});
 	}
 
-	public static HashMap<String, List<BakedQuad>> modelCache = new HashMap<>();
+	public static final Map<String, List<BakedQuad>> modelCache = new ConcurrentHashMap<>();
 
 	final String name;
 	public TextureAtlasSprite[][] textures;
@@ -68,25 +70,21 @@ public class ModelConfigurableSides implements IBakedModel {
 	}
 
 	@Override @Nonnull public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-		TextureAtlasSprite[] tex = new TextureAtlasSprite[6];
-		for (int i = 0; i < tex.length; i++) tex[i] = this.textures[i][0];
 		char[] keyArray = "000000".toCharArray();
 		if (state instanceof IExtendedBlockState) {
 			IExtendedBlockState extended = (IExtendedBlockState)state;
 			for (int i = 0; i < ICProperties.SIDECONFIG.length; i++) {
 				if (extended.getUnlistedNames().contains(ICProperties.SIDECONFIG[i])) {
 					ICSideConfig config = extended.getValue(ICProperties.SIDECONFIG[i]);
-					if (config != null) {
-						int c = config.ordinal();
-						tex[i] = this.textures[i][c];
-						keyArray[i] = Character.forDigit(c, 10);
-					}
+					if (config != null) { keyArray[i] = Character.forDigit(config.ordinal(), 10); }
 				}
 			}
 		}
-		String key = name + String.copyValueOf(keyArray);
-		if (!modelCache.containsKey(key)) modelCache.put(key, bakeQuads(tex));
-		return modelCache.get(key);
+		return modelCache.computeIfAbsent(name + String.copyValueOf(keyArray), k -> {
+			TextureAtlasSprite[] tex = new TextureAtlasSprite[6];
+			for (int i = 0; i < tex.length; i++) tex[i] = this.textures[i][Character.digit(k.charAt(k.length() - 6 + i), 10)];
+			return bakeQuads(tex);
+		});
 	}
 
 	private static List<BakedQuad> bakeQuads(TextureAtlasSprite[] sprites) {

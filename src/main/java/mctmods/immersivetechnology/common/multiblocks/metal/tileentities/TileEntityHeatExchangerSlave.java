@@ -122,7 +122,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
             if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new ICForgeEnergyWrapper(this, facing);

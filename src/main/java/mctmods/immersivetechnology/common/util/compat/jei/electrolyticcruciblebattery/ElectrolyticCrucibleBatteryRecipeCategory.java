@@ -1,4 +1,4 @@
-package mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery;
+package mctmods.immersivetechnology.common.util.compat.jei.electrolyticcruciblebattery;
 
 import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockIngredients;

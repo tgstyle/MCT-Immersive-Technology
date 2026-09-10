@@ -282,7 +282,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     private void spawnParticles() {
         if (particlePos0 == null) return;
         if (heatLevel < targetTemperature() || reflectorStrength <= 0) return;
-        Random rand = new Random();
+        Random rand = world.rand;
         long time = world.getTotalWorldTime();
         double baseX = particlePos0.getX() + 0.5;
         double baseZ = particlePos0.getZ() + 0.5;
@@ -399,10 +399,19 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
         return update;
     }
 
+    private ItemStack targetLookupInput = ItemStack.EMPTY;
+    private MeltingCrucibleRecipe targetLookupRecipe;
+    private boolean targetLookupDone;
+
     public double targetTemperature() {
         if (cachedSolarMelterRecipe != null) { return cachedSolarMelterRecipe.requiredTemp; }
-        MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
-        return recipe != null ? recipe.requiredTemp : workingHeatLevel();
+        ItemStack input = inventory.get(0);
+        if (!targetLookupDone || !ItemStack.areItemsEqual(input, targetLookupInput) || !ItemStack.areItemStackTagsEqual(input, targetLookupInput)) {
+            targetLookupRecipe = MeltingCrucibleRecipe.findRecipe(input);
+            targetLookupInput = input.isEmpty() ? ItemStack.EMPTY : input.copy();
+            targetLookupDone = true;
+        }
+        return targetLookupRecipe != null ? targetLookupRecipe.requiredTemp : workingHeatLevel();
     }
 
     private boolean recipeLogic() {

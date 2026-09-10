@@ -14,7 +14,6 @@ import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityC
 import mctmods.immersivetechnology.common.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -24,12 +23,9 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Set;
 
 @SuppressWarnings("unused")
 public class CommonProxy implements IGuiHandler {

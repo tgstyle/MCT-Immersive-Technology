@@ -168,7 +168,7 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (!formed || facing == null) return super.getCapability(capability, facing);
         TileEntitySolarMelterMaster m = master();
         if (m == null) return super.getCapability(capability, facing);

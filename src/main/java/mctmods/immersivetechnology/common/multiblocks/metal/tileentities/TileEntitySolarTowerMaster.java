@@ -326,10 +326,24 @@ public class TileEntitySolarTowerMaster extends TileEntitySolarTowerSlave implem
         checkReflectorPositions();
     }
 
+    private FluidStack targetLookupFluid;
+    private SolarTowerRecipe targetLookupRecipe;
+    private boolean targetLookupDone;
+
     public double targetTemperature() {
         if (cachedSolarTowerRecipe != null) { return cachedSolarTowerRecipe.requiredTemp; }
-        SolarTowerRecipe recipe = SolarTowerRecipe.findRecipe(tanks[0].getFluid());
-        return recipe != null ? recipe.requiredTemp : workingHeatLevel();
+        FluidStack input = tanks[0].getFluid();
+        if (!targetLookupDone || !isSameFluid(input, targetLookupFluid)) {
+            targetLookupRecipe = SolarTowerRecipe.findRecipe(input);
+            targetLookupFluid = input == null ? null : input.copy();
+            targetLookupDone = true;
+        }
+        return targetLookupRecipe != null ? targetLookupRecipe.requiredTemp : workingHeatLevel();
+    }
+
+    private static boolean isSameFluid(FluidStack a, FluidStack b) {
+        if (a == null || b == null) { return a == b; }
+        return a.isFluidEqual(b);
     }
 
 

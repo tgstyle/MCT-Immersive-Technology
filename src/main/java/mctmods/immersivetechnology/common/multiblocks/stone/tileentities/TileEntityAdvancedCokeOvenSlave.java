@@ -155,7 +155,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityAdvancedCokeOvenMaster m = master();
         if (m == null || facing == null) return super.getCapability(capability, facing);
         if (m.itemInputPos0 == null) m.InitializePoIs();

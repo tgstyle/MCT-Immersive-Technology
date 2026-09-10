@@ -194,8 +194,6 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	private ICWireType outputCable() { return rightIsInput() ? leftCable : rightCable; }
 
-	private BlockPos inputEnd() { return rightIsInput() ? rightEnd : leftEnd; }
-
 	private BlockPos outputEnd() { return rightIsInput() ? leftEnd : rightEnd; }
 
 	private int movedThisTick = 0;
@@ -263,7 +261,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side) {
+	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side) {
 		if (capability == CapabilityEnergy.ENERGY) {
 			if (side == inputDir()) { return (T)this; }
 			else if (side == outputDir() || side == null) { return (T)dummyBattery; }

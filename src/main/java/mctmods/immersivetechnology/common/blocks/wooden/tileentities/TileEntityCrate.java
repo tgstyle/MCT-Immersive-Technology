@@ -26,6 +26,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandlerModifiable, IGuiTile, IPlayerInteraction, ITileDrop {
 	public ItemStack visibleItemStack = ItemStack.EMPTY;
@@ -72,7 +73,7 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
     }
 
 	@SuppressWarnings("unchecked")
-	@Override public @Nonnull <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+	@Override public @Nullable <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
 		return super.getCapability(capability, facing);
 	}

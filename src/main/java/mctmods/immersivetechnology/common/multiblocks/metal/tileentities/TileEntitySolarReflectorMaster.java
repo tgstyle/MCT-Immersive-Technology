@@ -290,17 +290,23 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         }
     }
 
+    private BlockPos[] skyProbes;
+
     public double getSolarCollectorStrength() {
         if (sun0 == null) { InitializePoIs(); }
-        BlockPos centre = (sun0 == null ? getPos() : getBlockPosForPos(sun0.position)).up();
-        EnumFacing right = getFacing().rotateY();
-        EnumFacing back = getFacing().getOpposite();
-        int numClear = 0;
-        for (int l = -1; l < 2; l++) {
-            for (int w = -1; w < 2; w++) {
-                if (world.canBlockSeeSky(centre.offset(back, l).offset(right, w))) numClear++;
+        if (skyProbes == null) {
+            BlockPos centre = (sun0 == null ? getPos() : getBlockPosForPos(sun0.position)).up();
+            EnumFacing right = getFacing().rotateY();
+            EnumFacing back = getFacing().getOpposite();
+            BlockPos[] probes = new BlockPos[9];
+            int i = 0;
+            for (int l = -1; l < 2; l++) {
+                for (int w = -1; w < 2; w++) { probes[i++] = centre.offset(back, l).offset(right, w); }
             }
+            skyProbes = probes;
         }
+        int numClear = 0;
+        for (BlockPos probe : skyProbes) { if (world.canBlockSeeSky(probe)) { numClear++; } }
         return numClear / 9.0;
     }
 
@@ -313,6 +319,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         link0 = null;
         beam0 = null;
         sun0 = null;
+        skyProbes = null;
         for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarReflector.instance.pointsOfInterest) {
             switch (poi.name) {
                 case "link0":

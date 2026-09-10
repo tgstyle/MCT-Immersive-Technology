@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerSolidReci
 import mctmods.immersivetechnology.common.util.compat.jei.boiler.BoilerTankRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.coolingtower.CoolingTowerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.distiller.DistillerRecipeCategory;
-import mctmods.immersivetechnology.common.util.compat.jei.electrolyticcrucbilebattery.ElectrolyticCrucibleBatteryRecipeCategory;
+import mctmods.immersivetechnology.common.util.compat.jei.electrolyticcruciblebattery.ElectrolyticCrucibleBatteryRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.gasturbine.GasTurbineRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.heatexchanger.HeatExchangerRecipeCategory;
 import mctmods.immersivetechnology.common.util.compat.jei.highpressuresteamturbine.HighPressureSteamTurbineRecipeCategory;

@@ -159,7 +159,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityBoilerSolidMaster m = master();
             if (m != null && formed) {

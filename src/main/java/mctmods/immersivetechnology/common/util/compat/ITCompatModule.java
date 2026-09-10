@@ -38,11 +38,11 @@ public abstract class ITCompatModule {
 					modules.add(m);
 					m.preInit();
 				} catch(Exception exception) {
-                    ITLogger.logger.error("Compat module for{} could not be preInitialized. Report this and include the error message below!", e.getKey(), exception);
+                    ITLogger.logger.error("Compat module for {} could not be preInitialized. Report this and include the error message below!", e.getKey(), exception);
 				}
 			}
 		}
-		if (Loader.isModLoaded("advanced rocketry")) isAdvancedRocketryLoaded = true;
+		if (Loader.isModLoaded("advancedrocketry")) isAdvancedRocketryLoaded = true;
 	}
 
 	public static void doModulesInit() {
@@ -50,7 +50,7 @@ public abstract class ITCompatModule {
 			try {
 				compat.init();
 			} catch(Exception exception) {
-                ITLogger.logger.error("Compat module for{} could not be initialized. Report this and include the error message below!", compat, exception);
+                ITLogger.logger.error("Compat module for {} could not be initialized. Report this and include the error message below!", compat, exception);
 			}
 		}
 	}
@@ -60,7 +60,7 @@ public abstract class ITCompatModule {
 			try {
 				compat.postInit();
 			} catch(Exception exception) {
-                ITLogger.logger.error("Compat module for{} could not be postInitialized. Report this and include the error message below!", compat, exception);
+                ITLogger.logger.error("Compat module for {} could not be postInitialized. Report this and include the error message below!", compat, exception);
 			}
 		}
 	}
@@ -73,7 +73,7 @@ public abstract class ITCompatModule {
 				try {
 					compat.loadComplete();
 				} catch(Exception exception) {
-                    ITLogger.logger.error("Compat module for{} could not be initialized. Report this and include the error message below!", compat, exception);
+                    ITLogger.logger.error("Compat module for {} could not be initialized. Report this and include the error message below!", compat, exception);
 				}
 			}
 		}

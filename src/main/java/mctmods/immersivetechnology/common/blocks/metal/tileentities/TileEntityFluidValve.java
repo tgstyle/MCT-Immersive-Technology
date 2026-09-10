@@ -65,7 +65,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			if (facing == this.facing) { return (T)this; }
 			else if (facing == this.facing.getOpposite() || facing == null) { return (T)dummyTank; }

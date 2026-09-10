@@ -139,7 +139,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         if (smokePos0 == null || fluidOutputPos0 == null) InitializePoIs();
         if (smokePos0 == null || !isRunning || world.getTotalWorldTime() % 2 != 0) return;
         if (FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite()) != null) return;
-        Random rand = new Random();
+        Random rand = world.rand;
         int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;

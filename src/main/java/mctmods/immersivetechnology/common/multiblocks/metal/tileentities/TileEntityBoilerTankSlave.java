@@ -141,7 +141,7 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityBoilerTankMaster m = master();
             if (m != null && formed) {

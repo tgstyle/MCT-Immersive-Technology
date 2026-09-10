@@ -142,7 +142,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
         if (m == null || !formed) return super.getCapability(capability, facing);
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null && m.itemInputPos0 != null && m.itemInputPos0.isPoI(facing, posInMultiblock())) return (T) m.insertionHandler;

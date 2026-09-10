@@ -12,7 +12,7 @@ item.immersivetech.formation_tool.name=技術扳手
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸餾水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=餘熱蒸汽
+tile.immersivetech.exhaustSteam.name=餘熱蒸汽
 tile.immersivetech.fluidFlueGas.name=燃燒廢氣
 tile.immersivetech.fluidHighPressureSteam.name=高壓蒸汽
 tile.immersivetech.fluidHotWater.name=溫泉水
@@ -420,6 +420,7 @@ chat.immersivetech.info.noGasAllowed=此容器無法承裝氣體!
 desc.immersivetech.info.multiblocksAllowed=可用多方塊結構：
 desc.immersivetech.info.multiblockForbidden=禁用多方塊結構：
 desc.immersivetech.info.holdShift=§6按住Shift§r
+desc.immersivetech.info.redstoneChannel.send=頻道送出：%1$s
 desc.immersivetech.info.blockSide.io.-1=無連接
 desc.immersivetech.info.blockSide.io.0=輸入
 desc.immersivetech.info.blockSide.io.1=輸出

@@ -35,6 +35,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileEntityDistillerSlave, DistillerRecipe, TileEntityDistillerMaster> implements IGuiTile, IICFluxReceiver, IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
 
+    private static final boolean[] OUTPUT_INSERT = new boolean[5];
+    private static final boolean[] OUTPUT_EXTRACT = {false, true, false, true, true};
+
     private TileEntityDistillerMaster master;
     private int loadGrace = 0;
 
@@ -164,7 +167,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             TileEntityDistillerMaster m = master();
             if (m != null && formed) {
@@ -175,9 +178,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityDistillerMaster m = master();
             if (m != null && formed && m.itemOutputPos0 != null && m.itemOutputPos0.isPoI(facing, posInMultiblock())) {
-                boolean[] insert = new boolean[5];
-                boolean[] extract = new boolean[]{false, true, false, true, true};
-                return (T) new ICInventoryHandler(5, this, 0, insert, extract);
+                return (T) new ICInventoryHandler(5, this, 0, OUTPUT_INSERT, OUTPUT_EXTRACT);
             }
         }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {

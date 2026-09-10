@@ -164,7 +164,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     private void spawnParticles() {
         if (particle0 == null) InitializePoIs();
         if (!starterRunning || speed < effectiveMaxSpeed / 4) return;
-        Random rand = new Random();
+        Random rand = world.rand;
         if (rand.nextInt(40) == 0) return;
         int lessParticleSetting = ICClientUtils.mc().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
@@ -183,7 +183,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (smokePos1 == null || fluidOutputPos0 == null) InitializePoIs();
         if (smokePos1 == null || !isRunning || world.getTotalWorldTime() % 2 != 0) return;
         if (FluidUtil.getFluidHandler(world, outputFront0, fluidOutputPos0.facing.getOpposite()) != null) return;
-        Random rand = new Random();
+        Random rand = world.rand;
         int lessParticleSetting = ICClientUtils.mc().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -623,7 +623,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInputPos0 == null) InitializePoIs();
             if (fluidInputPos0.isPoI(facing, posInMultiblock()) || fluidOutputPos0.isPoI(facing, posInMultiblock())) {

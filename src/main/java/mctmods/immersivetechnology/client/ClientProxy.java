@@ -63,8 +63,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSteelSheetmetalTank;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
-import mctmods.immersivetechnology.common.util.ITLogger;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -97,9 +95,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = ImmersiveTechnology.MODID, value = Side.CLIENT)
 public class ClientProxy extends CommonProxy {

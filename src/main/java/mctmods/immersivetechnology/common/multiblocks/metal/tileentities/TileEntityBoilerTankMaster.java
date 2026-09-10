@@ -336,7 +336,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInputPos0.isPoI(facing, posInMultiblock()) || fluidOutputPos0.isPoI(facing, posInMultiblock())) {
                 return (T)new BoilerTankFluidHandler(getAccessibleFluidTanks(facing, posInMultiblock()), this, facing, posInMultiblock());

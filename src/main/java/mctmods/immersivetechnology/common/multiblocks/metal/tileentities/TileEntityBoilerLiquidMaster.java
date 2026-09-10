@@ -229,7 +229,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
     @SideOnly(Side.CLIENT)
     public void spawnParticles() {
         if (exhaustPos0 == null) InitializePoIs();
-        Random rand = new Random();
+        Random rand = world.rand;
         int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -395,7 +395,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
             if (fluidInputPos0.isPoI(facing, posInMultiblock())) { return (T)new BoilerLiquidFluidHandler(this, facing, posInMultiblock()); }
         }

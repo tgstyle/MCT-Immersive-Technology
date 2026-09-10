@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
 import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
@@ -18,7 +19,7 @@ public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnerg
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityEnergy.ENERGY; }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY) { return (T)this; }
         return super.getCapability(capability, facing);
     }

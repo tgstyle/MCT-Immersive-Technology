@@ -100,7 +100,7 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
             if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) {

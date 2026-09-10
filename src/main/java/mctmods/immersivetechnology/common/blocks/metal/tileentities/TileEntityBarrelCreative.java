@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.EnumHand;
@@ -69,8 +70,10 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
             if (!world.isRemote) {
                 world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
                 SPacketUpdateTileEntity packet = this.getUpdatePacket();
-                for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, p -> p.getDistanceSq(getPos()) < 64*64)) {
-                    player.connection.sendPacket(packet);
+                if (packet != null) {
+                    for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, p -> p.getDistanceSq(getPos()) < 64*64)) {
+                        player.connection.sendPacket(packet);
+                    }
                 }
             }
         }
@@ -107,9 +110,12 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
         if (world.isRemote || selectedFluid == null) { return; }
         for (int index = 0; index < 6; index++) {
             EnumFacing face = EnumFacing.byIndex(index);
-            IFluidHandler output = FluidUtil.getFluidHandler(world, getPos().offset(face), face.getOpposite());
+            BlockPos target = getPos().offset(face);
+            TileEntity tile = ICUtils.getExistingTileEntity(world, target);
+            IFluidHandler output = tile != null
+                    ? tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, face.getOpposite())
+                    : FluidUtil.getFluidHandler(world, target, face.getOpposite());
             if (output != null) {
-                TileEntity tile = ICUtils.getExistingTileEntity(world, getPos().offset(face));
                 FluidStack toOffer = getStack(Blocks.barrels.barrel_creative_outputAmount, tile instanceof IICPipe);
                 if (toOffer == null) { continue; }
                 int accepted = output.fill(toOffer, false);
@@ -126,7 +132,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull
+    @Override @Nullable
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) { return (T)this; }
         return super.getCapability(capability, facing);

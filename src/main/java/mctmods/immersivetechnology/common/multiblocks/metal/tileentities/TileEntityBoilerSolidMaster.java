@@ -225,7 +225,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     @SideOnly(Side.CLIENT)
     public void spawnParticles() {
         if (exhaustPos0 == null) InitializePoIs();
-        Random rand = new Random();
+        Random rand = world.rand;
         int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;

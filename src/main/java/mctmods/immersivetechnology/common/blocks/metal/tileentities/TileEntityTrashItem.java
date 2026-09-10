@@ -19,6 +19,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHandler, IGuiTile, ITrashCanBounds {
     public DummyInventory inv = new DummyInventory();
@@ -66,7 +67,7 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY; }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) { return (T)this; }
         return super.getCapability(capability, facing);
     }

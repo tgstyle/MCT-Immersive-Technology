@@ -55,7 +55,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override @Nonnull public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			if (facing == this.facing) { return (T)this; }
 			else if (facing == this.facing.getOpposite() || facing == null) { return (T)dummyInventory; }

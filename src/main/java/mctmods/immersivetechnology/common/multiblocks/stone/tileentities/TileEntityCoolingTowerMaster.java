@@ -121,7 +121,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     public void spawnParticles() {
         if (!isRunning) return;
         if (particlePos0 == null) InitializePoIs();
-        Random rand = new Random();
+        Random rand = world.rand;
         int lessParticleSetting = ICClientUtils.mc().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;

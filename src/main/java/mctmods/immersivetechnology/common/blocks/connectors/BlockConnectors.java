@@ -32,7 +32,6 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
 public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     public static final PropertyInteger ROTATION = PropertyInteger.create("rotation", 0, 3);

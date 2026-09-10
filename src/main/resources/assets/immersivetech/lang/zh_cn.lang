@@ -12,7 +12,7 @@ item.immersivetech.formation_tool.name=技术扳手
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=蒸馏水
 tile.immersivetech.fluidSteam.name=蒸汽
-tile.immersivetech.fluidExhaustSteam.name=余热蒸汽
+tile.immersivetech.exhaustSteam.name=余热蒸汽
 tile.immersivetech.fluidFlueGas.name=燃烧废气
 tile.immersivetech.fluidHighPressureSteam.name=高压蒸汽
 tile.immersivetech.fluidHotWater.name=温泉水

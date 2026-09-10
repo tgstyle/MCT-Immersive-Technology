@@ -12,7 +12,7 @@ item.immersivetech.formation_tool.name=Technologist's Wrench
 #FLUIDS
 tile.immersivetech.fluidDistWater.name=Distilled Water
 tile.immersivetech.fluidSteam.name=Steam
-tile.immersivetech.fluidExhaustSteam.name=Exhaust Steam
+tile.immersivetech.exhaustSteam.name=Exhaust Steam
 tile.immersivetech.fluidFlueGas.name=Flue Gas
 tile.immersivetech.fluidHighPressureSteam.name=High Pressure Steam
 tile.immersivetech.fluidHotWater.name=Hot Spring Water

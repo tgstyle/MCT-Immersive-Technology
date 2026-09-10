@@ -118,7 +118,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
     }
 
     @SuppressWarnings("unchecked")
-    @Override @Nonnull
+    @Override @Nullable
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (facing == null || facing.getAxis() == Axis.Y)) {
             return (T)(facing == null ? nullsideFluidHandler : sidedFluidHandler[facing.ordinal()]);

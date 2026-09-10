@@ -126,18 +126,19 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
     @Override public void breakDummies(@Nonnull BlockPos pos, @Nonnull IBlockState state) {
         if (dummy) {
             if (masterPos == null) { findMaster(); }
-            TileEntity tile = world.getTileEntity(masterPos);
-            if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) {
-                ((TileEntityAdvancedCokeOvenBaseheater)tile).breakDummies(masterPos, world.getBlockState(masterPos));
+            if (masterPos != null && !masterPos.equals(getPos())) {
+                TileEntity tile = world.getTileEntity(masterPos);
+                if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) {
+                    ((TileEntityAdvancedCokeOvenBaseheater)tile).breakDummies(masterPos, world.getBlockState(masterPos));
+                }
             }
+            world.setBlockToAir(getPos());
         } else {
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(getPos()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 0));
             BlockPos dummyPos0 = getPos().offset(facing.rotateY());
-            TileEntityAdvancedCokeOvenBaseheater dummy0 = (TileEntityAdvancedCokeOvenBaseheater)world.getTileEntity(dummyPos0);
             BlockPos dummyPos1 = getPos().offset(facing.rotateYCCW());
-            TileEntityAdvancedCokeOvenBaseheater dummy1 = (TileEntityAdvancedCokeOvenBaseheater)world.getTileEntity(dummyPos1);
-            if (dummy0 != null) { world.setBlockToAir(dummyPos0); }
-            if (dummy1 != null) { world.setBlockToAir(dummyPos1); }
+            if (world.getTileEntity(dummyPos0) instanceof TileEntityAdvancedCokeOvenBaseheater) { world.setBlockToAir(dummyPos0); }
+            if (world.getTileEntity(dummyPos1) instanceof TileEntityAdvancedCokeOvenBaseheater) { world.setBlockToAir(dummyPos1); }
             world.setBlockToAir(getPos());
         }
     }
@@ -182,7 +183,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
             this.markContainingBlockForUpdate(null);
             return;
         }
-        masterPos = getPos();
+        masterPos = null;
     }
 
     private boolean isMaster(TileEntityAdvancedCokeOvenBaseheater requester) {
@@ -196,11 +197,15 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
     @Override @Nonnull public ICFluxStorage getStorage() {
         if (dummy) {
             if (masterPos == null) { findMaster(); }
-            TileEntity tile = world.getTileEntity(masterPos);
-            if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) { return ((TileEntityAdvancedCokeOvenBaseheater)tile).getStorage(); }
+            if (masterPos != null && !masterPos.equals(getPos())) {
+                TileEntity tile = world.getTileEntity(masterPos);
+                if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) { return ((TileEntityAdvancedCokeOvenBaseheater)tile).getStorage(); }
+            }
         }
         return energyStorage;
     }
+
+    private TileEntity attachedCache;
 
     @Override public boolean getIsActive() { return active; }
 
@@ -208,8 +213,11 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
         if (!world.isRemote && !dummy) {
             if (soundGracePeriod > 0) { soundGracePeriod--; }
             if (active) {
-                BlockPos attachedPos = getPos().offset(facing);
-                TileEntity te = world.getTileEntity(attachedPos);
+                TileEntity te = attachedCache;
+                if (te == null || te.isInvalid()) {
+                    te = world.getTileEntity(getPos().offset(facing));
+                    attachedCache = te instanceof TileEntityAdvancedCokeOvenSlave ? te : null;
+                }
                 if (!(te instanceof TileEntityAdvancedCokeOvenSlave) || !((TileEntityAdvancedCokeOvenSlave)te).formed) {
                     active = false;
                     soundGracePeriod = 0;

@@ -246,10 +246,19 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
         return (1 / heatLost) * heatLossMultiplier();
     }
 
+    private ItemStack targetLookupInput = ItemStack.EMPTY;
+    private MeltingCrucibleRecipe targetLookupRecipe;
+    private boolean targetLookupDone;
+
     public double targetTemperature() {
         if (cachedMeltingRecipe != null) { return cachedMeltingRecipe.requiredTemp; }
-        MeltingCrucibleRecipe recipe = MeltingCrucibleRecipe.findRecipe(inventory.get(0));
-        return recipe != null ? recipe.requiredTemp : workingHeatLevel();
+        ItemStack input = inventory.get(0);
+        if (!targetLookupDone || !ItemStack.areItemsEqual(input, targetLookupInput) || !ItemStack.areItemStackTagsEqual(input, targetLookupInput)) {
+            targetLookupRecipe = MeltingCrucibleRecipe.findRecipe(input);
+            targetLookupInput = input.isEmpty() ? ItemStack.EMPTY : input.copy();
+            targetLookupDone = true;
+        }
+        return targetLookupRecipe != null ? targetLookupRecipe.requiredTemp : workingHeatLevel();
     }
 
     private boolean recipeLogic(boolean shouldRun) {
