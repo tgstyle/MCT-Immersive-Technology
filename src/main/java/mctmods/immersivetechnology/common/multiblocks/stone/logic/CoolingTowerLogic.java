@@ -7,6 +7,7 @@ import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
@@ -95,11 +96,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     private void spawnParticles(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state, Level level) {
         if (!state.active) { return; }
         RandomSource rand = RandomSource.create();
-        int particleSetting = Minecraft.getInstance().options.particles().get().ordinal();
-        if (particleSetting == 2 || particleSetting == 1 && rand.nextInt(3) == 0) { return; }
-        LocalPlayer player = Minecraft.getInstance().player;
         Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POI.getX() + 0.5, PARTICLE_POI.getY() + 0.5, PARTICLE_POI.getZ() + 0.5));
-        if (player != null && particleVec.distanceToSqr(player.position()) > 64 * 64) { return; }
+        if (!ClientUtils.particlesVisible(particleVec)) { return; }
         for (int i = 0; i < 3; i++) {
             double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
             double py = particleVec.y + rand.nextFloat() * 2f;

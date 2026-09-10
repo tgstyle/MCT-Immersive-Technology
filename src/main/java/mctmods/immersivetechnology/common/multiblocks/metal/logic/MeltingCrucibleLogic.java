@@ -70,6 +70,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     public static int inputTankCapacity() { return ServerConfig.meltingCrucibleInputTankCapacity; }
     public static int outputTankCapacity() { return ServerConfig.meltingCrucibleOutputTankCapacity; }
     public static int energyCapacity() { return ServerConfig.meltingCrucibleEnergyCapacity; }
+    public static int energyMaxIo() { return ServerConfig.meltingCrucibleEnergyMaxIO; }
 
     public static double workingHeatLevel() { return ServerConfig.meltingCrucibleHeatWorkingLevel; }
     private static double heatLossMultiplier() { return ServerConfig.meltingCrucibleHeatLossMultiplier; }
@@ -262,7 +263,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             this.inputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input(), false, true, onChanged));
             this.outputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.output(), true, false, onChanged));
             this.invCap = new StoredCapability<>(inventory);
-            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
         }
@@ -320,7 +321,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
@@ -368,8 +369,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
         private final Runnable onChanged;
 
-        public SyncEnergyStorage(int capacity, Runnable onChanged) {
+        public SyncEnergyStorage(int capacity, int maxIO, Runnable onChanged) {
             super(capacity);
+            this.maxReceive = maxIO;
+            this.maxExtract = maxIO;
             this.onChanged = onChanged;
         }
 

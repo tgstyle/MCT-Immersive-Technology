@@ -5,6 +5,7 @@ import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
@@ -159,7 +160,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
                     b = (tint & 0xFF) / 255f;
                 }
                 Level level = ctx.getLevel().getRawLevel();
-                level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+                if (ClientUtils.particlesVisible(smokePos)) {
+                    level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+                }
             }
         }
     }

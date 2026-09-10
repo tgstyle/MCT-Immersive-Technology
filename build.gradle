@@ -1,13 +1,11 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
-import net.minecraftforge.gradle.common.tasks.SignJar
 
 plugins {
+    id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '6.0.+'
-    id 'org.spongepowered.mixin' version '0.7.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.140'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.6'
     id 'eclipse'
 }
@@ -169,64 +167,67 @@ if (!ifJars.isEmpty()) {
     logger.warn('⚠️  No Immersive Fixes dev JAR found in ../Immersive-Fixes/build/libs, build one there first')
 }
 
-minecraft {
-    mappings channel: 'parchment', version: version_parchment + '-' + version_minecraft
-    accessTransformer { file('src/main/resources/META-INF/accesstransformer.cfg') }
-    runs {
-        client {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            ideaModule project.name + ".main"
-            jvmArgs '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                }
-            }
-            args '--username', 'tgstyle'
-            args '--width', '1920'
-            args '--height', '1080'
-        }
-        server {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            arg '-nogui'
-            jvmArgs '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                }
-            }
-        }
-        data {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'fml.earlyprogresswindow', 'false'
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--validate',
-                    '--existing', sourceSets.main.resources.srcDirs.first()
-            ideaModule project.name + ".datagen"
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                    source(sourceSets.datagen as SourceSet)
-                }
-            }
-        }
-        gameTestServer {
-            workingDirectory = project.file('run')
-            property 'forge.logging.markers', ''
-            property 'forge.enabledGameTestNamespaces', mod_id
-            ideaModule project.name + ".gametest"
-            mods {
-                immersivetechnology {
-                    source(sourceSets.main as SourceSet)
-                    source(sourceSets.gametest as SourceSet)
-                }
-            }
+legacyForge {
+    version = "${version_minecraft}-${version_forge}"
+
+    parchment {
+        mappingsVersion = project.version_parchment
+        minecraftVersion = project.version_minecraft
+    }
+
+    accessTransformers.from file('src/main/resources/META-INF/accesstransformer.cfg')
+    validateAccessTransformers = true
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.datagen
+            sourceSet sourceSets.gametest
         }
     }
+
+    runs {
+        client {
+            client()
+            sourceSet = sourceSets.main
+            systemProperty 'forge.logging.markers', ''
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            jvmArgument '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
+            programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
+        }
+        server {
+            server()
+            sourceSet = sourceSets.main
+            systemProperty 'forge.logging.markers', ''
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            jvmArgument '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
+            programArguments.addAll '--nogui'
+        }
+        data {
+            data()
+            sourceSet = sourceSets.datagen
+            systemProperty 'forge.logging.markers', ''
+            systemProperty 'fml.earlyprogresswindow', 'false'
+            programArguments.addAll '--mod', mod_id, '--all',
+                    '--output', file('src/generated/resources/').toString(), '--validate',
+                    '--existing', sourceSets.main.resources.srcDirs.first().toString()
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            sourceSet = sourceSets.gametest
+            systemProperty 'forge.logging.markers', ''
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+        }
+        configureEach {
+            gameDirectory = project.file('run')
+        }
+    }
+}
+
+// datagenImplementation is a custom configuration, so it needs its own
+// remapping child; MDG only creates mod* for the standard ones.
+obfuscation {
+    createRemappingConfiguration(configurations.datagenImplementation)
 }
 
 repositories {
@@ -266,32 +267,30 @@ mixin {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
+    modCompileOnly "mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}"
+    modCompileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
 
-    compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}")
-    compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
+    modImplementation "mezz.jei:jei-${version_minecraft}-forge:${version_jei}"
 
-    implementation fg.deobf("mezz.jei:jei-${version_minecraft}-forge:${version_jei}")
+    modImplementation "curse.maven:${version_ie_curse}"
+    modImplementation "curse.maven:${version_engineered_schematics_curse}"
+    modRuntimeOnly "curse.maven:${version_ip_curse}"
 
-    implementation fg.deobf("curse.maven:${version_ie_curse}")
-    implementation fg.deobf("curse.maven:${version_engineered_schematics_curse}")
-    runtimeOnly fg.deobf("curse.maven:${version_ip_curse}")
+    modImplementation "curse.maven:${version_jade_curse}"
+    modImplementation "curse.maven:${version_top_curse}"
 
-    implementation fg.deobf("curse.maven:${version_jade_curse}")
-    implementation fg.deobf("curse.maven:${version_top_curse}")
+    modImplementation "curse.maven:${version_journeymap_curse}"
+    modImplementation "curse.maven:${version_puzzleslib_curse}"
+    modImplementation "curse.maven:${version_held_item_tooltips_curse}"
 
-    implementation fg.deobf("curse.maven:${version_journeymap_curse}")
-    implementation fg.deobf("curse.maven:${version_puzzleslib_curse}")
-    implementation fg.deobf("curse.maven:${version_held_item_tooltips_curse}")
-
-    datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen")
+    modDatagenImplementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"
 
     annotationProcessor "org.spongepowered:mixin:${version_mixin}:processor"
 
     if (icJar != null) {
         implementation files(icJar)
     } else {
-        implementation fg.deobf("curse.maven:${version_ic_curse}")
+        modImplementation "curse.maven:${version_ic_curse}"
     }
     if (ifJar != null) {
         runtimeOnly files(ifJar)
@@ -321,20 +320,24 @@ tasks.register('bumpVersion') {
     }
 }
 
-tasks.register('signJar', SignJar) {
-    onlyIf {
-        project.hasProperty('keyStore')
+tasks.register('signJar') {
+    dependsOn tasks.named('jar')
+    onlyIf { project.hasProperty('keyStore') }
+    def jarFile = tasks.named('jar', Jar).flatMap { it.archiveFile }
+    doLast {
+        // FG6's SignJar task type is gone with ForgeGradle; Ant's signjar is the
+        // equivalent and signs in place, as the FG6 config did (in == out).
+        ant.signjar(
+                jar: jarFile.get().asFile,
+                alias: project.storeAlias,
+                keystore: project.keyStore,
+                storepass: project.storePass,
+                keypass: project.storePass
+        )
     }
-    if (project.hasProperty('keyStore')) {
-        keyStore = project.keyStore
-        alias = project.storeAlias
-        storePass = project.storePass
-        keyPass = project.storePass
-        inputFile = jar.archiveFile.get().asFile
-        outputFile = jar.archiveFile.get().asFile
-    } else {
-        logger.warn("No key store found, not signing the output jar\n")
-    }
+}
+if (!project.hasProperty('keyStore')) {
+    logger.warn("No key store found, not signing the output jar\n")
 }
 
 build.dependsOn bumpVersion, signJar

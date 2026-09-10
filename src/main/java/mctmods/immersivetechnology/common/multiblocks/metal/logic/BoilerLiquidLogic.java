@@ -6,6 +6,7 @@ import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
@@ -136,7 +137,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             double velY = 0.125;
             double velZ = 0;
             float r = 0.2F, g = 0.2F, b = 0.2F;
-            level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+            if (ClientUtils.particlesVisible(smokePos)) {
+                level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+            }
         }
     }
 

@@ -73,6 +73,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static int inputTankCapacity() { return ServerConfig.distillerInputTankCapacity; }
     public static int outputTankCapacity() { return ServerConfig.distillerOutputTankCapacity; }
     public static int energyCapacity() { return ServerConfig.distillerEnergyCapacity; }
+    public static int energyMaxIo() { return ServerConfig.distillerEnergyMaxIO; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("distiller").pointsOfInterest);
 
@@ -262,7 +263,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             this.inputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input, false, true, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.outputCapSteam = new StoredCapability<>(new MultiTankFluidHandler(tanks.output, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.invCap = new StoredCapability<>(inventory);
-            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, DistillerRecipe.RECIPES::getById);
             this.itemOutputCap = new StoredCapability<>(
@@ -333,7 +334,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), () -> {}); }
             energy.deserializeNBT(nbt.get("energy"));
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             queueSize = nbt.getInt("queueSize");
@@ -373,8 +374,10 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
         private final Runnable onChanged;
 
-        public SyncEnergyStorage(int capacity, Runnable onChanged) {
+        public SyncEnergyStorage(int capacity, int maxIO, Runnable onChanged) {
             super(capacity);
+            this.maxReceive = maxIO;
+            this.maxExtract = maxIO;
             this.onChanged = onChanged;
         }
 

@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
@@ -102,15 +103,17 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         final IMultiblockLevel level = ctx.getLevel();
         if (state.active) {
             final Vec3 particlePos = level.toAbsolute(new Vec3(SMOKE_POI.getX() + 0.5, SMOKE_POI.getY() + 0.9, SMOKE_POI.getZ() + 0.5));
-            level.getRawLevel().addAlwaysVisibleParticle(
-                    Particles.CAMPFIRE_SMOKE.get(),
-                    particlePos.x,
-                    particlePos.y,
-                    particlePos.z,
-                    ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625),
-                    0.05,
-                    ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625)
-            );
+            if (ClientUtils.particlesVisible(particlePos)) {
+                level.getRawLevel().addAlwaysVisibleParticle(
+                        Particles.CAMPFIRE_SMOKE.get(),
+                        particlePos.x,
+                        particlePos.y,
+                        particlePos.z,
+                        ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625),
+                        0.05,
+                        ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625)
+                );
+            }
         }
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {

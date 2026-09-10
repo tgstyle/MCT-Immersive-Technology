@@ -5,6 +5,7 @@ import com.immersiveconvergence.api.particles.ColoredSmoke;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
@@ -244,7 +245,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                     g = ((tint >> 8) & 0xFF) / 255f;
                     b = (tint & 0xFF) / 255f;
                 }
-                level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+                if (ClientUtils.particlesVisible(smokePos)) {
+                    level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ);
+                }
             }
         }
     }

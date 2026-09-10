@@ -44,10 +44,12 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue DISTILLER_INPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue DISTILLER_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue DISTILLER_ENERGY_CAPACITY;
+    public static final ForgeConfigSpec.IntValue DISTILLER_ENERGY_MAX_IO;
 
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_INPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY;
+    public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO;
 
     public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_PRESSURIZED;
     public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_UNPRESSURIZED;
@@ -71,6 +73,7 @@ public class ServerConfig {
     public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_INPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_CAPACITY;
+    public static final ForgeConfigSpec.IntValue MELTING_CRUCIBLE_ENERGY_MAX_IO;
     public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_WORKING_LEVEL;
     public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER;
     public static final ForgeConfigSpec.DoubleValue MELTING_CRUCIBLE_HEAT_GAIN_BASE;
@@ -147,10 +150,12 @@ public class ServerConfig {
     public static int distillerInputTankCapacity = 24000;
     public static int distillerOutputTankCapacity = 24000;
     public static int distillerEnergyCapacity = 32000;
+    public static int distillerEnergyMaxIO = 512;
 
     public static int electrolyticCrucibleBatteryInputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryOutputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
+    public static int electrolyticCrucibleBatteryEnergyMaxIO = 4096;
 
     public static int fluidPipeAmountPressurized = 2500;
     public static int fluidPipeAmountUnpressurized = 100;
@@ -174,6 +179,7 @@ public class ServerConfig {
     public static int meltingCrucibleInputTankCapacity = 10000;
     public static int meltingCrucibleOutputTankCapacity = 10000;
     public static int meltingCrucibleEnergyCapacity = 50000;
+    public static int meltingCrucibleEnergyMaxIO = 1024;
     public static double meltingCrucibleHeatWorkingLevel = 1000.0D;
     public static double meltingCrucibleHeatLossMultiplier = 0.2D;
     public static double meltingCrucibleHeatGainBase = 0.55D;
@@ -269,12 +275,14 @@ public class ServerConfig {
         DISTILLER_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 24000, 1000, Integer.MAX_VALUE);
         DISTILLER_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 24000, 1000, Integer.MAX_VALUE);
         DISTILLER_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 32000, 1000, Integer.MAX_VALUE);
+        DISTILLER_ENERGY_MAX_IO = BUILDER.defineInRange("energy_max_io", 512, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("electrolytic_crucible_battery");
         ELECTROLYTIC_CRUCIBLE_BATTERY_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 16000, 1000, Integer.MAX_VALUE);
+        ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO = BUILDER.defineInRange("energy_max_io", 4096, 0, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("gas_turbine");
@@ -301,6 +309,7 @@ public class ServerConfig {
         MELTING_CRUCIBLE_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
+        MELTING_CRUCIBLE_ENERGY_MAX_IO = BUILDER.defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER.defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER.defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER.defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
@@ -406,10 +415,12 @@ public class ServerConfig {
             distillerInputTankCapacity = DISTILLER_INPUT_TANK_CAPACITY.get();
             distillerOutputTankCapacity = DISTILLER_OUTPUT_TANK_CAPACITY.get();
             distillerEnergyCapacity = DISTILLER_ENERGY_CAPACITY.get();
+            distillerEnergyMaxIO = DISTILLER_ENERGY_MAX_IO.get();
 
             electrolyticCrucibleBatteryInputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_INPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryOutputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY.get();
+            electrolyticCrucibleBatteryEnergyMaxIO = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO.get();
 
             fluidPipeAmountPressurized = FLUID_PIPE_AMOUNT_PRESSURIZED.get();
             fluidPipeAmountUnpressurized = FLUID_PIPE_AMOUNT_UNPRESSURIZED.get();
@@ -433,6 +444,7 @@ public class ServerConfig {
             meltingCrucibleInputTankCapacity = MELTING_CRUCIBLE_INPUT_TANK_CAPACITY.get();
             meltingCrucibleOutputTankCapacity = MELTING_CRUCIBLE_OUTPUT_TANK_CAPACITY.get();
             meltingCrucibleEnergyCapacity = MELTING_CRUCIBLE_ENERGY_CAPACITY.get();
+            meltingCrucibleEnergyMaxIO = MELTING_CRUCIBLE_ENERGY_MAX_IO.get();
             meltingCrucibleHeatWorkingLevel = MELTING_CRUCIBLE_HEAT_WORKING_LEVEL.get();
             meltingCrucibleHeatLossMultiplier = MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER.get();
             meltingCrucibleHeatGainBase = MELTING_CRUCIBLE_HEAT_GAIN_BASE.get();

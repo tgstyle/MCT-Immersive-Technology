@@ -62,6 +62,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
     public static int inputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryInputTankCapacity; }
     public static int outputTankCapacity() { return ServerConfig.electrolyticCrucibleBatteryOutputTankCapacity; }
     public static int energyCapacity() { return ServerConfig.electrolyticCrucibleBatteryEnergyCapacity; }
+    public static int energyMaxIo() { return ServerConfig.electrolyticCrucibleBatteryEnergyMaxIO; }
 
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("electrolytic_crucible_battery").pointsOfInterest);
 
@@ -226,7 +227,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             this.outputCap1 = new StoredCapability<>(new MultiTankFluidHandler(tanks.output1, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.outputCap2 = new StoredCapability<>(new MultiTankFluidHandler(tanks.output2, true, false, () -> { onChanged.run(); this.tanksDirty = true; }));
             this.invCap = new StoredCapability<>(inventory);
-            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), onChanged);
             this.energyCap = new StoredCapability<>(this.energy);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(3, 0f, 3, markDirty, ElectrolyticCrucibleBatteryRecipe.RECIPES::getById);
             this.itemOutputCap = new StoredCapability<>(inventory);
@@ -252,7 +253,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) { nbt.putBoolean("active", active); nbt.put("tanks", tanks.toNBT()); nbt.put("energy", energy.serializeNBT()); nbt.put("inventory", inventory.serializeNBT()); nbt.putIntArray("processPercents", processPercents); }
 
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); int[] percents = nbt.getIntArray("processPercents"); processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1}; tanksDirty = false; inventoryDirty = false; }
+        @Override public void readDisplaySyncNBT(CompoundTag nbt) { active = nbt.getBoolean("active"); tanks.readNBT(nbt.getCompound("tanks")); if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), () -> {}); } energy.deserializeNBT(nbt.get("energy")); inventory.deserializeNBT(nbt.getCompound("inventory")); int[] percents = nbt.getIntArray("processPercents"); processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1}; tanksDirty = false; inventoryDirty = false; }
     
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
@@ -282,7 +283,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
         private final Runnable onChanged;
-        public SyncEnergyStorage(int capacity, Runnable onChanged) { super(capacity); this.onChanged = onChanged; }
+        public SyncEnergyStorage(int capacity, int maxIO, Runnable onChanged) { super(capacity); this.maxReceive = maxIO; this.maxExtract = maxIO; this.onChanged = onChanged; }
 
         @Override public int receiveEnergy(int maxReceive, boolean simulate) { int received = super.receiveEnergy(maxReceive, simulate); if (received > 0 && !simulate) { onChanged.run(); } return received; }
 
