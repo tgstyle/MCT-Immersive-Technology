@@ -77,8 +77,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 	@Override @Nonnull protected BlockStateContainer createBlockState() {
 		BlockStateContainer base = super.createBlockState();
 		IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState)base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
-		unlisted = Arrays.copyOf(unlisted, unlisted.length + 1);
-		unlisted[unlisted.length - 1] = ICProperties.CONNECTIONS;
+		unlisted = ICProperties.appendConnections(unlisted);
 		return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
 	}
 
@@ -86,7 +85,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		state = super.getExtendedState(state, world, pos);
 		if (state instanceof IExtendedBlockState) {
 			TileEntity te = world.getTileEntity(pos);
-			if (te instanceof TileEntityCommonValve) { state = ((IExtendedBlockState)state).withProperty(ICProperties.CONNECTIONS, ((TileEntityCommonValve)te).genConnBlockstate()); }
+			if (te instanceof TileEntityCommonValve) { state = ((IExtendedBlockState)state).withProperty(ICProperties.CONNECTIONS, ((TileEntityCommonValve)te).wireConnections()); }
 		}
 		return state;
 	}

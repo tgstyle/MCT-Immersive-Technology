@@ -50,8 +50,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     @Override @Nonnull protected BlockStateContainer createBlockState() {
         BlockStateContainer base = super.createBlockState();
         IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState) base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
-        unlisted = Arrays.copyOf(unlisted, unlisted.length+1);
-        unlisted[unlisted.length-1] = ICProperties.CONNECTIONS;
+        unlisted = ICProperties.appendConnections(unlisted);
         return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
     }
 
@@ -61,7 +60,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
             IExtendedBlockState ext = (IExtendedBlockState) state;
             TileEntity te = world.getTileEntity(pos);
             if (!(te instanceof ICTileEntityConnectable)) return state;
-            state = ext.withProperty(ICProperties.CONNECTIONS, ((ICTileEntityConnectable)te).genConnBlockstate());
+            state = ext.withProperty(ICProperties.CONNECTIONS, ((ICTileEntityConnectable)te).wireConnections());
         }
         return state;
     }
@@ -85,15 +84,16 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     @Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedSide, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer) {
         IBlockState state = super.getStateForPlacement(world, pos, clickedSide, hitX, hitY, hitZ, meta, placer);
         state = state.withProperty(ICProperties.FACING_ALL, clickedSide.getOpposite());
-        if (BlockType_Connectors.values()[meta] == BlockType_Connectors.CONNECTORS_TIMER) {
-            float yaw = placer.rotationYaw;
-            if (yaw < 0) yaw += 360f;
-            yaw += 180f;
-            yaw %= 360f;
-            int rotation = MathHelper.floor(yaw / 90f + 0.5f) & 3;
-            state = state.withProperty(ROTATION, rotation);
-        }
+        if (BlockType_Connectors.values()[meta] == BlockType_Connectors.CONNECTORS_TIMER) { state = state.withProperty(ROTATION, rotationFor(placer)); }
         return state;
+    }
+
+    private static int rotationFor(EntityLivingBase placer) {
+        float yaw = placer.rotationYaw;
+        if (yaw < 0) { yaw += 360f; }
+        yaw += 180f;
+        yaw %= 360f;
+        return MathHelper.floor(yaw / 90f + 0.5f) & 3;
     }
 
     @Override public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
@@ -101,8 +101,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         TileEntity te = worldIn.getTileEntity(pos);
         if (te instanceof TileEntityTimer) {
             TileEntityTimer timer = (TileEntityTimer) te;
-            int rot = state.getValue(ROTATION);
-            timer.setValue("rotation", rot);
+            timer.setValue("rotation", rotationFor(placer));
             timer.markDirty();
             worldIn.notifyBlockUpdate(pos, state, state, 3);
         }

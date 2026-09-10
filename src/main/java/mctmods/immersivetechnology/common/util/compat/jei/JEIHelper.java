@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
 import com.immersiveconvergence.api.ICIntegration;
+import com.immersiveconvergence.api.ICMods;
 import mctmods.immersivetechnology.api.crafting.*;
 import mctmods.immersivetechnology.common.Config.ITConfig.*;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
@@ -94,7 +95,7 @@ public class JEIHelper implements IModPlugin {
         if (Multiblocks.enable.enable_electrolyticCrucibleBattery) { modRegistry.addRecipes(new ArrayList<Object>((ElectrolyticCrucibleBatteryRecipe.recipeList)), "it.electrolyticCrucibleBattery"); }
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { modRegistry.addRecipes(new ArrayList<Object>((MeltingCrucibleRecipe.recipeList)), "it.meltingCrucible"); }
         if (Multiblocks.enable.enable_radiator) { modRegistry.addRecipes(new ArrayList<Object>((RadiatorRecipe.recipeList)), "it.radiator"); }
-        if (Multiblocks.enable.enable_advancedCokeOven) {
+        if (Multiblocks.enable.enable_advancedCokeOven && ICMods.immersiveEngineering()) {
             modRegistry.addRecipeCatalyst(ICIntegration.cokeOven(), "ie.cokeoven");
             modRegistry.addRecipeCatalyst(ITMultiblockIngredients.ADVANCED_COKE_OVEN, "ie.cokeoven");
             modRegistry.addRecipeClickArea(GuiAdvancedCokeOven.class, 58, 36, 11, 13, "ie.cokeoven");

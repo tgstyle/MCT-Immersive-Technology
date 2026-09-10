@@ -45,7 +45,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.Optional;
 
 public abstract class TileEntityCommonValve extends ICTileEntityConnectable implements ICBlockInterfaces.IDirectionalTile, ITickable, ICBlockInterfaces.IBlockOverlayText, ICBlockInterfaces.IPlayerInteraction, ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IActiveState, ICBlockInterfaces.IAttachedIntegerProperties, IICOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
 
@@ -308,7 +307,7 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 	}
 
 	@SideOnly(Side.CLIENT)
-	protected Optional<TRSRTransformation> valveTransform(IBlockState state, @Nullable TRSRTransformation transform, int horizontalXRot, int verticalDownXRot, int verticalUpXRot, int horizontalYOffset, int verticalYOffset) {
+	@Nullable protected TRSRTransformation valveTransform(IBlockState state, @Nullable TRSRTransformation transform, int horizontalXRot, int verticalDownXRot, int verticalUpXRot, int horizontalYOffset, int verticalYOffset) {
 		EnumFacing stateFacing = state.getValue(ICProperties.FACING_ALL);
 		int angleX;
 		int angleY;
@@ -321,7 +320,7 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 			angleY = ((state.getValue(BlockValve.ROTATION) + verticalYOffset) % 4) * 90;
 		}
 		TRSRTransformation rotate = TRSRTransformation.from(ModelRotation.getModelRotation(angleX, angleY));
-		return Optional.of(transform == null ? rotate : rotate.compose(transform));
+		return transform == null ? rotate : rotate.compose(transform);
 	}
 
 	@Override @Nonnull public String[] getIntPropertyNames() { return new String[]{"rotation"}; }

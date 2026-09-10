@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common;
 
 
+import com.immersiveconvergence.api.ICJEICatalysts;
+import com.immersiveconvergence.api.ICMultiblockNames;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import com.immersiveconvergence.common.blocks.pipes.TileEntityFluidPipeAlternative;
 
@@ -34,6 +36,8 @@ public class CommonProxy implements IGuiHandler {
 
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
+		ICMultiblockNames.register("IT", ImmersiveTechnology.MODID);
+		if (Config.ITConfig.Multiblocks.enable.enable_advancedCokeOven) { ICJEICatalysts.suppress("cokeoven"); }
 	}
 
 	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {

@@ -140,7 +140,9 @@ dependencies {
     implementation rfg.deobf("curse.maven:${common.woed_version}")
     implementation rfg.deobf("curse.maven:${common.wcui_version}")
 
+    compileOnly("${common.gscr_version}") { transitive = false }
     compileOnly rfg.deobf("curse.maven:${common.hwya_version}")
+    runtimeOnly rfg.deobf("curse.maven:${common.hwya_version}")
     compileOnly rfg.deobf("curse.maven:${common.advr_version}")
     compileOnly rfg.deobf("curse.maven:${common.libv_version}")
     compileOnly rfg.deobf("curse.maven:${common.opcm_version}")
@@ -151,7 +153,7 @@ dependencies {
     runtimeOnly rfg.deobf("${common.ctwk_version}")
     runtimeOnly rfg.deobf("curse.maven:${common.mkce_version}")
     compileOnly rfg.deobf("curse.maven:${common.imin_version}")
-//    runtimeOnly rfg.deobf("curse.maven:${common.imin_version}")
+    //runtimeOnly rfg.deobf("curse.maven:${common.imin_version}")
 
     implementation rfg.deobf("curse.maven:${common.ppfx_version}")
     implementation rfg.deobf("curse.maven:${common.cfga_version}")

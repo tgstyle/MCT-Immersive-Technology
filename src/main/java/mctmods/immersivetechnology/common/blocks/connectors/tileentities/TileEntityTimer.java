@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.connectors.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
-import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.energy.ICTileEntityConnectorRedstone;
 import com.immersiveconvergence.api.energy.ICWireType;
@@ -13,6 +12,7 @@ import com.immersiveconvergence.api.network.TileSyncMessage;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
+import mctmods.immersivetechnology.common.util.ITLib;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.properties.PropertyInteger;
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperties, ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
@@ -116,7 +116,7 @@ public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IG
                     currentInput = Math.max(currentInput, neighborState.getValue(BlockRedstoneWire.POWER));
                 }
             } else {
-                currentInput = wireNetwork.getPowerOutput(redstoneChannel);
+                currentInput = networkPower(redstoneChannel);
             }
 
             if (currentInput > 0 && world.getTotalWorldTime() % (long) target == 0) { pulseRemaining = PULSE_LENGTH; }
@@ -150,7 +150,7 @@ public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IG
             ioMode = ioMode == 0 ? 1 : 0;
         }
         markDirty();
-        wireNetwork.updateValues();
+        networkUpdateValues();
         onChange();
         this.markContainingBlockForUpdate(null);
         world.addBlockEvent(getPos(), this.getBlockType(), 254, 0);
@@ -188,8 +188,8 @@ public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IG
         if (!hammer) return new String[0];
         float time = (float) this.target / 20;
         EnumDyeColor color = EnumDyeColor.byMetadata(redstoneChannel);
-        String channelInfo = I18n.format(ICLib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + color.getTranslationKey()));
-        String modeInfo = I18n.format(ICLib.DESC_INFO + "blockSide.io." + this.ioMode);
+        String channelInfo = I18n.format(ITLib.DESC_INFO + "redstoneChannel.send", I18n.format("item.fireworksCharge." + color.getTranslationKey()));
+        String modeInfo = I18n.format(ITLib.DESC_INFO + "blockSide.io." + this.ioMode);
         String delayInfo = String.format("%.1f Sec.", time);
         return new String[]{channelInfo, modeInfo, delayInfo};
     }
@@ -234,14 +234,14 @@ public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IG
     }
 
     @SideOnly(Side.CLIENT)
-    @Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, String group, Optional<TRSRTransformation> transform) {
+    @Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, String group, @Nullable TRSRTransformation transform) {
         EnumFacing facing = object.getValue(ICProperties.FACING_ALL);
         int rot = object.getValue(BlockConnectors.ROTATION);
         int angleX = facing.getAxis() == EnumFacing.Axis.Y ? (facing == EnumFacing.DOWN ? 0 : 180) : -90;
         int angleY = rot * 90;
 
         TRSRTransformation rotation = TRSRTransformation.from(ModelRotation.getModelRotation(angleX, angleY));
-        return transform.map(t -> Optional.of(rotation.compose(t))).orElseGet(() -> Optional.of(rotation));
+        return transform == null ? rotation : rotation.compose(transform);
     }
 
     @Override @Nonnull public String[] getIntPropertyNames() { return new String[]{"rotation"}; }

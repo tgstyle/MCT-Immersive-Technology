@@ -157,26 +157,26 @@ gui.immersivetech.stack_limiter.limittime=Items per second
 gui.immersivetech.stack_limiter.limitdestination=Items in output storage
 
 #METAL MULTIBLOCKS
-desc.immersiveconvergence.info.multiblock.IT:Distiller=Distiller
-desc.immersiveconvergence.info.multiblock.IT:SolarTower=Solar Tower
-desc.immersiveconvergence.info.multiblock.IT:SolarReflector=Solar Reflector
-desc.immersiveconvergence.info.multiblock.IT:SteamTurbine=Steam Turbine
-desc.immersiveconvergence.info.multiblock.IT:BoilerTank=Boiler Tank
-desc.immersiveconvergence.info.multiblock.IT:BoilerLiquid=Boiler Liquid Fuel Burner
-desc.immersiveconvergence.info.multiblock.IT:BoilerSolid=Boiler Solid Fuel Burner
-desc.immersiveconvergence.info.multiblock.IT:Alternator=Alternator
-desc.immersiveconvergence.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
-desc.immersiveconvergence.info.multiblock.IT:CoolingTower=Cooling Tower
-desc.immersiveconvergence.info.multiblock.IT:GasTurbine=Gas Turbine
-desc.immersiveconvergence.info.multiblock.IT:HeatExchanger=Heat Exchanger
-desc.immersiveconvergence.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
-desc.immersiveconvergence.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
-desc.immersiveconvergence.info.multiblock.IT:meltingCrucible=Melting Crucible
-desc.immersiveconvergence.info.multiblock.IT:Radiator=Radiator
-desc.immersiveconvergence.info.multiblock.IT:SolarMelter=Solar Melting Crucible
+desc.immersivetech.info.multiblock.IT:Distiller=Distiller
+desc.immersivetech.info.multiblock.IT:SolarTower=Solar Tower
+desc.immersivetech.info.multiblock.IT:SolarReflector=Solar Reflector
+desc.immersivetech.info.multiblock.IT:SteamTurbine=Steam Turbine
+desc.immersivetech.info.multiblock.IT:BoilerTank=Boiler Tank
+desc.immersivetech.info.multiblock.IT:BoilerLiquid=Boiler Liquid Fuel Burner
+desc.immersivetech.info.multiblock.IT:BoilerSolid=Boiler Solid Fuel Burner
+desc.immersivetech.info.multiblock.IT:Alternator=Alternator
+desc.immersivetech.info.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
+desc.immersivetech.info.multiblock.IT:CoolingTower=Cooling Tower
+desc.immersivetech.info.multiblock.IT:GasTurbine=Gas Turbine
+desc.immersivetech.info.multiblock.IT:HeatExchanger=Heat Exchanger
+desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
+desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
+desc.immersivetech.info.multiblock.IT:meltingCrucible=Melting Crucible
+desc.immersivetech.info.multiblock.IT:Radiator=Radiator
+desc.immersivetech.info.multiblock.IT:SolarMelter=Solar Melting Crucible
 
 #STONE MULTIBLOCKS
-desc.immersiveconvergence.info.multiblock.IT:AdvancedCokeOven=Advanced Coke Oven
+desc.immersivetech.info.multiblock.IT:AdvancedCokeOven=Advanced Coke Oven
 
 #SOLAR
 chat.immersivetech.solar_tower_vertical_fail=Solar Towers Cannot Be Stacked Vertically
@@ -417,11 +417,11 @@ desc.engineered_schematics.multiblock.IT:SteamTurbine=Steam Turbine
 desc.engineered_schematics.multiblock.IT:SteelSheetmetalTank=Steel Fluid Tank
 desc.engineered_schematics.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
 desc.engineered_schematics.multiblock.IT:meltingCrucible=Melting Crucible
-chat.immersiveconvergence.info.noGasAllowed=This container can't store gasses!
-desc.immersiveconvergence.info.multiblocksAllowed=Allowed Multiblocks:
-desc.immersiveconvergence.info.multiblockForbidden=Forbidden Multiblocks:
-desc.immersiveconvergence.info.holdShift=§6Hold Shift§r
-desc.immersiveconvergence.info.redstoneChannel.send=Channel Sending: %1$s
-desc.immersiveconvergence.info.blockSide.io.-1=No Connection
-desc.immersiveconvergence.info.blockSide.io.0=Input
-desc.immersiveconvergence.info.blockSide.io.1=Output
+chat.immersivetech.info.noGasAllowed=This container can't store gasses!
+desc.immersivetech.info.multiblocksAllowed=Allowed Multiblocks:
+desc.immersivetech.info.multiblockForbidden=Forbidden Multiblocks:
+desc.immersivetech.info.holdShift=§6Hold Shift§r
+desc.immersivetech.info.redstoneChannel.send=Channel Sending: %1$s
+desc.immersivetech.info.blockSide.io.-1=No Connection
+desc.immersivetech.info.blockSide.io.0=Input
+desc.immersivetech.info.blockSide.io.1=Output

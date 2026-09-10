@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyStorage {
 
@@ -111,8 +110,9 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	@Override public boolean removeCable(@Nullable BlockPos otherEnd, boolean all) {
 		if (all) { leftCable = null; rightCable = null; leftEnd = null; rightEnd = null; }
-		else if (isRightConnection(otherEnd)) { rightCable = null; rightEnd = null; }
-		else { leftCable = null; leftEnd = null; }
+		else if (rightEnd != null && rightEnd.equals(otherEnd)) { rightCable = null; rightEnd = null; }
+		else if (leftEnd != null && leftEnd.equals(otherEnd)) { leftCable = null; leftEnd = null; }
+		else { return true; }
 		markContainingBlockForUpdate(null);
 		return true;
 	}
@@ -160,12 +160,21 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	}
 
 	@Override public int outputEnergy(int amount, boolean simulate, int energyType) {
-		if (!open) { return 0; }
-		int accepted = Math.min(amount, transferLimit(getDestination()));
-		if (inputCable() != null) { accepted = Math.min(accepted, inputCable().getTransferRate()); }
+		if (!open || inputCable() == null) { return 0; }
+		IEnergyStorage destination = getDestination();
+		if (destination == null && outputCable() == null) { return 0; }
+		int accepted = Math.min(amount, transferLimit(destination));
+		accepted = Math.min(accepted, inputCable().getTransferRate());
+		accepted = Math.min(accepted, bufferRoom(destination));
 		if (accepted <= 0) { return 0; }
 		if (!simulate) { bufferedEnergy += accepted; }
 		return accepted;
+	}
+
+	private int bufferRoom(IEnergyStorage destination) {
+		ICWireType out = outputCable();
+		long ceiling = out != null ? out.getTransferRate() : (destination != null ? Integer.MAX_VALUE : 0);
+		return longToInt(Math.max(0, ceiling - bufferedEnergy));
 	}
 
 	private void drainBuffer() {
@@ -175,8 +184,8 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 			int moved = destination.receiveEnergy(longToInt(Math.min(bufferedEnergy, transferLimit(destination))), false);
 			if (moved > 0) { bufferedEnergy -= moved; countOut(moved); }
 		}
-		if (bufferedEnergy <= 0) { return; }
-		ICWires.distributeToNetwork(world, pos, inputEnd(), () -> longToInt(bufferedEnergy), moved -> { bufferedEnergy -= moved; countOut(moved); });
+		if (bufferedEnergy <= 0 || outputEnd() == null) { return; }
+		ICWires.distributeToNetwork(world, pos, outputEnd(), () -> longToInt(bufferedEnergy), moved -> { bufferedEnergy -= moved; countOut(moved); });
 	}
 
 	private boolean rightIsInput() { return facing.getAxis().isVertical(); }
@@ -187,13 +196,15 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 
 	private BlockPos inputEnd() { return rightIsInput() ? rightEnd : leftEnd; }
 
+	private BlockPos outputEnd() { return rightIsInput() ? leftEnd : rightEnd; }
+
 	private int movedThisTick = 0;
 
 	private void fillBuffer() {
 		if (!open || inputCable() != null || outputCable() == null) { return; }
 		IEnergyStorage source = getSource();
 		if (source == null || !source.canExtract()) { return; }
-		int room = transferLimit(null) - movedThisTick;
+		int room = Math.min(transferLimit(null) - movedThisTick, bufferRoom(null));
 		if (room <= 0) { return; }
 		int got = source.extractEnergy(room, false);
 		if (got > 0) { bufferedEnergy += got; }
@@ -227,7 +238,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiLoadController(this)); }
 
 	@SideOnly(Side.CLIENT)
-	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform.orElse(null), 270, 180, 0, 0, 1); }
+	@Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nullable TRSRTransformation transform) { return valveTransform(object, transform, 270, 180, 0, 0, 1); }
 
 	public static class DummyBattery implements IEnergyStorage {
 

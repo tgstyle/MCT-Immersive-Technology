@@ -157,26 +157,26 @@ gui.immersivetech.stack_limiter.limittime=초당 아이템
 gui.immersivetech.stack_limiter.limitdestination=출력 저장소에 아이템
 
 #METAL MULTIBLOCKS
-desc.immersiveconvergence.info.multiblock.IT:Distiller=증류기
-desc.immersiveconvergence.info.multiblock.IT:SolarTower=태양탑
-desc.immersiveconvergence.info.multiblock.IT:SolarReflector=태양광 반사기
-desc.immersiveconvergence.info.multiblock.IT:SteamTurbine=증기 터빈
-desc.immersiveconvergence.info.multiblock.IT:BoilerTank=보일러 탱크
-desc.immersiveconvergence.info.multiblock.IT:BoilerLiquid=액체 연료 보일러 연소기
-desc.immersiveconvergence.info.multiblock.IT:BoilerSolid=고체 연료 보일러 연소기
-desc.immersiveconvergence.info.multiblock.IT:Alternator=교류 발전기
-desc.immersiveconvergence.info.multiblock.IT:SteelSheetmetalTank=강철 유체 탱크
-desc.immersiveconvergence.info.multiblock.IT:CoolingTower=냉각탑
-desc.immersiveconvergence.info.multiblock.IT:GasTurbine=가스 터빈
-desc.immersiveconvergence.info.multiblock.IT:HeatExchanger=열 교환기
-desc.immersiveconvergence.info.multiblock.IT:HighPressureSteamTurbine=고압 증기 터빈
-desc.immersiveconvergence.info.multiblock.IT:electrolyticCrucibleBattery=전해 도가니 배터리
-desc.immersiveconvergence.info.multiblock.IT:meltingCrucible=용융 도가니
-desc.immersiveconvergence.info.multiblock.IT:Radiator=방열기
-desc.immersiveconvergence.info.multiblock.IT:SolarMelter=태양 용융 도가니
+desc.immersivetech.info.multiblock.IT:Distiller=증류기
+desc.immersivetech.info.multiblock.IT:SolarTower=태양탑
+desc.immersivetech.info.multiblock.IT:SolarReflector=태양광 반사기
+desc.immersivetech.info.multiblock.IT:SteamTurbine=증기 터빈
+desc.immersivetech.info.multiblock.IT:BoilerTank=보일러 탱크
+desc.immersivetech.info.multiblock.IT:BoilerLiquid=액체 연료 보일러 연소기
+desc.immersivetech.info.multiblock.IT:BoilerSolid=고체 연료 보일러 연소기
+desc.immersivetech.info.multiblock.IT:Alternator=교류 발전기
+desc.immersivetech.info.multiblock.IT:SteelSheetmetalTank=강철 유체 탱크
+desc.immersivetech.info.multiblock.IT:CoolingTower=냉각탑
+desc.immersivetech.info.multiblock.IT:GasTurbine=가스 터빈
+desc.immersivetech.info.multiblock.IT:HeatExchanger=열 교환기
+desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=고압 증기 터빈
+desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=전해 도가니 배터리
+desc.immersivetech.info.multiblock.IT:meltingCrucible=용융 도가니
+desc.immersivetech.info.multiblock.IT:Radiator=방열기
+desc.immersivetech.info.multiblock.IT:SolarMelter=태양 용융 도가니
 
 #STONE MULTIBLOCKS
-desc.immersiveconvergence.info.multiblock.IT:AdvancedCokeOven=고급 코크스 오븐
+desc.immersivetech.info.multiblock.IT:AdvancedCokeOven=고급 코크스 오븐
 
 #SOLAR
 chat.immersivetech.solar_tower_vertical_fail=태양탑은 수직으로 쌓을 수 없습니다

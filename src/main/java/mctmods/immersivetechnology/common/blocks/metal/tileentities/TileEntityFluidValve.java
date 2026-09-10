@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 public class TileEntityFluidValve extends TileEntityCommonValve implements IFluidHandler, IICFluidPipe, ICBlockInterfaces.IBlockBounds {
 
@@ -46,7 +45,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this)); }
 
 	@SideOnly(Side.CLIENT)
-	@Override public Optional<TRSRTransformation> applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nonnull Optional<TRSRTransformation> transform) { return valveTransform(object, transform.orElse(null), 0, 90, 270, 2, 2); }
+	@Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nullable TRSRTransformation transform) { return valveTransform(object, transform, 0, 90, 270, 2, 2); }
 
 	public static class DummyTank implements IFluidHandler {
 

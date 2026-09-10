@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.items;
 
+import com.immersiveconvergence.api.ICMultiblockNames;
+import mctmods.immersivetechnology.common.util.ITLib;
 import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.IICTool;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
@@ -39,14 +41,8 @@ public class ItemFormationTool extends ItemITBase implements IICTool {
 
     @SideOnly(Side.CLIENT)
     @Override public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
-        addInfo(tooltip, ICLib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
-        addInfo(tooltip, ICLib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
-    }
-
-    @SideOnly(Side.CLIENT)
-    private static String multiblockNameKey(String uniqueName) {
-        String key = ICLib.DESC_INFO + "multiblock." + uniqueName;
-        return I18n.hasKey(key) ? key : ICLib.DESC_INFO_IE + "multiblock." + uniqueName;
+        addInfo(tooltip, ITLib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
+        addInfo(tooltip, ITLib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
 
     @SideOnly(Side.CLIENT)
@@ -54,10 +50,10 @@ public class ItemFormationTool extends ItemITBase implements IICTool {
         if (!ICNBT.hasKey(stack, nbtKey)) { return; }
         NBTTagList tagList = ICNBT.getTag(stack).getTagList(nbtKey, Constants.NBT.TAG_STRING);
         String title = I18n.format(titleKey);
-        if (!GuiScreen.isShiftKeyDown()) { tooltip.add(title + " " + I18n.format(ICLib.DESC_INFO + "holdShift")); }
+        if (!GuiScreen.isShiftKeyDown()) { tooltip.add(title + " " + I18n.format(ITLib.DESC_INFO + "holdShift")); }
         else {
             tooltip.add(title);
-            for (int i = 0; i < tagList.tagCount(); i++) { tooltip.add(TextFormatting.DARK_GRAY + " " + I18n.format(multiblockNameKey(tagList.getStringTagAt(i)))); }
+            for (int i = 0; i < tagList.tagCount(); i++) { tooltip.add(TextFormatting.DARK_GRAY + " " + I18n.format(ICMultiblockNames.key(tagList.getStringTagAt(i)))); }
         }
     }
 

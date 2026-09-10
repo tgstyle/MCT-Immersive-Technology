@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
 import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICUtils;
@@ -11,6 +10,7 @@ import java.util.Random;
 
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Blocks;
+import mctmods.immersivetechnology.common.util.ITLib;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -88,7 +88,7 @@ public class TileEntityBarrelOpen extends TileEntityBarrelSteel implements IPlay
     public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack fluid = FluidUtil.getFluidContained(heldItem);
         if (!isFluidInvalid(fluid)) {
-            ICUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(ICLib.CHAT_INFO + "noGasAllowed"));
+            ICUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(ITLib.CHAT_INFO + "noGasAllowed"));
             return true;
         }
         return FluidUtil.interactWithFluidHandler(player, hand, tank);
