@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.client;
 
 import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.ICIntegration;
 import com.immersiveconvergence.api.client.ICModels;
@@ -141,22 +142,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent public void PlayerDisconnected(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) { ICSoundHandler.deleteAllSounds(); }
 
     @SubscribeEvent public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) {
-                World world = Minecraft.getMinecraft().world;
-                if (world == null) { ITLogger.warn("ClientProxy has tried to access null world! This shouldn't normally happen..."); }
-                else {
-                    Set<TileEntity> forThisWorld = new HashSet<>();
-                    for (TileEntity te : ITUtils.REMOVE_FROM_TICKING) {
-                        if (te.getWorld() == world) { forThisWorld.add(te); }
-                    }
-                    if (!forThisWorld.isEmpty()) {
-                        world.tickableTileEntities.removeAll(forThisWorld);
-                        ITUtils.REMOVE_FROM_TICKING.removeAll(forThisWorld);
-                    }
-                }
-            }
-        }
+        if (event.phase == TickEvent.Phase.END) { ICTickingRegistry.drain(Minecraft.getMinecraft().world); }
     }
 
     @SuppressWarnings("ConstantConditions")

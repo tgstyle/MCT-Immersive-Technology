@@ -80,7 +80,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) { return false; }
 
-    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
@@ -127,7 +127,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
         int received = m.energyStorage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();
-            m.markContainingBlockForUpdate(null);
+            m.requestClientSync();
         }
         return received;
     }

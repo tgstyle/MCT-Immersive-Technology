@@ -79,9 +79,9 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
-    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
+    @Override @Nonnull public int[] getRedstonePos() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) { return false; }
 

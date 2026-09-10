@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 
 import com.immersiveconvergence.ImmersiveConvergence;
+import mctmods.immersivetechnology.common.util.ITUtils;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
@@ -395,12 +396,12 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return inventory; }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (redstonePos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 }

@@ -98,7 +98,7 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntityRadiatorMaster m = master();
-        return m == null ? new int[0] : m.getRedstonePos();
+        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[] {1}; }

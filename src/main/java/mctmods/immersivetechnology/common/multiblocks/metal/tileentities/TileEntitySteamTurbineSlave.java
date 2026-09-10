@@ -86,7 +86,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntitySteamTurbineMaster m = master();
-        return m == null ? new int[0] : m.getRedstonePos();
+        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
@@ -97,9 +97,9 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override public int getProcessQueueMaxLength() { return 1; }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         TileEntitySteamTurbineMaster m = master();

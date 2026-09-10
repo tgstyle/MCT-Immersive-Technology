@@ -553,7 +553,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
 
     @Override public void TankContentsChanged() {
         efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public boolean isRSDisabled() {
@@ -579,7 +579,7 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidOutputPos0 == null) InitializePoIs();
-        if (side != null && fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
+        if (side != null && fluidOutputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -608,11 +608,11 @@ public class TileEntitySolarMelterMaster extends TileEntitySolarMelterSlave impl
     }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() {
-        return new int[0];
+        return ITUtils.EMPTY_INT_ARRAY;
     }
 
     @Override @Nonnull public int[] getCurrentProcessesMax() {
-        return new int[0];
+        return ITUtils.EMPTY_INT_ARRAY;
     }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() {

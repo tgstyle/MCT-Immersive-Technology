@@ -410,7 +410,7 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
 
     @Override public void TankContentsChanged() {
         if (tanks[0].getFluidAmount() == 0) { cachedFuelRecipe = null; }
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
@@ -457,14 +457,14 @@ public class TileEntityBoilerLiquidMaster extends TileEntityBoilerLiquidSlave im
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (redstonePos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     public static class BoilerLiquidFluidHandler implements IFluidHandler {
         private final TileEntityBoilerLiquidMaster master;

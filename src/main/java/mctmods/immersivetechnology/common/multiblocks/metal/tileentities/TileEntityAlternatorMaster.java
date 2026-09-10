@@ -329,7 +329,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     @Override @Nonnull public ICFluxStorageAdvanced getStorage() { return energyStorage; }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 }

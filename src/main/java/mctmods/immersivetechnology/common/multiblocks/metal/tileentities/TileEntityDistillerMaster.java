@@ -359,7 +359,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @Override public void TankContentsChanged() {
         if (processTimeRemaining == 0) { cachedDistillerRecipe = null; }
         efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public boolean isRSDisabled() {
@@ -393,13 +393,13 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (energyInputPos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(energyInputPos0.position)};
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (redstonePos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
@@ -408,16 +408,16 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return true; }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         if (fluidInputPos0 == null) InitializePoIs();
-        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(1, tanks[1]);
         return ITUtils.emptyIFluidTankList;
     }
 

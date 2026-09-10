@@ -411,7 +411,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     @Override public void TankContentsChanged() {
         cachedTurbineRecipe = null;
         this.markDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public boolean isRSDisabled() {
@@ -436,7 +436,7 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
     @Override public TileEntitySteamTurbineMaster master() { return this; }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (redstonePos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
@@ -451,8 +451,8 @@ public class TileEntitySteamTurbineMaster extends TileEntitySteamTurbineSlave im
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
+        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(1, tanks[1]);
         return ITUtils.emptyIFluidTankList;
     }
 

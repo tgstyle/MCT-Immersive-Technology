@@ -363,7 +363,7 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
 
     @Override public void TankContentsChanged() {
         efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public boolean isRSDisabled() {
@@ -394,12 +394,12 @@ public class TileEntityMeltingCrucibleMaster extends TileEntityMeltingCrucibleSl
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed || redstonePos0 == null) return new int[0];
+        if (!formed || redstonePos0 == null) return ITUtils.EMPTY_INT_ARRAY;
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed || energyInputPos0 == null) return new int[0];
+        if (!formed || energyInputPos0 == null) return ITUtils.EMPTY_INT_ARRAY;
         return new int[]{toFlatIndex(energyInputPos0.position)};
     }
 

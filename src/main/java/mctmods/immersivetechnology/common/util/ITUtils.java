@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util;
 
 import com.immersiveconvergence.api.block.ICBlockBase;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,14 +15,13 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ITUtils {
     public static IFluidTank[] emptyIFluidTankList = new IFluidTank[0];
 
-    public static final Set<TileEntity> REMOVE_FROM_TICKING = ConcurrentHashMap.newKeySet();
+    public static final int[] EMPTY_INT_ARRAY = new int[0];
 
-    public static void RemoveDummyFromTicking(TileEntity te) { REMOVE_FROM_TICKING.add(te); }
+    public static void RemoveDummyFromTicking(TileEntity te) { ICTickingRegistry.removeFromTicking(te); }
 
     public static float remapRange(float inMin, float inMax, float outMin, float outMax, float value) { return outMin + ((value - inMin) / inMax) * (outMax - outMin); }
 

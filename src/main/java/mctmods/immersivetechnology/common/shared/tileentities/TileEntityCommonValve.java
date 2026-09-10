@@ -126,7 +126,11 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 			if (requestCooldown > 0) { requestCooldown--; }
 			return;
 		}
-		efficientMarkDirty();
+		if (acceptedAmount != lastDirtyAmount || packets != lastDirtyPackets) {
+			lastDirtyAmount = acceptedAmount;
+			lastDirtyPackets = packets;
+			efficientMarkDirty();
+		}
 		if (++secondCounter < 20) { return; }
 		if (average == 0 && acceptedAmount > 0) {
 			for (int i = 0; i < 60; i++) { averages[i] = acceptedAmount; }
@@ -187,6 +191,9 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 		}
 		return false;
 	}
+
+	private long lastDirtyAmount = -1;
+	private int lastDirtyPackets = -1;
 
 	int requestCooldown = 0;
 

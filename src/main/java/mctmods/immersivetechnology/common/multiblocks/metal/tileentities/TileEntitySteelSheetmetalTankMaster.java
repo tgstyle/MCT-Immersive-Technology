@@ -140,7 +140,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     @Override public void TankContentsChanged() {
         updateComparators();
         efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     private void updateComparators() {
@@ -184,7 +184,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) { return new int[0]; }
+        if (!formed) { return ITUtils.EMPTY_INT_ARRAY; }
         if (redstonePos0 == null) { InitializePoIs(); }
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
@@ -196,8 +196,8 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) { return ITUtils.emptyIFluidTankList; }
         if (fluidInputs0.isEmpty() && fluidOutputs0.isEmpty()) { InitializePoIs(); }
-        if (side == null) { return new IFluidTank[]{tank}; }
-        if (isInputPoI(side, position) || isOutputPoI(side, position)) { return new IFluidTank[]{tank}; }
+        if (side == null) { return tankView(0, tank); }
+        if (isInputPoI(side, position) || isOutputPoI(side, position)) { return tankView(0, tank); }
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -211,7 +211,7 @@ public class TileEntitySteelSheetmetalTankMaster extends TileEntitySteelSheetmet
         return isOutputPoI(side, position);
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 }

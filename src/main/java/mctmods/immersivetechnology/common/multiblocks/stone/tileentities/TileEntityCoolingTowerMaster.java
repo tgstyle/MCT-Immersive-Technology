@@ -281,7 +281,6 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         if (tempFactor > 0 || humidityFactor > 0) {
             if (tempFactor > 0) { multiplier -= (world.getBiome(getPos()).getDefaultTemperature() - 0.8) * tempFactor; }
             if (humidityFactor > 0) { multiplier += 0.075 * humidityFactor * -((world.getBiome(getPos()).getRainfall() - 0.5) / 0.5); }
-            multiplier = Math.max(multiplier, 0.01);
         }
         if (ITCompatModule.isAdvancedRocketryLoaded) { multiplier *= AdvancedRocketryHelper.getHeatTransferCoefficient(world, getPos()); }
         return Math.max(multiplier, 0);
@@ -331,7 +330,7 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
     @Override public void TankContentsChanged() {
         if (processQueue.isEmpty()) { cachedCoolingRecipe = null; }
         efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
@@ -346,11 +345,11 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
         if (fluidInputPos0 == null) InitializePoIs();
-        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidInputPos1.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[2]};
-        if (fluidOutputPos1.isPoI(side, position)) return new IFluidTank[] {tanks[3]};
-        if (fluidOutputPos2.isPoI(side, position)) return new IFluidTank[] {tanks[4]};
+        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
+        if (fluidInputPos1.isPoI(side, position)) return tankView(1, tanks[1]);
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(2, tanks[2]);
+        if (fluidOutputPos1.isPoI(side, position)) return tankView(3, tanks[3]);
+        if (fluidOutputPos2.isPoI(side, position)) return tankView(4, tanks[4]);
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -386,9 +385,9 @@ public class TileEntityCoolingTowerMaster extends TileEntityCoolingTowerSlave im
         return tanks[iTank].getFluidAmount() > 0;
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     public static class CoolingTowerFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

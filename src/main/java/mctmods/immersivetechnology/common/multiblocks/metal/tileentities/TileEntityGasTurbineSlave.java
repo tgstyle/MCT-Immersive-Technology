@@ -82,7 +82,7 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntityGasTurbineMaster m = master();
-        return m == null ? new int[0] : m.getRedstonePos();
+        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
@@ -147,7 +147,7 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
         int received = storage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();
-            m.markContainingBlockForUpdate(null);
+            m.requestClientSync();
         }
         return received;
     }

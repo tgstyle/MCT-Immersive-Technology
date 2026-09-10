@@ -111,10 +111,10 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntitySteelSheetmetalTankMaster m = master();
-        return m != null ? m.getRedstonePos() : new int[0];
+        return m != null ? m.getRedstonePos() : ITUtils.EMPTY_INT_ARRAY;
     }
 
-    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DummyRecipe> process) { return true; }
 

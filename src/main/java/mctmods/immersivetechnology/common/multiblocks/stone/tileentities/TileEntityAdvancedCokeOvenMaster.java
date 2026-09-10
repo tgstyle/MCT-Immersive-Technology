@@ -200,6 +200,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             spawnParticles();
             return;
         }
+        super.update();
         boolean update = false;
         boolean wasRunning = isRunning;
         if (!inventory.get(0).isEmpty()) {
@@ -411,7 +412,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public void TankContentsChanged() {
         efficientMarkDirty();
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
@@ -428,7 +429,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidOutputPos0 == null) InitializePoIs();
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tank};
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(0, tank);
         return ITUtils.emptyIFluidTankList;
     }
 

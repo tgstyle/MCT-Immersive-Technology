@@ -359,7 +359,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @Override public void TankContentsChanged() {
         if (processTimeRemaining == 0) { cachedExchangeRecipe = null; }
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public boolean isRSDisabled() {
@@ -386,13 +386,13 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     @Override public boolean isDummy() { return false; }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (redstonePos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (energyInputPos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(energyInputPos0.position)};
     }
@@ -412,10 +412,10 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
-        if (fluidInputPos1.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[2]};
-        if (fluidOutputPos1.isPoI(side, position)) return new IFluidTank[]{tanks[3]};
+        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
+        if (fluidInputPos1.isPoI(side, position)) return tankView(1, tanks[1]);
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(2, tanks[2]);
+        if (fluidOutputPos1.isPoI(side, position)) return tankView(3, tanks[3]);
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -457,9 +457,9 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return false;
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     static class HeatExchangerFluidHandler implements IFluidHandler {
         private final IFluidTank[] tanks;

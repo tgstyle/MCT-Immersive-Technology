@@ -86,7 +86,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntityDistillerMaster m = master();
-        return m == null ? new int[0] : m.getRedstonePos();
+        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
@@ -142,7 +142,7 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
         int received = m.energyStorage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();
-            m.markContainingBlockForUpdate(null);
+            m.requestClientSync();
         }
         return received;
     }

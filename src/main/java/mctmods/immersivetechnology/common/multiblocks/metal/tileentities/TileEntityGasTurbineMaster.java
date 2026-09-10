@@ -518,7 +518,7 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
 
     @Override public void TankContentsChanged() {
         lastRecipe = null;
-        markContainingBlockForUpdate(null);
+        requestClientSync();
         tickCountdown = 0;
     }
 
@@ -544,13 +544,13 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
     @Override public TileEntityGasTurbineMaster master() { return this; }
 
     @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (redstonePos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(redstonePos0.position)};
     }
 
     @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return new int[0];
+        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
         if (energyInputPos0 == null) InitializePoIs();
         return new int[]{toFlatIndex(energyInputPos0.position), toFlatIndex(energyInputPos1.position)};
     }
@@ -585,8 +585,8 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[0]};
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[] {tanks[1]};
+        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(1, tanks[1]);
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -633,9 +633,9 @@ public class TileEntityGasTurbineMaster extends TileEntityGasTurbineSlave implem
         return super.getCapability(capability, facing);
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     public static class GasTurbineFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

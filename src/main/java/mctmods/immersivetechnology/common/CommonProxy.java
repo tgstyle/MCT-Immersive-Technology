@@ -41,21 +41,7 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	@SubscribeEvent public void onWorldUnload(WorldEvent.Unload event) {
-		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty()) { ITUtils.REMOVE_FROM_TICKING.removeIf(te -> te.getWorld() == event.getWorld()); }
 		if (Loader.isModLoaded("immersiveengineering")) { TileEntityFluidPipeAlternative.indirectConnections.remove(event.getWorld().provider.getDimension()); }
-	}
-
-	@SubscribeEvent public void onWorldTick(TickEvent.WorldTickEvent event) {
-		if (!ITUtils.REMOVE_FROM_TICKING.isEmpty() && event.phase == TickEvent.Phase.END) {
-			Set<TileEntity> forThisWorld = new HashSet<>();
-			for (TileEntity te : ITUtils.REMOVE_FROM_TICKING) {
-				if (te.getWorld() == event.world) { forThisWorld.add(te); }
-			}
-			if (!forThisWorld.isEmpty()) {
-				event.world.tickableTileEntities.removeAll(forThisWorld);
-				ITUtils.REMOVE_FROM_TICKING.removeAll(forThisWorld);
-			}
-		}
 	}
 
 	public void preInitEnd() {}

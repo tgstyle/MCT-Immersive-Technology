@@ -353,7 +353,7 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
 
     @Override public void TankContentsChanged() {
         if (processTimeRemaining == 0) { cachedRecipe = null; }
-        markContainingBlockForUpdate(null);
+        requestClientSync();
     }
 
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
@@ -374,8 +374,8 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
         if (!formed) return ITUtils.emptyIFluidTankList;
         if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[0]};
-        if (fluidOutputPos0.isPoI(side, position)) return new IFluidTank[]{tanks[1]};
+        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
+        if (fluidOutputPos0.isPoI(side, position)) return tankView(1, tanks[1]);
         return ITUtils.emptyIFluidTankList;
     }
 
@@ -405,9 +405,9 @@ public class TileEntityBoilerTankMaster extends TileEntityBoilerTankSlave implem
         return iTank == 1 && fluidOutputPos0.isPoI(side, position);
     }
 
-    @Override @Nonnull public int[] getCurrentProcessesStep() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getCurrentProcessesMax() { return new int[0]; }
+    @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
 
     public static class BoilerTankFluidHandler implements IFluidHandler {
         private final IFluidTank[] accessibleTanks;

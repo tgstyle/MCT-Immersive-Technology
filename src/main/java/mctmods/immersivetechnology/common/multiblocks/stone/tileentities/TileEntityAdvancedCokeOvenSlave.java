@@ -109,9 +109,9 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
 
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
-    @Override @Nonnull public int[] getRedstonePos() { return new int[0]; }
+    @Override @Nonnull public int[] getRedstonePos() { return ITUtils.EMPTY_INT_ARRAY; }
 
-    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<ICMultiblockRecipe> process) { return true; }
 

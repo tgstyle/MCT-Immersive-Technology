@@ -83,6 +83,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
     public void update() {
         super.update();
         if (world.isRemote) { return; }
+        if ((world.getTotalWorldTime() & 1L) == 0L) { flushClientSync(); }
         doFluidOutput();
     }
 
@@ -109,7 +110,7 @@ public class TileEntityBarrelSteel extends TileEntityCommonOSD implements IConfi
     }
 
     @Override
-    public void TankContentsChanged() { this.markContainingBlockForUpdate(null); }
+    public void TankContentsChanged() { this.requestClientSync(); }
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

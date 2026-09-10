@@ -109,10 +109,10 @@ public class TileEntityBoilerLiquidSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntityBoilerLiquidMaster m = master();
-        return m == null ? new int[0] : m.getRedstonePos();
+        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
-    @Override @Nonnull public int[] getOutputTanks() { return new int[0]; }
+    @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DummyRecipe> process) { return true; }
 

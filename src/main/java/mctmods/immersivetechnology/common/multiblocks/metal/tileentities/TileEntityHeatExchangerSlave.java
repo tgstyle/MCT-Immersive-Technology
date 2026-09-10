@@ -81,7 +81,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
 
     @Override @Nonnull public int[] getRedstonePos() {
         TileEntityHeatExchangerMaster m = master();
-        return m == null ? new int[0] : m.getRedstonePos();
+        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{2, 3}; }
@@ -150,7 +150,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
         int received = m.energyStorage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();
-            m.markContainingBlockForUpdate(null);
+            m.requestClientSync();
         }
         return received;
     }
