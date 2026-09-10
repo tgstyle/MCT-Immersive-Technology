@@ -222,7 +222,7 @@ ie.manual.entry.boilerSolid.name=Boiler Solid Fuel Burner
 ie.manual.entry.boilerSolid.subtext=Getting steamy in here!
 ie.manual.entry.boilerTank0=The Boiler Tank is the core of the Boiler system - it holds water and turns it into steam, but it can't produce heat on its own. Attach one §lBoiler (Liquid Fuel)§r or §lBoiler (Solid Fuel)§r burner to supply it.
 ie.manual.entry.boilerTank1=§lWater§r is input near the tank on the §lleft side§r; §lSteam§r is output from the top. Holds up to <config;i;boilerTank_tankSize> mB of water. Runs a batch once the attached burner's heat reaches working temperature.
-ie.manual.entry.boilerTank2=If heat drops mid-batch, progress drains back gradually rather than resetting outright - a brief interruption costs some progress, not all of it. A comparator against any exterior block outputs a signal proportional to current heat level.
+ie.manual.entry.boilerTank2=If heat drops mid-batch, progress drains back gradually rather than resetting outright - a brief interruption costs some progress, not all of it. A comparator against any exterior block outputs a signal proportional to current heat level. Applying a redstone signal to the control panel halts the machine; the Engineer's Hammer inverts that.
 ie.manual.entry.boilerLiquid0=The Liquid Fuel Boiler burns fluid fuel to supply heat to an attached §lBoiler Tank§r - it does not hold water or produce steam itself.
 ie.manual.entry.boilerLiquid1=§lLiquid Fuel§r is input below the combustion chamber. Light it with a torch or flint and steel on the top exhaust vent.
 ie.manual.entry.boilerLiquid2=Runs in pilot mode when idle, consuming a small trickle of fuel to stay lit rather than going cold. A comparator against any exterior block outputs a signal proportional to current heat level.
@@ -234,7 +234,7 @@ ie.manual.entry.distiller.name=Distiller
 ie.manual.entry.distiller.subtext=Clearer than water
 ie.manual.entry.distiller0=The Distiller is a multiblock machine that turns Water in to Distilled Water and Salt.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Sheetmetal Iron.
 ie.manual.entry.distiller1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>Water can be input into the Distiller via a hatch on the right that is marked with a blue dot. The hatch with the orange dot on the left is the fluid output and the other hatch on the back serves as a item output.<br>It needs energy to produce Distilled Water and Salt.<br>One bucket of Water produces 500 mB of Distilled Water.
-ie.manual.entry.distiller2=The item output is a chance, not a guarantee, alongside the fluid output. A comparator placed against the multiblock outputs a signal proportional to how full its internal Flux buffer is. Supports OpenComputers.
+ie.manual.entry.distiller2=The item output is a chance, not a guarantee, alongside the fluid output. A comparator placed against the multiblock outputs a signal proportional to how full its internal Flux buffer is. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.openBarrel.name=Open Metal Barrel
 ie.manual.entry.openBarrel.subtext=Open to the Sun or Clouds?
@@ -251,7 +251,7 @@ ie.manual.entry.solarReflector.subtext=Shine!
 ie.manual.entry.solarReflector0=The Solar Reflector is a multiblock structure that reflects the light of the Sun to the center of the Solar Tower.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Silver Block. It must be placed above the concrete
 ie.manual.entry.solarReflector1=foundation layer of the Tower/Melter. If too low or too high, it will not connect.
 ie.manual.entry.solarReflector2=Reflector distance from the Solar Tower must be between <config;i;solarTower_minRange>-<config;i;solarTower_maxRange> blocks. The reflector does not work at night or during thunderstorms, and has reduced efficiency during rainstorms. Efficiency is also reduced at dawn and dusk when the sunlight's angle of incidence is too low to be easily collected, and by high ambient humidity. Full reflector efficiency depends on full sky access. With §lAdvanced Rocketry§r, strength varies by planet.
-ie.manual.entry.solarReflector3=Each Solar Reflector can only serve one collector - a Solar Tower or a Solar Melting Crucible - at a time. Building several solar collectors near each other means they will compete for the same pool of reflectors rather than each reaching full efficiency. A comparator placed against the Solar Tower outputs a signal proportional to current heat level. Supports OpenComputers.
+ie.manual.entry.solarReflector3=Each Solar Reflector can only serve one collector - a Solar Tower or a Solar Melting Crucible - at a time. Building several solar collectors near each other means they will compete for the same pool of reflectors rather than each reaching full efficiency. A comparator placed against the Solar Tower outputs a signal proportional to current heat level. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.controlBlocks.name=Limiter and Control Devices
 ie.manual.entry.controlBlocks.subtext=Throughput is overrated
@@ -267,14 +267,14 @@ ie.manual.entry.steamTurbine.subtext=Boiling breath
 ie.manual.entry.steamTurbine0=The Steam Turbine is a multiblock structure that uses Steam to produce kinetic energy.<br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Steel Block (short side).
 ie.manual.entry.steamTurbine1=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;steamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 ie.manual.entry.steamTurbine2=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine (Steel Block). Optionally, fluids can be retrieved through the output pipe right below the mechanical energy output.
-ie.manual.entry.steamTurbine3=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers.
+ie.manual.entry.steamTurbine3=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.highPressureSteamTurbine.name=High Pressure Steam Turbine
 ie.manual.entry.highPressureSteamTurbine.subtext=Double Rankine
 ie.manual.entry.highPressureSteamTurbine0=The High Pressure Steam Turbine is a multiblock structure that uses High Pressure Steam to produce kinetic energy. The structure is built as shown and formed by using the Engineer's Hammer on the central block (short side).
 ie.manual.entry.highPressureSteamTurbine1=When supplied with steam, the Turbine will slowly speed up, reaching maximum speed after <config;i;highPressureSteamTurbine_timeToMax> seconds, as long it's constantly fed. Turning it off or failing to provide enough steam slows the Turbine down and reduces its power output.<br>To work, it needs an <link;alternator;§o§nAlternator§r>.
 ie.manual.entry.highPressureSteamTurbine2=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer.<br>The fluid pipe on front of the machine is the input. The kinetic energy output is in the rear of the machine. Optionally, fluids can be retrieved through the output pipe right below the mechanical energy output.
-ie.manual.entry.highPressureSteamTurbine3=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers.
+ie.manual.entry.highPressureSteamTurbine3=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.gasTurbine.name=Gas Turbine
 ie.manual.entry.gasTurbine.subtext=Not part of a 747
@@ -282,7 +282,7 @@ ie.manual.entry.gasTurbine0=The Gas Turbine is a multiblock structure that uses 
 ie.manual.entry.gasTurbine1=When the turbine is supplied with adequate fuel, the turbine will slowly speed up until it hits max speed and efficiency about 30 seconds into the spinup process. Some fuels may require large enough amounts to be fed into the turbine to require pressurized transport, and if the turbine runs out of fuel it will begin to slow down. If the turbine is at speed while shut down, it will slowly lose speed. If it slows down to below 1/4 speed, it will need to be spun back up before it can be used again.
 ie.manual.entry.gasTurbine2=The fluid pipe on the front of the turbine is the input, and the two power plugs on the sides of the turbine each serve a different input purpose. The HV plug consumes 4096 IF/t to start the turbine up to 1/4 speed, at which point more flux input will cause the turbine to stall and not spin up past 1/4 speed. The MV plug uses 1024 IF to ignite the fuel if the turbine is not currently burning fuel - this happens on startup and any time the turbine has no fuel for 3 or more seconds.
 ie.manual.entry.gasTurbine3=The turbine outputs kinetic energy from the rear, and the flue gas just below the kinetic energy output. On its own it is usually worse than the diesel generator, but this output is where the gas turbine really shines: feed the hot flue gas to a <link;heatExchanger;§n§oHeat Exchanger§r> to raise steam from it - combined cycle, CCGT (or COGAS for the mariners out there) - for a far larger return on combustible fuels.
-ie.manual.entry.gasTurbine4=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers.
+ie.manual.entry.gasTurbine4=A comparator placed against the multiblock outputs a signal proportional to current speed. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.steelBarrel.name=Steel Metal Barrel
 ie.manual.entry.steelBarrel.subtext=Full to the max!
@@ -307,9 +307,9 @@ ie.manual.entry.coolingTower2=The Cooling Tower accepts its two fluid inputs in 
 
 ie.manual.entry.heatExchanger.name=Heat Exchanger
 ie.manual.entry.heatExchanger.subtext=Entropy says hi
-ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.
+ie.manual.entry.heatExchanger0=The Heat Exchanger is a multiblock structure that quickly moves heat from one fluid to another. <br>The structure is built as shown above and formed by using the Engineer's Hammer on the central Iron Sheetmetal next to the Redstone Engineering Block.<br>Applying a redstone signal to the control panel halts the machine; the Engineer's Hammer inverts that. A comparator against any block outputs a signal proportional to its stored Flux. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 ie.manual.entry.heatExchanger1=Applying a redstone signal to the control panel at the front will halt the machine's progress, this behavior can be inverted by use of the Engineer's Hammer. The heat exchanger processes hot, energy-bearing fluids with colder fluids like §lWater§r or §lDistilled Water§r to heat them up into more usable forms. The heat exchanger is a countercurrent heat exchanger, meaning the hot fluid is output from the side the hot fluid is input and vice versa for cold fluid.
-ie.manual.entry.heatExchanger2=A comparator placed against the multiblock outputs a signal proportional to how full its internal Flux buffer is. Supports OpenComputers.
+ie.manual.entry.heatExchanger2=A comparator placed against the multiblock outputs a signal proportional to how full its internal Flux buffer is. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.electrolyticCrucibleBattery.name=Electrolytic Crucible Battery
 ie.manual.entry.electrolyticCrucibleBattery.subtext=The power of electricity compels you!
@@ -336,7 +336,7 @@ ie.manual.entry.radiator.name=Radiator
 ie.manual.entry.radiator.subtext=Irradiative Phase Shift
 ie.manual.entry.radiator0=The Radiator is a multiblock that performs radiative cooling (and conductive cooling, if possible) to cool hot fluids and gasses down, similar to the cooling tower. It can be formed by hitting the light engineering block with an Engineer's Hammer. It can also be made horizontal.
 ie.manual.entry.radiator1=The amount of cooling depends on the temperature differential between the hot fluid and the environment, and will not heat fluid. Efficiency also varies based on number of close obstructions. With §lAdvanced Rocketry§r, amount also depends on atmosphere pressure and radiator blackbody temperature. Radiators are extremely inefficient compared to the cooling tower, but can operate in vacuum unlike the cooling tower. The radiator will not function in an artificial atmosphere.
-ie.manual.entry.radiator2=The Radiator produces no cooling at all in the Nether, regardless of how much open space surrounds it. A comparator placed against the multiblock outputs a signal proportional to how far along the current cycle is. Supports OpenComputers.
+ie.manual.entry.radiator2=The Radiator produces no cooling at all in the Nether, regardless of how much open space surrounds it. A comparator placed against the multiblock outputs a signal proportional to how far along the current cycle is. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath

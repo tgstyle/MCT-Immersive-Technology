@@ -35,7 +35,7 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
     private int loadGrace = 0;
 
     public TileEntityBoilerTankSlave() {
-        super(TileEntityITMultiblockPartBoilerTank.instance, 0, false);
+        super(TileEntityITMultiblockPartBoilerTank.instance, 0, true);
         this.shouldDropInventory = false;
     }
 

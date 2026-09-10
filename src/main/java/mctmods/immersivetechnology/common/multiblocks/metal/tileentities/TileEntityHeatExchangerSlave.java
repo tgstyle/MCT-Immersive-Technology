@@ -36,7 +36,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
     private int loadGrace;
 
     public TileEntityHeatExchangerSlave() {
-        super(TileEntityITMultiblockPartHeatExchanger.instance, 0, false);
+        super(TileEntityITMultiblockPartHeatExchanger.instance, 0, true);
         this.shouldDropInventory = false;
     }
 

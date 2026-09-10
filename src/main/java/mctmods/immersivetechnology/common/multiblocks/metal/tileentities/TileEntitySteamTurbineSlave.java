@@ -259,7 +259,6 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
         }
     }
 
-    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
 
     @Override public int getComparatorInputOverride() {
         TileEntitySteamTurbineMaster m = master();

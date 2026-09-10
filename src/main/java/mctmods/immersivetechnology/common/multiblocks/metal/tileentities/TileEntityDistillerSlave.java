@@ -187,7 +187,6 @@ public class TileEntityDistillerSlave extends TileEntityTemplateMultiblock<TileE
         return super.getCapability(capability, facing);
     }
 
-    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
 
     @Override public int getComparatorInputOverride() {
         TileEntityDistillerMaster m = master();

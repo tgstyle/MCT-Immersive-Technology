@@ -22,9 +22,12 @@ public class BoilerTankDriver extends DriverSidedTileEntity {
 	public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
 		TileEntity tile = world.getTileEntity(pos);
 
-		if (tile instanceof TileEntityBoilerTankMaster) {
-			TileEntityBoilerTankMaster tem = (TileEntityBoilerTankMaster) tile;
-			return new BoilerTankEnvironment(world, tem.getPos());
+		if (tile instanceof TileEntityBoilerTankSlave) {
+			TileEntityBoilerTankSlave te = (TileEntityBoilerTankSlave) tile;
+			TileEntityBoilerTankMaster tem = te.master();
+			if (tem != null && te.isRedstonePos()) {
+				return new BoilerTankEnvironment(world, tem.getPos());
+			}
 		}
 		return null;
 	}

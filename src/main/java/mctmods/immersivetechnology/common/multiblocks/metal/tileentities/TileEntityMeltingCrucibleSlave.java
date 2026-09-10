@@ -159,7 +159,6 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
         return formed && m != null && facing != null && m.energyInputPos0 != null && m.energyInputPos0.isPoI(facing, posInMultiblock()) ? ICSideConfig.INPUT : ICSideConfig.NONE;
     }
 
-    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
 
     @Override public int getComparatorInputOverride() {
         TileEntityMeltingCrucibleMaster m = master();

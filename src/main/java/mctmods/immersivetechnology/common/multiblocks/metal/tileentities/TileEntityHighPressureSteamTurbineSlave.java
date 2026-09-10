@@ -259,7 +259,6 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateM
         }
     }
 
-    @Override protected String[] comparatorPoINames() { return new String[]{"redstone0"}; }
 
     @Override public int getComparatorInputOverride() {
         TileEntityHighPressureSteamTurbineMaster m = master();

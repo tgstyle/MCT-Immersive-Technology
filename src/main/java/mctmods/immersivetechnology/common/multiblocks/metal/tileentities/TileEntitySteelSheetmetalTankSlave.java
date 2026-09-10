@@ -92,7 +92,6 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
 
     @Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
 
-    @Override protected String[] comparatorPoINames() { return new String[]{"comparator_base0", "comparator_layer0"}; }
 
     @Override public int getComparatorInputOverride() {
         TileEntitySteelSheetmetalTankMaster m = master();

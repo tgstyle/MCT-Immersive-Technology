@@ -122,7 +122,6 @@ public class TileEntityCoolingTowerSlave extends TileEntityTemplateMultiblock<Ti
         return super.getCapability(capability, facing);
     }
 
-    @Override protected String[] comparatorPoINames() { return new String[]{"master"}; }
 
     @Override public int getComparatorInputOverride() {
         TileEntityCoolingTowerMaster m = master();
