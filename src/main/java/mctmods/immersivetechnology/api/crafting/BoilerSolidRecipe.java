@@ -2,13 +2,13 @@ package mctmods.immersivetechnology.api.crafting;
 
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.crafting.ICIngredientStack;
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 import com.immersiveconvergence.core.ICCommonConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import java.util.ArrayList;
 
-public class BoilerSolidRecipe extends MultiblockRecipeBase {
+public class BoilerSolidRecipe extends ICRecipeBase {
     public final ICIngredientStack itemInput;
     public final double heatPerTick;
     public final double targetHeat;

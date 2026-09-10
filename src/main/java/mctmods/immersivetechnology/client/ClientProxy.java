@@ -56,6 +56,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHighPressureSteamTurbine;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartMeltingCrucible;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiatorHorizontal;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarMelter;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarTower;
@@ -298,7 +299,8 @@ public class ClientProxy extends CommonProxy {
             ICManual.addEntry("radiator", CAT_POWER,
                     ICManual.multiblock("radiator0", TileEntityITMultiblockPartRadiator.instance),
                     ICManual.text("radiator1"),
-                    ICManual.text("radiator2"));
+                    ICManual.text("radiator2"),
+                    ICManual.multiblock("radiator3", TileEntityITMultiblockPartRadiatorHorizontal.instance));
         }
         if (ICMods.immersiveEngineering()) {
         ICManual.addEntry("controlBlocks", CAT_IT,

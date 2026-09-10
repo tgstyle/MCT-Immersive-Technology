@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
 import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockOverlayText;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
@@ -19,7 +19,6 @@ import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
@@ -32,7 +31,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultiblock<TileEntitySteelSheetmetalTankSlave, DummyRecipe, TileEntitySteelSheetmetalTankMaster> implements IBlockOverlayText, IPlayerInteraction, IComparatorOverride, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
-
     private int loadGrace = 0;
 
     public TileEntitySteelSheetmetalTankSlave() {
@@ -45,7 +43,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (!world.isRemote) {
             TileEntitySteelSheetmetalTankMaster m = master();
@@ -65,16 +63,7 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntitySteelSheetmetalTankMaster master;
-
-    @Override public TileEntitySteelSheetmetalTankMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = world.getTileEntity(masterPos);
-        master = te instanceof TileEntitySteelSheetmetalTankMaster ? (TileEntitySteelSheetmetalTankMaster)te : null;
-        return master;
-    }
+    @Override public TileEntitySteelSheetmetalTankMaster master() { return resolveMaster(TileEntitySteelSheetmetalTankMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("steel_sheetmetal_tank"); }
 
@@ -92,7 +81,6 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
 
     @Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
 
-
     @Override public int getComparatorInputOverride() {
         TileEntitySteelSheetmetalTankMaster m = master();
         return m != null && isComparatorPos() ? m.comparatorOutputFor(posInMultiblock()) : 0;
@@ -107,11 +95,6 @@ public class TileEntitySteelSheetmetalTankSlave extends TileEntityTemplateMultib
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntitySteelSheetmetalTankMaster m = master();
-        return m != null ? m.getRedstonePos() : ITUtils.EMPTY_INT_ARRAY;
-    }
 
     @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 

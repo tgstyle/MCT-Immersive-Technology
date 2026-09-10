@@ -1,10 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
 import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
-import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.util.IICInventory;
 import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
 import mctmods.immersivetechnology.client.ITGUI;
@@ -23,15 +22,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<TileEntitySolarMelterSlave, MeltingCrucibleRecipe, TileEntitySolarMelterMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, ICBlockInterfaces.IGuiTile, IICInventory {
-
     private int loadGrace = 0;
-
-    TileEntitySolarMelterMaster master;
 
     public TileEntitySolarMelterSlave() {
         super(TileEntityITMultiblockPartSolarMelter.instance, 0, false);
@@ -47,7 +42,7 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
     }
 
     @Override public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (!formed) return;
         if (world.isRemote) return;
@@ -63,14 +58,7 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
         return true;
     }
 
-    @Override public TileEntitySolarMelterMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySolarMelterMaster ? (TileEntitySolarMelterMaster)te : null;
-        return master;
-    }
+    @Override public TileEntitySolarMelterMaster master() { return resolveMaster(TileEntitySolarMelterMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("solar_melter"); }
 
@@ -102,11 +90,6 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
 
     @Override protected @Nonnull MeltingCrucibleRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) {
         return MeltingCrucibleRecipe.loadFromNBT(tag);
-    }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntitySolarMelterMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() {
@@ -160,10 +143,6 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
             IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, posInMultiblock());
             return handlers.length > 0;
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, posInMultiblock());
-            return tanks.length > 0;
-        }
         return super.hasCapability(capability, facing);
     }
 
@@ -176,13 +155,8 @@ public class TileEntitySolarMelterSlave extends TileEntityTemplateMultiblock<Til
             IItemHandler[] handlers = m.getAccessibleItemHandlers(facing, posInMultiblock());
             if (handlers.length > 0) return (T)handlers[0];
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, posInMultiblock());
-            if (tanks.length > 0) return (T)new TileEntitySolarMelterMaster.SolarMelterFluidHandler(this, facing);
-        }
         return super.getCapability(capability, facing);
     }
-
 
     @Override public int getComparatorInputOverride() {
         TileEntitySolarMelterMaster m = master();

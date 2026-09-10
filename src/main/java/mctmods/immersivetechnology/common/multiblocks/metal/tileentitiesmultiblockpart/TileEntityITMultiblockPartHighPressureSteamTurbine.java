@@ -1,24 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart;
 
-
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHighPressureSteamTurbineSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 
-import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.BlockMatcher;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +23,7 @@ public class TileEntityITMultiblockPartHighPressureSteamTurbine extends MachineT
     private Map<IBlockState, IBlockState> turbineMaterial;
     private boolean turbineMaterialResolved;
 
-    public TileEntityITMultiblockPartHighPressureSteamTurbine() { super("IT:HighPressureSteamTurbine", ITShapes.get("high_pressure_steam_turbine"), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE_SLAVE)); }
+    public TileEntityITMultiblockPartHighPressureSteamTurbine() { super("IT:HighPressureSteamTurbine", ITShapes.get("high_pressure_steam_turbine"), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE), ICUtils.stateOf(ITContent.blockMetalMultiblock1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE_SLAVE), 2.7, 2.1, 3.2, 8.7); }
 
     @Override protected IBlockState modifyTemplateState(IBlockState state) {
         if (!turbineMaterialResolved) { resolveTurbineMaterial(); }
@@ -65,25 +59,4 @@ public class TileEntityITMultiblockPartHighPressureSteamTurbine extends MachineT
             }
         }
     }
-
-    @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
-
-    @Override public boolean canRenderFormedStructure() { return true; }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void renderFormedStructure() {
-        if (renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock1, 1, BlockType_MetalMultiblock1.HIGH_PRESSURE_STEAM_TURBINE.getMeta());
-        GlStateManager.translate(0.3, 0.1, 0);
-        GlStateManager.translate(2.4, 2, 3.2);
-        GlStateManager.rotate(-45, 0, 1, 0);
-        GlStateManager.rotate(-20, 1, 0, 0);
-        GlStateManager.scale(8.7, 8.7, 8.7);
-        GlStateManager.disableCull();
-        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
-        GlStateManager.enableCull();
-    }
-
-    @SideOnly(Side.CLIENT)
-    static ItemStack renderStack;
 }

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei;
 
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 import com.immersiveconvergence.common.util.compat.jei.ICMultiblockRecipeWrapper;
 
 import mctmods.immersivetechnology.common.util.TranslationKey;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class ITMultiblockRecipeWrapper extends ICMultiblockRecipeWrapper {
-    public ITMultiblockRecipeWrapper(MultiblockRecipeBase recipe) { super(recipe); }
+    public ITMultiblockRecipeWrapper(ICRecipeBase recipe) { super(recipe); }
 
     protected static String getTimeText(int ticks) { return GuiScreen.isShiftKeyDown() ? TranslationKey.GUI_TICKS.format(ticks) : TranslationKey.GUI_SECONDS.format(((float)ticks) / 20); }
 

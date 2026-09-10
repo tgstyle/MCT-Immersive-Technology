@@ -321,6 +321,7 @@ public class ITContent {
             registerTile(TileEntityRadiatorMaster.class);
             MultiblockRegistry.register(TileEntityITMultiblockPartRadiator.instance);
             multiblockRadiator = TileEntityITMultiblockPartRadiator.instance;
+            MultiblockRegistry.register(TileEntityITMultiblockPartRadiatorHorizontal.instance);
         }
         if (ITConfig.Multiblocks.enable.enable_solarMelter) {
             registerTile(TileEntitySolarMelterSlave.class);

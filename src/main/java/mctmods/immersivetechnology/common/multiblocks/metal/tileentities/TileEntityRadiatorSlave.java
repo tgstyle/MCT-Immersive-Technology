@@ -1,31 +1,25 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
 import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
-import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartRadiator;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEntityRadiatorSlave, RadiatorRecipe, TileEntityRadiatorMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
-
     private int loadGrace = 0;
 
     public TileEntityRadiatorSlave() {
@@ -39,7 +33,7 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (world.isRemote) return;
 
@@ -64,19 +58,7 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntityRadiatorMaster master;
-
-    @Override public TileEntityRadiatorMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) {
-            master = null;
-            return null;
-        }
-        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityRadiatorMaster ? (TileEntityRadiatorMaster)te : null;
-        return master;
-    }
+    @Override public TileEntityRadiatorMaster master() { return resolveMaster(TileEntityRadiatorMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("radiator"); }
 
@@ -95,11 +77,6 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
     }
 
     @Override protected @Nonnull RadiatorRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return RadiatorRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntityRadiatorMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
-    }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[] {1}; }
 
@@ -126,33 +103,13 @@ public class TileEntityRadiatorSlave extends TileEntityTemplateMultiblock<TileEn
 
     @Override public boolean isRSDisabled() {
         TileEntityRadiatorMaster m = master();
-        return m == null || m.isRSDisabled();
+        if (m == null) { return true; }
+        return m == this ? super.isRSDisabled() : m.isRSDisabled();
     }
 
     @Override public int getComparatorInputOverride() {
         TileEntityRadiatorMaster m = master();
         return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
-    }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityRadiatorMaster m = master();
-            if (m == null || !formed) return false;
-            return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityRadiatorMaster m = master();
-            if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
-                if (accessible.length > 0) return (T)new TileEntityRadiatorMaster.RadiatorFluidHandler(accessible, m, facing, posInMultiblock());
-            }
-        }
-        return super.getCapability(capability, facing);
     }
 
     @Override

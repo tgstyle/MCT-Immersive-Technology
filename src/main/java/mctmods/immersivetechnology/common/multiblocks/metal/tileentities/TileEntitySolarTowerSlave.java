@@ -1,10 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
 import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
-import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.util.IICInventory;
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.client.ITGUI;
@@ -13,23 +12,17 @@ import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblo
 import mctmods.immersivetechnology.common.util.ITUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntitySolarTowerSlave extends TileEntityTemplateMultiblock<TileEntitySolarTowerSlave, SolarTowerRecipe, TileEntitySolarTowerMaster> implements ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IICInventory {
-
     private int loadGrace = 0;
-
-    TileEntitySolarTowerMaster master;
 
     public TileEntitySolarTowerSlave() {
         super(TileEntityITMultiblockPartSolarTower.instance, 0, true);
@@ -45,7 +38,7 @@ public class TileEntitySolarTowerSlave extends TileEntityTemplateMultiblock<Tile
     }
 
     @Override public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (!formed) return;
         if (world.isRemote) return;
@@ -61,14 +54,7 @@ public class TileEntitySolarTowerSlave extends TileEntityTemplateMultiblock<Tile
         return true;
     }
 
-    @Override public TileEntitySolarTowerMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntitySolarTowerMaster ? (TileEntitySolarTowerMaster)te : null;
-        return master;
-    }
+    @Override public TileEntitySolarTowerMaster master() { return resolveMaster(TileEntitySolarTowerMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("solar_tower"); }
 
@@ -100,11 +86,6 @@ public class TileEntitySolarTowerSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override protected @Nonnull SolarTowerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) {
         return SolarTowerRecipe.loadFromNBT(tag);
-    }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntitySolarTowerMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
     }
 
     @Override @Nonnull public int[] getOutputTanks() {
@@ -149,30 +130,6 @@ public class TileEntitySolarTowerSlave extends TileEntityTemplateMultiblock<Tile
     @Override public TileEntity getGuiMaster() {
         return master();
     }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (!formed || facing == null) return super.hasCapability(capability, facing);
-        TileEntitySolarTowerMaster m = master();
-        if (m == null) return super.hasCapability(capability, facing);
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
-            return accessible.length > 0;
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (!formed || facing == null) return super.getCapability(capability, facing);
-        TileEntitySolarTowerMaster m = master();
-        if (m == null) return super.getCapability(capability, facing);
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
-            if (accessible.length > 0) return (T)new TileEntitySolarTowerMaster.SolarTowerFluidHandler(this, facing);
-        }
-        return super.getCapability(capability, facing);
-    }
-
 
     @Override public int getComparatorInputOverride() {
         TileEntitySolarTowerMaster m = master();

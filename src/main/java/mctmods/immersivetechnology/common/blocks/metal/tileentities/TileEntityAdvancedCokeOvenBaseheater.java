@@ -9,7 +9,7 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.block.ICSideConfig;
 import com.immersiveconvergence.api.block.ICTileEntityBase;
 import com.immersiveconvergence.api.client.ICSoundHandler;
-import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
+import com.immersiveconvergence.api.energy.ICFluxWrapper;
 import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IActiveState;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IDirectionalTile;
@@ -99,9 +99,9 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
         return !dummy && facing == EnumFacing.UP ? ICSideConfig.INPUT : ICSideConfig.NONE;
     }
 
-    ICForgeEnergyWrapper wrapper = new ICForgeEnergyWrapper(this, EnumFacing.UP);
+    ICFluxWrapper wrapper = new ICFluxWrapper(this, EnumFacing.UP);
 
-    @Override public ICForgeEnergyWrapper getCapabilityWrapper(EnumFacing facing) {
+    @Override public ICFluxWrapper getCapabilityWrapper(EnumFacing facing) {
         if (!dummy && facing == EnumFacing.UP) { return wrapper; }
         return null;
     }

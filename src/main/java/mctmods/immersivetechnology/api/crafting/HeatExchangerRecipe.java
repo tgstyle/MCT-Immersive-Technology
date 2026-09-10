@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 
 import com.google.common.collect.Lists;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class HeatExchangerRecipe extends MultiblockRecipeBase {
+public class HeatExchangerRecipe extends ICRecipeBase {
     public static float timeModifier = 1;
     public static float energyModifier = 1;
     public final FluidStack fluidOutput0;

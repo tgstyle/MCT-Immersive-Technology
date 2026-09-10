@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
-import com.immersiveconvergence.api.energy.IICFluxReceiver;
 import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -28,12 +27,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IICFluxReceiver, IICInternalFluxHandler, IMechanicalEnergyProvider, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, ICBlockInterfaces.IComparatorOverride {
-
+public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<TileEntityGasTurbineSlave, GasTurbineRecipe, TileEntityGasTurbineMaster> implements IICInternalFluxHandler, IMechanicalEnergyProvider, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, ICBlockInterfaces.IComparatorOverride {
     protected int loadGrace = 0;
-    protected TileEntityGasTurbineMaster master;
 
     private static float outputtorque() { return Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_torque; }
 
@@ -48,7 +44,7 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         TileEntityGasTurbineMaster m = master();
         if (m == null) { if (loadGrace++ > 20) invalidate(); }
         else { loadGrace = 0; }
@@ -57,13 +53,7 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public boolean isDummy() { return true; }
 
-    public TileEntityGasTurbineMaster master() {
-        if (master != null && !master.isInvalid()) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = world.getTileEntity(masterPos);
-        master = te instanceof TileEntityGasTurbineMaster ? (TileEntityGasTurbineMaster) te : null;
-        return master;
-    }
+    @Override public TileEntityGasTurbineMaster master() { return resolveMaster(TileEntityGasTurbineMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("gas_turbine"); }
 
@@ -79,11 +69,6 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
     }
 
     @Override @Nonnull protected GasTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return GasTurbineRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntityGasTurbineMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
-    }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
@@ -103,10 +88,6 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0) return true;
-        }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
             if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return true;
@@ -116,12 +97,6 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
 
     @SuppressWarnings("unchecked")
     @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityGasTurbineMaster m = master();
-            if (m != null && formed && m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0) {
-                return (T) new TileEntityGasTurbineMaster.GasTurbineFluidHandler(m.getAccessibleFluidTanks(facing, posInMultiblock()), m, facing, posInMultiblock());
-            }
-        }
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityGasTurbineMaster m = master();
             if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) m.getEnergyAtPosition(facing, posInMultiblock());

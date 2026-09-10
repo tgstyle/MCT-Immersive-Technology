@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HighPressureSteamTurbineRecipe extends MultiblockRecipeBase {
+public class HighPressureSteamTurbineRecipe extends ICRecipeBase {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
     public final FluidStack fluidInput;

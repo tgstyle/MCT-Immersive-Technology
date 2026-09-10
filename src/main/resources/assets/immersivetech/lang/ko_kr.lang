@@ -173,6 +173,7 @@ desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=고압 증기 터
 desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=전해 도가니 배터리
 desc.immersivetech.info.multiblock.IT:meltingCrucible=용융 도가니
 desc.immersivetech.info.multiblock.IT:Radiator=방열기
+desc.immersivetech.info.multiblock.IT:RadiatorHorizontal=방열기
 desc.immersivetech.info.multiblock.IT:SolarMelter=태양 용융 도가니
 
 #STONE MULTIBLOCKS
@@ -336,6 +337,7 @@ ie.manual.entry.radiator.subtext=방사 위상 이동
 ie.manual.entry.radiator0=방열기는 뜨거운 유체와 가스를 냉각탑과 유사하게 방사 냉각(가능하다면 전도 냉각)하는 멀티블록입니다. 엔지니어의 망치로 가벼운 엔지니어링 블록을 치면 형성할 수 있습니다. 수평으로 만들 수도 있습니다.
 ie.manual.entry.radiator1=냉각량은 뜨거운 유체와 환경 사이의 온도 차이에 따라 달라지며 유체를 가열하지 않습니다. 효율은 가까운 장애물 수에 따라 달라집니다. §lAdvanced Rocketry§r 설치 시, 대기 압력과 방열기 온도에도 영향을 받습니다. 방열기는 냉각탑에 비해 극도로 비효율적이지만 냉각탑과 달리 진공에서 작동할 수 있습니다. 방열기는 인공 대기에서 작동하지 않습니다.
 ie.manual.entry.radiator2=네더에서는 주변에 아무리 열린 공간이 많아도 방열기가 전혀 냉각하지 못합니다. 멀티블록에 비교기를 설치하면 현재 주기의 진행도에 비례하는 신호를 출력합니다. OpenComputers를 지원합니다.
+ie.manual.entry.radiator3=The Radiator can also be built lying flat: the same nine-long row of blocks, seven wide and one high, formed with the same hammer strike. Both orientations share the same recipes, ports and comparator output.
 
 ie.manual.entry.computer.steamTurbine.name=증기 터빈 ☎
 ie.manual.entry.computer.steamTurbine.subtext=끓는 숨결
@@ -409,6 +411,7 @@ desc.engineered_schematics.multiblock.IT:GasTurbine=가스 터빈
 desc.engineered_schematics.multiblock.IT:HeatExchanger=열 교환기
 desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=고압 증기 터빈
 desc.engineered_schematics.multiblock.IT:Radiator=방열기
+desc.engineered_schematics.multiblock.IT:RadiatorHorizontal=방열기
 desc.engineered_schematics.multiblock.IT:SolarMelter=태양 용융 도가니
 desc.engineered_schematics.multiblock.IT:SolarReflector=태양광 반사기
 desc.engineered_schematics.multiblock.IT:SolarTower=태양탑

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei.steamturbine;
 
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 
 import mctmods.immersivetechnology.common.util.compat.jei.ITMultiblockRecipeWrapper;
 
@@ -10,9 +10,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SteamTurbineRecipeWrapper extends ITMultiblockRecipeWrapper {
-	public MultiblockRecipeBase recipe;
+	public ICRecipeBase recipe;
 
-	public SteamTurbineRecipeWrapper(MultiblockRecipeBase recipe) {
+	public SteamTurbineRecipeWrapper(ICRecipeBase recipe) {
 		super(recipe);
 		this.recipe = recipe;
 	}

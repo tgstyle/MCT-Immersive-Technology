@@ -1,10 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
-import com.immersiveconvergence.api.multiblock.PoICache;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.QueueProcessor;
 import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
@@ -39,9 +37,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -53,9 +49,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver {
-
     private static int inputTankSize() { return Multiblocks.radiator.radiator_input_tankSize; }
+
     private static int outputTankSize() { return Multiblocks.radiator.radiator_output_tankSize; }
+
     private static float speedMult() { return Multiblocks.radiator.radiator_speed_multiplier; }
 
     public FluidTank[] tanks = new FluidTank[] {
@@ -77,11 +74,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     private double distanceSqToTE;
     private int playerDimension;
     public boolean redstoneControlInverted = false;
-    private boolean needsPoIInit = true;
-    private boolean needsNotify = false;
-
-    protected PoICache fluidInputPos0, fluidOutputPos0, redstonePos0;
-    private BlockPos soundPos0, fluidOutputTEPos0;
 
     public void efficientMarkDirty() {
         world.getChunk(getPos()).markDirty();
@@ -102,10 +94,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
         if (!descPacket && nbt.hasKey("cachedRecipe")) { cachedRadiatorRecipe = RadiatorRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe")); }
-        if (!descPacket && formed) {
-            needsPoIInit = true;
-            needsNotify = true;
-        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -124,14 +112,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || fluidInputPos0 == null || fluidOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
-        if (needsNotify) {
-            notifyIONeighbors();
-            needsNotify = false;
-        }
         if (world.isRemote) {
             clientUpdate();
             return;
@@ -173,52 +153,18 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         }
     }
 
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartRadiator.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "fluid_input0":
-                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_output0":
-                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
-                    break;
-                case "redstone0":
-                    redstonePos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-    }
-
-    private void notifyIONeighbors() {
-        BlockPos pos;
-        pos = getBlockPosForPos(fluidInputPos0.position);
-        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-        pos = getBlockPosForPos(fluidOutputPos0.position);
-        world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), true);
-        notifyComparators();
-    }
-
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
+        BlockPos soundPos = poiWorldPos("sound0");
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume == 0) ICSoundHandler.stopSound(soundPos0);
+        if (soundVolume == 0) ICSoundHandler.stopSound(soundPos);
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            double distance = Math.sqrt(player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5));
-            ITSounds.solarTower.PlayRepeating(soundPos0, soundVolume * (float)Math.max(1 - distance / 16, 0), 1f);
+            double distance = Math.sqrt(player.getDistanceSq(soundPos.getX() + .5, soundPos.getY() + .5, soundPos.getZ() + .5));
+            ITSounds.solarTower.PlayRepeating(soundPos, soundVolume * (float)Math.max(1 - distance / 16, 0), 1f);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
-        super.onChunkUnload();
     }
 
     public void disassemble() {
@@ -226,18 +172,14 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
     }
 
     public void disassemble(@Nullable BlockPos triggerPos) {
-        if (world.isRemote) return;
-
-        if (triggerPos == null) triggerPos = getPos();
+        if (world.isRemote || QueueProcessor.isDisassembling(world, getPos())) { return; }
+        if (triggerPos == null) { triggerPos = getPos(); }
 
         long time = world.getTotalWorldTime();
-        if (time == onlyLocalDisassembly) return;
-        onlyLocalDisassembly = time;
+        if (time == onlyLocalDisassembly) { return; }
 
-        if (soundPos0 != null) {
-            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-            soundPos0 = null;
-        }
+        BlockPos soundPos = poiWorldPos("sound0");
+        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos.getX(), soundPos.getY(), soundPos.getZ(), 0));
 
         tanks[0].setFluid(null);
         tanks[1].setFluid(null);
@@ -246,12 +188,20 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         radiationEfficiency = 0;
         isRunning = false;
 
+        TileEntity trigger = world.getTileEntity(triggerPos);
+        TileEntityRadiatorSlave broken = trigger instanceof TileEntityRadiatorSlave ? (TileEntityRadiatorSlave)trigger : this;
+        if (QueueProcessor.handleDisassembly(broken, structurePositions(), broken.shouldDropOriginal) != QueueProcessor.Result.FALLBACK) {
+            efficientMarkDirty();
+            return;
+        }
+
+        onlyLocalDisassembly = time;
         revertAllPositions(time, triggerPos);
 
         efficientMarkDirty();
     }
 
-    private void revertAllPositions(long time, BlockPos triggerPos) {
+    private List<BlockPos> structurePositions() {
         int eff_width = mirrored ? TileEntityITMultiblockPartRadiator.instance.height : TileEntityITMultiblockPartRadiator.instance.width;
         int eff_height = mirrored ? TileEntityITMultiblockPartRadiator.instance.width : TileEntityITMultiblockPartRadiator.instance.height;
 
@@ -267,37 +217,36 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
                 .offset(facing.rotateY(), -eff_masterX)
                 .offset(EnumFacing.DOWN, eff_masterY);
 
+        List<BlockPos> positions = new ArrayList<>(eff_height * eff_width * TileEntityITMultiblockPartRadiator.instance.length);
+        for (int eff_h = 0; eff_h < eff_height; eff_h++) {
+            for (int l = 0; l < TileEntityITMultiblockPartRadiator.instance.length; l++) {
+                for (int eff_w = 0; eff_w < eff_width; eff_w++) {
+                    positions.add(TemplateMultiblock.localToWorld(origin, mirrored ? -eff_w : eff_w, eff_h, l, facing, mirrored));
+                }
+            }
+        }
+        return positions;
+    }
+
+    private void revertAllPositions(long time, BlockPos triggerPos) {
         List<BlockPos> positions = new ArrayList<>();
         List<IBlockState> states = new ArrayList<>();
         List<ItemStack> drops = new ArrayList<>();
 
-        for (int eff_h = 0; eff_h < eff_height; eff_h++) {
-            for (int l = 0; l < TileEntityITMultiblockPartRadiator.instance.length; l++) {
-                for (int eff_w = 0; eff_w < eff_width; eff_w++) {
-                    BlockPos pos2 = TemplateMultiblock.localToWorld(
-                            origin,
-                            mirrored ? -eff_w : eff_w,
-                            eff_h,
-                            l,
-                            facing,
-                            mirrored
-                    );
-
-                    TileEntity te = world.getTileEntity(pos2);
-                    if (te instanceof TileEntityRadiatorSlave) {
-                        TileEntityRadiatorSlave part = (TileEntityRadiatorSlave) te;
-                        if (time != part.onlyLocalDisassembly) {
-                            ItemStack originalStack = part.getOriginalBlock();
-                            IBlockState originalState = ICUtils.getStateFromItemStack(originalStack);
-                            if (originalState != null) {
-                                positions.add(pos2);
-                                states.add(originalState);
-                                drops.add(originalStack.copy());
-                            }
-                            part.formed = false;
-                            part.onlyLocalDisassembly = time;
-                        }
+        for (BlockPos pos2 : structurePositions()) {
+            TileEntity te = world.getTileEntity(pos2);
+            if (te instanceof TileEntityRadiatorSlave) {
+                TileEntityRadiatorSlave part = (TileEntityRadiatorSlave) te;
+                if (time != part.onlyLocalDisassembly) {
+                    ItemStack originalStack = part.getOriginalBlock();
+                    IBlockState originalState = ICUtils.getStateFromItemStack(originalStack);
+                    if (originalState != null) {
+                        positions.add(pos2);
+                        states.add(originalState);
+                        drops.add(originalStack.copy());
                     }
+                    part.formed = false;
+                    part.onlyLocalDisassembly = time;
                 }
             }
         }
@@ -354,7 +303,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         isRunning = message.readBoolean();
     }
 
-
     private void checkReflectorEfficiency() {
         double reflectorFactor = Multiblocks.radiator.radiator_reflector_factor;
         if (reflectorFactor <= 0) {
@@ -402,7 +350,7 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     private boolean pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return false;
-        IFluidHandler handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
+        IFluidHandler handler = FluidUtil.getFluidHandler(world, poiFrontPos("fluid_output0"), poi("fluid_output0").facing.getOpposite());
         if (handler == null) return false;
         FluidStack out = tanks[1].getFluid();
         if (out == null) return false;
@@ -412,7 +360,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         tanks[1].drain(drained, true);
         return drained > 0;
     }
-
 
     private double getTotalRadiationEfficiency(int temp) {
         double tempFactorNether = Multiblocks.radiator.radiator_biome_temp_factor;
@@ -459,9 +406,9 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @SideOnly(Side.CLIENT)
     private void clientUpdate() {
-        if (soundPos0 == null) InitializePoIs();
+        BlockPos soundPos = poiWorldPos("sound0");
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
+        double distSq = player.getDistanceSq(soundPos.getX() + .5, soundPos.getY() + .5, soundPos.getZ() + .5);
         if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceSqToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceSqToTE = distSq;
         playerDimension = player.dimension;
@@ -472,20 +419,6 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
         if (processQueue.isEmpty()) { cachedRadiatorRecipe = null; }
         efficientMarkDirty();
         requestClientSync();
-    }
-
-    @Override public boolean isRSDisabled() {
-        if (computerOn != null) return !computerOn;
-        int[] rs = getRedstonePos();
-        if (rs.length < 1) return false;
-        for (int p : rs) {
-            TileEntity te = getTileForPos(p);
-            if (te != null) {
-                int power = world.getRedstonePowerFromNeighbors(te.getPos());
-                return redstoneControlInverted != (power > 0);
-            }
-        }
-        return false;
     }
 
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
@@ -509,128 +442,21 @@ public class TileEntityRadiatorMaster extends TileEntityRadiatorSlave implements
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (redstonePos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
-        if (fluidOutputPos0.isPoI(side, position)) return tankView(1, tanks[1]);
+        if (isPoI("fluid_input0", side, position)) return tankView(0, tanks[0]);
+        if (isPoI("fluid_output0", side, position)) return tankView(1, tanks[1]);
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
-        if (!formed || redstonePos0 == null) InitializePoIs();
-        if (!fluidInputPos0.isPoI(side, position)) return false;
+        if (!isPoI("fluid_input0", side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         FluidStack current = tanks[0].getFluid();
         if (current == null) { return true; }
         return resource.isFluidEqual(current);
     }
 
-    @Override protected boolean isInputFluidPoI(BlockPos position) {
-        if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position.equals(position);
-    }
-
-    @Override protected int clearInputTanks() {
-        tanks[0].drain(Integer.MAX_VALUE, true);
-        TankContentsChanged();
-        return 1;
-    }
-
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
-        if (!formed || redstonePos0 == null) InitializePoIs();
-        return fluidOutputPos0.isPoI(side, position) && tanks[1].getFluidAmount() > 0;
-    }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
-        if (redstonePos0 == null) InitializePoIs();
-        return new int[]{toFlatIndex(redstonePos0.position)};
-    }
-
-    static class RadiatorFluidHandler implements IFluidHandler {
-        private final IFluidTank[] tanks;
-        private final TileEntityRadiatorMaster master;
-        private final EnumFacing side;
-        private final BlockPos position;
-
-        RadiatorFluidHandler(IFluidTank[] accessibleTanks, TileEntityRadiatorMaster master, EnumFacing side, BlockPos position) {
-            this.tanks = accessibleTanks;
-            this.master = master;
-            this.side = side;
-            this.position = position;
-        }
-
-        private int getTankIndex(IFluidTank tank) {
-            for (int i = 0; i < master.tanks.length; i++) if (master.tanks[i] == tank) return i;
-            return -1;
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> list = new ArrayList<>();
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                boolean fill = idx == 0;
-                boolean drain = idx == 1;
-                list.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity(), fill, drain));
-            }
-            return list.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) return 0;
-            resource = resource.copy();
-            int filled = 0;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canFillTankFrom(idx, side, resource, position)) {
-                    int f = tank.fill(resource, doFill);
-                    filled += f;
-                    resource.amount -= f;
-                    if (resource.amount <= 0) return filled;
-                }
-            }
-            return filled;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) return null;
-            resource = resource.copy();
-            FluidStack drained = null;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canDrainTankFrom(idx, side, position)) {
-                    FluidStack tf = tank.getFluid();
-                    if (tf != null && tf.isFluidEqual(resource)) {
-                        int amt = Math.min(resource.amount, tf.amount);
-                        FluidStack d = tank.drain(amt, doDrain);
-                        if (d != null) {
-                            if (drained == null) drained = d.copy();
-                            else drained.amount += d.amount;
-                            if (resource.amount <= d.amount) return drained;
-                            resource.amount -= d.amount;
-                        }
-                    }
-                }
-            }
-            return drained;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            int remaining = maxDrain;
-            FluidStack drained = null;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canDrainTankFrom(idx, side, position)) {
-                    FluidStack d = tank.drain(remaining, doDrain);
-                    if (d != null) {
-                        if (drained == null) drained = d.copy();
-                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
-                        remaining -= d.amount;
-                        if (remaining <= 0) return drained;
-                    }
-                }
-            }
-            return drained;
-        }
+        return isPoI("fluid_output0", side, position) && tanks[1].getFluidAmount() > 0;
     }
 }

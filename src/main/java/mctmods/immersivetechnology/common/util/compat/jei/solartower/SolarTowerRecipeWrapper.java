@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util.compat.jei.solartower;
 
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 
 import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
@@ -14,11 +14,11 @@ import net.minecraft.client.Minecraft;
 
 public class SolarTowerRecipeWrapper extends ITMultiblockRecipeWrapper {
 	public ITickTimer timer;
-	private final MultiblockRecipeBase recipe;
+	private final ICRecipeBase recipe;
 	private static float speedMult() { return Multiblocks.solarTower.solarTower_speed_multiplier; }
 	private static final DecimalFormat format = new DecimalFormat("#.####");
 
-	public SolarTowerRecipeWrapper(MultiblockRecipeBase recipe) {
+	public SolarTowerRecipeWrapper(ICRecipeBase recipe) {
 		super(recipe);
 		this.recipe = recipe;
 	}

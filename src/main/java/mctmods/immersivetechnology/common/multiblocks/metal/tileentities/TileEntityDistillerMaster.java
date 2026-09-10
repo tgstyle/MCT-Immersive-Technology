@@ -1,14 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
-import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
-import com.immersiveconvergence.api.multiblock.PoICache;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
-import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICFluxStorageAdvanced;
 import com.immersiveconvergence.api.util.ICUtils;
@@ -19,7 +14,6 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartDistiller;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import mctmods.immersivetechnology.common.util.ITSounds;
 
@@ -35,10 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -47,15 +38,14 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TileEntityDistillerMaster extends TileEntityDistillerSlave implements ICFluidTank.TankListener, IICInventory, IBinaryMessageReceiver, IComparatorOverride {
-
     private static int inputTankSize() { return Multiblocks.distiller.distiller_input_tankSize; }
+
     private static int outputTankSize() { return Multiblocks.distiller.distiller_output_tankSize; }
+
     private static int energyCapacity() { return Multiblocks.distiller.distiller_energy_size; }
+
     private static int energyMaxInput() { return Multiblocks.distiller.distiller_energy_maxInput; }
 
     public ICFluxStorageAdvanced energyStorage = new ICFluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
@@ -78,14 +68,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     public boolean redstoneControlInverted = false;
     private int oldComparatorOutput;
 
-    private boolean needsPoIInit = false;
-    private boolean needsNotify = false;
-
     private int tickCountdown = 5;
 
     private static final int[] ITEM_OUTPUT_SLOTS = {1, 3, 4};
-    protected PoICache energyInputPos0, fluidInputPos0, fluidOutputPos0, itemOutputPos0, redstonePos0;
-    private BlockPos fluidOutputTEPos0, fluidOutputTEPos1, soundPos0;
 
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
@@ -102,10 +87,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
             if (nbt.hasKey("cachedRecipe")) cachedDistillerRecipe = DistillerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
             inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
             if (processTimeRemaining > 0 && cachedDistillerRecipe == null) processTimeRemaining = 0;
-            if (formed) {
-                needsPoIInit = true;
-                needsNotify = true;
-            }
         }
     }
 
@@ -128,30 +109,21 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @SideOnly(Side.CLIENT)
     private void handleSounds() {
-        if (soundPos0 == null) InitializePoIs();
+        BlockPos soundPos = poiWorldPos("sound0");
         float target = isRunning ? 1f : 0f;
         if (soundVolume < target) { soundVolume = Math.min(soundVolume + 0.01f, target); }
         else if (soundVolume > target) { soundVolume = Math.max(soundVolume - 0.01f, target); }
         if (soundVolume <= 0f) {
-            ICSoundHandler.stopSound(soundPos0);
+            ICSoundHandler.stopSound(soundPos);
             soundVolume = 0f;
         } else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX(), soundPos0.getY(), soundPos0.getZ()) / 32f, 1f);
-            ITSounds.distiller.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos.getX(), soundPos.getY(), soundPos.getZ()) / 32f, 1f);
+            ITSounds.distiller.PlayRepeating(soundPos, soundVolume / attenuation, 1f);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
-        super.onChunkUnload();
     }
 
     @Override public void disassemble() {
-        if (soundPos0 != null) {
-            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        }
         if (!world.isRemote) {
             for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
@@ -163,14 +135,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || energyInputPos0 == null || fluidInputPos0 == null || fluidOutputPos0 == null || itemOutputPos0 == null || redstonePos0 == null || soundPos0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
-        if (needsNotify) {
-            notifyIONeighbors();
-            needsNotify = false;
-        }
         super.update();
         if (world.isRemote) {
             handleSounds();
@@ -263,9 +227,9 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
             update = true;
         }
         pumpOutputOut();
-        TileEntity outputTile = world.getTileEntity(fluidOutputTEPos1);
-        if (outputTile != null && outputTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite())) {
-            IItemHandler handler = outputTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite());
+        TileEntity outputTile = world.getTileEntity(poiWorldPos("item_output0").offset(poi("item_output0").facing.getOpposite()));
+        if (outputTile != null && outputTile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, poi("item_output0").facing.getOpposite())) {
+            IItemHandler handler = outputTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, poi("item_output0").facing.getOpposite());
             if (handler != null) {
                 for (int slot : ITEM_OUTPUT_SLOTS) {
                     if (inventory.get(slot).isEmpty()) { continue; }
@@ -308,7 +272,7 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     private void pumpOutputOut() {
         if (tanks[1].getFluidAmount() == 0) return;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, poiFrontPos("fluid_output0"), poi("fluid_output0").facing.getOpposite());
         if (output == null) return;
         FluidStack out = tanks[1].getFluid();
         if (out == null) return;
@@ -319,60 +283,10 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
         }
     }
 
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartDistiller.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "energy_input0":
-                    energyInputPos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_input0":
-                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_output0":
-                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
-                    break;
-                case "item_output0":
-                    itemOutputPos0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputTEPos1 = getBlockPosForPos(itemOutputPos0.position).offset(itemOutputPos0.facing.getOpposite());
-                    break;
-                case "redstone0":
-                    redstonePos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-    }
-
-    private void notifyIONeighbors() {
-        if (energyInputPos0 != null) notifyPort(getBlockPosForPos(energyInputPos0.position));
-        if (fluidInputPos0 != null) notifyPort(getBlockPosForPos(fluidInputPos0.position));
-        if (fluidOutputPos0 != null) notifyPort(getBlockPosForPos(fluidOutputPos0.position));
-        if (itemOutputPos0 != null) notifyPort(getBlockPosForPos(itemOutputPos0.position));
-        notifyComparators();
-    }
-
-    private void notifyPort(BlockPos pos) { world.notifyNeighborsOfStateChange(pos, getBlockType(), true); }
-
     @Override public void TankContentsChanged() {
         if (processTimeRemaining == 0) { cachedDistillerRecipe = null; }
         efficientMarkDirty();
         requestClientSync();
-    }
-
-    @Override public boolean isRSDisabled() {
-        int[] rsPositions = getRedstonePos();
-        if (rsPositions.length < 1) return false;
-        for (int rsPos : rsPositions) {
-            TileEntity tile = world.getTileEntity(getBlockPosForPos(rsPos));
-            if (tile != null) {
-                int power = world.getRedstonePowerFromNeighbors(tile.getPos());
-                return redstoneControlInverted != (power > 0);
-            }
-        }
-        return false;
     }
 
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
@@ -386,24 +300,6 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
 
     @Override public TileEntityDistillerMaster master() { return this; }
 
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
-        if (!formed) return false;
-        if (energyInputPos0 == null) InitializePoIs();
-        return facing != null && energyInputPos0.isPoI(facing, position);
-    }
-
-    @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
-        if (energyInputPos0 == null) InitializePoIs();
-        return new int[]{toFlatIndex(energyInputPos0.position)};
-    }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
-        if (redstonePos0 == null) InitializePoIs();
-        return new int[]{toFlatIndex(redstonePos0.position)};
-    }
-
     @Override @Nonnull public int[] getOutputSlots() { return new int[]{4}; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DistillerRecipe> process) { return true; }
@@ -415,37 +311,23 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return tanks; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) {
-        if (fluidInputPos0 == null) InitializePoIs();
-        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
-        if (fluidOutputPos0.isPoI(side, position)) return tankView(1, tanks[1]);
+        if (isPoI("fluid_input0", side, position)) return tankView(0, tanks[0]);
+        if (isPoI("fluid_output0", side, position)) return tankView(1, tanks[1]);
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (iTank != 0) return false;
-        if (fluidInputPos0 == null) InitializePoIs();
-        if (!fluidInputPos0.isPoI(side, position)) return false;
+        if (!isPoI("fluid_input0", side, position)) return false;
         if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
         FluidStack current = tanks[0].getFluid();
         if (current != null) return resource.isFluidEqual(current);
         return true;
     }
 
-    @Override protected boolean isInputFluidPoI(BlockPos position) {
-        if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position.equals(position);
-    }
-
-    @Override protected int clearInputTanks() {
-        tanks[0].drain(Integer.MAX_VALUE, true);
-        TankContentsChanged();
-        return 1;
-    }
-
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (iTank != 1) return false;
-        if (fluidOutputPos0 == null) InitializePoIs();
-        if (!fluidOutputPos0.isPoI(side, position)) return false;
+        if (!isPoI("fluid_output0", side, position)) return false;
         return tanks[1].getFluidAmount() > 0;
     }
 
@@ -473,96 +355,4 @@ public class TileEntityDistillerMaster extends TileEntityDistillerSlave implemen
     }
 
     @Override public void receiveMessageFromClient(ByteBuf message, EntityPlayerMP player) {}
-
-    public static class DistillerFluidHandler implements IFluidHandler {
-        private final IFluidTank[] accessibleTanks;
-        private final TileEntityDistillerMaster master;
-        private final EnumFacing side;
-        private final BlockPos position;
-
-        public DistillerFluidHandler(IFluidTank[] accessibleTanks, TileEntityDistillerMaster master, EnumFacing side, BlockPos position) {
-            this.accessibleTanks = accessibleTanks;
-            this.master = master;
-            this.side = side;
-            this.position = position;
-        }
-
-        private int getTankIndex(IFluidTank tank) {
-            for (int i = 0; i < master.tanks.length; i++) {
-                if (master.tanks[i] == tank) return i;
-            }
-            return -1;
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> list = new ArrayList<>();
-            for (IFluidTank tank : accessibleTanks) {
-                int index = getTankIndex(tank);
-                boolean canFill = index == 0;
-                boolean canDrain = index == 1;
-                list.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity(), canFill, canDrain));
-            }
-            return list.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) return 0;
-            resource = resource.copy();
-            int filled = 0;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canFillTankFrom(iTank, side, resource, position)) {
-                    int f = accessible.fill(resource, doFill);
-                    filled += f;
-                    resource.amount -= f;
-                    if (doFill && f > 0) master.TankContentsChanged();
-                    if (resource.amount <= 0) return filled;
-                }
-            }
-            return filled;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) return null;
-            resource = resource.copy();
-            FluidStack drained = null;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack tankFluid = accessible.getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        int amount = Math.min(resource.amount, tankFluid.amount);
-                        FluidStack d = accessible.drain(amount, doDrain);
-                        if (d != null) {
-                            if (drained == null) drained = d.copy();
-                            else drained.amount += d.amount;
-                            resource.amount -= d.amount;
-                            if (doDrain && d.amount > 0) master.TankContentsChanged();
-                            if (resource.amount <= 0) return drained;
-                        }
-                    }
-                }
-            }
-            return drained;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            int toDrain = maxDrain;
-            FluidStack drained = null;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack d = accessible.drain(toDrain, doDrain);
-                    if (d != null) {
-                        if (drained == null) drained = d.copy();
-                        else if (drained.isFluidEqual(d)) drained.amount += d.amount;
-                        toDrain -= d.amount;
-                        if (doDrain && d.amount > 0) master.TankContentsChanged();
-                        if (toDrain <= 0) return drained;
-                    }
-                }
-            }
-            return drained;
-        }
-    }
 }

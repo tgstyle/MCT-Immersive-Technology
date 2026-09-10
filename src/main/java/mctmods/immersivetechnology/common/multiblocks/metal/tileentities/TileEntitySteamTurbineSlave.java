@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 
@@ -14,30 +15,19 @@ import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<TileEntitySteamTurbineSlave, SteamTurbineRecipe, TileEntitySteamTurbineMaster>
         implements IMechanicalEnergyProvider, IBlockBounds, ICollisionBounds, ISelectionBounds {
-
     private static float outputTorque() { return Multiblocks.steamTurbine.steamTurbine_torque; }
 
-    private TileEntitySteamTurbineMaster master;
     private int loadGrace = 0;
 
     public TileEntitySteamTurbineSlave() {
@@ -51,7 +41,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         TileEntitySteamTurbineMaster m = master();
         if (m == null) { if (++loadGrace > 20) disassemble(); }
@@ -60,14 +50,7 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
 
     @Override public boolean isDummy() { return true; }
 
-    @Override public TileEntitySteamTurbineMaster master() {
-        if (master != null && !master.isInvalid()) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (world == null || !world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = world.getTileEntity(masterPos);
-        master = te instanceof TileEntitySteamTurbineMaster ? (TileEntitySteamTurbineMaster)te : null;
-        return master;
-    }
+    @Override public TileEntitySteamTurbineMaster master() { return resolveMaster(TileEntitySteamTurbineMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("steam_turbine"); }
 
@@ -83,11 +66,6 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
     }
 
     @Override @Nonnull protected SteamTurbineRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return SteamTurbineRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntitySteamTurbineMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
-    }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
@@ -145,120 +123,6 @@ public class TileEntitySteamTurbineSlave extends TileEntityTemplateMultiblock<Ti
         TileEntitySteamTurbineMaster m = master();
         return m == null ? null : m.animation;
     }
-
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntitySteamTurbineMaster m = master();
-            if (m == null) return false;
-            if (m.fluidInputPos0 == null) m.InitializePoIs();
-            return m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock());
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntitySteamTurbineMaster m = master();
-            if (m == null) return super.getCapability(capability, facing);
-            if (m.fluidInputPos0 == null) m.InitializePoIs();
-            if (m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock())) {
-                return (T) new SteamTurbineFluidHandler(m.getAccessibleFluidTanks(facing, posInMultiblock()), m, facing, posInMultiblock());
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
-
-    public static class SteamTurbineFluidHandler implements IFluidHandler {
-        private final IFluidTank[] accessibleTanks;
-        private final TileEntitySteamTurbineMaster master;
-        private final EnumFacing side;
-        private final BlockPos position;
-
-        public SteamTurbineFluidHandler(IFluidTank[] accessibleTanks, TileEntitySteamTurbineMaster master, EnumFacing side, BlockPos position) {
-            this.accessibleTanks = accessibleTanks;
-            this.master = master;
-            this.side = side;
-            this.position = position;
-        }
-
-        private int getTankIndex(IFluidTank tank) {
-            for (int i = 0; i < master.tanks.length; i++) if (master.tanks[i] == tank) return i;
-            return -1;
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> list = new ArrayList<>();
-            for (IFluidTank tank : accessibleTanks) {
-                int index = getTankIndex(tank);
-                boolean canFill = index == 0;
-                boolean canDrain = index == 1;
-                list.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity(), canFill, canDrain));
-            }
-            return list.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) return 0;
-            resource = resource.copy();
-            int filled = 0;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canFillTankFrom(iTank, side, resource, position)) {
-                    int f = accessible.fill(resource, doFill);
-                    filled += f;
-                    resource.amount -= f;
-                    if (doFill && f > 0) master.TankContentsChanged();
-                    if (resource.amount <= 0) return filled;
-                }
-            }
-            return filled;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) return null;
-            resource = resource.copy();
-            FluidStack drained = null;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack tankFluid = accessible.getFluid();
-                    if (tankFluid != null && tankFluid.isFluidEqual(resource)) {
-                        int amount = Math.min(resource.amount, tankFluid.amount);
-                        FluidStack d = accessible.drain(amount, doDrain);
-                        if (d != null) {
-                            if (drained == null) drained = d.copy();
-                            else drained.amount += d.amount;
-                            resource.amount -= d.amount;
-                            if (doDrain && d.amount > 0) master.TankContentsChanged();
-                            if (resource.amount <= 0) return drained;
-                        }
-                    }
-                }
-            }
-            return drained;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            int toDrain = maxDrain;
-            FluidStack drained = null;
-            for (IFluidTank accessible : accessibleTanks) {
-                int iTank = getTankIndex(accessible);
-                if (iTank != -1 && master.canDrainTankFrom(iTank, side, position)) {
-                    FluidStack d = accessible.drain(toDrain, doDrain);
-                    if (d != null) {
-                        if (drained == null) drained = d.copy();
-                        else drained.amount += d.amount;
-                        toDrain -= d.amount;
-                        if (doDrain && d.amount > 0) master.TankContentsChanged();
-                        if (toDrain <= 0) return drained;
-                    }
-                }
-            }
-            return drained;
-        }
-    }
-
 
     @Override public int getComparatorInputOverride() {
         TileEntitySteamTurbineMaster m = master();

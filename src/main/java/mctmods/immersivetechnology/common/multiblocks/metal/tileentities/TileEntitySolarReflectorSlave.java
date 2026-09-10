@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
@@ -12,7 +13,6 @@ import mctmods.immersivetechnology.common.util.ITUtils;
 import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +20,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
 public class TileEntitySolarReflectorSlave extends TileEntityTemplateMultiblock<TileEntitySolarReflectorSlave, ICMultiblockRecipe, TileEntitySolarReflectorMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
-
     private int loadGrace = 0;
 
     public TileEntitySolarReflectorSlave() {
@@ -33,7 +32,7 @@ public class TileEntitySolarReflectorSlave extends TileEntityTemplateMultiblock<
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (!formed) return;
         if (world.isRemote) return;
@@ -44,16 +43,7 @@ public class TileEntitySolarReflectorSlave extends TileEntityTemplateMultiblock<
 
     @Override public boolean isDummy() { return true; }
 
-    TileEntitySolarReflectorMaster master;
-
-    @Override public TileEntitySolarReflectorMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = world.getTileEntity(masterPos);
-        master = te instanceof TileEntitySolarReflectorMaster ? (TileEntitySolarReflectorMaster)te : null;
-        return master;
-    }
+    @Override public TileEntitySolarReflectorMaster master() { return resolveMaster(TileEntitySolarReflectorMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("solar_reflector"); }
 
@@ -68,8 +58,6 @@ public class TileEntitySolarReflectorSlave extends TileEntityTemplateMultiblock<
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
     @Override protected @Nonnull ICMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 

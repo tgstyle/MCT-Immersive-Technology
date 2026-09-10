@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.block.ICSideConfig;
-import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
-import com.immersiveconvergence.api.energy.IICFluxReceiver;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
+import com.immersiveconvergence.api.energy.ICFluxWrapper;
 import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
@@ -29,12 +29,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IGuiTile, IICInventory, IICFluxReceiver, IICInternalFluxHandler {
-
-    protected TileEntityMeltingCrucibleMaster master;
+public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock<TileEntityMeltingCrucibleSlave, MeltingCrucibleRecipe, TileEntityMeltingCrucibleMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IGuiTile, IICInventory, IICInternalFluxHandler {
     private int loadGrace = 0;
 
     public TileEntityMeltingCrucibleSlave() {
@@ -48,7 +45,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (world.isRemote) return;
         TileEntityMeltingCrucibleMaster m = master();
@@ -56,14 +53,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
         else { loadGrace = 0; }
     }
 
-    public TileEntityMeltingCrucibleMaster master() {
-        if (master == null || master.tileEntityInvalid || !world.isBlockLoaded(master.getPos())) {
-            BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-            TileEntity te = world.getTileEntity(masterPos);
-            master = te instanceof TileEntityMeltingCrucibleMaster ? (TileEntityMeltingCrucibleMaster) te : null;
-        }
-        return master;
-    }
+    @Override public TileEntityMeltingCrucibleMaster master() { return resolveMaster(TileEntityMeltingCrucibleMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("melting_crucible"); }
 
@@ -123,7 +113,7 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
     @Override public int receiveEnergy(@Nullable EnumFacing from, int energy, boolean simulate) {
         TileEntityMeltingCrucibleMaster m = master();
         if (m == null || !formed) return 0;
-        if (from != null && (m.energyInputPos0 == null || !m.energyInputPos0.isPoI(from, posInMultiblock()))) return 0;
+        if (from != null && !m.isPoI("energy_input0", from, posInMultiblock())) return 0;
         int received = m.energyStorage.receiveEnergy(energy, simulate);
         if (!simulate && received > 0) {
             m.efficientMarkDirty();
@@ -135,9 +125,8 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
         if (m == null || !formed) return false;
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null && m.itemInputPos0 != null) { return m.itemInputPos0.isPoI(facing, posInMultiblock()); }
-        if (capability == CapabilityEnergy.ENERGY && facing != null && m.energyInputPos0 != null) { return m.energyInputPos0.isPoI(facing, posInMultiblock()); }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) { return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0; }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) { return m.isPoI("item_input0", facing, posInMultiblock()); }
+        if (capability == CapabilityEnergy.ENERGY && facing != null) { return m.isPoI("energy_input0", facing, posInMultiblock()); }
         return super.hasCapability(capability, facing);
     }
 
@@ -145,20 +134,15 @@ public class TileEntityMeltingCrucibleSlave extends TileEntityTemplateMultiblock
     @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
         if (m == null || !formed) return super.getCapability(capability, facing);
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null && m.itemInputPos0 != null && m.itemInputPos0.isPoI(facing, posInMultiblock())) return (T) m.insertionHandler;
-        if (capability == CapabilityEnergy.ENERGY && facing != null && m.energyInputPos0 != null && m.energyInputPos0.isPoI(facing, posInMultiblock())) return (T) new ICForgeEnergyWrapper(this, facing);
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            IFluidTank[] tanks = m.getAccessibleFluidTanks(facing, posInMultiblock());
-            if (tanks.length > 0) return (T) tanks[0];
-        }
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null && m.isPoI("item_input0", facing, posInMultiblock())) return (T) m.insertionHandler;
+        if (capability == CapabilityEnergy.ENERGY && facing != null && m.isPoI("energy_input0", facing, posInMultiblock())) return (T) new ICFluxWrapper(this, facing);
         return super.getCapability(capability, facing);
     }
 
     @Override @Nonnull public ICSideConfig getSideConfig(@Nullable EnumFacing facing) {
         TileEntityMeltingCrucibleMaster m = master();
-        return formed && m != null && facing != null && m.energyInputPos0 != null && m.energyInputPos0.isPoI(facing, posInMultiblock()) ? ICSideConfig.INPUT : ICSideConfig.NONE;
+        return formed && m != null && facing != null && m.isPoI("energy_input0", facing, posInMultiblock()) ? ICSideConfig.INPUT : ICSideConfig.NONE;
     }
-
 
     @Override public int getComparatorInputOverride() {
         TileEntityMeltingCrucibleMaster m = master();

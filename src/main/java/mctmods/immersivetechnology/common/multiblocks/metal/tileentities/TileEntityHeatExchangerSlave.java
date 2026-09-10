@@ -1,15 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.block.ICSideConfig;
-import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
-import com.immersiveconvergence.api.energy.IICFluxReceiver;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
+import com.immersiveconvergence.api.energy.ICFluxWrapper;
 import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import com.immersiveconvergence.api.util.ICFluxStorage;
-import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHeatExchanger;
@@ -20,7 +19,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -28,11 +26,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IICFluxReceiver, IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
-
-    TileEntityHeatExchangerMaster master;
+public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<TileEntityHeatExchangerSlave, HeatExchangerRecipe, TileEntityHeatExchangerMaster> implements IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
     private int loadGrace;
 
     public TileEntityHeatExchangerSlave() {
@@ -46,7 +41,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         TileEntityHeatExchangerMaster m = master();
         if (m == null) { if (loadGrace++ > 20) invalidate(); }
@@ -55,14 +50,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
 
     @Override public boolean isDummy() { return true; }
 
-    public TileEntityHeatExchangerMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityHeatExchangerMaster ? (TileEntityHeatExchangerMaster) te : null;
-        return master;
-    }
+    @Override public TileEntityHeatExchangerMaster master() { return resolveMaster(TileEntityHeatExchangerMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("heat_exchanger"); }
 
@@ -78,11 +66,6 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
     }
 
     @Override @Nonnull protected HeatExchangerRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return HeatExchangerRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntityHeatExchangerMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
-    }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{2, 3}; }
 
@@ -113,11 +96,6 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
             if (m == null || !formed) return false;
             return m.isEnergyPosition(facing, posInMultiblock());
         }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityHeatExchangerMaster m = master();
-            if (m == null || !formed) return false;
-            return m.getAccessibleFluidTanks(facing, posInMultiblock()).length > 0;
-        }
         return super.hasCapability(capability, facing);
     }
 
@@ -125,14 +103,7 @@ public class TileEntityHeatExchangerSlave extends TileEntityTemplateMultiblock<T
     @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityHeatExchangerMaster m = master();
-            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new ICForgeEnergyWrapper(this, facing);
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityHeatExchangerMaster m = master();
-            if (m != null && formed) {
-                IFluidTank[] accessible = m.getAccessibleFluidTanks(facing, posInMultiblock());
-                if (accessible.length > 0) return (T) new TileEntityHeatExchangerMaster.HeatExchangerFluidHandler(accessible, m, facing, posInMultiblock());
-            }
+            if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) return (T) new ICFluxWrapper(this, facing);
         }
         return super.getCapability(capability, facing);
     }

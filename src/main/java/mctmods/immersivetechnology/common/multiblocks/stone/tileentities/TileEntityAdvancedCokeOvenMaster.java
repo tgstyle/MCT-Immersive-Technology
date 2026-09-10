@@ -6,9 +6,7 @@ import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.PoICache;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
-import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.particles.ParticleCampfireSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
@@ -20,7 +18,6 @@ import mctmods.immersivetechnology.common.Config;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
@@ -37,10 +34,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -55,8 +49,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOvenSlave implements ICFluidTank.TankListener, IICInventory, IComparatorOverride, ITileSyncReceiver {
-
     private static int tankSize() { return Multiblocks.advancedCokeOven.advancedCokeOven_tankSize; }
+
     public static float baseSpeed = Multiblocks.advancedCokeOven.advancedCokeOven_speed_base;
     public static float baseheaterAdd = Multiblocks.advancedCokeOven.advancedCokeOven_baseheater_speed_increase;
     public static float baseheaterMult = Multiblocks.advancedCokeOven.advancedCokeOven_baseheater_speed_multiplier;
@@ -73,18 +67,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     private int soundGracePeriod = 0;
     private int oldComparatorOutput = -1;
     private boolean isRunning = false;
-    private boolean needsPoIInit = false;
-
-    PoICache itemInputPos0;
-    PoICache itemOutputPos0;
-    PoICache fluidOutputPos0;
-    PoICache baseheaterPos0;
-    PoICache baseheaterPos1;
-    private BlockPos soundPos0;
-    private BlockPos smokePos0;
-
-    BlockPos itemOutputTEPos0;
-    BlockPos fluidOutputTEPos0;
 
     final IItemHandler inputHandler = new ICInventoryHandler(1, this, 0, new boolean[]{true}, new boolean[]{false});
     final IItemHandler outputHandler = new ICInventoryHandler(1, this, 1, new boolean[]{false}, new boolean[]{true});
@@ -100,7 +82,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
         inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount);
         isRunning = nbt.getBoolean("isRunning");
         soundGracePeriod = nbt.getInteger("soundGracePeriod");
-        if (formed && !descPacket) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -116,38 +97,32 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
-        if (smokePos0 == null) InitializePoIs();
-        if (smokePos0 == null || !isRunning) return;
+        BlockPos smokePos = poiWorldPos("smoke0");
+        if (!isRunning) return;
         Random rand = world.rand;
         int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        if (smokePos0.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
+        if (smokePos.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
         Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleCampfireSmoke(world,
-                smokePos0.getX() + 0.5, smokePos0.getY() + 0.9, smokePos0.getZ() + 0.5,
+                smokePos.getX() + 0.5, smokePos.getY() + 0.9, smokePos.getZ() + 0.5,
                 (rand.nextDouble() - 0.5) * 0.0125, 0.05 * ITConfig.Client.particles.colored_smoke_height / Config.SMOKE_HEIGHT_DEFAULT, (rand.nextDouble() - 0.5) * 0.0125));
     }
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (soundPos0 == null) InitializePoIs();
+        BlockPos soundPos = poiWorldPos("sound0");
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0) {
-            ICSoundHandler.stopSound(soundPos0);
+            ICSoundHandler.stopSound(soundPos);
             soundVolume = 0;
         } else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 8, 1);
-            ITSounds.advancedCokeOven.PlayRepeating(soundPos0, soundVolume / attenuation, 1);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos.getX() + .5, soundPos.getY() + .5, soundPos.getZ() + .5) / 8, 1);
+            ITSounds.advancedCokeOven.PlayRepeating(soundPos, soundVolume / attenuation, 1);
         }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
-        super.onChunkUnload();
     }
 
     @Override public void disassemble() {
@@ -159,8 +134,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
             inventory.clear();
         }
-        if (soundPos0 == null) InitializePoIs();
-        ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
         super.disassemble();
     }
 
@@ -191,10 +164,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || itemInputPos0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
         if (world.isRemote) {
             handleSounds();
             spawnParticles();
@@ -282,9 +251,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
             }
         }
         if (!inventory.get(1).isEmpty()) {
-            TileEntity te = world.getTileEntity(itemOutputTEPos0);
-            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite())) {
-                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, itemOutputPos0.facing.getOpposite());
+            TileEntity te = world.getTileEntity(poiFrontPos("item_output0"));
+            if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, poi("item_output0").facing.getOpposite())) {
+                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, poi("item_output0").facing.getOpposite());
                 if (handler != null) {
                     ItemStack current = inventory.get(1).copy();
                     ItemStack remaining = ItemHandlerHelper.insertItemStacked(handler, current, false);
@@ -315,7 +284,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     private boolean pumpOutputOut() {
         if (tank.getFluidAmount() == 0) return false;
-        IFluidHandler output = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
+        IFluidHandler output = FluidUtil.getFluidHandler(world, poiFrontPos("fluid_output0"), poi("fluid_output0").facing.getOpposite());
         if (output == null) return false;
         FluidStack available = tank.getFluid();
         if (available == null) return false;
@@ -338,9 +307,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     private float getProcessSpeed() {
         int activeBaseheaters = 0;
-        PoICache[] heaters = {baseheaterPos0, baseheaterPos1};
-        for (PoICache poi : heaters) {
-            if (poi == null) continue;
+        for (PoICache poi : poisWithPrefix("baseheater")) {
             BlockPos pos = getBlockPosForPos(poi.position).offset(poi.facing);
             TileEntity tile = ICUtils.getExistingTileEntity(world, pos);
             if (!(tile instanceof TileEntityAdvancedCokeOvenBaseheater)) continue;
@@ -352,9 +319,7 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     }
 
     private void setHeatersActive() {
-        PoICache[] heaters = {baseheaterPos0, baseheaterPos1};
-        for (PoICache poi : heaters) {
-            if (poi == null) continue;
+        for (PoICache poi : poisWithPrefix("baseheater")) {
             BlockPos pos = getBlockPosForPos(poi.position).offset(poi.facing);
             TileEntity tile = ICUtils.getExistingTileEntity(world, pos);
             if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) {
@@ -366,48 +331,6 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
                 }
             }
         }
-    }
-
-    private void notifyNeighbor(BlockPos pos) {
-        if (pos != null) world.notifyNeighborsOfStateChange(pos, world.getBlockState(pos).getBlock(), false);
-    }
-
-    void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartAdvancedCokeOven.instance.pointsOfInterest) {
-            PoICache cache = new PoICache(facing, poi, mirrored);
-            switch (poi.name) {
-                case "item_input0":
-                    itemInputPos0 = cache;
-                    break;
-                case "item_output0":
-                    itemOutputPos0 = cache;
-                    itemOutputTEPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
-                    break;
-                case "fluid_output0":
-                    fluidOutputPos0 = cache;
-                    fluidOutputTEPos0 = getBlockPosForPos(cache.position).offset(cache.facing);
-                    break;
-                case "baseheater0":
-                    baseheaterPos0 = cache;
-                    break;
-                case "baseheater1":
-                    baseheaterPos1 = cache;
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-                case "smoke0":
-                    smokePos0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-        if (!world.isRemote) notifyIONeighbors();
-    }
-
-    private void notifyIONeighbors() {
-        if (itemInputPos0 != null) notifyNeighbor(getBlockPosForPos(itemInputPos0.position));
-        if (itemOutputPos0 != null) notifyNeighbor(getBlockPosForPos(itemOutputPos0.position));
-        if (fluidOutputPos0 != null) notifyNeighbor(getBlockPosForPos(fluidOutputPos0.position));
     }
 
     @Override public void TankContentsChanged() {
@@ -428,24 +351,18 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidOutputPos0 == null) InitializePoIs();
-        if (fluidOutputPos0.isPoI(side, position)) return tankView(0, tank);
+        if (isPoI("fluid_output0", side, position)) return tankView(0, tank);
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
-        if (!formed || fluidOutputPos0 == null) InitializePoIs();
-        return fluidOutputPos0.isPoI(side, position) && iTank == 0;
+        return isPoI("fluid_output0", side, position) && iTank == 0;
     }
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (!formed) return false;
-        if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            return itemInputPos0.isPoI(facing, posInMultiblock()) || itemOutputPos0.isPoI(facing, posInMultiblock());
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            return fluidOutputPos0.isPoI(facing, posInMultiblock());
+            return isPoI("item_input0", facing, posInMultiblock()) || isPoI("item_output0", facing, posInMultiblock());
         }
         return super.hasCapability(capability, facing);
     }
@@ -453,13 +370,9 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     @SuppressWarnings("unchecked")
     @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (!formed) return super.getCapability(capability, facing);
-        if (itemInputPos0 == null) InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
-            if (itemInputPos0.isPoI(facing, posInMultiblock())) return (T)inputHandler;
-            if (itemOutputPos0.isPoI(facing, posInMultiblock())) return (T)outputHandler;
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null && fluidOutputPos0.isPoI(facing, posInMultiblock())) {
-            return (T)new AdvancedCokeOvenFluidHandler(this);
+            if (isPoI("item_input0", facing, posInMultiblock())) return (T)inputHandler;
+            if (isPoI("item_output0", facing, posInMultiblock())) return (T)outputHandler;
         }
         return super.getCapability(capability, facing);
     }
@@ -478,33 +391,4 @@ public class TileEntityAdvancedCokeOvenMaster extends TileEntityAdvancedCokeOven
     @Override public boolean getIsActive() { return active; }
 
     @Override public TileEntity getGuiMaster() { return this; }
-
-    public static class AdvancedCokeOvenFluidHandler implements IFluidHandler {
-        private final ICFluidTank tank;
-        private final TileEntityAdvancedCokeOvenMaster master;
-
-        public AdvancedCokeOvenFluidHandler(TileEntityAdvancedCokeOvenMaster master) {
-            this.master = master;
-            this.tank = master.tank;
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            return new IFluidTankProperties[]{new FluidTankProperties(tank.getFluid(), tank.getCapacity(), false, true)};
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) { return 0; }
-
-        @Override public @Nullable FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null || resource.amount <= 0) return null;
-            FluidStack drained = tank.drain(resource, doDrain);
-            if (drained != null && drained.amount > 0 && doDrain) master.TankContentsChanged();
-            return drained;
-        }
-
-        @Override public @Nullable FluidStack drain(int maxDrain, boolean doDrain) {
-            FluidStack drained = tank.drain(maxDrain, doDrain);
-            if (drained != null && drained.amount > 0 && doDrain) master.TankContentsChanged();
-            return drained;
-        }
-    }
 }

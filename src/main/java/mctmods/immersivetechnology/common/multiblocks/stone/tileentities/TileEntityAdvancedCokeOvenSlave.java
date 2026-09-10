@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.tileentities;
 
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IActiveState;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
@@ -24,11 +25,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultiblock<TileEntityAdvancedCokeOvenSlave, ICMultiblockRecipe, TileEntityAdvancedCokeOvenMaster> implements IActiveState, IGuiTile, IComparatorOverride, ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
-
     private int loadGrace = 0;
 
     public TileEntityAdvancedCokeOvenSlave() {
@@ -41,7 +40,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
 
     @Override public void update() {
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         if (!world.isRemote) {
             TileEntityAdvancedCokeOvenMaster m = master();
@@ -61,16 +60,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
 
     @Override public boolean isDummy() { return true; }
 
-    private TileEntityAdvancedCokeOvenMaster master;
-
-    @Override public TileEntityAdvancedCokeOvenMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = world.getTileEntity(masterPos);
-        master = te instanceof TileEntityAdvancedCokeOvenMaster ? (TileEntityAdvancedCokeOvenMaster)te : null;
-        return master;
-    }
+    @Override public TileEntityAdvancedCokeOvenMaster master() { return resolveMaster(TileEntityAdvancedCokeOvenMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("advanced_coke_oven"); }
 
@@ -109,8 +99,6 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
 
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
 
-    @Override @Nonnull public int[] getRedstonePos() { return ITUtils.EMPTY_INT_ARRAY; }
-
     @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<ICMultiblockRecipe> process) { return true; }
@@ -148,9 +136,7 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         TileEntityAdvancedCokeOvenMaster m = master();
         if (m == null || facing == null) return super.hasCapability(capability, facing);
-        if (m.itemInputPos0 == null) m.InitializePoIs();
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.itemInputPos0.isPoI(facing, posInMultiblock()) || m.itemOutputPos0.isPoI(facing, posInMultiblock());
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) return m.fluidOutputPos0.isPoI(facing, posInMultiblock());
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return m.isPoI("item_input0", facing, posInMultiblock()) || m.isPoI("item_output0", facing, posInMultiblock());
         return super.hasCapability(capability, facing);
     }
 
@@ -158,13 +144,9 @@ public class TileEntityAdvancedCokeOvenSlave extends TileEntityTemplateMultibloc
     @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         TileEntityAdvancedCokeOvenMaster m = master();
         if (m == null || facing == null) return super.getCapability(capability, facing);
-        if (m.itemInputPos0 == null) m.InitializePoIs();
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if (m.itemInputPos0.isPoI(facing, posInMultiblock())) return (T)m.inputHandler;
-            if (m.itemOutputPos0.isPoI(facing, posInMultiblock())) return (T)m.outputHandler;
-        }
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && m.fluidOutputPos0.isPoI(facing, posInMultiblock())) {
-            return (T)new TileEntityAdvancedCokeOvenMaster.AdvancedCokeOvenFluidHandler(m);
+            if (m.isPoI("item_input0", facing, posInMultiblock())) return (T)m.inputHandler;
+            if (m.isPoI("item_output0", facing, posInMultiblock())) return (T)m.outputHandler;
         }
         return super.getCapability(capability, facing);
     }

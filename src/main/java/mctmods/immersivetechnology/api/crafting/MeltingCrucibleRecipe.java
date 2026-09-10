@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.api.crafting;
 import mctmods.immersivetechnology.common.Config;
 
 import com.immersiveconvergence.api.crafting.ICIngredientStack;
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 
 import com.google.common.collect.Lists;
 import net.minecraft.item.ItemStack;
@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import java.util.ArrayList;
 
-public class MeltingCrucibleRecipe extends MultiblockRecipeBase {
+public class MeltingCrucibleRecipe extends ICRecipeBase {
     public static float timeModifier = 1;
     public final FluidStack fluidOutput;
     public final ICIngredientStack itemInput;

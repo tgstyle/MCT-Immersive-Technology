@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.api.crafting;
 
 import com.google.common.collect.Lists;
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 import com.immersiveconvergence.core.ICCommonConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoilerLiquidRecipe extends MultiblockRecipeBase {
+public class BoilerLiquidRecipe extends ICRecipeBase {
     public static float timeModifier = 1;
     public final FluidStack fluidInput;
     public final double heatPerTick;

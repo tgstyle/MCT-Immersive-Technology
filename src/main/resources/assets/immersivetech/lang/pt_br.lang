@@ -173,6 +173,7 @@ desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=Turbina a Vapor d
 desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=Bateria de Crisol Eletrolítico
 desc.immersivetech.info.multiblock.IT:meltingCrucible=Crisol de Fusão
 desc.immersivetech.info.multiblock.IT:Radiator=Radiador
+desc.immersivetech.info.multiblock.IT:RadiatorHorizontal=Radiador
 desc.immersivetech.info.multiblock.IT:SolarMelter=Crisol de Fusão Solar
 
 #STONE MULTIBLOCKS
@@ -336,6 +337,7 @@ ie.manual.entry.radiator.subtext=Mudança de Fase Irradiativa
 ie.manual.entry.radiator0=O Radiador é um multibloco que realiza resfriamento radiativo (e resfriamento condutivo, se possível) para resfriar fluidos e gases quentes, similar à torre de resfriamento. Pode ser formado batendo no bloco de engenharia leve com um Martelo do Engenheiro. Também pode ser feito horizontal.
 ie.manual.entry.radiator1=A quantidade de resfriamento depende da diferença de temperatura entre o fluido quente e o ambiente, e não aquecerá fluido. Eficiência também varia baseada no número de obstruções próximas. Com §lAdvanced Rocketry§r, também depende da pressão atmosférica e temperatura do radiador. Radiadores são extremamente ineficientes comparados à torre de resfriamento, mas podem operar em vácuo ao contrário da torre de resfriamento. O radiador não funcionará em uma atmosfera artificial.
 ie.manual.entry.radiator2=O Radiador não produz nenhum resfriamento no Nether, independentemente de quanto espaço aberto o cerque. Um comparador colocado contra o multibloco emite um sinal proporcional a quão avançado está o ciclo atual. Suporta OpenComputers.
+ie.manual.entry.radiator3=The Radiator can also be built lying flat: the same nine-long row of blocks, seven wide and one high, formed with the same hammer strike. Both orientations share the same recipes, ports and comparator output.
 
 ie.manual.entry.computer.steamTurbine.name=Turbina a Vapor ☎
 ie.manual.entry.computer.steamTurbine.subtext=Respiração fervente
@@ -409,6 +411,7 @@ desc.engineered_schematics.multiblock.IT:GasTurbine=Turbina a Gás
 desc.engineered_schematics.multiblock.IT:HeatExchanger=Trocador de Calor
 desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=Turbina a Vapor de Alta Pressão
 desc.engineered_schematics.multiblock.IT:Radiator=Radiador
+desc.engineered_schematics.multiblock.IT:RadiatorHorizontal=Radiador
 desc.engineered_schematics.multiblock.IT:SolarMelter=Crisol de Fusão Solar
 desc.engineered_schematics.multiblock.IT:SolarReflector=Refletor Solar
 desc.engineered_schematics.multiblock.IT:SolarTower=Torre Solar

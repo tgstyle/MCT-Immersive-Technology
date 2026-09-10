@@ -1,16 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-
-import com.immersiveconvergence.ImmersiveConvergence;
 import mctmods.immersivetechnology.common.util.ITUtils;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
-import com.immersiveconvergence.api.multiblock.PoICache;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
-import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.particles.ParticleFlameCustom;
 import com.immersiveconvergence.api.util.ICInventoryHandler;
@@ -23,7 +18,6 @@ import io.netty.buffer.Unpooled;
 import mctmods.immersivetechnology.api.crafting.BoilerSolidRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerSolid;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
 import mctmods.immersivetechnology.common.util.compat.advancedrocketry.AdvancedRocketryHelper;
@@ -42,24 +36,25 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave implements IComparatorOverride, IICInventory, IBinaryMessageReceiver {
-
     private static double heatLossPerTick() { return Multiblocks.boilerSolid.boilerSolid_heat_lossPerTick; }
+
     private static double pilotHeat() { return Multiblocks.boilerSolid.boilerSolid_heat_pilot; }
+
     private static int pilotMultiplier() { return Multiblocks.boilerSolid.boilerSolid_pilot_fuelMultiplier; }
+
     private static double defaultHeatPerTick() { return Multiblocks.boilerSolid.boilerSolid_heat_defaultPerTick; }
+
     private static int burnTimeDivider() { return Multiblocks.boilerSolid.boilerSolid_burnTime_divider; }
+
     private static double defaultWorkingHeatLevel() { return Multiblocks.boilerHeat.workingLevel(); }
 
     public static int slotCount = 1;
@@ -79,13 +74,6 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     private int oldComparatorOutput = 0;
     private int tickCountdown = 5;
 
-    private boolean needsPoIInit = false;
-    private boolean needsNotify = false;
-
-    protected PoICache itemInputPos0, heatOutputPos0, redstonePos0;
-    private BlockPos heatConsumerTEPos0, soundPos0, exhaustPos0;
-    private List<BlockPos> ignitionPositions;
-
     @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
         heatLevel = nbt.getDouble("heatLevel");
@@ -97,10 +85,6 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         pilotLit = nbt.getBoolean("pilotLit");
         oldComparatorOutput = nbt.getInteger("oldComparatorOutput");
         if (!descPacket) { inventory = ICUtils.readInventory(nbt.getTagList("inventory", 10), slotCount); }
-        if (formed && !descPacket) {
-            needsPoIInit = true;
-            needsNotify = true;
-        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -116,43 +100,13 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         if (!descPacket) { nbt.setTag("inventory", ICUtils.writeInventory(inventory)); }
     }
 
-    void InitializePoIs() {
-        List<BlockPos> ignition = new ArrayList<>();
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartBoilerSolid.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "item_input0":
-                    itemInputPos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "heat_output0":
-                    heatOutputPos0 = new PoICache(facing, poi, mirrored);
-                    heatConsumerTEPos0 = getBlockPosForPos(heatOutputPos0.position).offset(heatOutputPos0.facing);
-                    break;
-                case "redstone0":
-                    redstonePos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-                case "exhaust0":
-                    exhaustPos0 = getBlockPosForPos(poi.position);
-                    break;
-                case "ignition0":
-                    ignition.add(poi.position);
-                    break;
-            }
-        }
-        ignitionPositions = ignition;
-    }
-
     public boolean isHeatOutputPoI(BlockPos position) {
-        if (heatOutputPos0 == null) InitializePoIs();
-        return heatOutputPos0.position.equals(position);
+        return poi("heat_output0").position.equals(position);
     }
 
     public boolean tryIgnite(BlockPos posInMultiblock, EntityPlayer player, ItemStack heldItem) {
         if (!formed) return false;
-        if (ignitionPositions == null) InitializePoIs();
-        if (!ignitionPositions.contains(posInMultiblock)) return false;
+        if (!isPoIPosition("ignition0", posInMultiblock)) return false;
         boolean torch = Block.getBlockFromItem(heldItem.getItem()) == Blocks.TORCH;
         boolean flintAndSteel = heldItem.getItem() == Items.FLINT_AND_STEEL;
         if (!torch && !flintAndSteel) return false;
@@ -178,11 +132,6 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         int burnTime = ForgeEventFactory.getItemBurnTime(single);
         if (burnTime <= 0 && BoilerSolidRecipe.findFuel(single) != null) { burnTime = 200; }
         return burnTime;
-    }
-
-    private void notifyIONeighbors() {
-        if (itemInputPos0 != null) world.notifyNeighborsOfStateChange(getBlockPosForPos(itemInputPos0.position), getBlockType(), true);
-        notifyComparators();
     }
 
     private void notifyNearbyClients() {
@@ -211,36 +160,36 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (soundPos0 == null) InitializePoIs();
+        BlockPos soundPos = poiWorldPos("sound0");
         float targetSoundLevel = heatLevel > 0 ? (float)(heatLevel / workingHeatLevel) : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + 0.5, soundPos0.getY() + 0.5, soundPos0.getZ() + 0.5) / 8, 1);
+        float attenuation = Math.max((float)player.getDistanceSq(soundPos.getX() + 0.5, soundPos.getY() + 0.5, soundPos.getZ() + 0.5) / 8, 1);
         float volume = (2 * soundVolume) / attenuation;
-        if (soundVolume <= 0f || volume <= 0.01f) { ICSoundHandler.stopSound(soundPos0); }
-        else { ITSounds.boilerSolid.PlayRepeating(soundPos0, volume, soundVolume); }
+        if (soundVolume <= 0f || volume <= 0.01f) { ICSoundHandler.stopSound(soundPos); }
+        else { ITSounds.boilerSolid.PlayRepeating(soundPos, volume, soundVolume); }
     }
 
     @SideOnly(Side.CLIENT)
     public void spawnParticles() {
-        if (exhaustPos0 == null) InitializePoIs();
+        BlockPos exhaustPos = poiWorldPos("exhaust0");
         Random rand = world.rand;
         int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
         if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         double distanceLimit = 64;
-        if (exhaustPos0.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
+        if (exhaustPos.distanceSq(player.posX, player.posY, player.posZ) > distanceLimit * distanceLimit) return;
         if (pilotLit) {
             Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleFlameCustom(world,
-                    exhaustPos0.getX() + 0.5, exhaustPos0.getY() + 0.1, exhaustPos0.getZ() + 0.5,
+                    exhaustPos.getX() + 0.5, exhaustPos.getY() + 0.1, exhaustPos.getZ() + 0.5,
                     rand.nextFloat() * 0.0625f - 0.03125f, 0.0625f, rand.nextFloat() * 0.0625f - 0.03125f));
         }
         if (pilotLit && heatLevel > pilotHeat() && !isRSDisabled() && consumerHasWater()) {
             ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
-                    exhaustPos0.getX() + 0.5,
-                    exhaustPos0.getY() + 1.25,
-                    exhaustPos0.getZ() + 0.5,
+                    exhaustPos.getX() + 0.5,
+                    exhaustPos.getY() + 1.25,
+                    exhaustPos.getZ() + 0.5,
                     0, 0.125, 0, ITConfig.Client.particles.colored_smoke_height);
             cloud.setRBGColorF(0.2f, 0.2f, 0.2f);
             Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
@@ -249,24 +198,14 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
 
     @SideOnly(Side.CLIENT)
     private boolean consumerHasWater() {
-        if (heatConsumerTEPos0 == null) { return false; }
-        TileEntity te = world.getTileEntity(heatConsumerTEPos0);
+        BlockPos heatOutputFront = poiFrontPos("heat_output0");
+        TileEntity te = world.getTileEntity(heatOutputFront);
         if (!(te instanceof TileEntityBoilerTankSlave)) { return false; }
         TileEntityBoilerTankMaster tank = ((TileEntityBoilerTankSlave)te).master();
         return tank != null && tank.tanks[0].getFluidAmount() > 0;
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
     @Override public void disassemble() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundPos0 != null) {
-            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        }
         if (!world.isRemote) {
             for (ItemStack stack : inventory) if (!stack.isEmpty()) ICUtils.dropStackAtPos(world, getPos(), stack);
             inventory.clear();
@@ -277,14 +216,6 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     @Override public void update() {
         super.update();
         if (!formed) return;
-        if (needsPoIInit || itemInputPos0 == null || heatOutputPos0 == null || redstonePos0 == null || soundPos0 == null || exhaustPos0 == null || ignitionPositions == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
-        if (needsNotify) {
-            notifyIONeighbors();
-            needsNotify = false;
-        }
         if (world.isRemote) {
             handleSounds();
             spawnParticles();
@@ -312,7 +243,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     }
 
     private boolean hasWater() {
-        TileEntity te = world.getTileEntity(heatConsumerTEPos0);
+        TileEntity te = world.getTileEntity(poiFrontPos("heat_output0"));
         return te instanceof IHeatConsumer && ((IHeatConsumer)te).getFluidAmount() > 0;
     }
 
@@ -324,7 +255,7 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
         double previousWorking = workingHeatLevel;
         int previousBurn = burnRemaining;
         boolean canCombust = true;
-        if (ITCompatModule.isAdvancedRocketryLoaded) { canCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, exhaustPos0); }
+        if (ITCompatModule.isAdvancedRocketryLoaded) { canCombust = AdvancedRocketryHelper.isAtmosphereSuitableForCombustion(world, poiWorldPos("exhaust0")); }
         boolean fullMode = isFullMode();
         if (!pilotLit || !canCombust) {
             heatLevel = Math.max(heatLevel - heatLossPerTick(), 0);
@@ -394,12 +325,6 @@ public class TileEntityBoilerSolidMaster extends TileEntityBoilerSolidSlave impl
     @Override public void doGraphicalUpdates(int slot) { markDirty(); markContainingBlockForUpdate(null); }
 
     @Override @Nonnull public NonNullList<ItemStack> getDroppedItems() { return inventory; }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
-        if (redstonePos0 == null) InitializePoIs();
-        return new int[]{toFlatIndex(redstonePos0.position)};
-    }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 

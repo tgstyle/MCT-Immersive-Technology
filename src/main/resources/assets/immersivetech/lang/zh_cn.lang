@@ -173,6 +173,7 @@ desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=高压蒸汽轮�
 desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=电解池
 desc.immersivetech.info.multiblock.IT:meltingCrucible=电熔炼炉
 desc.immersivetech.info.multiblock.IT:Radiator=散热板
+desc.immersivetech.info.multiblock.IT:RadiatorHorizontal=散热板
 desc.immersivetech.info.multiblock.IT:SolarMelter=太阳能熔炼塔
 
 #STONE MULTIBLOCKS
@@ -336,6 +337,7 @@ ie.manual.entry.radiator.subtext=热辐射
 ie.manual.entry.radiator0=散热板以辐射(或热传导，当有介质的时)的方式冷却流体，功能与冷却塔一样.使用工程师锤右击轻型工程块可完成搭建，它也可以水平摆放.
 ie.manual.entry.radiator1=冷却效率取决于流体温度环境温度的温差以及遮挡物的数量，安装§lAdvancedRocketry§r后，效率还取决于大气压强和散热板温度. 与冷却塔相比，散热板效率极低，但是它可以在真空中工作，不过散热板不会在人造大气中工作.
 ie.manual.entry.radiator2=无论周围有多少开阔空间，散热板在下界中都完全无法冷却。在多方块结构上放置比较器可输出与当前循环进度成比例的信号。支持OpenComputers。
+ie.manual.entry.radiator3=The Radiator can also be built lying flat: the same nine-long row of blocks, seven wide and one high, formed with the same hammer strike. Both orientations share the same recipes, ports and comparator output.
 
 ie.manual.entry.computer.steamTurbine.name=蒸汽轮机 ☎
 ie.manual.entry.computer.steamTurbine.subtext=沸腾的气息
@@ -409,6 +411,7 @@ desc.engineered_schematics.multiblock.IT:GasTurbine=燃气轮机
 desc.engineered_schematics.multiblock.IT:HeatExchanger=热交换器
 desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=高压蒸汽轮机
 desc.engineered_schematics.multiblock.IT:Radiator=散热板
+desc.engineered_schematics.multiblock.IT:RadiatorHorizontal=散热板
 desc.engineered_schematics.multiblock.IT:SolarMelter=太阳能熔炼塔
 desc.engineered_schematics.multiblock.IT:SolarReflector=太阳能反射镜
 desc.engineered_schematics.multiblock.IT:SolarTower=太阳能集热塔

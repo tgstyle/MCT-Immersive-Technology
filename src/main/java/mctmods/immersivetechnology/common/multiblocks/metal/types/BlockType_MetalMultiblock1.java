@@ -7,45 +7,26 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public enum BlockType_MetalMultiblock1 implements IStringSerializable, BlockITBase.IBlockEnum {
+    GAS_TURBINE,
+    GAS_TURBINE_SLAVE,
+    HEAT_EXCHANGER,
+    HEAT_EXCHANGER_SLAVE,
+    HIGH_PRESSURE_STEAM_TURBINE,
+    HIGH_PRESSURE_STEAM_TURBINE_SLAVE,
+    ELECTROLYTIC_CRUCIBLE_BATTERY,
+    ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE,
+    MELTING_CRUCIBLE,
+    MELTING_CRUCIBLE_SLAVE,
+    RADIATOR,
+    RADIATOR_SLAVE,
+    SOLAR_MELTER,
+    SOLAR_MELTER_SLAVE,
+    BOILER_LIQUID,
+    BOILER_LIQUID_SLAVE;
 
-    GAS_TURBINE(true),
-    GAS_TURBINE_SLAVE(true),
-    HEAT_EXCHANGER(true),
-    HEAT_EXCHANGER_SLAVE(true),
-    HIGH_PRESSURE_STEAM_TURBINE(true),
-    HIGH_PRESSURE_STEAM_TURBINE_SLAVE(true),
-    ELECTROLYTIC_CRUCIBLE_BATTERY(true),
-    ELECTROLYTIC_CRUCIBLE_BATTERY_SLAVE(true),
-    MELTING_CRUCIBLE(true),
-    MELTING_CRUCIBLE_SLAVE(true),
-    RADIATOR(true),
-    RADIATOR_SLAVE(true),
-    SOLAR_MELTER(true),
-    SOLAR_MELTER_SLAVE(true),
-    BOILER_LIQUID(true),
-    BOILER_LIQUID_SLAVE(true);
+    @Override public int getMeta() { return ordinal(); }
 
-    private final boolean needsCustomState;
-    BlockType_MetalMultiblock1(boolean needsCustomState) {
-        this.needsCustomState = needsCustomState;
-    }
+    @Override public boolean listForCreative() { return false; }
 
-    @Override public int getMeta() {
-        return ordinal();
-    }
-
-    @Override public boolean listForCreative() {
-        return false;
-    }
-
-    @Override @Nonnull public String getName() {
-        return this.toString().toLowerCase(Locale.ENGLISH);
-    }
-
-    public boolean needsCustomState() {
-        return this.needsCustomState;
-    }
-    public String getCustomState() {
-        return getName().toLowerCase();
-    }
+    @Override @Nonnull public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 }

@@ -173,6 +173,7 @@ desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=High Pressure Ste
 desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=Electrolytic Crucible Battery
 desc.immersivetech.info.multiblock.IT:meltingCrucible=Melting Crucible
 desc.immersivetech.info.multiblock.IT:Radiator=Radiator
+desc.immersivetech.info.multiblock.IT:RadiatorHorizontal=Radiator
 desc.immersivetech.info.multiblock.IT:SolarMelter=Solar Melting Crucible
 
 #STONE MULTIBLOCKS
@@ -337,6 +338,7 @@ ie.manual.entry.radiator.subtext=Irradiative Phase Shift
 ie.manual.entry.radiator0=The Radiator is a multiblock that performs radiative cooling (and conductive cooling, if possible) to cool hot fluids and gasses down, similar to the cooling tower. It can be formed by hitting the light engineering block with an Engineer's Hammer. It can also be made horizontal.
 ie.manual.entry.radiator1=The amount of cooling depends on the temperature differential between the hot fluid and the environment, and will not heat fluid. Efficiency also varies based on number of close obstructions. With §lAdvanced Rocketry§r, amount also depends on atmosphere pressure and radiator blackbody temperature. Radiators are extremely inefficient compared to the cooling tower, but can operate in vacuum unlike the cooling tower. The radiator will not function in an artificial atmosphere.
 ie.manual.entry.radiator2=The Radiator produces no cooling at all in the Nether, regardless of how much open space surrounds it. A comparator placed against the multiblock outputs a signal proportional to how far along the current cycle is. Supports OpenComputers - attach the Adapter to the block carrying the redstone control panel.
+ie.manual.entry.radiator3=The Radiator can also be built lying flat: the same nine-long row of blocks, seven wide and one high, formed with the same hammer strike. Both orientations share the same recipes, ports and comparator output.
 
 ie.manual.entry.computer.steamTurbine.name=Steam Turbine ☎
 ie.manual.entry.computer.steamTurbine.subtext=Boiling breath
@@ -410,6 +412,7 @@ desc.engineered_schematics.multiblock.IT:GasTurbine=Gas Turbine
 desc.engineered_schematics.multiblock.IT:HeatExchanger=Heat Exchanger
 desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=High Pressure Steam Turbine
 desc.engineered_schematics.multiblock.IT:Radiator=Radiator
+desc.engineered_schematics.multiblock.IT:RadiatorHorizontal=Radiator
 desc.engineered_schematics.multiblock.IT:SolarMelter=Solar Melting Crucible
 desc.engineered_schematics.multiblock.IT:SolarReflector=Solar Reflector
 desc.engineered_schematics.multiblock.IT:SolarTower=Solar Tower

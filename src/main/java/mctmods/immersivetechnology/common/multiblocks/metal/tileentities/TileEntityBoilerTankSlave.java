@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
@@ -12,26 +13,20 @@ import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartBoilerTank;
-import mctmods.immersivetechnology.common.util.ITUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<TileEntityBoilerTankSlave, DummyRecipe, TileEntityBoilerTankMaster>
         implements ICBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
         IICInventory, ICBlockInterfaces.IComparatorOverride, IHeatConsumer {
-
-    private TileEntityBoilerTankMaster cachedMaster;
     private int loadGrace = 0;
 
     public TileEntityBoilerTankSlave() {
@@ -45,7 +40,7 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         TileEntityBoilerTankMaster m = master();
         if (m == null) { if (loadGrace++ > 20) disassemble(); }
@@ -54,14 +49,7 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public boolean isDummy() { return true; }
 
-    @Override public TileEntityBoilerTankMaster master() {
-        if (cachedMaster != null && !cachedMaster.isInvalid()) return cachedMaster;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = world.getTileEntity(masterPos);
-        cachedMaster = (te instanceof TileEntityBoilerTankMaster) ? (TileEntityBoilerTankMaster)te : null;
-        return cachedMaster;
-    }
+    @Override public TileEntityBoilerTankMaster master() { return resolveMaster(TileEntityBoilerTankMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("boiler_tank"); }
 
@@ -74,8 +62,7 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
     @Override public boolean acceptsHeatFrom(EnumFacing side) {
         TileEntityBoilerTankMaster m = master();
         if (m == null || !formed) return false;
-        if (m.heatInputPos0 == null) m.InitializePoIs();
-        return m.heatInputPos0.isPoI(side, posInMultiblock());
+        return m.isPoI("heat_input0", side, posInMultiblock());
     }
 
     @Override @Nonnull public NonNullList<ItemStack> getInventory() {
@@ -98,8 +85,6 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
     }
 
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
 
@@ -129,28 +114,4 @@ public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<Tile
         return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
     }
 
-    @Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityBoilerTankMaster m = master();
-            if (m != null && formed) {
-                if (m.fluidInputPos0 == null) m.InitializePoIs();
-                return m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock());
-            }
-        }
-        return super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing != null) {
-            TileEntityBoilerTankMaster m = master();
-            if (m != null && formed) {
-                if (m.fluidInputPos0 == null) m.InitializePoIs();
-                if (m.fluidInputPos0.isPoI(facing, posInMultiblock()) || m.fluidOutputPos0.isPoI(facing, posInMultiblock())) {
-                    return (T)new TileEntityBoilerTankMaster.BoilerTankFluidHandler(m.getAccessibleFluidTanks(facing, posInMultiblock()), m, facing, posInMultiblock());
-                }
-            }
-        }
-        return super.getCapability(capability, facing);
-    }
 }

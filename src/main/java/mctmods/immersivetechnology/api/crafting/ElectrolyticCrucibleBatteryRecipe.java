@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.api.crafting;
 
-import com.immersiveconvergence.api.crafting.MultiblockRecipeBase;
+import com.immersiveconvergence.api.crafting.ICRecipeBase;
 import com.immersiveconvergence.api.util.ICUtils;
 
 import com.google.common.collect.Lists;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipeBase {
+public class ElectrolyticCrucibleBatteryRecipe extends ICRecipeBase {
     public static float timeModifier = 1;
     public static float energyModifier = 1;
     public final FluidStack fluidInput0;

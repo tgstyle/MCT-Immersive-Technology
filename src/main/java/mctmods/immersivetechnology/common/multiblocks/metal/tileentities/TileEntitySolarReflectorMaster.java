@@ -2,8 +2,6 @@ package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import mctmods.immersivetechnology.common.util.ITUtils;
-import com.immersiveconvergence.api.multiblock.PoICache;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.particles.BeamParticles;
@@ -12,7 +10,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.common.Config.ITConfig;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartSolarReflector;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,7 +26,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlave implements IBinaryMessageReceiver {
-
     private float[] animationRotations = new float[2];
 
     private static final int PHASE_PARKED = -4;
@@ -54,11 +50,6 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     boolean isMirrorTaken = false;
     private boolean initialized = false;
-    private boolean needsPoIInit = false;
-
-    private PoICache link0;
-    private PoICache beam0;
-    private PoICache sun0;
     private BlockPos collectorPosition0;
 
     public BlockPos getCollectorPosition() { return collectorPosition0 != null ? collectorPosition0 : getPos(); }
@@ -74,7 +65,6 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         animationRotations[0] = nbt.getFloat("rotation0");
         animationRotations[1] = nbt.getFloat("rotation1");
         initialized = nbt.getBoolean("initialized");
-        if (formed && !descPacket) needsPoIInit = true;
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -88,8 +78,7 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
 
     @Override public void disassemble() {
         if (!world.isRemote) {
-            InitializePoIs();
-            SolarRegistry.unregisterReflector(world, getBlockPosForPos(link0.position));
+            SolarRegistry.unregisterReflector(world, poiWorldPos("link0"));
             detachTower();
         }
         super.disassemble();
@@ -127,12 +116,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
             spawnBeamParticles();
             return;
         }
-        if (needsPoIInit || link0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
         if (!initialized) {
-            SolarRegistry.registerReflector(world, getBlockPosForPos(link0.position));
+            SolarRegistry.registerReflector(world, poiWorldPos("link0"));
             initialized = true;
         }
         if (isMirrorTaken) {
@@ -233,9 +218,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     @SideOnly(Side.CLIENT)
     private void spawnBeamParticles() {
         if (!isMirrorTaken || collectorPosition0 == null) { return; }
-        if (beam0 == null) { InitializePoIs(); }
-        if (beam0 == null || getSolarCollectorStrength() <= 0) { return; }
-        BlockPos origin = getBlockPosForPos(beam0.position);
+        BlockPos origin = poiWorldPos("beam0");
+        if (getSolarCollectorStrength() <= 0) { return; }
         BeamParticles.spawnAlongBeam(world,
                 new Vec3d(origin.getX() + 0.5, origin.getY() + 0.5, origin.getZ() + 0.5),
                 new Vec3d(collectorPosition0.getX() + 0.5, collectorPosition0.getY() + 0.5, collectorPosition0.getZ() + 0.5),
@@ -293,9 +277,8 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     private BlockPos[] skyProbes;
 
     public double getSolarCollectorStrength() {
-        if (sun0 == null) { InitializePoIs(); }
         if (skyProbes == null) {
-            BlockPos centre = (sun0 == null ? getPos() : getBlockPosForPos(sun0.position)).up();
+            BlockPos centre = poiWorldPos("sun0").up();
             EnumFacing right = getFacing().rotateY();
             EnumFacing back = getFacing().getOpposite();
             BlockPos[] probes = new BlockPos[9];
@@ -315,24 +298,9 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
         return animationRotations;
     }
 
-    private void InitializePoIs() {
-        link0 = null;
-        beam0 = null;
-        sun0 = null;
+    @Override public void invalidateStructureCaches() {
+        super.invalidateStructureCaches();
         skyProbes = null;
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartSolarReflector.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "link0":
-                    link0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "beam0":
-                    beam0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "sun0":
-                    sun0 = new PoICache(facing, poi, mirrored);
-                    break;
-            }
-        }
     }
 
     public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }

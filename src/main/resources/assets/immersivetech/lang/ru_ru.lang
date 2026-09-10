@@ -173,6 +173,7 @@ desc.immersivetech.info.multiblock.IT:HighPressureSteamTurbine=Паровая т
 desc.immersivetech.info.multiblock.IT:electrolyticCrucibleBattery=Электролитическая тигельная батарея
 desc.immersivetech.info.multiblock.IT:meltingCrucible=Тигель плавления
 desc.immersivetech.info.multiblock.IT:Radiator=Радиатор
+desc.immersivetech.info.multiblock.IT:RadiatorHorizontal=Радиатор
 desc.immersivetech.info.multiblock.IT:SolarMelter=Солнечный тигель плавления
 
 #STONE MULTIBLOCKS
@@ -336,6 +337,7 @@ ie.manual.entry.radiator.subtext=Иррадиативный фазовый сд�
 ie.manual.entry.radiator0=Радиатор - мультиблок для радиационного (и кондуктивного, если возможно) охлаждения горячих жидкостей/газов, подобно охлаждающей башне. Формируется молотком на лёгком инженерном блоке. Может быть горизонтальным.
 ie.manual.entry.radiator1=Охлаждение зависит от разницы температур с окружением, не нагревает. Эффективность от числа препятствий. С §lAdvanced Rocketry§r также влияет давление атмосферы и температура радиатора. Крайне неэффективен по сравнению с башней, но работает в вакууме. Не работает в искусственной атмосфере.
 ie.manual.entry.radiator2=В Нижнем мире радиатор совсем не охлаждает, независимо от количества открытого пространства вокруг. Компаратор на мультиблоке выдаёт сигнал пропорционально прогрессу текущего цикла. Поддерживает OpenComputers.
+ie.manual.entry.radiator3=The Radiator can also be built lying flat: the same nine-long row of blocks, seven wide and one high, formed with the same hammer strike. Both orientations share the same recipes, ports and comparator output.
 
 ie.manual.entry.computer.steamTurbine.name=Паровая турбина ☎
 ie.manual.entry.computer.steamTurbine.subtext=Кипящее дыхание
@@ -409,6 +411,7 @@ desc.engineered_schematics.multiblock.IT:GasTurbine=Газовая турбин�
 desc.engineered_schematics.multiblock.IT:HeatExchanger=Теплообменник
 desc.engineered_schematics.multiblock.IT:HighPressureSteamTurbine=Паровая турбина высокого давления
 desc.engineered_schematics.multiblock.IT:Radiator=Радиатор
+desc.engineered_schematics.multiblock.IT:RadiatorHorizontal=Радиатор
 desc.engineered_schematics.multiblock.IT:SolarMelter=Солнечный тигель плавления
 desc.engineered_schematics.multiblock.IT:SolarReflector=Солнечный отражатель
 desc.engineered_schematics.multiblock.IT:SolarTower=Солнечная башня

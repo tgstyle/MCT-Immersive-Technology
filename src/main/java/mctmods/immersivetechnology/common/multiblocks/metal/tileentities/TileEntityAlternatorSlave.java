@@ -1,17 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.block.ICSideConfig;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyConsumer;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
-import com.immersiveconvergence.api.energy.ICForgeEnergyWrapper;
+import com.immersiveconvergence.api.energy.ICFluxWrapper;
 import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
 import com.immersiveconvergence.api.util.ICFluxStorage;
-import com.immersiveconvergence.api.util.ICUtils;
 import mctmods.immersivetechnology.api.crafting.DummyRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartAlternator;
@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -35,9 +34,7 @@ import net.minecraftforge.fluids.IFluidTank;
 public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<TileEntityAlternatorSlave, ICMultiblockRecipe, TileEntityAlternatorMaster>
         implements IMechanicalEnergyConsumer, IICInternalFluxHandler, ICBlockInterfaces.IBlockBounds,
         ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds, IComparatorOverride {
-
     private int loadGrace = 0;
-    private TileEntityAlternatorMaster master;
 
     public TileEntityAlternatorSlave() {
         super(TileEntityITMultiblockPartAlternator.instance, 0, false);
@@ -50,7 +47,7 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         TileEntityAlternatorMaster m = master();
         if (m == null) { if (loadGrace++ > 20) invalidate(); }
@@ -59,13 +56,7 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public boolean isDummy() { return true; }
 
-    public TileEntityAlternatorMaster master() {
-        if (master != null && !master.tileEntityInvalid) return master;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        TileEntity te = ICUtils.getExistingTileEntity(world, masterPos);
-        master = te instanceof TileEntityAlternatorMaster ? (TileEntityAlternatorMaster) te : null;
-        return master;
-    }
+    @Override public TileEntityAlternatorMaster master() { return resolveMaster(TileEntityAlternatorMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("alternator"); }
 
@@ -78,8 +69,6 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
     @Override public int getSlotLimit(int slot) { return 0; }
 
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
-
-    @Override @Nonnull public int[] getRedstonePos() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
@@ -104,7 +93,7 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
         if (capability == CapabilityEnergy.ENERGY && facing != null) {
             TileEntityAlternatorMaster m = master();
             if (m != null && formed && m.isEnergyPosition(facing, posInMultiblock())) {
-                return (T)new ICForgeEnergyWrapper(this, facing);
+                return (T)new ICFluxWrapper(this, facing);
             }
         }
         return super.getCapability(capability, facing);

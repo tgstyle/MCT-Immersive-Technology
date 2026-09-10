@@ -9,45 +9,21 @@ import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 import com.immersiveconvergence.api.block.ICProperties;
-import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.multiblock.*;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.util.solarregistry.SolarRegistry;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityITMultiblockPartSolarTower extends MachineTemplateMultiblock<TileEntitySolarTowerSlave> {
     public static TileEntityITMultiblockPartSolarTower instance = new TileEntityITMultiblockPartSolarTower();
 
-    @SideOnly(Side.CLIENT)
-    static ItemStack renderStack;
-
-    public TileEntityITMultiblockPartSolarTower() { super("IT:SolarTower", ITShapes.get("solar_tower"), ICUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_TOWER), ICUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE)); }
-
-    @Override public boolean overwriteBlockRender(ItemStack stack, int iterator) { return false; }
-
-    @Override public boolean canRenderFormedStructure() { return true; }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void renderFormedStructure() {
-        if (renderStack == null) renderStack = new ItemStack(ITContent.blockMetalMultiblock, 1, BlockType_MetalMultiblock.SOLAR_TOWER.getMeta());
-        GlStateManager.translate(0.1, 0.25, 0.125);
-        GlStateManager.translate(1, 3.5, 2);
-        GlStateManager.rotate(-45, 0, 1, 0);
-        GlStateManager.rotate(-20, 1, 0, 0);
-        GlStateManager.scale(8, 8, 8);
-        ICClientUtils.mc().getRenderItem().renderItem(renderStack, ItemCameraTransforms.TransformType.GUI);
-    }
+    public TileEntityITMultiblockPartSolarTower() { super("IT:SolarTower", ITShapes.get("solar_tower"), ICUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_TOWER), ICUtils.stateOf(ITContent.blockMetalMultiblock, BlockType_MetalMultiblock.SOLAR_TOWER_SLAVE), 1.1, 3.75, 2.125, 8); }
 
     @Override public boolean createStructure(World world, BlockPos pos, EnumFacing side, EntityPlayer player) {
         side = (side == EnumFacing.UP || side == EnumFacing.DOWN)? EnumFacing.fromAngle(player.rotationYaw) : side.getOpposite();

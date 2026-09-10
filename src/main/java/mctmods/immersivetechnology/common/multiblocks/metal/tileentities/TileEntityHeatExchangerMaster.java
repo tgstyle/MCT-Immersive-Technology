@@ -1,14 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
-import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.ICSoundHandler;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-import com.immersiveconvergence.api.multiblock.PoICache;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
-import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICFluxStorageAdvanced;
 import com.immersiveconvergence.api.util.ICUtils;
@@ -18,7 +14,6 @@ import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.TileEntityITMultiblockPartHeatExchanger;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
 
@@ -26,7 +21,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
@@ -34,24 +28,20 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, ICBlockInterfaces.IMirrorAble, ICBlockInterfaces.IUsesBooleanProperty, IComparatorOverride {
-
     private static int inputTankSize() { return Multiblocks.heatExchanger.heatExchanger_input_tankSize; }
+
     private static int outputTankSize() { return Multiblocks.heatExchanger.heatExchanger_output_tankSize; }
+
     private static int energyCapacity() { return Multiblocks.heatExchanger.heatExchanger_energy_size; }
+
     private static int energyMaxInput() { return Multiblocks.heatExchanger.heatExchanger_energy_maxInput; }
 
     public ICFluxStorageAdvanced energyStorage = new ICFluxStorageAdvanced(energyCapacity(), energyMaxInput(), energyMaxInput());
@@ -74,11 +64,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
     public boolean redstoneControlInverted;
     private int oldComparatorOutput;
 
-    protected PoICache fluidInputPos0, fluidInputPos1, fluidOutputPos0, fluidOutputPos1, redstonePos0, energyInputPos0;
-    private BlockPos fluidOutputTEPos0, fluidOutputTEPos1, soundPos0;
-
-    private boolean needsPoIInit = true;
-    private boolean needsNotify = true;
     private int tickCountdown = 5;
     private int oldEnergy;
     private boolean oldIsRunning;
@@ -104,10 +89,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             if (nbt.hasKey("cachedRecipe")) cachedExchangeRecipe = HeatExchangerRecipe.loadFromNBT(nbt.getCompoundTag("cachedRecipe"));
             if (processTimeRemaining > 0 && cachedExchangeRecipe == null) processTimeRemaining = 0;
         }
-        if (formed && !descPacket) {
-            needsPoIInit = true;
-            needsNotify = true;
-        }
     }
 
     @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
@@ -128,40 +109,30 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @SideOnly(Side.CLIENT)
     public void handleSounds() {
-        if (soundPos0 == null) InitializePoIs();
+        BlockPos soundPos = poiWorldPos("sound0");
         float targetSoundLevel = isRunning ? 1f : 0f;
         if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
         else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
-        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos0); }
+        if (soundVolume <= 0f) { ICSoundHandler.stopSound(soundPos); }
         else {
             EntityPlayerSP player = Minecraft.getMinecraft().player;
-            float attenuation = Math.max((float)player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5) / 32, 1);
-            ITSounds.heatExchanger.PlayRepeating(soundPos0, soundVolume / attenuation, 1f);
+            float attenuation = Math.max((float)player.getDistanceSq(soundPos.getX() + .5, soundPos.getY() + .5, soundPos.getZ() + .5) / 32, 1);
+            ITSounds.heatExchanger.PlayRepeating(soundPos, soundVolume / attenuation, 1f);
         }
     }
 
     @SideOnly(Side.CLIENT)
     private void clientUpdate() {
-        if (soundPos0 == null) InitializePoIs();
+        BlockPos soundPos = poiWorldPos("sound0");
         EntityPlayerSP player = Minecraft.getMinecraft().player;
-        double distSq = player.getDistanceSq(soundPos0.getX() + .5, soundPos0.getY() + .5, soundPos0.getZ() + .5);
+        double distSq = player.getDistanceSq(soundPos.getX() + .5, soundPos.getY() + .5, soundPos.getZ() + .5);
         if (world.provider.getDimension() == player.dimension && distSq < 400 && (distanceToTE > 400 || playerDimension != player.dimension)) requestUpdate();
         distanceToTE = distSq;
         playerDimension = player.dimension;
         handleSounds();
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override public void onChunkUnload() {
-        if (soundPos0 != null) ICSoundHandler.stopSound(soundPos0);
-        super.onChunkUnload();
-    }
-
     @Override public void disassemble() {
-        if (soundPos0 == null) InitializePoIs();
-        if (soundPos0 != null) {
-            ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(soundPos0), new NetworkRegistry.TargetPoint(world.provider.getDimension(), soundPos0.getX(), soundPos0.getY(), soundPos0.getZ(), 0));
-        }
         super.disassemble();
     }
 
@@ -180,31 +151,8 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         isRunning = message.readBoolean();
     }
 
-    private void notifyIONeighbors() {
-        BlockPos p;
-        p = getBlockPosForPos(energyInputPos0.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidInputPos0.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidInputPos1.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidOutputPos0.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        p = getBlockPosForPos(fluidOutputPos1.position);
-        world.notifyNeighborsOfStateChange(p, world.getBlockState(p).getBlock(), true);
-        notifyComparators();
-    }
-
     @Override public void update() {
         if (!formed) return;
-        if (needsPoIInit || fluidInputPos0 == null) {
-            InitializePoIs();
-            needsPoIInit = false;
-        }
-        if (needsNotify) {
-            notifyIONeighbors();
-            needsNotify = false;
-        }
         if (world.isRemote) {
             clientUpdate();
             return;
@@ -292,42 +240,11 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @Override public TileEntityHeatExchangerMaster master() { return this; }
 
-    private void InitializePoIs() {
-        for (PoIJSONSchema poi : TileEntityITMultiblockPartHeatExchanger.instance.pointsOfInterest) {
-            switch (poi.name) {
-                case "redstone0":
-                    redstonePos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "energy_input0":
-                    energyInputPos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_input0":
-                    fluidInputPos0 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_input1":
-                    fluidInputPos1 = new PoICache(facing, poi, mirrored);
-                    break;
-                case "fluid_output0":
-                    fluidOutputPos0 = new PoICache(facing, poi, mirrored);
-                    fluidOutputTEPos0 = getBlockPosForPos(fluidOutputPos0.position).offset(fluidOutputPos0.facing);
-                    break;
-                case "fluid_output1":
-                    fluidOutputPos1 = new PoICache(facing, poi, mirrored);
-                    fluidOutputTEPos1 = getBlockPosForPos(fluidOutputPos1.position).offset(fluidOutputPos1.facing);
-                    break;
-                case "sound0":
-                    soundPos0 = getBlockPosForPos(poi.position);
-                    break;
-            }
-        }
-        if (!world.isRemote) notifyIONeighbors();
-    }
-
     private boolean pumpOutputOut() {
         boolean update = false;
         IFluidHandler handler;
         if (tanks[2].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos0, fluidOutputPos0.facing.getOpposite());
+            handler = FluidUtil.getFluidHandler(world, poiFrontPos("fluid_output0"), poi("fluid_output0").facing.getOpposite());
             if (handler != null) {
                 FluidStack out = tanks[2].getFluid();
                 if (out != null) {
@@ -341,7 +258,7 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
             }
         }
         if (tanks[3].getFluidAmount() > 0) {
-            handler = FluidUtil.getFluidHandler(world, fluidOutputTEPos1, fluidOutputPos1.facing.getOpposite());
+            handler = FluidUtil.getFluidHandler(world, poiFrontPos("fluid_output1"), poi("fluid_output1").facing.getOpposite());
             if (handler != null) {
                 FluidStack out = tanks[3].getFluid();
                 if (out != null) {
@@ -362,20 +279,6 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         requestClientSync();
     }
 
-    @Override public boolean isRSDisabled() {
-        if (computerOn != null) return !computerOn;
-        int[] rs = getRedstonePos();
-        if (rs.length < 1) return false;
-        for (int p : rs) {
-            TileEntity te = getTileForPos(p);
-            if (te != null) {
-                int power = world.getRedstonePowerFromNeighbors(te.getPos());
-                return redstoneControlInverted != (power > 0);
-            }
-        }
-        return false;
-    }
-
     @Override public int getComparatorInputOverride() { return isComparatorPos() ? comparatorValue() : 0; }
 
     public int comparatorValue() {
@@ -385,50 +288,29 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
 
     @Override public boolean isDummy() { return false; }
 
-    @Override @Nonnull public int[] getRedstonePos() {
-        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
-        if (redstonePos0 == null) InitializePoIs();
-        return new int[]{toFlatIndex(redstonePos0.position)};
-    }
-
-    @Override @Nonnull public int[] getEnergyPos() {
-        if (!formed) return ITUtils.EMPTY_INT_ARRAY;
-        if (energyInputPos0 == null) InitializePoIs();
-        return new int[]{toFlatIndex(energyInputPos0.position)};
-    }
-
-    public boolean isEnergyPosition(@Nullable EnumFacing facing, BlockPos position) {
-        if (!formed) return false;
-        if (energyInputPos0 == null) InitializePoIs();
-        if (facing == null) return false;
-        return energyInputPos0.isPoI(facing, position);
-    }
-
     @Override @Nonnull public ICFluxStorageAdvanced getStorage() { return energyStorage; }
 
     @Override public boolean getIsMirrored() { return mirrored; }
 
     @Override @Nonnull public IFluidTank[] getAccessibleFluidTanks(@Nullable EnumFacing side, BlockPos position) {
         if (!formed) return ITUtils.emptyIFluidTankList;
-        if (fluidInputPos0 == null) InitializePoIs();
         if (side == null) return tanks;
-        if (fluidInputPos0.isPoI(side, position)) return tankView(0, tanks[0]);
-        if (fluidInputPos1.isPoI(side, position)) return tankView(1, tanks[1]);
-        if (fluidOutputPos0.isPoI(side, position)) return tankView(2, tanks[2]);
-        if (fluidOutputPos1.isPoI(side, position)) return tankView(3, tanks[3]);
+        if (isPoI("fluid_input0", side, position)) return tankView(0, tanks[0]);
+        if (isPoI("fluid_input1", side, position)) return tankView(1, tanks[1]);
+        if (isPoI("fluid_output0", side, position)) return tankView(2, tanks[2]);
+        if (isPoI("fluid_output1", side, position)) return tankView(3, tanks[3]);
         return ITUtils.emptyIFluidTankList;
     }
 
     @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) {
         if (!formed) return false;
-        if (fluidInputPos0 == null) InitializePoIs();
-        if (iTank == 0 && fluidInputPos0.isPoI(side, position)) {
+        if (iTank == 0 && isPoI("fluid_input0", side, position)) {
             if (tanks[0].getFluidAmount() >= tanks[0].getCapacity()) return false;
             FluidStack current = tanks[0].getFluid();
             if (current == null) { return true; }
             return resource.isFluidEqual(current);
         }
-        if (iTank == 1 && fluidInputPos1.isPoI(side, position)) {
+        if (iTank == 1 && isPoI("fluid_input1", side, position)) {
             if (tanks[1].getFluidAmount() >= tanks[1].getCapacity()) return false;
             FluidStack current = tanks[1].getFluid();
             if (current == null) { return true; }
@@ -437,117 +319,14 @@ public class TileEntityHeatExchangerMaster extends TileEntityHeatExchangerSlave 
         return false;
     }
 
-    @Override protected boolean isInputFluidPoI(BlockPos position) {
-        if (fluidInputPos0 == null) { InitializePoIs(); }
-        return fluidInputPos0.position.equals(position) || fluidInputPos1.position.equals(position);
-    }
-
-    @Override protected int clearInputTanks() {
-        tanks[0].drain(Integer.MAX_VALUE, true);
-        tanks[1].drain(Integer.MAX_VALUE, true);
-        TankContentsChanged();
-        return 2;
-    }
-
     @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) {
         if (!formed) return false;
-        if (fluidOutputPos0 == null) InitializePoIs();
-        if (fluidOutputPos0.isPoI(side, position)) return tanks[2].getFluidAmount() > 0;
-        if (fluidOutputPos1.isPoI(side, position)) return tanks[3].getFluidAmount() > 0;
+        if (isPoI("fluid_output0", side, position)) return tanks[2].getFluidAmount() > 0;
+        if (isPoI("fluid_output1", side, position)) return tanks[3].getFluidAmount() > 0;
         return false;
     }
 
     @Override @Nonnull public int[] getCurrentProcessesStep() { return ITUtils.EMPTY_INT_ARRAY; }
 
     @Override @Nonnull public int[] getCurrentProcessesMax() { return ITUtils.EMPTY_INT_ARRAY; }
-
-    static class HeatExchangerFluidHandler implements IFluidHandler {
-        private final IFluidTank[] tanks;
-        private final TileEntityHeatExchangerMaster master;
-        private final EnumFacing side;
-        private final BlockPos position;
-
-        HeatExchangerFluidHandler(IFluidTank[] accessibleTanks, TileEntityHeatExchangerMaster master, EnumFacing side, BlockPos position) {
-            this.tanks = accessibleTanks;
-            this.master = master;
-            this.side = side;
-            this.position = position;
-        }
-
-        private int getTankIndex(IFluidTank tank) {
-            for (int i = 0; i < master.tanks.length; i++) if (master.tanks[i] == tank) return i;
-            return -1;
-        }
-
-        @Override public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> list = new ArrayList<>();
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                boolean fill = idx == 0 || idx == 1;
-                boolean drain = idx == 2 || idx == 3;
-                list.add(new FluidTankProperties(tank.getFluid(), tank.getCapacity(), fill, drain));
-            }
-            return list.toArray(new IFluidTankProperties[0]);
-        }
-
-        @Override public int fill(FluidStack resource, boolean doFill) {
-            if (resource == null) return 0;
-            resource = resource.copy();
-            int filled = 0;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canFillTankFrom(idx, side, resource, position)) {
-                    int f = tank.fill(resource, doFill);
-                    filled += f;
-                    resource.amount -= f;
-                    if (doFill && f > 0) master.TankContentsChanged();
-                    if (resource.amount <= 0) return filled;
-                }
-            }
-            return filled;
-        }
-
-        @Override public FluidStack drain(FluidStack resource, boolean doDrain) {
-            if (resource == null) return null;
-            resource = resource.copy();
-            FluidStack drained = null;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canDrainTankFrom(idx, side, position)) {
-                    FluidStack tf = tank.getFluid();
-                    if (tf != null && tf.isFluidEqual(resource)) {
-                        int amt = Math.min(resource.amount, tf.amount);
-                        FluidStack d = tank.drain(amt, doDrain);
-                        if (d != null) {
-                            if (drained == null) drained = d.copy();
-                            else drained.amount += d.amount;
-                            if (doDrain && d.amount > 0) master.TankContentsChanged();
-                            resource.amount -= d.amount;
-                            if (resource.amount <= 0) return drained;
-                        }
-                    }
-                }
-            }
-            return drained;
-        }
-
-        @Override public FluidStack drain(int maxDrain, boolean doDrain) {
-            int remaining = maxDrain;
-            FluidStack drained = null;
-            for (IFluidTank tank : tanks) {
-                int idx = getTankIndex(tank);
-                if (idx != -1 && master.canDrainTankFrom(idx, side, position)) {
-                    FluidStack d = tank.drain(remaining, doDrain);
-                    if (d != null) {
-                        if (drained == null) drained = d.copy();
-                        else drained.amount += d.amount;
-                        remaining -= d.amount;
-                        if (doDrain && d.amount > 0) master.TankContentsChanged();
-                        if (remaining <= 0) return drained;
-                    }
-                }
-            }
-            return drained;
-        }
-    }
 }

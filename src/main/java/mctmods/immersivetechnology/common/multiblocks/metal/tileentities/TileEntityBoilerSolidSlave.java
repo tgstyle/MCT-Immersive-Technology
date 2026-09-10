@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.capability.IHeatProvider;
+import com.immersiveconvergence.common.event.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
@@ -32,8 +33,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<TileEntityBoilerSolidSlave, DummyRecipe, TileEntityBoilerSolidMaster>
         implements ICBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
         IICInventory, ICBlockInterfaces.IComparatorOverride, ICBlockInterfaces.IActiveState, IHeatProvider {
-
-    private TileEntityBoilerSolidMaster cachedMaster;
     private int loadGrace = 0;
 
     public TileEntityBoilerSolidSlave() {
@@ -47,7 +46,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
 
     @Override public void update() {
         if (!formed) return;
-        if (isDummy()) ITUtils.RemoveDummyFromTicking(this);
+        if (isDummy()) ICTickingRegistry.removeFromTicking(this);
         super.update();
         TileEntityBoilerSolidMaster m = master();
         if (m == null) { if (loadGrace++ > 20) disassemble(); }
@@ -56,14 +55,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
 
     @Override public boolean isDummy() { return true; }
 
-    @Override public TileEntityBoilerSolidMaster master() {
-        if (cachedMaster != null && !cachedMaster.isInvalid()) return cachedMaster;
-        BlockPos masterPos = getPos().add(-offset[0], -offset[1], -offset[2]);
-        if (!world.isBlockLoaded(masterPos)) return null;
-        TileEntity te = world.getTileEntity(masterPos);
-        cachedMaster = (te instanceof TileEntityBoilerSolidMaster) ? (TileEntityBoilerSolidMaster)te : null;
-        return cachedMaster;
-    }
+    @Override public TileEntityBoilerSolidMaster master() { return resolveMaster(TileEntityBoilerSolidMaster.class); }
 
     @Override protected GenericShape getShapeGetter() { return ITShapes.get("boiler_solid"); }
 
@@ -83,8 +75,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
     @Override public boolean providesHeatTo(EnumFacing side) {
         TileEntityBoilerSolidMaster m = master();
         if (m == null || !formed) return false;
-        if (m.heatOutputPos0 == null) m.InitializePoIs();
-        return m.heatOutputPos0.isPoI(side, posInMultiblock());
+        return m.isPoI("heat_output0", side, posInMultiblock());
     }
 
     @Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
@@ -113,11 +104,6 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
     @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
 
     @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
-
-    @Override @Nonnull public int[] getRedstonePos() {
-        TileEntityBoilerSolidMaster m = master();
-        return m == null ? ITUtils.EMPTY_INT_ARRAY : m.getRedstonePos();
-    }
 
     @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
 
@@ -151,8 +137,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityBoilerSolidMaster m = master();
             if (m != null && formed) {
-                if (m.itemInputPos0 == null) m.InitializePoIs();
-                return m.itemInputPos0.isPoI(facing, posInMultiblock());
+                return m.isPoI("item_input0", facing, posInMultiblock());
             }
         }
         return super.hasCapability(capability, facing);
@@ -163,8 +148,7 @@ public class TileEntityBoilerSolidSlave extends TileEntityTemplateMultiblock<Til
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing != null) {
             TileEntityBoilerSolidMaster m = master();
             if (m != null && formed) {
-                if (m.itemInputPos0 == null) m.InitializePoIs();
-                if (m.itemInputPos0.isPoI(facing, posInMultiblock())) { return (T)m.inputHandler; }
+                if (m.isPoI("item_input0", facing, posInMultiblock())) { return (T)m.inputHandler; }
             }
         }
         return super.getCapability(capability, facing);
