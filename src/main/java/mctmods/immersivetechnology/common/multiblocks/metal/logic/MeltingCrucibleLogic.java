@@ -69,6 +69,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     public static int inputTankCapacity() { return ServerConfig.meltingCrucibleInputTankCapacity; }
     public static int outputTankCapacity() { return ServerConfig.meltingCrucibleOutputTankCapacity; }
     public static int energyCapacity() { return ServerConfig.meltingCrucibleEnergyCapacity; }
+    public static int energyMaxIo() { return ServerConfig.meltingCrucibleEnergyMaxIO; }
 
     public static double workingHeatLevel() { return ServerConfig.meltingCrucibleHeatWorkingLevel; }
     private static double heatLossMultiplier() { return ServerConfig.meltingCrucibleHeatLossMultiplier; }
@@ -280,7 +281,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             this.inputCap = new MultiTankFluidHandler(tanks.input(), false, true, onChanged);
             this.outputCap = new MultiTankFluidHandler(tanks.output(), true, false, onChanged);
             this.invCap = inventory;
-            this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
+            this.energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), onChanged);
             this.processor = new MultiblockProcessor.InMachineProcessor<>(1, 0f, 1, markDirty, MeltingRecipe.RECIPES::getById);
         }
 
@@ -342,7 +343,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), () -> {}); }
+            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), () -> {}); }
             CompoundTag energyTag = nbt.getCompound("energy");
             if (!energyTag.isEmpty()) {
                 energy.deserializeNBT(provider, energyTag);
@@ -393,8 +394,10 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     private static class SyncEnergyStorage extends AveragingEnergyStorage {
         private final Runnable onChanged;
 
-        public SyncEnergyStorage(int capacity, Runnable onChanged) {
+        public SyncEnergyStorage(int capacity, int maxIO, Runnable onChanged) {
             super(capacity);
+            this.maxReceive = maxIO;
+            this.maxExtract = maxIO;
             this.onChanged = onChanged;
         }
 
