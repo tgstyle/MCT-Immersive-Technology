@@ -404,4 +404,7 @@ sourcesJar.dependsOn bumpVersion
 jar {
     archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
+    // MDG's mixin { config } only feeds the dev runs; the release jar must carry
+    // the attribute itself or no mixin applies in production.
+    manifest { attributes 'MixinConfigs': "mixins.${mod_id}.json" }
 }
