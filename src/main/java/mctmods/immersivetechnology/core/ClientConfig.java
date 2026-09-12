@@ -45,7 +45,7 @@ public class ClientConfig {
 
     static {
         BUILDER.comment("Render options").push("render");
-        CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER = BUILDER.comment("This modifies the distance a special multiblock renderer is visible from (Default: 2.5).").defineInRange("multiblockSpecialRenderDistanceModifier", 2.5, 0, Double.MAX_VALUE);
+        CONFIG_MULTIBLOCK_SPECIAL_RENDER_DISTANCE_MODIFIER = BUILDER.comment("This modifies the distance a special multiblock renderer is visible from (Default: 2.5).").defineInRange("multiblock_special_render_distance_modifier", 2.5, 0, Double.MAX_VALUE);
         CONFIG_DO_SPECIAL_RENDER_GAS_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Gas Turbine (Default: true).").define("gas_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_STEAM_TURBINE = BUILDER.comment("This controls if the animations and special client rendering applies to the Steam Turbine (Default: true).").define("steam_turbine_renderer", true);
         CONFIG_DO_SPECIAL_RENDER_SOLAR_REFLECTOR = BUILDER.comment("This controls if the animations and special client rendering applies to the Solar Reflector (Default: true).").define("solar_reflector_renderer", true);

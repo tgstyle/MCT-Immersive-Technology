@@ -310,7 +310,7 @@ public class ServerConfig {
         MELTING_CRUCIBLE_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_MAX_IO = BUILDER.defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER.defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER.defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER.defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER.defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT = BUILDER.defineInRange("energy_per_tick_heating", 1000, 32, Integer.MAX_VALUE);
