@@ -30,8 +30,9 @@ public class BoilerSolidScreen extends BaseContainerScreen<BoilerSolidMenu> {
         graphics.blit(TEXTURE, leftPos + 119, topPos + 38, 176, 0, barWidth, 9);
 
         int total = menu.getTotalBurnTime();
-        if (total > 0) {
-            int k = (total - menu.getBurnRemaining()) * 13 / total;
+        int remaining = menu.getBurnRemaining();
+        if (total > 0 && remaining > 0) {
+            int k = Mth.clamp(13 * remaining / total, 0, 13);
             graphics.blit(TEXTURE, leftPos + 81, topPos + 35 + 13 - k, 176, 12 + (13 - k), 14, k + 1);
         }
     }

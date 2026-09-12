@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import mctmods.immersivetechnology.client.models.util.FluidRender;
 import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.FluidRender;
 import com.immersiveconvergence.api.client.RenderTypes;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
 

@@ -18,21 +18,33 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import java.util.function.BiFunction;
 
 public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<AdvancedCokeOvenRecipe> {
-    private float processTick;
+    private float tickRemainder;
     private final int maxProcessTime;
 
     public AdvancedCokeOvenProcess(AdvancedCokeOvenRecipe recipe) { super(recipe, 0); this.maxProcessTime = recipe.getTotalProcessTime(); }
 
-    public AdvancedCokeOvenProcess(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); this.processTick = data.getFloat("processTick"); this.maxProcessTime = data.getInt("maxProcessTime"); }
+    public AdvancedCokeOvenProcess(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data) {
+        super(getRecipe, data);
+        if (data.contains("processTick")) {
+            float saved = data.getFloat("processTick");
+            this.processTick = (int) saved;
+            this.tickRemainder = saved - this.processTick;
+        }
+        else { this.tickRemainder = data.getFloat("tickRemainder"); }
+        this.maxProcessTime = data.getInt("maxProcessTime");
+    }
 
-    @Override public void writeExtraDataToNBT(CompoundTag nbt) { super.writeExtraDataToNBT(nbt); nbt.putFloat("processTick", processTick); nbt.putInt("maxProcessTime", maxProcessTime); }
+    @Override public void writeExtraDataToNBT(CompoundTag nbt) { super.writeExtraDataToNBT(nbt); nbt.putFloat("tickRemainder", tickRemainder); nbt.putInt("maxProcessTime", maxProcessTime); }
 
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, IMultiblockLevel level) {
         if (getRecipe(level.getRawLevel()) == null) { this.clearProcess = true; return; }
         @SuppressWarnings("unchecked")
         BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
         double speed = env.getProcessSpeed(level);
-        this.processTick += (float)speed;
+        float total = this.tickRemainder + (float) speed;
+        int wholeTicks = (int) total;
+        this.tickRemainder = total - wholeTicks;
+        this.processTick += wholeTicks;
         if (this.processTick >= this.maxProcessTime) { processFinish(context, level); this.clearProcess = true; }
     }
 
@@ -52,7 +64,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
         }
     }
 
-    public int getCurrentProcessTime() { return (int)processTick; }
+    public int getCurrentProcessTime() { return this.processTick; }
 
     public int getMaxProcessTime() { return maxProcessTime; }
 }

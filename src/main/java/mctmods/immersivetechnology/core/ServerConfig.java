@@ -12,6 +12,7 @@ public class ServerConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_SPEED_BASE;
+    public static final ForgeConfigSpec.IntValue ADVANCED_COKE_OVEN_TANK_CAPACITY;
     public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE;
     public static final ForgeConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER;
     public static final ForgeConfigSpec.IntValue ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY;
@@ -118,6 +119,7 @@ public class ServerConfig {
 
 
     public static double advancedCokeOvenSpeedBase = 1.0D;
+    public static int advancedCokeOvenTankCapacity = 12000;
     public static double advancedCokeOvenBaseheaterSpeedIncrease = 0.25D;
     public static double advancedCokeOvenBaseheaterSpeedMultiplier = 1.25D;
     public static int advancedCokeOvenBaseheaterMaxEnergy = 8000;
@@ -227,6 +229,7 @@ public class ServerConfig {
 
         BUILDER.push("advanced_coke_oven");
         ADVANCED_COKE_OVEN_SPEED_BASE = BUILDER.defineInRange("speed_base", 1.0D, 0.1D, 10.0D);
+        ADVANCED_COKE_OVEN_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
         ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE = BUILDER.defineInRange("baseheater_speed_increase", 0.25D, 0.0D, 5.0D);
         ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER = BUILDER.defineInRange("baseheater_speed_multiplier", 1.25D, 1.0D, 5.0D);
         ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY = BUILDER.defineInRange("baseheater_max_energy", 8000, 1000, Integer.MAX_VALUE);
@@ -383,6 +386,7 @@ public class ServerConfig {
     public static void onConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC) {
             advancedCokeOvenSpeedBase = ADVANCED_COKE_OVEN_SPEED_BASE.get();
+            advancedCokeOvenTankCapacity = ADVANCED_COKE_OVEN_TANK_CAPACITY.get();
             advancedCokeOvenBaseheaterSpeedIncrease = ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE.get();
             advancedCokeOvenBaseheaterSpeedMultiplier = ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER.get();
             advancedCokeOvenBaseheaterMaxEnergy = ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY.get();

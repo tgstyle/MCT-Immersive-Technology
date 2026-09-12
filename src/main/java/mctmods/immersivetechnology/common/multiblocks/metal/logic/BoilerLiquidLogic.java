@@ -157,55 +157,41 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         boolean fullMode = state.rsState.isEnabled(ctx) && hasWater;
         if (!state.pilotLit) {
             state.heatLevel = Math.max(state.heatLevel - delta, 0);
-            state.burnRemaining = 0;
         } else {
-            if (state.burnRemaining > 0) {
-                state.burnRemaining--;
-                if (state.lastFuel != null) {
-                    if (fullMode) {
+            state.lastFuel = null;
+            if (state.tanks.input1.getFluidAmount() > 0) {
+                FluidStack dummy = state.tanks.input1.getFluid().copy();
+                dummy = new FluidStack(dummy, Integer.MAX_VALUE);
+                state.lastFuel = state.recipeGetter.apply(level, dummy);
+            }
+            if (state.lastFuel != null) {
+                state.targetHeat = state.lastFuel.getTargetHeat();
+                state.workingHeatLevel = state.targetHeat;
+                FluidStack drained;
+                if (fullMode) {
+                    int drainAmount = state.lastFuel.input.getAmount();
+                    drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
+                    if (drained.getAmount() == drainAmount) {
                         if (state.heatLevel < state.targetHeat) {
                             state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), state.targetHeat);
                         } else {
                             state.heatLevel = Math.max(state.heatLevel - delta, state.targetHeat);
-                        }
-                    } else { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
-                } else { state.burnRemaining = 0; }
-            } else {
-                state.lastFuel = null;
-                if (state.tanks.input1.getFluidAmount() > 0) {
-                    FluidStack dummy = state.tanks.input1.getFluid().copy();
-                    dummy = new FluidStack(dummy, Integer.MAX_VALUE);
-                    state.lastFuel = state.recipeGetter.apply(level, dummy);
-                }
-                if (state.lastFuel != null) {
-                    state.targetHeat = state.lastFuel.getTargetHeat();
-                    state.workingHeatLevel = state.targetHeat;
-                    FluidStack drained;
-                    if (fullMode) {
-                        int drainAmount = state.lastFuel.input.getAmount();
-                        drained = state.tanks.input1.drain(drainAmount, FluidAction.EXECUTE);
-                        if (drained.getAmount() == drainAmount) {
-                            if (state.heatLevel < state.targetHeat) {
-                                state.heatLevel = Math.min(state.heatLevel + state.lastFuel.getHeatPerTick(), state.targetHeat);
-                            } else {
-                                state.heatLevel = Math.max(state.heatLevel - delta, state.targetHeat);
-                            }
-                        } else {
-                            drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
-                            if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
-                            else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                         }
                     } else {
                         drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
                         if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
                         else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                     }
-                    state.pilotLit = true;
                 } else {
-                    state.pilotLit = false;
-                    state.heatLevel = Math.max(state.heatLevel - delta, 0);
-                    state.workingHeatLevel = defaultWorkingHeatLevel();
+                    drained = state.tanks.input1.drain(1, FluidAction.EXECUTE);
+                    if (drained.getAmount() >= 1) { state.heatLevel = Math.max(state.heatLevel - delta, pilotHeat()); }
+                    else { state.pilotLit = false; state.heatLevel = Math.max(state.heatLevel - delta, 0); }
                 }
+                state.pilotLit = true;
+            } else {
+                state.pilotLit = false;
+                state.heatLevel = Math.max(state.heatLevel - delta, 0);
+                state.workingHeatLevel = defaultWorkingHeatLevel();
             }
         }
         tryEmptyContainer(state.tanks.input1, state.inventory);
@@ -215,13 +201,10 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         boolean activeChanged = wasActive != state.active;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
-        int newBurnPercent = (state.lastFuel != null && state.burnRemaining > 0) ? (state.lastFuel.getTotalProcessTime() - state.burnRemaining) * 100 / state.lastFuel.getTotalProcessTime() : 0;
-        boolean burnPercentChanged = newBurnPercent != state.burnPercent;
-        if (burnPercentChanged) { state.burnPercent = newBurnPercent; }
         int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;
         boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
         if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
-        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged || burnPercentChanged || comparatorChanged;
+        boolean update = heatLevelChanged || pilotLitChanged || activeChanged || tanksChanged || inventoryChanged || comparatorChanged;
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
@@ -267,8 +250,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         public CapabilityReference<IHeatConsumer> boilerInput;
         public ConstrainedItemHandler inventory;
         public double heatLevel = 0;
-        public int burnRemaining = 0;
-        public int burnPercent = 0;
         public int lastComparatorValue = -1;
         public BoilerLiquidRecipe lastFuel;
         public double targetHeat = defaultWorkingHeatLevel();
@@ -305,7 +286,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putDouble("heatLevel", heatLevel);
-            nbt.putInt("burnRemaining", burnRemaining);
             nbt.putBoolean("pilotLit", pilotLit);
             nbt.putDouble("targetHeat", targetHeat);
             nbt.put("inventory", inventory.serializeNBT());
@@ -314,7 +294,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             heatLevel = nbt.getDouble("heatLevel");
-            burnRemaining = nbt.getInt("burnRemaining");
             pilotLit = nbt.getBoolean("pilotLit");
             targetHeat = nbt.getDouble("targetHeat");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
@@ -345,7 +324,6 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             nbt.put("tanks", tanks.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putDouble("workingHeatLevel", workingHeatLevel);
-            nbt.putInt("burnPercent", burnPercent);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -355,14 +333,13 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
             tanks.readNBT(nbt.getCompound("tanks"));
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             workingHeatLevel = nbt.getDouble("workingHeatLevel");
-            burnPercent = nbt.getInt("burnPercent");
             tanksDirty = false;
             inventoryDirty = false;
         }
     
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            lines.temperature(heatLevel, getWorkingHeatLevel()).percent(burnPercent);
+            lines.temperature(heatLevel, getWorkingHeatLevel());
             if (tanks.input1().getFluid().isEmpty()) { lines.fuelEmpty(); }
         }
 }

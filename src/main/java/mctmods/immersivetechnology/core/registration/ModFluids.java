@@ -111,6 +111,7 @@ public class ModFluids {
         FLUID_REGISTRY_MAP.put("exhaust_steam", EXHAUST_STEAM.getStillGetter());
         FLUID_REGISTRY_MAP.put("flue_gas", FLUE_GAS.getStillGetter());
         FLUID_REGISTRY_MAP.put("gravel_slurry", GRAVEL_SLURRY.getStillGetter());
+        FLUID_REGISTRY_MAP.put("heated_gravel_slurry", HEATED_GRAVEL.getStillGetter());
         FLUID_REGISTRY_MAP.put("heated_salt_slurry", HEATED_SALT.getStillGetter());
         FLUID_REGISTRY_MAP.put("hot_water", HOT_WATER.getStillGetter());
         FLUID_REGISTRY_MAP.put("hydrogen", HYDROGEN.getStillGetter());

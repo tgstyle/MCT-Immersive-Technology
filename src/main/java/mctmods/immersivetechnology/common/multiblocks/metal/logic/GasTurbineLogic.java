@@ -214,15 +214,14 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 level.playLocalSound(ignitePos.x, ignitePos.y, ignitePos.z, Sounds.gasIgnite.get(), SoundSource.BLOCKS, 1 / ignitionAtt, 1, false);
             }
         }
-        if (state.starterRunning && state.speed >= state.effectiveMaxSpeed / 4) {
-            if (level.random.nextInt(40) == 0) { return; }
+        if (state.starterRunning && state.speed >= state.effectiveMaxSpeed / 4 && level.random.nextInt(40) != 0) {
             Vec3 particlePos = ctx.getLevel().toAbsolute(new Vec3(SMOKE_POI0.getX() + 0.5, SMOKE_POI0.getY() - 0.5, SMOKE_POI0.getZ() + 0.5));
-            double distSq = player.distanceToSqr(particlePos);
-            if (distSq > 64 * 64) { return; }
-            double px = particlePos.x + 2 - level.random.nextFloat() * 3;
-            double py = particlePos.y + 0.5;
-            double pz = particlePos.z + 2 - level.random.nextFloat() * 3;
-            level.addParticle(ParticleTypes.SMOKE, px, py, pz, 0, 0.02, 0);
+            if (ClientUtils.particlesVisible(particlePos)) {
+                double px = particlePos.x + 2 - level.random.nextFloat() * 3;
+                double py = particlePos.y + 0.5;
+                double pz = particlePos.z + 2 - level.random.nextFloat() * 3;
+                level.addParticle(ParticleTypes.SMOKE, px, py, pz, 0, 0.02, 0);
+            }
         }
         if (state.active && ctx.getLevel().shouldTickModulo(2)) {
             Direction facing = ctx.getLevel().getOrientation().front();

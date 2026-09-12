@@ -58,7 +58,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
@@ -81,7 +80,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
     public static final int SLOT_OUTPUT = 1;
     public static final int SLOT_EMPTY_CONTAINER = 2;
     public static final int SLOT_FILLED_CONTAINER = 3;
-    public static final int TANK_CAPACITY = 12 * FluidType.BUCKET_VOLUME;
+    public static int tankCapacity() { return ServerConfig.advancedCokeOvenTankCapacity; }
 
     public static double baseSpeed() { return ServerConfig.advancedCokeOvenSpeedBase; }
     public static double baseheaterAdd() { return ServerConfig.advancedCokeOvenBaseheaterSpeedIncrease; }
@@ -391,7 +390,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     public record AdvancedCokeOvenTank(MarkableFluidTank output) {
         public AdvancedCokeOvenTank(Consumer<Void> markDirty) {
-            this(new MarkableFluidTank(TANK_CAPACITY, markDirty));
+            this(new MarkableFluidTank(tankCapacity(), markDirty));
         }
 
         public static AdvancedCokeOvenTank makeClient() { return new AdvancedCokeOvenTank(v -> {}); }
@@ -405,6 +404,6 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         public void readNBT(CompoundTag tag) { this.output.readFromNBT(tag.getCompound("out")); }
 
         @SuppressWarnings("unused")
-        public int getCapacity() { return TANK_CAPACITY; }
+        public int getCapacity() { return output.getCapacity(); }
     }
 }
