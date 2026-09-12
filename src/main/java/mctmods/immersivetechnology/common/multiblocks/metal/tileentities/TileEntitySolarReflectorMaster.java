@@ -41,9 +41,9 @@ public class TileEntitySolarReflectorMaster extends TileEntitySolarReflectorSlav
     @SideOnly(Side.CLIENT) private float deltaSupportRotation;
     @SideOnly(Side.CLIENT) private float startMirrorTilt;
     @SideOnly(Side.CLIENT) private float deltaMirrorTilt;
-    @SideOnly(Side.CLIENT) private int animMaxTicks = MOVE_TICKS;
+    private int animMaxTicks = MOVE_TICKS;
     @SideOnly(Side.CLIENT) private int animTicks;
-    @SideOnly(Side.CLIENT) private int animPhase = PHASE_PARKED;
+    private int animPhase = PHASE_PARKED;
     @SideOnly(Side.CLIENT) private boolean animStarted;
     @SideOnly(Side.CLIENT) private boolean prevMirrorTaken;
     @SideOnly(Side.CLIENT) private BlockPos prevCollectorPosition;

@@ -7,6 +7,7 @@ import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IComparatorOverride;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.particles.ParticleColoredSmoke;
 import com.immersiveconvergence.api.util.ICFluidTank;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.core.ICCommonConfig;
@@ -15,6 +16,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
+import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
 import mctmods.immersivetechnology.common.util.ITSounds;
 import mctmods.immersivetechnology.common.util.ITUtils;
@@ -37,6 +39,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Random;
 
 public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPressureSteamTurbineSlave implements ICFluidTank.TankListener, IBinaryMessageReceiver, IComparatorOverride {
     private static int inputTankSize() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_input_tankSize; }
@@ -117,6 +120,37 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
     }
 
     @SideOnly(Side.CLIENT)
+    private void spawnParticles() {
+        BlockPos smokePos = poiWorldPos("smoke0");
+        if (!isRunning || world.getTotalWorldTime() % 2 != 0) return;
+        if (FluidUtil.getFluidHandler(world, poiFrontPos("fluid_output0"), poi("fluid_output0").facing.getOpposite()) != null) return;
+        Random rand = world.rand;
+        int lessParticleSetting = Minecraft.getMinecraft().gameSettings.particleSetting;
+        if (lessParticleSetting == 2 || (lessParticleSetting == 1 && rand.nextInt(3) == 0)) return;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (smokePos.distanceSq(player.posX, player.posY, player.posZ) > 4096) return;
+        float normSpeed = Math.max(0f, ITUtils.remapRange(100f, effectiveMaxSpeed, 0f, 1f, speed));
+        double dirVelHoriz = 0.125 * normSpeed;
+        double dirVelVert = 0.1 * normSpeed;
+        double baseUp = 0.0625 + 0.1 * (1 - normSpeed);
+        double velX = facing.getXOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        double velY = facing.getYOffset() * dirVelVert + baseUp;
+        double velZ = facing.getZOffset() * dirVelHoriz + (rand.nextDouble() - 0.5) * 0.03125;
+        FluidStack outFluid = tanks[1].getFluid();
+        float r = 0.5F, g = 0.5F, b = 0.5F;
+        if (outFluid != null) {
+            int tint = outFluid.getFluid().getColor(outFluid);
+            r = ((tint >> 16) & 0xFF) / 255f;
+            g = ((tint >> 8) & 0xFF) / 255f;
+            b = (tint & 0xFF) / 255f;
+        }
+        ParticleColoredSmoke cloud = new ParticleColoredSmoke(world,
+                smokePos.getX() + 0.5, smokePos.getY() + 0.5, smokePos.getZ() + 0.5, velX, velY, velZ, ITConfig.Client.particles.colored_smoke_height);
+        cloud.setRBGColorF(r, g, b);
+        Minecraft.getMinecraft().effectRenderer.addEffect(cloud);
+    }
+
+    @SideOnly(Side.CLIENT)
     public void handleSounds() {
         BlockPos soundPos = poiWorldPos("sound0");
         float targetLevel = ITUtils.remapRange(0, effectiveMaxSpeed, 0.5f, 1.0f, speed);
@@ -174,6 +208,7 @@ public class TileEntityHighPressureSteamTurbineMaster extends TileEntityHighPres
             animation.setAnimationRotation(animation.getAnimationRotation() + oldMomentum);
             animation.setAnimationMomentum(rotationSpeed);
             handleSounds();
+            spawnParticles();
             return;
         }
 
