@@ -133,6 +133,8 @@ if (!esJars.isEmpty()) {
 dependencies {
     if (icJar != null) {
         implementation files(icJar)
+    } else {
+        implementation rfg.deobf("curse.maven:${common.imco_version}")
     }
     if (ifJar != null) {
         implementation files(ifJar)
