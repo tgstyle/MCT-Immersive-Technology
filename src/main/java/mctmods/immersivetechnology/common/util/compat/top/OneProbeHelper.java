@@ -29,6 +29,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -430,6 +432,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
     private static int getFluidColor(@Nullable FluidStack fluid) {
         if (fluid == null) return 0xff555555;
         int tint = fluid.getFluid().getColor(fluid);
+        if (FMLCommonHandler.instance().getSide() != Side.CLIENT) { return 0xff000000 | tint; }
         ResourceLocation still = fluid.getFluid().getStill(fluid);
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(still.toString());
         int[] pixels = sprite.getFrameTextureData(0)[0];
