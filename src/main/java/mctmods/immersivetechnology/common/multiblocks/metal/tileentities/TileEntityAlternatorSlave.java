@@ -115,8 +115,6 @@ public class TileEntityAlternatorSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public int getEffectiveMaxSpeed() { return master() == null ? TileEntityAlternatorMaster.maxSpeed() : Objects.requireNonNull(master()).effectiveMaxSpeed; }
 
-    @Override public float getTorqueMultiplier() { return master() == null ? 0 : Objects.requireNonNull(master()).torqueMult; }
-
     @Override public double getMass() { return Multiblocks.alternator.alternator_baseMass; }
 
     @Override public double getFriction() { return Multiblocks.alternator.alternator_friction; }

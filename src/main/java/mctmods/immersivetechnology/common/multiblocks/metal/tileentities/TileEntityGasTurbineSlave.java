@@ -147,7 +147,7 @@ public class TileEntityGasTurbineSlave extends TileEntityTemplateMultiblock<Tile
 
     @Override public double getFriction() { return Config.ITConfig.Multiblocks.gasTurbine.gasTurbine_friction; }
 
-    @Override public float getTorqueMultiplier() {
+    @Override public float getTorque() {
         TileEntityGasTurbineMaster m = master();
         return m == null ? outputtorque() : m.currentTorque;
     }

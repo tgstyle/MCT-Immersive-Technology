@@ -114,7 +114,7 @@ public class TileEntityHighPressureSteamTurbineSlave extends TileEntityTemplateM
 
     @Override public double getFriction() { return Multiblocks.highPressureSteamTurbine.highPressureSteamTurbine_friction; }
 
-    @Override public float getTorqueMultiplier() {
+    @Override public float getTorque() {
         TileEntityHighPressureSteamTurbineMaster m = master();
         return m == null ? outputTorque() : m.currentTorque;
     }

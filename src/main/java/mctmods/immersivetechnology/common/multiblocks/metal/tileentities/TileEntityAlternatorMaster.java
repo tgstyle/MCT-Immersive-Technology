@@ -203,7 +203,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
         if (isValidProvider()) {
             effectiveMaxSpeed = Math.min(maxSpeed(), provider.getMaxSpeed());
             speed = Math.min(provider.getSpeed(), effectiveMaxSpeed);
-            torqueMult = provider.getTorqueMultiplier();
+            torqueMult = provider.getTorque();
         } else if (speed > 0) {
             speed = Math.max(speed - 6, 0);
         }
