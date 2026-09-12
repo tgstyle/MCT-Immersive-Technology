@@ -30,7 +30,7 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         super(LAZY_EMPTY, RecipeTypes.BOILER_TANK, id);
         this.input = input;
         this.output = output;
-        this.requiredHeat = Math.min(requiredHeat, HeatCapabilities.MAX_HEAT);
+        this.requiredHeat = Math.min(requiredHeat, HeatCapabilities.maxHeat());
         totalProcessTime = Lazy.of(() -> time);
 
         this.fluidInputList = Lists.newArrayList(this.input);

@@ -51,7 +51,6 @@ import java.util.function.Function;
 
 public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>, IServerTickableComponent<AlternatorLogic.State>, IClientTickableComponent<AlternatorLogic.State> {
     private static final ShapeData SHAPE = ITShapes.get("alternator");
-    private static final int MAX_SPEED = MechanicalCapabilities.MAX_RPM;
     private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("alternator").pointsOfInterest);
 
     public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
@@ -100,7 +99,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         int turbineSpeed = 0;
         float turbineTorque = 1f;
         boolean hasProvider = false;
-        int providerMaxSpeed = MAX_SPEED;
+        int providerMaxSpeed = MechanicalCapabilities.maxRpm();
         Direction inputFacing = ctx.getLevel().toAbsolute(MECHANICAL_INPUT_FACING);
         BlockPos inputPortAbs = ctx.getLevel().toAbsolute(MECHANICAL_INPUT_POI.posInMultiblock());
         if (inputFacing == null) {
@@ -120,7 +119,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
                 }
             }
         }
-        int effectiveMax = hasProvider ? Math.min(MAX_SPEED, providerMaxSpeed) : MAX_SPEED;
+        int effectiveMax = hasProvider ? Math.min(MechanicalCapabilities.maxRpm(), providerMaxSpeed) : MechanicalCapabilities.maxRpm();
         state.effectiveMaxSpeed = effectiveMax;
         if (hasProvider) {
             state.speed = Math.min(turbineSpeed, effectiveMax);
@@ -144,7 +143,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     private void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
-        double ratio = (double) state.speed / MAX_SPEED;
+        double ratio = (double) state.speed / MechanicalCapabilities.maxRpm();
         double powerFactor = Math.max(0.0D, ServerConfig.alternatorPowerFactor);
         int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * ServerConfig.alternatorMaxOutput * powerFactor);
         List<IEnergyStorage> connected = getConnectedHandlers(ctx, level);
@@ -229,7 +228,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     private static class MechanicalEnergyConsumer implements IMechanicalEnergyConsumer {
         @Override public double getMass() { return ServerConfig.alternatorBaseMass; }
         @Override public double getFriction() { return ServerConfig.alternatorFriction; }
-        @Override public int getMaxSpeed() { return MechanicalCapabilities.MAX_RPM; }
+        @Override public int getMaxSpeed() { return MechanicalCapabilities.maxRpm(); }
     }
 
     public static class State implements IMultiblockState, IDisplayContext {
@@ -238,7 +237,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         public int speed = 0;
         public int lastComparatorValue = -1;
         public float torqueMultiplier = 1f;
-        public int effectiveMaxSpeed = MAX_SPEED;
+        public int effectiveMaxSpeed = MechanicalCapabilities.maxRpm();
         public BooleanSupplier isSoundPlaying = () -> false;
         private final StoredCapability<IEnergyStorage> energyCap;
 

@@ -95,7 +95,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     private static double baseMass() { return ServerConfig.gasTurbineBaseMass; }
     private static double driveTorque() { return ServerConfig.gasTurbineDriveTorque; }
     private static double friction() { return ServerConfig.gasTurbineFriction; }
-    private static int maxSpeed() { return (int) (MechanicalCapabilities.MAX_RPM * ServerConfig.gasTurbineMaxSpeedFactor); }
+    private static int maxSpeed() { return (int) (MechanicalCapabilities.maxRpm() * ServerConfig.gasTurbineMaxSpeedFactor); }
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
@@ -267,7 +267,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         boolean hasConsumer = false;
         double additionalMass = 0.0;
         double additionalFriction = 0.0;
-        int consumerMaxSpeed = MechanicalCapabilities.MAX_RPM;
+        int consumerMaxSpeed = MechanicalCapabilities.maxRpm();
         if (entity != null) {
             LazyOptional<IMechanicalEnergyConsumer> consumerCap = entity.getCapability(MechanicalCapabilities.MECHANICAL_CONSUMER_CAPABILITY, outputFacing.getOpposite());
             if (consumerCap.isPresent()) {

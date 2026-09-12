@@ -56,5 +56,5 @@ public class CommonConfig {
         }
     }
 
-    public static double boilerDefaultWorkingHeat() { return Math.min(boilerDefaultWorkingHeat, HeatCapabilities.MAX_HEAT); }
+    public static double boilerDefaultWorkingHeat() { return Math.min(boilerDefaultWorkingHeat, HeatCapabilities.maxHeat()); }
 }
