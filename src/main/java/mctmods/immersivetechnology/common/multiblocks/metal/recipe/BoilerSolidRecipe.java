@@ -32,7 +32,7 @@ public class BoilerSolidRecipe extends MultiblockRecipe {
         super(TagOutput.EMPTY, RecipeTypes.BOILER_SOLID, 0, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
         this.input = input;
         this.heatPerTick = heatPerTick;
-        this.targetHeat = Math.min(targetHeat, HeatCapabilities.MAX_HEAT);
+        this.targetHeat = Math.min(targetHeat, HeatCapabilities.maxHeat());
         setInputListWithSizes(Lists.newArrayList(this.input));
     }
 

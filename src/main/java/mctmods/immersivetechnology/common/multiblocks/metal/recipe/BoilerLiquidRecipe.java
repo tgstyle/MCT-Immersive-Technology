@@ -36,7 +36,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
         this.amount = amount;
         this.time = time;
         this.heatPerTick = heatPerTick;
-        this.targetHeat = Math.min(targetHeat, HeatCapabilities.MAX_HEAT);
+        this.targetHeat = Math.min(targetHeat, HeatCapabilities.maxHeat());
         this.totalProcessTime = Lazy.of(() -> this.time);
     }
 

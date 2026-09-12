@@ -36,7 +36,7 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.output = output;
-        this.requiredHeat = Math.min(requiredHeat, HeatCapabilities.MAX_HEAT);
+        this.requiredHeat = Math.min(requiredHeat, HeatCapabilities.maxHeat());
         this.time = time;
     }
 
