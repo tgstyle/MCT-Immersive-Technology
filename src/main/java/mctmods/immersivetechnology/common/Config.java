@@ -56,8 +56,6 @@ public class Config {
             public static SteelTank steelTank = new SteelTank();
 
             public static class Alternator {
-                @Comment({"Alternator generation exponent [Default=1.0]"})
-                public double alternator_exponent = 1.0;
                 @Comment({"The maximum energy an Alternator can store [Default=1200000]"})
                 public int alternator_energy_capacitorSize = 1200000;
                 @Comment({"Energy production when running at maximum speed and torque [Default=12288]"})

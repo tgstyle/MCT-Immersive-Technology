@@ -41,7 +41,6 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     private static int rfPerTick() { return Multiblocks.alternator.alternator_energy_perTick; }
 
-    private static double rfExponent() { return Multiblocks.alternator.alternator_exponent; }
 
     private static double rfThreshold() { return Multiblocks.alternator.alternator_threshold; }
 
@@ -196,7 +195,7 @@ public class TileEntityAlternatorMaster extends TileEntityAlternatorSlave implem
 
     private int energyGenerated() {
         if ((double)speed / maxSpeed() <= rfThreshold()) return 0;
-        return (int)Math.round(Math.pow((double)speed / maxSpeed(), rfExponent()) * rfPerTick() * torqueMult * rfPowerFactor());
+        return (int)Math.round((double)speed / maxSpeed() * rfPerTick() * torqueMult * rfPowerFactor());
     }
 
     private void checkProvider() {
