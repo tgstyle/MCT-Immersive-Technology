@@ -12,6 +12,7 @@ public class ServerConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     public static final ModConfigSpec.DoubleValue ADVANCED_COKE_OVEN_SPEED_BASE;
+    public static final ModConfigSpec.IntValue ADVANCED_COKE_OVEN_TANK_CAPACITY;
     public static final ModConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE;
     public static final ModConfigSpec.DoubleValue ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER;
     public static final ModConfigSpec.IntValue ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY;
@@ -124,6 +125,7 @@ public class ServerConfig {
 
 
     public static double advancedCokeOvenSpeedBase = 1.0D;
+    public static int advancedCokeOvenTankCapacity = 12000;
     public static double advancedCokeOvenBaseheaterSpeedIncrease = 0.25D;
     public static double advancedCokeOvenBaseheaterSpeedMultiplier = 1.25D;
     public static int advancedCokeOvenBaseheaterMaxEnergy = 8000;
@@ -239,6 +241,7 @@ public class ServerConfig {
 
         BUILDER.push("advanced_coke_oven");
         ADVANCED_COKE_OVEN_SPEED_BASE = BUILDER.defineInRange("speed_base", 1.0D, 0.1D, 10.0D);
+        ADVANCED_COKE_OVEN_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 12000, 1000, Integer.MAX_VALUE);
         ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE = BUILDER.defineInRange("baseheater_speed_increase", 0.25D, 0.0D, 5.0D);
         ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER = BUILDER.defineInRange("baseheater_speed_multiplier", 1.25D, 1.0D, 5.0D);
         ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY = BUILDER.defineInRange("baseheater_max_energy", 8000, 1000, Integer.MAX_VALUE);
@@ -322,7 +325,7 @@ public class ServerConfig {
         MELTING_CRUCIBLE_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 10000, 1000, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 50000, 1000, Integer.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_MAX_IO = BUILDER.defineInRange("energy_max_io", 1024, 0, Integer.MAX_VALUE);
-        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER.defineInRange("heat_workingLevel", 1000.0D, 100.0D, Double.MAX_VALUE);
+        MELTING_CRUCIBLE_HEAT_WORKING_LEVEL = BUILDER.defineInRange("working_heat_level", 1000.0D, 100.0D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_LOSS_MULTIPLIER = BUILDER.defineInRange("heat_loss_multiplier", 0.2D, 0.0D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_HEAT_GAIN_BASE = BUILDER.defineInRange("heat_gain_base", 0.55D, 0.1D, Double.MAX_VALUE);
         MELTING_CRUCIBLE_ENERGY_PER_TICK_TO_HEAT = BUILDER.defineInRange("energy_per_tick_heating", 1000, 32, Integer.MAX_VALUE);
@@ -405,6 +408,7 @@ public class ServerConfig {
     public static void onConfig(final ModConfigEvent event) {
         if (event.getConfig().getSpec() == SPEC && !(event instanceof ModConfigEvent.Unloading)) {
             advancedCokeOvenSpeedBase = ADVANCED_COKE_OVEN_SPEED_BASE.get();
+            advancedCokeOvenTankCapacity = ADVANCED_COKE_OVEN_TANK_CAPACITY.get();
             advancedCokeOvenBaseheaterSpeedIncrease = ADVANCED_COKE_OVEN_BASEHEATER_SPEED_INCREASE.get();
             advancedCokeOvenBaseheaterSpeedMultiplier = ADVANCED_COKE_OVEN_BASEHEATER_SPEED_MULTIPLIER.get();
             advancedCokeOvenBaseheaterMaxEnergy = ADVANCED_COKE_OVEN_BASEHEATER_MAX_ENERGY.get();
