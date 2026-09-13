@@ -65,6 +65,8 @@ public class ItemModel extends ItemModelProvider {
         generateFlatItem("fuel_element", "item/fuel_element");
         generateFlatItem("spent_element", "item/spent_element");
         generateFlatItem("ingot_chromium", "item/metal/ingots/chromium");
+        generateFlatItem("ingot_depleted_uranium", "item/metal/ingots/depleted_uranium");
+        generateFlatItem("ingot_enriched_uranium", "item/metal/ingots/enriched_uranium");
         generateFlatItem("ingot_magnesium", "item/metal/ingots/magnesium");
         generateFlatItem("ingot_magnox", "item/metal/ingots/magnox");
         generateFlatItem("ingot_plutonium", "item/metal/ingots/plutonium");

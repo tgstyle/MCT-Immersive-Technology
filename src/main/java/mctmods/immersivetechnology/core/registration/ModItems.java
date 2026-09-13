@@ -27,6 +27,8 @@ public class ModItems {
     public static final ItemEntry<BaseItem> FUEL_ELEMENT = item("fuel_element");
     public static final ItemEntry<BaseItem> SPENT_ELEMENT = item("spent_element");
     public static final ItemEntry<BaseItem> INGOT_CHROMIUM = item("ingot_chromium");
+    public static final ItemEntry<BaseItem> INGOT_DEPLETED_URANIUM = item("ingot_depleted_uranium");
+    public static final ItemEntry<BaseItem> INGOT_ENRICHED_URANIUM = item("ingot_enriched_uranium");
     public static final ItemEntry<BaseItem> INGOT_MAGNESIUM = item("ingot_magnesium");
     public static final ItemEntry<BaseItem> INGOT_MAGNOX = item("ingot_magnox");
     public static final ItemEntry<BaseItem> INGOT_PLUTONIUM = item("ingot_plutonium");

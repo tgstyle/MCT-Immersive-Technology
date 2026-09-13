@@ -213,6 +213,7 @@ public class Recipes extends RecipeProvider {
 
         MetalPressRecipeBuilder.builder().input(IETags.getTagsFor(EnumMetals.URANIUM).ingot).mold(IEItems.Molds.MOLD_ROD).output(ModItems.PELLET_URANIUM.get(), 2).setEnergy(2400).build(output, toResourceLocation("metalpress/pellet_uranium"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FUEL_ELEMENT.get(), 1).define('x', ModItems.PELLET_URANIUM.get()).define('y', cTag("plates/magnox")).pattern("xyx").pattern("x x").pattern("xyx").unlockedBy("has_pellet_uranium", has(ModItems.PELLET_URANIUM.get())).save(output, toResourceLocation("fuel_element"));
+        CrusherRecipeBuilder.builder().input(ModItems.SPENT_ELEMENT.get()).output(cTag("dusts/spent_fuel"), 3).setEnergy(6000).build(output, toResourceLocation("crusher/spent_element"));
     }
 
     private void oreMetal(RecipeOutput output, String name, ItemEntry<?> ingot, ItemEntry<?> dust, ItemEntry<?> raw, ModBlocks.BlockEntry<?> storage, ModBlocks.BlockEntry<?> ore, ModBlocks.BlockEntry<?> deepslateOre) {

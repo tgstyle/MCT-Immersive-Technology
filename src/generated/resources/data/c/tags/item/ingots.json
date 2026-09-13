@@ -1,6 +1,8 @@
 {
   "values": [
     "#c:ingots/chromium",
+    "#c:ingots/depleted_uranium",
+    "#c:ingots/enriched_uranium",
     "#c:ingots/magnesium",
     "#c:ingots/magnox",
     "#c:ingots/plutonium",

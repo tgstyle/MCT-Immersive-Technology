@@ -1,0 +1,13 @@
+{
+  "type": "immersiveengineering:crusher",
+  "energy": 6000,
+  "input": {
+    "item": "immersivetechnology:spent_element"
+  },
+  "result": {
+    "basePredicate": {
+      "tag": "c:dusts/spent_fuel"
+    },
+    "count": 3
+  }
+}

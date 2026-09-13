@@ -34,6 +34,8 @@ public class ModItemTags extends ItemTagsProvider {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "tools/hammers"))).add(ModItems.FORMATION_TOOL.get());
 
         registerMaterial("ingots", "chromium", ModItems.INGOT_CHROMIUM);
+        registerMaterial("ingots", "depleted_uranium", ModItems.INGOT_DEPLETED_URANIUM);
+        registerMaterial("ingots", "enriched_uranium", ModItems.INGOT_ENRICHED_URANIUM);
         registerMaterial("ingots", "magnesium", ModItems.INGOT_MAGNESIUM);
         registerMaterial("ingots", "magnox", ModItems.INGOT_MAGNOX);
         registerMaterial("ingots", "plutonium", ModItems.INGOT_PLUTONIUM);
