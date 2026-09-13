@@ -45,18 +45,18 @@ public class StyleNOXMenu extends BaseContainerMenu {
         );
     }
 
+    public static int fuelSlotX(int slot) { return FUEL_GRID_X + fuelCell(slot) % 3 * 18; }
+
+    public static int fuelSlotY(int slot) { return FUEL_GRID_Y + fuelCell(slot) / 3 * 18; }
+
+    private static int fuelCell(int slot) { return slot < 4 ? slot : slot + 1; }
+
     protected StyleNOXMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, StyleNOXLogic.StyleNOXTank tanks, @Nullable StyleNOXLogic.State state, @Nullable IMultiblockContext<StyleNOXLogic.State> mbContext) {
         super(ctx);
         this.tanks = tanks;
         this.mbContext = mbContext;
         this.energy = new MutableEnergyStorage(StyleNOXLogic.energyCapacity());
-        int slot = 0;
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                if (row == 1 && col == 1) { continue; }
-                this.addSlot(new ModSlot.Input(inv, slot++, FUEL_GRID_X + col * 18, FUEL_GRID_Y + row * 18));
-            }
-        }
+        for (int slot = 0; slot < StyleNOXLogic.FUEL_SLOTS; slot++) { this.addSlot(new ModSlot.Input(inv, slot, fuelSlotX(slot), fuelSlotY(slot))); }
         this.addSlot(new ModSlot.Output(inv, StyleNOXLogic.SLOT_SPENT, SPENT_X, SPENT_Y));
         ownSlotCount = StyleNOXLogic.FUEL_SLOTS + 1;
         addPlayerInventorySlots(inventoryPlayer);

@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.core.integration.jei.category;
 import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import mctmods.immersivetechnology.common.multiblocks.gui.StyleNOXMenu;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -15,13 +16,13 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -40,12 +41,13 @@ public class StyleNOXCategory extends BaseRecipeCategory<StyleNOXRecipe> {
         setRecipeBackground(helper.createDrawable(background, 0, 0, 176, 74));
         setIcon(MultiblockRegistry.STYLENOX.iconStack());
 
-        tankOverlay = helper.createDrawable(background, 176, 31, 20, 51);
+        tankOverlay = helper.createDrawable(background, 177, 31, 20, 51);
     }
 
     @Override public void setRecipe(@Nonnull IRecipeLayoutBuilder builder, @Nonnull StyleNOXRecipe recipe, @Nonnull IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, StyleNOXMenu.FUEL_GRID_X, StyleNOXMenu.FUEL_GRID_Y)
-                .addItemStacks(Arrays.asList(recipe.input().getMatchingStacks()));
+        List<ItemStack> fuel = Arrays.stream(recipe.input().getMatchingStacks()).map(stack -> stack.copyWithCount(1)).toList();
+        int fuelCount = Math.min(recipe.input().getCount(), StyleNOXLogic.FUEL_SLOTS);
+        for (int slot = 0; slot < fuelCount; slot++) { builder.addSlot(RecipeIngredientRole.INPUT, StyleNOXMenu.fuelSlotX(slot), StyleNOXMenu.fuelSlotY(slot)).addItemStacks(fuel); }
 
         builder.addSlot(RecipeIngredientRole.INPUT, 8, 21)
                 .addIngredients(NeoForgeTypes.FLUID_STACK, tagStacks(recipe.waterTag(), recipe.waterAmount()))
@@ -83,12 +85,12 @@ public class StyleNOXCategory extends BaseRecipeCategory<StyleNOXRecipe> {
 
     @Override public void draw(@Nonnull StyleNOXRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
-        tankOverlay.draw(guiGraphics, 5, 15);
-        tankOverlay.draw(guiGraphics, 24, 15);
-        tankOverlay.draw(guiGraphics, 131, 15);
-        guiGraphics.drawString(Minecraft.getInstance().font,
-                Component.translatable(TranslationKey.CATEGORY_STYLENOX_TIME.getLocation(), recipe.getTotalProcessTime() / 20), 44, 40, 0x404040, false);
-        guiGraphics.drawString(Minecraft.getInstance().font,
-                Component.translatable(TranslationKey.CATEGORY_STYLENOX_ENERGY.getLocation(), recipe.getTotalProcessEnergy()), 44, 52, 0x404040, false);
+        tankOverlay.draw(guiGraphics, 6, 19);
+        tankOverlay.draw(guiGraphics, 25, 19);
+        tankOverlay.draw(guiGraphics, 44, 19);
+        Component time = Component.translatable(TranslationKey.CATEGORY_STYLENOX_TIME.getLocation(), recipe.getTotalProcessTime() / 20);
+        guiGraphics.drawString(font, time, getWidth() / 2 - font.width(time) / 2, 0, 0xAAAAAA, true);
+        Component energy = Component.translatable(TranslationKey.CATEGORY_STYLENOX_ENERGY.getLocation(), recipe.getTotalProcessEnergy());
+        guiGraphics.drawString(font, energy, getWidth() / 2 - font.width(energy) / 2, 9, 0xAAAAAA, true);
     }
 }
