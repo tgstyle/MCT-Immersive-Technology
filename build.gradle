@@ -180,6 +180,9 @@ neoForge {
     }
 
     runs {
+        configureEach {
+            jvmArgument '-Xmx4G'
+        }
         client {
             client()
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
