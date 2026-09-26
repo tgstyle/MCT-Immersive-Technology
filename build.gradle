@@ -18,7 +18,7 @@ file('version.properties').withInputStream { versionProps.load(it) }
 def gradleProps = new Properties()
 file('gradle.properties').withInputStream { gradleProps.load(it) }
 
-def building = gradle.startParameter.taskNames*.toLowerCase().any { it.contains('build') || it.contains('jar') || it.contains('assemble') }
+def building = gradle.startParameter.taskNames*.toLowerCase().findAll { !(it ==~ /(.*:)?dev(jar|sync)/) }.any { it.contains('build') || it.contains('jar') || it.contains('assemble') }
 if (building) {
     versionProps['build_number'] = ((versionProps.getProperty('build_number')?.toInteger() ?: 0) + 1).toString()
     file('version.properties').withOutputStream { versionProps.store(it, null) }
@@ -89,53 +89,30 @@ configurations {
     }
 }
 
-def icJar = null
-def icDir = file('../ImmersiveConvergence-Legacy/build/libs')
-def icJars = icDir.exists() ? fileTree(icDir) {
-    include '*-dev.jar'
-    exclude '**/*-sources.jar'
-}.files : []
-
-if (!icJars.isEmpty()) {
-    icJar = icJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
-    logger.lifecycle("Found Immersive Convergence dev JAR: ${icJar.name}")
-} else {
-    logger.warn('No Immersive Convergence dev JAR found in ../ImmersiveConvergence-Legacy/build/libs, build one there first')
+def devSyncScript = null
+for (def dir = rootDir; dir != null && devSyncScript == null; dir = dir.parentFile) {
+    def candidate = new File(dir, '#scripts/mods-devsync.gradle')
+    if (candidate.isFile()) { devSyncScript = candidate }
+}
+if (devSyncScript != null) {
+    apply from: devSyncScript
+    build.finalizedBy 'devSync'
 }
 
-def ifJar = null
-def ifDir = file('../Immersive-Fixes-Legacy/build/libs')
-def ifJars = ifDir.exists() ? fileTree(ifDir) {
-    include '*-dev.jar'
-    exclude '**/*-sources.jar'
-}.files : []
+def icJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('ImmersiveConvergence-Legacy', versionProps['devsync_ic']), 'build/devsync-pins/ImmersiveConvergence-Legacy.jar')
+if (icJar == null) { logger.warn('No Immersive Convergence devSync pin: set devsync_ic in version.properties to a snapshot in the devsync cache') }
 
-if (!ifJars.isEmpty()) {
-    ifJar = ifJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
-    logger.lifecycle("Found Immersive Fixes dev JAR: ${ifJar.name}")
-} else {
-    logger.warn('No Immersive Fixes dev JAR found in ../Immersive-Fixes-Legacy/build/libs, build one there first')
-}
+def ifJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('Immersive-Fixes-Legacy', versionProps['devsync_if']), 'build/devsync-pins/Immersive-Fixes-Legacy.jar')
+if (ifJar == null) { logger.warn('No Immersive Fixes devSync pin: set devsync_if in version.properties to a snapshot in the devsync cache') }
 
-def esJar = null
-def esDir = file('../EngineeredSchematics-Legacy/build/libs')
-def esJars = esDir.exists() ? fileTree(esDir) {
-    include '*-dev.jar'
-    exclude '**/*-sources.jar'
-}.files : []
-
-if (!esJars.isEmpty()) {
-    esJar = esJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
-    logger.lifecycle("Found Engineered Schematics dev JAR: ${esJar.name}")
-} else {
-    logger.warn('No Engineered Schematics dev JAR found in ../EngineeredSchematics-Legacy/build/libs, build one there first')
-}
+def esJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('EngineeredSchematics-Legacy', versionProps['devsync_es']), 'build/devsync-pins/EngineeredSchematics-Legacy.jar')
+if (esJar == null) { logger.warn('No Engineered Schematics devSync pin: set devsync_es in version.properties to a snapshot in the devsync cache') }
 
 dependencies {
     if (icJar != null) {
         implementation files(icJar)
     } else {
-        implementation rfg.deobf("curse.maven:${common.imco_version}")
+        implementation(rfg.deobf("curse.maven:${common.imco_version}") as String)
     }
     if (ifJar != null) {
         implementation files(ifJar)
@@ -143,35 +120,35 @@ dependencies {
     if (esJar != null) {
         implementation files(esJar)
     }
-    implementation rfg.deobf("${common.mjei_version}")
-    implementation rfg.deobf("curse.maven:${common.imme_version}")
-    implementation rfg.deobf("curse.maven:${common.imps_version}")
-    implementation rfg.deobf("curse.maven:${common.mtop_version}")
-    implementation rfg.deobf("curse.maven:${common.woed_version}")
-    implementation rfg.deobf("curse.maven:${common.wcui_version}")
+    implementation(rfg.deobf("${common.mjei_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.imme_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.imps_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.mtop_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.woed_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.wcui_version}") as String)
 
     compileOnly("${common.gscr_version}") { transitive = false }
-    compileOnly rfg.deobf("curse.maven:${common.hwya_version}")
-    runtimeOnly rfg.deobf("curse.maven:${common.hwya_version}")
-    compileOnly rfg.deobf("curse.maven:${common.advr_version}")
-    compileOnly rfg.deobf("curse.maven:${common.libv_version}")
-    compileOnly rfg.deobf("curse.maven:${common.opcm_version}")
+    compileOnly(rfg.deobf("curse.maven:${common.hwya_version}") as String)
+    runtimeOnly(rfg.deobf("curse.maven:${common.hwya_version}") as String)
+    compileOnly(rfg.deobf("curse.maven:${common.advr_version}") as String)
+    compileOnly(rfg.deobf("curse.maven:${common.libv_version}") as String)
+    compileOnly(rfg.deobf("curse.maven:${common.opcm_version}") as String)
 
-    compileOnly rfg.deobf("${common.crft_version}")
-    compileOnly rfg.deobf("${common.zens_version}")
+    compileOnly(rfg.deobf("${common.crft_version}") as String)
+    compileOnly(rfg.deobf("${common.zens_version}") as String)
 
-    runtimeOnly rfg.deobf("${common.ctwk_version}")
-    runtimeOnly rfg.deobf("curse.maven:${common.mkce_version}")
-    compileOnly rfg.deobf("curse.maven:${common.imin_version}")
+    runtimeOnly(rfg.deobf("${common.ctwk_version}") as String)
+    runtimeOnly(rfg.deobf("curse.maven:${common.mkce_version}") as String)
+    compileOnly(rfg.deobf("curse.maven:${common.imin_version}") as String)
     //runtimeOnly rfg.deobf("curse.maven:${common.imin_version}")
 
-    implementation rfg.deobf("curse.maven:${common.ppfx_version}")
-    implementation rfg.deobf("curse.maven:${common.cfga_version}")
+    implementation(rfg.deobf("curse.maven:${common.ppfx_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.cfga_version}") as String)
 
-    implementation rfg.deobf("curse.maven:${common.liti_version}")
-    implementation rfg.deobf("curse.maven:${common.crce_version}")
+    implementation(rfg.deobf("curse.maven:${common.liti_version}") as String)
+    implementation(rfg.deobf("curse.maven:${common.crce_version}") as String)
 
-    clientRuntime rfg.deobf("curse.maven:${common.bf3r_version}")
+    clientRuntime(rfg.deobf("curse.maven:${common.bf3r_version}") as String)
 
     annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
     annotationProcessor 'com.google.guava:guava:32.1.2-jre'
@@ -222,9 +199,9 @@ tasks.register('optimizePng') {
     doLast {
         pngFiles.each { File file ->
             long size = file.length()
-            execOps.exec {
-                executable 'optipng'
-                args '-q', '-o7', '-zm1-9', '-nc', '-strip', 'all', file.absolutePath
+            execOps.exec { ExecSpec spec ->
+                spec.executable('optipng')
+                spec.args('-q', '-o7', '-zm1-9', '-nc', '-strip', 'all', file.absolutePath)
             }
             long newSize = file.length()
             if (newSize < size) {
