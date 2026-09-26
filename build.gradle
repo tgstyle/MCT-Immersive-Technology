@@ -139,33 +139,18 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     dependsOn processResources
 }
 
-def icJar = null
-def icDir = file('../ImmersiveConvergence/build/libs')
-def matchingJars = icDir.exists() ? fileTree(icDir) {
-    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
-    exclude "**/*-sources.jar"
-}.files : []
-
-if (!matchingJars.isEmpty()) {
-    icJar = matchingJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
-    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
-} else {
-    logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence/build/libs')
+def devSyncScript = null
+for (def dir = rootDir; dir != null && devSyncScript == null; dir = dir.parentFile) {
+    def candidate = new File(dir, '#scripts/mods-devsync.gradle')
+    if (candidate.isFile()) { devSyncScript = candidate }
 }
+if (devSyncScript != null) { apply from: devSyncScript }
 
-def ifJar = null
-def ifDir = file('../Immersive-Fixes/build/libs')
-def ifJars = ifDir.exists() ? fileTree(ifDir) {
-    include '*-dev.jar'
-    exclude '**/*-sources.jar'
-}.files : []
+def icJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('ImmersiveConvergence', versionProps['devsync_ic']), 'build/devsync-pins/ImmersiveConvergence.jar')
+if (icJar == null) { logger.warn('No IC devSync pin: set devsync_ic in version.properties to a snapshot in the devsync cache; falling back to CurseMaven') }
 
-if (!ifJars.isEmpty()) {
-    ifJar = ifJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
-    logger.lifecycle("✅ Found Immersive Fixes dev JAR: ${ifJar.name}")
-} else {
-    logger.warn('⚠️  No Immersive Fixes dev JAR found in ../Immersive-Fixes/build/libs, build one there first')
-}
+def ifJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('Immersive-Fixes', versionProps['devsync_if']), 'build/devsync-pins/Immersive-Fixes.jar')
+if (ifJar == null) { logger.warn('No Immersive Fixes devSync pin: set devsync_if in version.properties to a snapshot in the devsync cache') }
 
 legacyForge {
     version = "${version_minecraft}-${version_forge}"
@@ -355,16 +340,7 @@ tasks.register('datagenJar', Jar) {
     }
 }
 
-tasks.register('sourcesJar', Jar) {
-    dependsOn classes
-    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-    from sourceSets.datagen.allSource
-}
-
 artifacts {
-    archives sourcesJar
     archives datagenJar
 }
 
@@ -402,7 +378,6 @@ tasks.withType(Task).configureEach {
 processResources.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
-sourcesJar.dependsOn bumpVersion
 
 jar {
     archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
