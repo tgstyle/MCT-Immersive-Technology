@@ -248,7 +248,7 @@ dependencies {
     implementation "mezz.jei:jei-${version_minecraft}-neoforge-api:${version_jei}"
     runtimeOnly  "mezz.jei:jei-${version_minecraft}-neoforge:${version_jei}"
 
-    runtimeOnly "curse.maven:${version_wayfix_curse}"
+    add(neoForge.runs.client.additionalRuntimeClasspathConfiguration.name, "curse.maven:${version_wayfix_curse}")
     runtimeOnly "curse.maven:${version_cloth_config_curse}"
     runtimeOnly "curse.maven:${version_engineered_schematics_curse}"
     runtimeOnly "curse.maven:${version_ip_curse}"
