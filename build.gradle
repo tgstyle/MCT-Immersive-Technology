@@ -149,19 +149,15 @@ tasks.register('copyModsTomlForIntelliJ', Copy) {
     dependsOn processResources
 }
 
-def icJar = null
-def icDir = file('../ImmersiveConvergence-21/build/libs')
-def matchingJars = icDir.exists() ? fileTree(icDir) {
-    include "ImmersiveConvergence-${version_minecraft}-*-dev.jar"
-    exclude "**/*-sources.jar"
-}.files : []
-
-if (!matchingJars.isEmpty()) {
-    icJar = matchingJars.sort { a, b -> a.lastModified() <=> b.lastModified() }.last()
-    logger.lifecycle("✅ Found IC deobf JAR: ${icJar.name}")
-} else {
-    logger.warn('⚠️  No IC deobf JAR found in ../ImmersiveConvergence-21/build/libs')
+def devSyncScript = null
+for (def dir = rootDir; dir != null && devSyncScript == null; dir = dir.parentFile) {
+    def candidate = new File(dir, '#scripts/mods-devsync.gradle')
+    if (candidate.isFile()) { devSyncScript = candidate }
 }
+if (devSyncScript != null) { apply from: devSyncScript }
+
+def icJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('ImmersiveConvergence-21', versionProps['devsync_ic']), 'build/devsync-pins/ImmersiveConvergence-21.jar')
+if (icJar == null) { logger.warn('No IC devSync pin: set devsync_ic in version.properties to a snapshot in the devsync cache') }
 
 neoForge {
     version = project.version_neoforge
@@ -301,15 +297,7 @@ tasks.register('datagenJar', Jar) {
     manifest { attributes "FMLModType": "GAMELIBRARY" }
 }
 
-tasks.register('sourcesJar', Jar) {
-    dependsOn classes
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
-    from sourceSets.datagen.allSource
-}
-
 artifacts {
-    archives sourcesJar
     archives datagenJar
 }
 
@@ -337,7 +325,6 @@ tasks.register('optimizePng') {
 processResources.dependsOn bumpVersion
 jar.dependsOn bumpVersion
 datagenJar.dependsOn bumpVersion
-sourcesJar.dependsOn bumpVersion
 
 tasks.register('genIntellijRunsDummy') {}
 
