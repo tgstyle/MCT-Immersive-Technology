@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.TagOutput;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.util.RecipeCache;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -76,6 +77,13 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
             if (recipe.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= recipe.getInput0Amount() && fluidInput1.getAmount() >= recipe.getInput1Amount()) return recipe;
         }
         return null;
+    }
+
+    @Nullable public static CoolingTowerRecipe findOriented(Level level, FluidStack tank0, FluidStack tank1, RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> direct, RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> reversed) {
+        CoolingTowerRecipe recipe = direct.apply(level, tank0, tank1);
+        if (recipe != null) { return recipe; }
+        recipe = reversed.apply(level, tank1, tank0);
+        return recipe == null ? null : new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.inputTag1, recipe.amount1, recipe.inputTag0, recipe.amount0, recipe.time);
     }
 
     @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }

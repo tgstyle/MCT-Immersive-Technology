@@ -1,21 +1,21 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.process;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
+import mctmods.immersivetechnology.core.util.ItemOutputs;
+
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import blusunrize.immersiveengineering.common.register.IEFluids;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
-import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-
 import java.util.function.BiFunction;
 
 public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<AdvancedCokeOvenRecipe> {
@@ -29,13 +29,16 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
 
     public AdvancedCokeOvenProcess(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data) {
         super(getRecipe, data);
-        this.tickRemainder = data.getFloat("tickRemainder");
+        if (data.contains("processTick")) {
+            float saved = data.getFloat("processTick");
+            this.processTick = (int) saved;
+            this.tickRemainder = saved - this.processTick;
+        }
+        else { this.tickRemainder = data.getFloat("tickRemainder"); }
         this.maxProcessTime = data.getInt("maxProcessTime");
     }
 
-    public static AdvancedCokeOvenProcess create(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data, Object ignored) {
-        return new AdvancedCokeOvenProcess(getRecipe, data);
-    }
+    public static AdvancedCokeOvenProcess create(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data, Object ignored) { return new AdvancedCokeOvenProcess(getRecipe, data); }
 
     @Override public void writeExtraDataToNBT(CompoundTag nbt, HolderLookup.Provider provider) {
         super.writeExtraDataToNBT(nbt, provider);
@@ -44,33 +47,29 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
     }
 
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, IMultiblockLevel level) {
-        if (getRecipe(level.getRawLevel()) == null) { this.clearProcess = true; return; }
-        @SuppressWarnings("unchecked")
-        BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
-        double speed = env.getProcessSpeed(level);
-        float total = this.tickRemainder + (float) speed;
+        if (getRecipe(level.getRawLevel()) == null) {
+            this.clearProcess = true;
+            return;
+        }
+        @SuppressWarnings("unchecked") BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
+        float total = this.tickRemainder + (float) env.getProcessSpeed(level);
         int wholeTicks = (int) total;
         this.tickRemainder = total - wholeTicks;
         this.processTick += wholeTicks;
-        if (this.processTick >= this.maxProcessTime) { processFinish(context, level); this.clearProcess = true; }
+        if (this.processTick >= this.maxProcessTime) {
+            processFinish(context, level);
+            this.clearProcess = true;
+        }
     }
 
     @Override public boolean canProcess(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, Level level) { return true; }
 
     @Override protected void processFinish(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, IMultiblockLevel level) {
         AdvancedCokeOvenRecipe recipe = getRecipe(level.getRawLevel());
-        if (recipe != null) {
-            ItemStack input = context.getInventory().getStackInSlot(inputSlots[0]);
-            int processedCount = Math.min(input.getCount(), recipe.input.getCount());
-            input.shrink(processedCount);
-            ItemStack outUnit = recipe.itemOutput.get();
-            ItemStack out = outUnit.copyWithCount(outUnit.getCount() * processedCount);
-            ItemStack current = context.getInventory().getStackInSlot(AdvancedCokeOvenLogic.SLOT_OUTPUT);
-            if (current.isEmpty()) { context.getInventory().setStackInSlot(AdvancedCokeOvenLogic.SLOT_OUTPUT, out); }
-            else if (ItemStack.isSameItemSameComponents(current, out) && current.getCount() + out.getCount() <= current.getMaxStackSize()) { current.grow(out.getCount()); }
-            FluidStack fluidOut = new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput * processedCount);
-            context.getInternalTanks()[0].fill(fluidOut.copy(), FluidAction.EXECUTE);
-        }
+        if (recipe == null) { return; }
+        context.getInventory().getStackInSlot(inputSlots[0]).shrink(recipe.input.getCount());
+        ItemOutputs.merge(context.getInventory(), AdvancedCokeOvenLogic.SLOT_OUTPUT, recipe.itemOutput.get().copy());
+        context.getInternalTanks()[0].fill(new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput), FluidAction.EXECUTE);
     }
 
     public int getCurrentProcessTime() { return this.processTick; }

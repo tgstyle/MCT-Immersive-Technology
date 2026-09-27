@@ -1,22 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.util.MultiTankFluidHandler;
-import com.immersiveconvergence.api.util.MarkableFluidTank;
-import com.immersiveconvergence.api.multiblock.IDisplayContext;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.ServerConfig;
-import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import com.immersiveconvergence.api.util.RecipeCache;
-import com.immersiveconvergence.api.multiblock.ShapeData;
+import mctmods.immersivetechnology.core.util.IDisplaySyncState;
+import mctmods.immersivetechnology.core.util.ItemOutputs;
+import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
+
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -25,13 +18,21 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.Redstone
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
+import com.immersiveconvergence.api.util.RecipeCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -47,17 +48,16 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 
 public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, IServerTickableComponent<StyleNOXLogic.State>, IClientTickableComponent<StyleNOXLogic.State>, IFluidOutputPump<StyleNOXLogic.State> {
-    private static final ShapeData SHAPE = ITShapes.get("stylenox");
     public static final int FUEL_SLOTS = 8;
     public static final int SLOT_SPENT = FUEL_SLOTS;
     public static final int MAX_ROD_LEVEL = 4;
@@ -67,24 +67,19 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
     public static final float CONTROL_ROD_TRAVEL = 0.875f;
     public static final float FUEL_ROD_TRAVEL = 0.4f;
     public static final int[][] FUEL_SLOT_CELLS = {{1, 1}, {0, 1}, {-1, 1}, {1, 0}, {-1, 0}, {1, -1}, {0, -1}, {-1, -1}};
+    public static BlockPos REDSTONE_POI;
+    public static List<BlockPos> WATER_INPUT_POS_LIST;
+    private static List<CapabilityPosition> WATER_INPUT_POIS;
+    private static List<CapabilityPosition> STEAM_OUTPUT_POIS;
+    private static List<CapabilityPosition> CO2_INPUT_POIS;
+    private static List<CapabilityPosition> ENERGY_INPUT_POIS;
+    private static List<BlockPos> STEAM_OUTPUT_POS_LIST;
+    private static List<RelativeBlockFace> STEAM_OUTPUT_FACINGS;
+    private static BlockPos SOUND_POI;
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("stylenox").pointsOfInterest);
+    static { ITShapes.readPois("stylenox", StyleNOXLogic::loadPois); }
 
-    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
-    public static final List<BlockPos> WATER_INPUT_POS_LIST = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    private static final List<CapabilityPosition> WATER_INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
-    private static final List<CapabilityPosition> STEAM_OUTPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_output0");
-    private static final List<CapabilityPosition> CO2_INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input1");
-    private static final List<CapabilityPosition> ENERGY_INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "energy_input0");
-    private static final List<BlockPos> STEAM_OUTPUT_POS_LIST = STEAM_OUTPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList());
-    private static final List<RelativeBlockFace> STEAM_OUTPUT_FACINGS = STEAM_OUTPUT_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList());
-    private static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").getFirst();
-
-    public static int waterTankCapacity() { return ServerConfig.stylenoxWaterTankCapacity; }
-    public static int steamTankCapacity() { return ServerConfig.stylenoxSteamTankCapacity; }
-    public static int co2TankCapacity() { return ServerConfig.stylenoxCo2TankCapacity; }
     public static int energyCapacity() { return ServerConfig.stylenoxEnergyCapacity; }
-    public static int startupTime() { return ServerConfig.stylenoxStartupTime; }
 
     public enum ReactorState { IDLE, STARTING, CRITICAL }
 
@@ -124,14 +119,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue);
             state.lastComparatorValue = newComparatorValue;
         }
-        boolean changed = wasActive != state.active
-                || wasReactorState != state.reactorState
-                || prevEnergy != state.energy.getEnergyStored()
-                || (!prevTanksDirty && state.tanksDirty)
-                || (!prevInventoryDirty && state.inventoryDirty)
-                || comparatorChanged
-                || rodsChanged;
-        if (changed) {
+        if (wasActive != state.active || wasReactorState != state.reactorState || prevEnergy != state.energy.getEnergyStored() || (!prevTanksDirty && state.tanksDirty) || (!prevInventoryDirty && state.inventoryDirty) || comparatorChanged || rodsChanged) {
             ctx.markMasterDirty();
             ctx.requestMasterBESync();
         }
@@ -157,12 +145,12 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             state.shutdown();
             return;
         }
-        int perTick = Math.max(1, recipeHolder.value().getTotalProcessEnergy() / startupTime());
+        int perTick = Math.max(1, recipeHolder.value().getTotalProcessEnergy() / ServerConfig.stylenoxStartupTime);
         if (state.energy.extractEnergy(perTick, true) == perTick) {
             state.energy.extractEnergy(perTick, false);
             state.startupProgress++;
             state.active = true;
-            if (state.startupProgress >= startupTime()) {
+            if (state.startupProgress >= ServerConfig.stylenoxStartupTime) {
                 state.reactorState = ReactorState.CRITICAL;
                 state.startupProgress = 0;
             }
@@ -182,15 +170,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         StyleNOXRecipe recipe = recipeHolder.value();
         int burnTotal = recipe.getTotalProcessTime() * FULL_CHANNELS;
         if (state.burnProgress >= burnTotal) {
-            ItemStack spentOut = recipe.output.get().copy();
-            ItemStack current = state.inventory.getStackInSlot(SLOT_SPENT);
-            boolean fits = current.isEmpty() || (ItemStack.isSameItemSameComponents(current, spentOut) && current.getCount() + spentOut.getCount() <= current.getMaxStackSize());
-            if (!fits) { return; }
-            if (current.isEmpty()) { state.inventory.setStackInSlot(SLOT_SPENT, spentOut); }
-            else {
-                current.grow(spentOut.getCount());
-                state.inventory.setStackInSlot(SLOT_SPENT, current);
-            }
+            if (!ItemOutputs.merge(state.inventory, SLOT_SPENT, recipe.output.get().copy())) { return; }
             state.loadedFuel = ItemStack.EMPTY;
             state.burnProgress = 0;
             if (!tryLoad(state, level)) {
@@ -263,63 +243,30 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         return true;
     }
 
-    public static List<ConstrainedItemHandler.IOConstraint> slotConstraints() {
-        List<ConstrainedItemHandler.IOConstraint> constraints = new ArrayList<>(Collections.nCopies(FUEL_SLOTS, ConstrainedItemHandler.IOConstraint.INPUT));
-        constraints.add(ConstrainedItemHandler.IOConstraint.OUTPUT);
-        return constraints;
-    }
-
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         state.animation_rodPrev = state.animation_rodPosition;
-        float target = state.controlRodDown ? 0f : 1f;
-        if (state.animation_rodPosition < target) { state.animation_rodPosition = Math.min(target, state.animation_rodPosition + 0.00625f); }
-        else if (state.animation_rodPosition > target) { state.animation_rodPosition = Math.max(target, state.animation_rodPosition - 0.0625f); }
+        state.animation_rodPosition = approach(state.animation_rodPosition, state.controlRodDown ? 0f : 1f, 0.0625f);
         state.animation_fuelPrev = state.animation_fuelPosition;
-        float fuelTarget = state.fuelDown ? 1f : 0f;
-        if (state.animation_fuelPosition < fuelTarget) { state.animation_fuelPosition = Math.min(fuelTarget, state.animation_fuelPosition + 0.00625f); }
-        else if (state.animation_fuelPosition > fuelTarget) { state.animation_fuelPosition = Math.max(fuelTarget, state.animation_fuelPosition - 0.00625f); }
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) { return; }
-        Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
-        float attenuation = (float) Math.max(player.distanceToSqr(soundPos) / 32, 1);
-        float volume = 1 / attenuation;
-        if (state.reactorState == ReactorState.CRITICAL && volume > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(
-                    () -> state.reactorState == ReactorState.CRITICAL, ctx.isValid(), soundPos, Sounds.stylenox,
-                    () -> {
-                        LocalPlayer p = Minecraft.getInstance().player;
-                        if (p == null) { return 0f; }
-                        return 1 / (float) Math.max(p.distanceToSqr(soundPos) / 32, 1);
-                    },
-                    () -> 1f
-            );
+        state.animation_fuelPosition = approach(state.animation_fuelPosition, state.fuelDown ? 1f : 0f, 0.00625f);
+        Vec3 soundPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(SOUND_POI));
+        if (state.reactorState == ReactorState.CRITICAL && ClientUtils.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+            state.isSoundPlaying = MachineSound.startSound(() -> state.reactorState == ReactorState.CRITICAL, ctx.isValid(), soundPos, Sounds.stylenox, () -> ClientUtils.attenuated(soundPos, 32, 1), () -> 1f);
         }
     }
+
+    private static float approach(float current, float target, float down) { return current < target ? Math.min(target, current + 0.00625f) : Math.max(target, current - down); }
 
     @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
-        register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
-            BlockPos localPos = position.posInMultiblock();
-            RelativeBlockFace side = position.side();
-            if (matchesAny(ENERGY_INPUT_POIS, localPos, side)) { return state.energy; }
-            return null;
-        });
+        register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> matchesAny(ENERGY_INPUT_POIS, position) ? state.energy : null);
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
-            BlockPos localPos = position.posInMultiblock();
-            RelativeBlockFace side = position.side();
-            if (matchesAny(WATER_INPUT_POIS, localPos, side)) { return state.waterInputCap; }
-            if (matchesAny(CO2_INPUT_POIS, localPos, side)) { return state.co2InputCap; }
-            if (matchesAny(STEAM_OUTPUT_POIS, localPos, side)) { return state.steamOutputCap; }
-            return null;
+            if (matchesAny(WATER_INPUT_POIS, position)) { return state.waterInputCap; }
+            if (matchesAny(CO2_INPUT_POIS, position)) { return state.co2InputCap; }
+            return matchesAny(STEAM_OUTPUT_POIS, position) ? state.steamOutputCap : null;
         });
     }
 
-    private static boolean matchesAny(List<CapabilityPosition> pois, BlockPos pos, RelativeBlockFace side) {
-        for (CapabilityPosition poi : pois) {
-            if (poi.posInMultiblock().equals(pos) && (side == null || side == poi.side())) { return true; }
-        }
-        return false;
-    }
+    private static boolean matchesAny(List<CapabilityPosition> pois, CapabilityPosition position) { return pois.stream().anyMatch(poi -> poi.posInMultiblock().equals(position.posInMultiblock()) && (position.side() == null || position.side() == poi.side())); }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) {
         MultiBlockInventoryUtils.dropItems(state.inventory, drop);
@@ -328,9 +275,9 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ITShapes.get("stylenox").getter; }
 
-    public static class State implements IMultiblockState, IDisplayContext {
+    public static class State implements IDisplaySyncState, IDataReloadAware {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final StyleNOXTank tanks;
         public final ConstrainedItemHandler inventory;
@@ -338,7 +285,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         public final IFluidHandler steamOutputCap;
         public final IFluidHandler co2InputCap;
         public final AveragingEnergyStorage energy;
-        private final BiFunction<Level, ItemStack, RecipeHolder<StyleNOXRecipe>> recipeGetter;
+        private final BiFunction<Level, ItemStack, RecipeHolder<StyleNOXRecipe>> recipeGetter = RecipeCache.cached(StyleNOXRecipe::findRecipe);
         private final BiFunction<Level, FluidStack, BoilerTankRecipe> boilerRecipeGetter = RecipeCache.cached(BoilerTankRecipe::findRecipe);
         public ReactorState reactorState = ReactorState.IDLE;
         public int rodLevel = 0;
@@ -372,22 +319,19 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
                 this.tanksDirty = true;
                 this.inventoryDirty = true;
             };
-            this.tanks = new StyleNOXTank(v -> onChanged.run(), waterTankCapacity(), steamTankCapacity(), co2TankCapacity());
+            this.tanks = new StyleNOXTank(v -> onChanged.run());
             this.inventory = new FuelChannelHandler(onChanged);
             this.waterInputCap = new MultiTankFluidHandler(tanks.water(), false, true, onChanged);
             this.steamOutputCap = new MultiTankFluidHandler(tanks.steam(), true, false, onChanged);
             this.co2InputCap = new MultiTankFluidHandler(tanks.co2(), false, true, onChanged);
             this.energy = new SyncEnergyStorage(energyCapacity(), onChanged);
-            this.recipeGetter = RecipeCache.cached(StyleNOXRecipe::findRecipe);
         }
+
+        @Override public void onDataReload(IInitialMultiblockContext<?> context) { lastComparatorValue = -1; }
 
         private RecipeHolder<StyleNOXRecipe> recipeForLoad(Level level) {
             if (loadedFuel.isEmpty()) { return null; }
-            if (lastRecipeCache != null && lastRecipeCache.value().matches(loadedFuel)) {
-                burnTotal = lastRecipeCache.value().getTotalProcessTime() * FULL_CHANNELS;
-                return lastRecipeCache;
-            }
-            lastRecipeCache = recipeGetter.apply(level, loadedFuel);
+            if (lastRecipeCache == null || !lastRecipeCache.value().matches(loadedFuel)) { lastRecipeCache = recipeGetter.apply(level, loadedFuel); }
             if (lastRecipeCache != null) { burnTotal = lastRecipeCache.value().getTotalProcessTime() * FULL_CHANNELS; }
             return lastRecipeCache;
         }
@@ -400,19 +344,16 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             controlRodDown = true;
         }
 
-        public int computeRodMask() {
-            if (hasLoad()) { return (1 << FUEL_SLOTS) - 1; }
+        public int computeRodMask() { return hasLoad() ? (1 << FUEL_SLOTS) - 1 : fuelMask(); }
+
+        private int fuelMask() {
             int mask = 0;
             for (int slot = 0; slot < FUEL_SLOTS; slot++) { if (!inventory.getStackInSlot(slot).isEmpty()) { mask |= 1 << slot; } }
             return mask;
         }
 
-        public boolean fuelSlotsEmpty() {
-            for (int slot = 0; slot < FUEL_SLOTS; slot++) { if (!inventory.getStackInSlot(slot).isEmpty()) { return false; } }
-            return true;
-        }
-
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            rsState.writeSaveNBT(nbt, provider);
             nbt.putInt("reactorState", reactorState.ordinal());
             nbt.putInt("rodLevel", rodLevel);
             nbt.putInt("startupProgress", startupProgress);
@@ -429,6 +370,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         }
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            rsState.readSaveNBT(nbt, provider);
             reactorState = ReactorState.values()[nbt.getInt("reactorState")];
             rodLevel = nbt.getInt("rodLevel");
             startupProgress = nbt.getInt("startupProgress");
@@ -462,16 +404,6 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
                 }
                 inventory.getRawHandler().setStackInSlot(slot, stack);
             }
-        }
-
-        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display, provider);
-            nbt.put("display", display);
-        }
-
-        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
         }
 
         @Override public boolean isActive() { return active; }
@@ -508,17 +440,16 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             energy.setStoredEnergy(nbt.getInt("energy"));
             tanksDirty = false;
         }
-    
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
             lines.text(reactorState.name() + " (" + (rodLevel * 25) + "%)");
             if (burnTotal > 0 && hasLoad()) { lines.percent((int) (100L * burnProgress / burnTotal)); }
-            if (!hasLoad() && fuelSlotsEmpty()) { lines.fuelEmpty(); }
+            if (!hasLoad() && fuelMask() == 0) { lines.fuelEmpty(); }
         }
-}
+    }
 
     public static class FuelChannelHandler extends ConstrainedItemHandler {
-        public FuelChannelHandler(Runnable onChanged) { super(slotConstraints(), onChanged); }
+        public FuelChannelHandler(Runnable onChanged) { super(Stream.concat(Collections.nCopies(FUEL_SLOTS, ConstrainedItemHandler.IOConstraint.INPUT).stream(), Stream.of(ConstrainedItemHandler.IOConstraint.OUTPUT)).toList(), onChanged); }
 
         @Override public int getSlotLimit(int slot) { return slot < FUEL_SLOTS ? 1 : super.getSlotLimit(slot); }
 
@@ -531,11 +462,9 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
     }
 
     public record StyleNOXTank(MarkableFluidTank water, MarkableFluidTank steam, MarkableFluidTank co2) {
-        public StyleNOXTank(Consumer<Void> markDirty, int waterCapacity, int steamCapacity, int co2Capacity) {
-            this(new MarkableFluidTank(waterCapacity, markDirty), new MarkableFluidTank(steamCapacity, markDirty), new MarkableFluidTank(co2Capacity, markDirty));
-        }
+        public StyleNOXTank(Consumer<Void> markDirty) { this(new MarkableFluidTank(ServerConfig.stylenoxWaterTankCapacity, markDirty), new MarkableFluidTank(ServerConfig.stylenoxSteamTankCapacity, markDirty), new MarkableFluidTank(ServerConfig.stylenoxCo2TankCapacity, markDirty)); }
 
-        public static StyleNOXTank makeClient() { return new StyleNOXTank(v -> {}, waterTankCapacity(), steamTankCapacity(), co2TankCapacity()); }
+        public static StyleNOXTank makeClient() { return new StyleNOXTank(v -> {}); }
 
         public CompoundTag toNBT(HolderLookup.Provider provider) {
             CompoundTag tag = new CompoundTag();
@@ -552,29 +481,15 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         }
     }
 
-    private static class SyncEnergyStorage extends AveragingEnergyStorage {
-        private final Runnable onChanged;
-
-        public SyncEnergyStorage(int capacity, Runnable onChanged) {
-            super(capacity);
-            this.onChanged = onChanged;
-        }
-
-        @Override public int receiveEnergy(int maxReceive, boolean simulate) {
-            int received = super.receiveEnergy(maxReceive, simulate);
-            if (received > 0 && !simulate) { onChanged.run(); }
-            return received;
-        }
-
-        @Override public int extractEnergy(int maxExtract, boolean simulate) {
-            int extracted = super.extractEnergy(maxExtract, simulate);
-            if (extracted > 0 && !simulate) { onChanged.run(); }
-            return extracted;
-        }
-
-        @Override public void setStoredEnergy(int stored) {
-            super.setStoredEnergy(stored);
-            onChanged.run();
-        }
+    private static void loadPois(List<PoIJSONSchema> pois) {
+        REDSTONE_POI = MultiblockPOIHelper.getPosList(pois, "redstone0").getFirst();
+        WATER_INPUT_POS_LIST = MultiblockPOIHelper.getPosList(pois, "fluid_input0");
+        WATER_INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(pois, "fluid_input0");
+        STEAM_OUTPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(pois, "fluid_output0");
+        CO2_INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(pois, "fluid_input1");
+        ENERGY_INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(pois, "energy_input0");
+        STEAM_OUTPUT_POS_LIST = STEAM_OUTPUT_POIS.stream().map(CapabilityPosition::posInMultiblock).collect(ImmutableList.toImmutableList());
+        STEAM_OUTPUT_FACINGS = STEAM_OUTPUT_POIS.stream().map(CapabilityPosition::side).collect(ImmutableList.toImmutableList());
+        SOUND_POI = MultiblockPOIHelper.getPosList(pois, "sound0").getFirst();
     }
 }

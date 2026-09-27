@@ -2,59 +2,73 @@ package mctmods.immersivetechnology.common.multiblocks.stone.process;
 
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+import mctmods.immersivetechnology.core.util.ProcessUtils;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
+
+import javax.annotation.Nullable;
 
 public class CoolingTowerProcess {
     private final CoolingTowerRecipe recipe;
+    private final FluidStack recipeInput0;
+    private final FluidStack recipeInput1;
     private int ticksProcessed = 0;
     private double progressAccumulator = 0.0D;
-    private boolean inputsDrained = false;
+    private boolean inputDrained = false;
 
-    public CoolingTowerProcess(CoolingTowerRecipe recipe) { this.recipe = recipe; }
+    public CoolingTowerProcess(CoolingTowerRecipe recipe, FluidStack tank0, FluidStack tank1) {
+        this.recipe = recipe;
+        this.recipeInput0 = tank0.copyWithAmount(recipe.getInput0Amount());
+        this.recipeInput1 = tank1.copyWithAmount(recipe.getInput1Amount());
+    }
 
-    public void tick(CoolingTowerLogic.State state) { tick(state, 1.0D); }
+    @Nullable public static CoolingTowerProcess fromNBT(Level level, CompoundTag tag) {
+        CompoundTag recipeTag = tag.getCompound("recipe");
+        FluidStack input0 = FluidStack.parseOptional(level.registryAccess(), recipeTag.getCompound("input0"));
+        FluidStack input1 = FluidStack.parseOptional(level.registryAccess(), recipeTag.getCompound("input1"));
+        CoolingTowerRecipe recipe = CoolingTowerRecipe.findOriented(level, input0, input1, CoolingTowerRecipe::findRecipe, CoolingTowerRecipe::findRecipe);
+        if (recipe == null) { return null; }
+        CoolingTowerProcess process = new CoolingTowerProcess(recipe, input0, input1);
+        process.ticksProcessed = tag.getInt("ticksProcessed");
+        process.progressAccumulator = tag.getDouble("progressAccumulator");
+        process.inputDrained = tag.getBoolean("inputDrained");
+        return process;
+    }
+
+    public CompoundTag toNBT(HolderLookup.Provider provider) {
+        CompoundTag recipeTag = new CompoundTag();
+        recipeTag.put("input0", recipeInput0.saveOptional(provider));
+        recipeTag.put("input1", recipeInput1.saveOptional(provider));
+        CompoundTag tag = new CompoundTag();
+        tag.put("recipe", recipeTag);
+        tag.putInt("ticksProcessed", ticksProcessed);
+        tag.putDouble("progressAccumulator", progressAccumulator);
+        tag.putBoolean("inputDrained", inputDrained);
+        return tag;
+    }
 
     public void tick(CoolingTowerLogic.State state, double speedMult) {
-        if (ticksProcessed >= recipe.getTotalProcessTime()) { return; }
-
-        if (!inputsDrained) {
-            FluidStack drained0 = state.tanks.input0().drain(recipe.getInput0Amount(), FluidAction.EXECUTE);
-            FluidStack drained1 = state.tanks.input1().drain(recipe.getInput1Amount(), FluidAction.EXECUTE);
-            inputsDrained = true;
-            if (drained0.getAmount() < recipe.getInput0Amount() || !drained0.is(recipe.inputTag0()) || drained1.getAmount() < recipe.getInput1Amount() || !drained1.is(recipe.inputTag1())) {
-                ticksProcessed = recipe.getTotalProcessTime();
+        int total = recipe.getTotalProcessTime();
+        if (ticksProcessed >= total) { return; }
+        if (!inputDrained) {
+            inputDrained = true;
+            if (ProcessUtils.drainFails(state.tanks.input0(), recipe.getInput0Amount(), fluid -> fluid.is(recipe.inputTag0()), state.tanks.input1(), recipe.getInput1Amount(), fluid -> fluid.is(recipe.inputTag1()))) {
+                ticksProcessed = total;
                 return;
             }
         }
-
         progressAccumulator += Math.max(speedMult, 0.0D);
         int advance = (int) progressAccumulator;
         progressAccumulator -= advance;
-        for (int i = 0; i < advance && ticksProcessed < recipe.getTotalProcessTime(); i++) {
-            FluidStack out0 = recipe.fluidOutput0();
-            FluidStack out1 = recipe.fluidOutput1();
-            FluidStack out2 = recipe.fluidOutput2();
-
-            int perTickOut0 = out0.getAmount() / recipe.getTotalProcessTime();
-            int perTickOut1 = out1.getAmount() / recipe.getTotalProcessTime();
-            int perTickOut2 = out2.getAmount() / recipe.getTotalProcessTime();
-
-            if (!out0.isEmpty()) { state.tanks.output0().fill(new FluidStack(out0.getFluid(), perTickOut0), FluidAction.EXECUTE); }
-            if (!out1.isEmpty()) { state.tanks.output1().fill(new FluidStack(out1.getFluid(), perTickOut1), FluidAction.EXECUTE); }
-            if (!out2.isEmpty()) { state.tanks.output2().fill(new FluidStack(out2.getFluid(), perTickOut2), FluidAction.EXECUTE); }
-
+        for (int i = 0; i < advance && ticksProcessed < total; i++) {
             ticksProcessed++;
-
-            if (ticksProcessed == recipe.getTotalProcessTime()) {
-                int remOut0 = out0.getAmount() % recipe.getTotalProcessTime();
-                int remOut1 = out1.getAmount() % recipe.getTotalProcessTime();
-                int remOut2 = out2.getAmount() % recipe.getTotalProcessTime();
-                if (!out0.isEmpty() && remOut0 > 0) { state.tanks.output0().fill(new FluidStack(out0.getFluid(), remOut0), FluidAction.EXECUTE); }
-                if (!out1.isEmpty() && remOut1 > 0) { state.tanks.output1().fill(new FluidStack(out1.getFluid(), remOut1), FluidAction.EXECUTE); }
-                if (!out2.isEmpty() && remOut2 > 0) { state.tanks.output2().fill(new FluidStack(out2.getFluid(), remOut2), FluidAction.EXECUTE); }
-            }
+            boolean last = ticksProcessed == total;
+            ProcessUtils.fillShare(state.tanks.output0(), recipe.fluidOutput0(), total, last);
+            ProcessUtils.fillShare(state.tanks.output1(), recipe.fluidOutput1(), total, last);
+            ProcessUtils.fillShare(state.tanks.output2(), recipe.fluidOutput2(), total, last);
         }
     }
 

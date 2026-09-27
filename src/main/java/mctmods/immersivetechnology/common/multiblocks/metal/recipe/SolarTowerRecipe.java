@@ -20,7 +20,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class SolarTowerRecipe extends MultiblockRecipe {
+public class SolarTowerRecipe extends MultiblockRecipe implements ISolarRecipe {
     public static DeferredHolder<RecipeSerializer<?>, SolarTowerRecipeSerializer> SERIALIZER;
     public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.SOLAR_TOWER);
 
@@ -50,6 +50,7 @@ public class SolarTowerRecipe extends MultiblockRecipe {
     public int inputAmount() { return inputAmount; }
     public int getInputAmount() { return inputAmount; }
     public FluidStack fluidOutput() { return fluidOutput; }
+    @Override public double requiredTemp() { return requiredTemp; }
 
     public boolean matches(FluidStack stack) {
         return stack != null && stack.is(this.inputTag);

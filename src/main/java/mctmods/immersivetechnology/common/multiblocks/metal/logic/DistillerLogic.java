@@ -1,18 +1,16 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.DistillerProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import com.immersiveconvergence.api.util.MultiTankFluidHandler;
-import com.immersiveconvergence.api.util.MarkableFluidTank;
-import com.immersiveconvergence.api.client.MachineSound;
-import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.ServerConfig;
-import com.immersiveconvergence.api.util.RecipeCache;
-import com.immersiveconvergence.api.util.ICItemUtils;
+import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.util.FluidContainers;
+import mctmods.immersivetechnology.core.util.IDisplaySyncState;
+import mctmods.immersivetechnology.core.util.ItemOutputs;
+import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
+
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
@@ -22,12 +20,24 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.Redstone
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
 import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
+import com.immersiveconvergence.api.util.RecipeCache;
+import com.immersiveconvergence.api.util.SlotRangeItemHandler;
+import com.immersiveconvergence.api.util.TankPair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -39,30 +49,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidActionResult;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.BiFunction;
-import com.immersiveconvergence.api.util.ConstrainedItemHandler;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.multiblock.IProcessContext;
-import com.immersiveconvergence.api.util.SlotRangeItemHandler;
-import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
-import com.immersiveconvergence.api.multiblock.IDisplayContext;
-import com.immersiveconvergence.api.multiblock.ShapeData;
 
 public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, IServerTickableComponent<DistillerLogic.State>, IClientTickableComponent<DistillerLogic.State>, IFluidOutputPump<DistillerLogic.State> {
-    private static final ShapeData SHAPE = ITShapes.get("distiller");
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -74,16 +72,18 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
     public static int energyCapacity() { return ServerConfig.distillerEnergyCapacity; }
     public static int energyMaxIo() { return ServerConfig.distillerEnergyMaxIO; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("distiller").pointsOfInterest);
+    private static List<PoIJSONSchema> RAW_POIS;
 
-    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").getFirst();
-    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    private static final List<BlockPos> ENERGY_INPUT_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "energy_input0");
-    private static final RelativeBlockFace ENERGY_INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "energy_input0");
-    public static final MultiblockFace ITEM_OUTPUT_POI = new MultiblockFace(MultiblockPOIHelper.getFacing(RAW_POIS, "item_output0"), MultiblockPOIHelper.getPosList(RAW_POIS, "item_output0").getFirst());
-    private static final RelativeBlockFace INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    public static BlockPos REDSTONE_POI;
+    public static List<BlockPos> INPUT_FLUID_POIS;
+    public static List<BlockPos> OUTPUT_FLUID_POIS;
+    private static List<BlockPos> ENERGY_INPUT_POIS;
+    private static RelativeBlockFace ENERGY_INPUT_FACING;
+    public static MultiblockFace ITEM_OUTPUT_POI;
+    private static RelativeBlockFace INPUT_FLUID_FACING;
+    private static RelativeBlockFace OUTPUT_FLUID_FACING;
+
+    static { ITShapes.readPois("distiller", DistillerLogic::loadPois); }
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
@@ -95,23 +95,10 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         State state = ctx.getState();
         List<BlockPos> soundPosList = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         BlockPos soundBlockPos = soundPosList.getFirst();
-        Vec3 soundPos = ctx.getLevel().toAbsolute(new Vec3(soundBlockPos.getX() + 0.5, soundBlockPos.getY() + 0.5, soundBlockPos.getZ() + 0.5));
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) { return; }
-        float distSq = (float) player.distanceToSqr(soundPos);
-        float attenuation = Math.max(distSq / 32f, 1f);
-        float vol = 1f / attenuation;
-        if (state.active && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(
-                    () -> state.active, ctx.isValid(), soundPos, Sounds.distiller,
-                    () -> {
-                        LocalPlayer p = Minecraft.getInstance().player;
-                        if (p == null) { return 0f; }
-                        float a = (float) Math.max(p.distanceToSqr(soundPos) / 32f, 1f);
-                        return 1f / a;
-                    },
-                    () -> 1f
-            );
+        Vec3 soundPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(soundBlockPos));
+        if (Minecraft.getInstance().player == null) { return; }
+        if (state.active && ClientUtils.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
+            state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.distiller, () -> ClientUtils.attenuated(soundPos, 32, 1), () -> 1f);
         }
     }
 
@@ -130,25 +117,10 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         }
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipeHolder);
-        tryEmptyContainer(state.tanks.input(), state.inventory);
+        FluidContainers.emptyBucket(state.tanks.input(), state.inventory, SLOT_INPUT_FILLED, SLOT_INPUT_EMPTY);
         FluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         pumpOutputs(ctx);
-        IItemHandlerModifiable inventory = state.inventory;
-        ItemStack drainedContainer = inventory.getStackInSlot(SLOT_INPUT_EMPTY);
-        if (!drainedContainer.isEmpty()) {
-            drainedContainer = ICItemUtils.insertStackIntoInventory(state.outputRef, drainedContainer, false);
-            inventory.setStackInSlot(SLOT_INPUT_EMPTY, drainedContainer);
-        }
-        ItemStack filledContainer = inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
-        if (!filledContainer.isEmpty()) {
-            filledContainer = ICItemUtils.insertStackIntoInventory(state.outputRef, filledContainer, false);
-            inventory.setStackInSlot(SLOT_OUTPUT_FILLED, filledContainer);
-        }
-        ItemStack itemOutput = inventory.getStackInSlot(OUTPUT_SLOT);
-        if (!itemOutput.isEmpty()) {
-            itemOutput = ICItemUtils.insertStackIntoInventory(state.outputRef, itemOutput, false);
-            inventory.setStackInSlot(OUTPUT_SLOT, itemOutput);
-        }
+        ItemOutputs.eject(state.inventory, state.outputRef, SLOT_INPUT_EMPTY, SLOT_OUTPUT_FILLED, OUTPUT_SLOT);
         boolean activeChanged = wasActive != state.active;
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
@@ -165,22 +137,6 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
     }
 
-    private void tryEmptyContainer(IFluidHandler tank, IItemHandlerModifiable inv) {
-        ItemStack filledContainer = inv.getStackInSlot(DistillerLogic.SLOT_INPUT_FILLED);
-        if (filledContainer.isEmpty()) { return; }
-        FluidActionResult result = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.SIMULATE);
-        if (!result.isSuccess()) { return; }
-        ItemStack emptyContainer = result.getResult();
-        ItemStack outputStack = inv.getStackInSlot(DistillerLogic.SLOT_INPUT_EMPTY);
-        if (!outputStack.isEmpty() && !ItemStack.isSameItemSameComponents(outputStack, emptyContainer)) { return; }
-        if (outputStack.getCount() + emptyContainer.getCount() > emptyContainer.getMaxStackSize()) { return; }
-        result = FluidUtils.tryEmptyContainer(filledContainer, tank, FluidType.BUCKET_VOLUME, FluidAction.EXECUTE);
-        filledContainer.shrink(1);
-        inv.setStackInSlot(DistillerLogic.SLOT_INPUT_FILLED, filledContainer);
-        if (outputStack.isEmpty()) { inv.setStackInSlot(DistillerLogic.SLOT_INPUT_EMPTY, result.getResult()); }
-        else { outputStack.grow(result.getResult().getCount()); }
-    }
-
     private void tryEnqueueProcess(State state, Level level, RecipeHolder<DistillerRecipe> recipeHolder) {
         if (state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
         if (recipeHolder == null) { return; }
@@ -189,13 +145,8 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (inputFluid.getAmount() < recipe.getInputAmount()) { return; }
         FluidStack outputFluid = recipe.fluidOutput;
         if (outputFluid != null && !outputFluid.isEmpty() && state.tanks.output().getFluidAmount() + outputFluid.getAmount() > state.tanks.output().getCapacity()) { return; }
-        ItemStack itemOutput = recipe.itemOutput;
-        if (!itemOutput.isEmpty()) {
-            ItemStack currentOutput = state.inventory.getStackInSlot(OUTPUT_SLOT);
-            if (!currentOutput.isEmpty() && (!ItemStack.isSameItemSameComponents(currentOutput, itemOutput) || currentOutput.getCount() + itemOutput.getCount() > currentOutput.getMaxStackSize())) { return; }
-        }
-        DistillerProcess process = new DistillerProcess(recipeHolder);
-        state.processor.addProcessToQueue(process, level, false);
+        if (!recipe.itemOutput.isEmpty() && ItemOutputs.overflows(state.inventory.getStackInSlot(OUTPUT_SLOT), recipe.itemOutput)) { return; }
+        state.processor.addProcessToQueue(new DistillerProcess(recipeHolder), level, false);
     }
 
     @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {
@@ -230,12 +181,12 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ITShapes.get("distiller").getter; }
 
-    public static class State implements IMultiblockState, IProcessContext.IProcessContextInMachine<DistillerRecipe>, IDisplayContext {
+    public static class State implements IDisplaySyncState, IProcessContext.IProcessContextInMachine<DistillerRecipe>, IDataReloadAware {
         public final BiFunction<Level, FluidStack, RecipeHolder<DistillerRecipe>> recipeGetter = RecipeCache.cached(DistillerRecipe::findRecipe);
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
-        public final DistillerTank tanks;
+        public final TankPair tanks;
         public IFluidHandler inputCap;
         public IFluidHandler outputCap;
         public IItemHandler invCap;
@@ -244,7 +195,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
-        public AveragingEnergyStorage energy;
+        public final AveragingEnergyStorage energy;
         public boolean active;
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
@@ -257,7 +208,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> { markDirty.run(); sync.run(); this.tanksDirty = true; this.inventoryDirty = true; };
-            this.tanks = new DistillerTank(() -> { onChanged.run(); this.tanksDirty = true; });
+            this.tanks = new TankPair(v -> { onChanged.run(); this.tanksDirty = true; }, inputTankCapacity(), outputTankCapacity());
             this.tankArray = new IFluidTank[]{tanks.input(), tanks.output()};
             inventory = new ConstrainedItemHandler(
                     List.of(
@@ -284,14 +235,19 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
                             new SlotRangeItemHandler.IntRange(OUTPUT_SLOT, OUTPUT_SLOT + 1)
                     )
             );
-            this.outputRef = ctx.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI);
+            bindOutputs(ctx);
         }
+
+        @Override public void onDataReload(IInitialMultiblockContext<?> context) { lastComparatorValue = -1; bindOutputs(context); }
+
+        private void bindOutputs(IInitialMultiblockContext<?> context) { this.outputRef = context.getCapabilityAt(Capabilities.ItemHandler.BLOCK, ITEM_OUTPUT_POI); }
 
         public ConstrainedItemHandler getInventory() { return inventory; }
 
-        public DistillerTank getTanks() { return tanks; }
+        public TankPair getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            rsState.writeSaveNBT(nbt, provider);
             nbt.put("energy", energy.serializeNBT(provider));
             nbt.put("tanks", this.tanks.toNBT(provider));
             nbt.put("processor", processor.toNBT(provider));
@@ -300,6 +256,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         }
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+            rsState.readSaveNBT(nbt, provider);
             CompoundTag energyTag = nbt.getCompound("energy");
             if (!energyTag.isEmpty()) {
                 energy.deserializeNBT(provider, energyTag);
@@ -310,18 +267,6 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             active = nbt.getBoolean("active");
             tanksDirty = false;
             inventoryDirty = false;
-        }
-
-        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display, provider);
-            nbt.put("display", display);
-        }
-
-        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) {
-                readDisplaySyncNBT(nbt.getCompound("display"), provider);
-            }
         }
 
         @Override public AveragingEnergyStorage getEnergy() { return energy; }
@@ -345,7 +290,6 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            if (energy == null) { energy = new SyncEnergyStorage(energyCapacity(), energyMaxIo(), () -> {}); }
             CompoundTag energyTag = nbt.getCompound("energy");
             if (!energyTag.isEmpty()) {
                 energy.deserializeNBT(provider, energyTag);
@@ -355,62 +299,21 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             tanksDirty = false;
             inventoryDirty = false;
         }
-    
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
             if (queueSize > 0) { lines.text("Processing (" + queueSize + " queued)"); }
         }
-}
-
-    public record DistillerTank(MarkableFluidTank input, MarkableFluidTank output) {
-        public DistillerTank(Runnable markDirty) {
-            this(new MarkableFluidTank(inputTankCapacity(), v -> markDirty.run()), new MarkableFluidTank(outputTankCapacity(), v -> markDirty.run()));
-        }
-
-        public static DistillerTank makeClient() { return new DistillerTank(() -> {}); }
-
-        public CompoundTag toNBT(HolderLookup.Provider provider) {
-            CompoundTag tag = new CompoundTag();
-            tag.put("input", this.input().writeToNBT(provider, new CompoundTag()));
-            tag.put("output", this.output().writeToNBT(provider, new CompoundTag()));
-            return tag;
-        }
-
-        public void readNBT(CompoundTag tag, HolderLookup.Provider provider) {
-            this.input().readFromNBT(provider, tag.getCompound("input"));
-            this.output().readFromNBT(provider, tag.getCompound("output"));
-        }
-
-        @SuppressWarnings("unused")
-        public int getCapacity() { return Math.max(inputTankCapacity(), outputTankCapacity()); }
     }
 
-    private static class SyncEnergyStorage extends AveragingEnergyStorage {
-        private final Runnable onChanged;
-
-        public SyncEnergyStorage(int capacity, int maxIO, Runnable onChanged) {
-            super(capacity);
-            this.maxReceive = maxIO;
-            this.maxExtract = maxIO;
-            this.onChanged = onChanged;
-        }
-
-        @Override public int receiveEnergy(int maxReceive, boolean simulate) {
-            int received = super.receiveEnergy(maxReceive, simulate);
-            if (received > 0 && !simulate) { onChanged.run(); }
-            return received;
-        }
-
-        @Override public int extractEnergy(int maxExtract, boolean simulate) {
-            int extracted = super.extractEnergy(maxExtract, simulate);
-            if (extracted > 0 && !simulate) { onChanged.run(); }
-            return extracted;
-        }
-
-        public void setStoredEnergy(int energy) {
-            int prev = getEnergyStored();
-            super.setStoredEnergy(energy);
-            if (energy != prev && onChanged != null) { onChanged.run(); }
-        }
+    private static void loadPois(List<PoIJSONSchema> pois) {
+        RAW_POIS = pois;
+        REDSTONE_POI = MultiblockPOIHelper.getPosList(pois, "redstone0").getFirst();
+        INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(pois, "fluid_input0");
+        OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(pois, "fluid_output0");
+        ENERGY_INPUT_POIS = MultiblockPOIHelper.getPosList(pois, "energy_input0");
+        ENERGY_INPUT_FACING = MultiblockPOIHelper.getFacing(pois, "energy_input0");
+        ITEM_OUTPUT_POI = new MultiblockFace(MultiblockPOIHelper.getFacing(pois, "item_output0"), MultiblockPOIHelper.getPosList(pois, "item_output0").getFirst());
+        INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_input0");
+        OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_output0");
     }
 }

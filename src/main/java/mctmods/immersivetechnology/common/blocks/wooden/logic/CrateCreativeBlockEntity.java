@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.wooden.logic;
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
+import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
@@ -22,7 +23,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
@@ -116,12 +116,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
         return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this);
     }
 
-    public boolean stillValid(Player player) {
-        if (level != null && !level.isClientSide) {
-            return !this.isRemoved() && player.distanceToSqr(Vec3.atCenterOf(getBlockPos())) <= 64.0D;
-        }
-        return false;
-    }
+    public boolean stillValid(Player player) { return level != null && !level.isClientSide && Reach.within(this, player); }
 
     @Override
     public int getSlots() { return 1; }

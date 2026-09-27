@@ -11,8 +11,6 @@ public enum TranslationKey {
     CATEGORY_SOLAR_TOWER_TIME("category." + Reference.MODID + ".metal_multiblock.solar_tower.time"),
     CATEGORY_STYLENOX_ENERGY("category." + Reference.MODID + ".metal_multiblock.stylenox.energy"),
     CATEGORY_STYLENOX_TIME("category." + Reference.MODID + ".metal_multiblock.stylenox.time"),
-    CHAT_RS_CONTROL_INVERTED_OFF("chat.immersiveengineering.info.rsControl.invertedOff"),
-    CHAT_RS_CONTROL_INVERTED_ON("chat.immersiveengineering.info.rsControl.invertedOn"),
     CREATIVE_TAB("itemGroup." + Reference.MODID),
     GUI_APPLY("gui." + Reference.MODID + ".apply"),
     GUI_CRATE_CREATIVE("gui." + Reference.MODID + ".crate_creative"),

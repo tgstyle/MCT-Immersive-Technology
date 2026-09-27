@@ -66,7 +66,7 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
-    version_ie_full = "${version_minecraft}-${version_ie}"
+    version_ie_full = version_minecraft + '-' + version_ie
     version_ic = versionProps.getProperty('version_ic', '[0,)')
     version_ic_curse = versionProps['version_ic_curse']
     version_ie_curse = versionProps['version_ie_curse']
@@ -168,10 +168,11 @@ neoForge {
     }
 
     mods {
-        "${mod_id}" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.datagen
-            sourceSet sourceSets.gametest
+        register(mod_id.toString()) { net.neoforged.moddevgradle.dsl.ModModel mod ->
+            SourceSetContainer sets = project.extensions.getByType(SourceSetContainer)
+            mod.modSourceSets.add(sets.named('main'))
+            mod.modSourceSets.add(sets.named('datagen'))
+            mod.modSourceSets.add(sets.named('gametest'))
         }
     }
 
@@ -204,7 +205,7 @@ neoForge {
         }
 
         configureEach {
-            gameDirectory = project.file('run')
+            gameDirectory = layout.projectDirectory.dir('run')
             systemProperty('neoforge.enabledGameTestNamespaces', mod_id.toString())
         }
     }
@@ -309,9 +310,9 @@ tasks.register('optimizePng') {
     doLast {
         pngFiles.each { File file ->
             long size = file.length()
-            execOps.exec {
-                executable 'optipng'
-                args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+            execOps.exec { ExecSpec spec ->
+                spec.executable('optipng')
+                spec.args('-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath)
             }
             long newSize = file.length()
             if (newSize < size) {

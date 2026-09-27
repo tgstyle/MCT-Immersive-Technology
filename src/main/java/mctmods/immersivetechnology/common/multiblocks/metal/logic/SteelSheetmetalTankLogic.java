@@ -1,15 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.multiblock.IDisplayContext;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import com.immersiveconvergence.api.util.MarkableFluidTank;
-import com.immersiveconvergence.api.util.DelegatingFluidTank;
 import mctmods.immersivetechnology.core.ServerConfig;
-import com.immersiveconvergence.api.util.LayeredComparator;
+import mctmods.immersivetechnology.core.util.IDisplaySyncState;
+
 import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
 import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
@@ -17,19 +11,29 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerT
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.CapabilityPosition;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
 import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.util.DelegatingFluidTank;
+import com.immersiveconvergence.api.util.ICFluidUtils;
+import com.immersiveconvergence.api.util.LayeredComparator;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -40,36 +44,29 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.immersiveconvergence.api.util.ICFluidUtils;
-import com.immersiveconvergence.api.multiblock.ShapeData;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State>, BlockInterfaces.ILadderPositionProvider {
-    private static final ShapeData SHAPE = ITShapes.get("steel_sheetmetal_tank");
+    private static List<CapabilityPosition> INPUT_POIS;
+    private static List<CapabilityPosition> IO_POIS;
+    private static BlockPos OUTPUT0_POI;
+    private static BlockPos OUTPUT1_POI;
+    private static BlockPos OUTPUT2_POI;
+    private static RelativeBlockFace OUTPUT0_FACING;
+    private static RelativeBlockFace OUTPUT1_FACING;
+    private static RelativeBlockFace OUTPUT2_FACING;
+    private static List<BlockPos> COMPARATOR_BASE;
+    private static List<List<BlockPos>> COMPARATOR_LAYERS;
+    public static int COMPARATOR_HEIGHT;
+    private static Set<BlockPos> LADDER_POSITIONS;
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("steel_sheetmetal_tank").pointsOfInterest);
-    private static final List<CapabilityPosition> INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_input0");
-    private static final List<CapabilityPosition> IO_POIS = MultiblockPOIHelper.getCapabilityPositions(RAW_POIS, "fluid_io0");
-    private static final BlockPos OUTPUT0_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0").getFirst();
-    private static final BlockPos OUTPUT1_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output1").getFirst();
-    private static final BlockPos OUTPUT2_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output2").getFirst();
-    private static final RelativeBlockFace OUTPUT0_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace OUTPUT1_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output1");
-    private static final RelativeBlockFace OUTPUT2_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output2");
-    private static final List<BlockPos> COMPARATOR_BASE = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator_base0");
-    private static final List<List<BlockPos>> COMPARATOR_LAYERS;
-
-    static {
-        COMPARATOR_LAYERS = MultiblockPOIHelper.getPosList(RAW_POIS, "comparator_layer0").stream().collect(Collectors.groupingBy(BlockPos::getY, TreeMap::new, ImmutableList.toImmutableList())).values().stream().collect(ImmutableList.toImmutableList());
-    }
-    public static final int COMPARATOR_HEIGHT = COMPARATOR_LAYERS.size() + 1;
-    private static final Set<BlockPos> LADDER_POSITIONS = Set.copyOf(MultiblockPOIHelper.getPosList(RAW_POIS, "ladder"));
+    static { ITShapes.readPois("steel_sheetmetal_tank", SteelSheetmetalTankLogic::loadPois); }
 
     @Override public boolean isLadderPos(BlockPos posInMB) { return LADDER_POSITIONS.contains(posInMB); }
 
@@ -83,10 +80,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     @Override public int getTransferSpeed() { return ServerConfig.steelSheetmetalTankTransferSpeed; }
 
-    @Override public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
-        return !state.tank.isEmpty();
-    }
+    @Override public boolean shouldPumpOutputs(IMultiblockContext<State> ctx) { return !ctx.getState().tank.isEmpty(); }
 
     private record ConditionalFluidHandler(MarkableFluidTank tank, boolean canFill, boolean canDrain, Runnable onChange, Supplier<Boolean> allowDrain) implements IFluidHandler {
         @Override public int getTanks() { return 1; }
@@ -98,57 +92,60 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return this.tank.isFluidValid(stack); }
 
         @Override public int fill(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
-            if (!canFill || resource.isEmpty()) return 0;
-            if (action == FluidAction.SIMULATE) return this.tank.fill(resource, FluidAction.SIMULATE);
+            if (!canFill || resource.isEmpty()) { return 0; }
+            if (action == FluidAction.SIMULATE) { return this.tank.fill(resource, FluidAction.SIMULATE); }
             int filled = this.tank.fill(resource, FluidAction.EXECUTE);
-            if (filled > 0) onChange.run();
+            if (filled > 0) { onChange.run(); }
             return filled;
         }
 
         @Override @Nonnull public FluidStack drain(@Nonnull FluidStack resource, @Nonnull FluidAction action) {
-            if (!canDrain || !allowDrain.get() || resource.isEmpty()) return FluidStack.EMPTY;
-            FluidStack drained = this.tank.drain(resource, action);
-            if (!drained.isEmpty() && action == FluidAction.EXECUTE) onChange.run();
-            return drained;
+            if (!canDrain || !allowDrain.get() || resource.isEmpty()) { return FluidStack.EMPTY; }
+            return drained(this.tank.drain(resource, action), action);
         }
 
         @Override @Nonnull public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
-            if (!canDrain || !allowDrain.get() || maxDrain <= 0) return FluidStack.EMPTY;
-            FluidStack drained = this.tank.drain(maxDrain, action);
-            if (!drained.isEmpty() && action == FluidAction.EXECUTE) onChange.run();
+            if (!canDrain || !allowDrain.get() || maxDrain <= 0) { return FluidStack.EMPTY; }
+            return drained(this.tank.drain(maxDrain, action), action);
+        }
+
+        private FluidStack drained(FluidStack drained, FluidAction action) {
+            if (!drained.isEmpty() && action == FluidAction.EXECUTE) { onChange.run(); }
             return drained;
         }
     }
 
-    public static class State implements IMultiblockState, IDisplayContext {
+    public static class State implements IDisplaySyncState, IDataReloadAware {
         public final MarkableFluidTank tank;
-        private final LayeredComparator<IMultiblockContext<State>> comparatorHelper;
-        public IFluidHandler inputHandler;
-        public IFluidHandler ioHandler;
-        public IFluidHandler output0Handler;
-        public IFluidHandler output1Handler;
-        public IFluidHandler output2Handler;
+        private LayeredComparator<IMultiblockContext<State>> comparatorHelper;
+        public final IFluidHandler inputHandler;
+        public final IFluidHandler ioHandler;
+        public final IFluidHandler outputHandler;
         public final MarkableFluidTank output0Tank;
         public final MarkableFluidTank output1Tank;
         public final MarkableFluidTank output2Tank;
         public boolean active = false;
 
         public State(IInitialMultiblockContext<State> capabilitySource) {
-            Runnable changedAndSync = () -> { capabilitySource.getSyncRunnable().run(); capabilitySource.getMarkDirtyRunnable().run(); };
+            Runnable changedAndSync = () -> {
+                capabilitySource.getSyncRunnable().run();
+                capabilitySource.getMarkDirtyRunnable().run();
+            };
             this.tank = new MarkableFluidTank(ServerConfig.steelSheetmetalTankCapacity, v -> changedAndSync.run());
             this.inputHandler = new ConditionalFluidHandler(tank, true, false, changedAndSync, () -> false);
             this.ioHandler = new ConditionalFluidHandler(tank, true, true, changedAndSync, () -> true);
-            this.output0Handler = new ConditionalFluidHandler(tank, false, true, changedAndSync, () -> true);
-            this.output1Handler = new ConditionalFluidHandler(tank, false, true, changedAndSync, () -> true);
-            this.output2Handler = new ConditionalFluidHandler(tank, false, true, changedAndSync, () -> true);
+            this.outputHandler = new ConditionalFluidHandler(tank, false, true, changedAndSync, () -> true);
             this.output0Tank = new DelegatingFluidTank(tank);
             this.output1Tank = new DelegatingFluidTank(tank);
             this.output2Tank = new DelegatingFluidTank(tank);
-            this.comparatorHelper = new LayeredComparator<>(tank.getCapacity(), COMPARATOR_LAYERS.size(),
-                    (ctx, value) -> { for (BlockPos pos : COMPARATOR_BASE) { ctx.setComparatorOutputFor(pos, value); } },
-                    (ctx, layer, value) -> { for (BlockPos pos : COMPARATOR_LAYERS.get(layer)) { ctx.setComparatorOutputFor(pos, value); } }
-            );
+            this.comparatorHelper = newComparator();
         }
+
+        private LayeredComparator<IMultiblockContext<State>> newComparator() {
+            return new LayeredComparator<>(tank.getCapacity(), COMPARATOR_LAYERS.size(), (ctx, value) -> { for (BlockPos pos : COMPARATOR_BASE) { ctx.setComparatorOutputFor(pos, value); } }, (ctx, layer, value) -> { for (BlockPos pos : COMPARATOR_LAYERS.get(layer)) { ctx.setComparatorOutputFor(pos, value); } });
+        }
+
+        @Override public void onDataReload(IInitialMultiblockContext<?> context) { comparatorHelper = newComparator(); }
 
         @Override public boolean isActive() { return active; }
 
@@ -158,37 +155,23 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
 
-        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            nbt.put("tank", tank.writeToNBT(provider, new CompoundTag()));
-        }
+        @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) { nbt.put("tank", tank.writeToNBT(provider, new CompoundTag())); }
 
-        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            tank.readFromNBT(provider, nbt.getCompound("tank"));
-        }
+        @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) { tank.readFromNBT(provider, nbt.getCompound("tank")); }
 
-        @Override public void writeSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display, provider);
-            nbt.put("display", display);
-        }
-
-        @Override public void readSyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display"), provider); }
-        }
-
-        public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+        @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.put("tank", tank.writeToNBT(provider, new CompoundTag()));
         }
 
-        public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
+        @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tank.readFromNBT(provider, nbt.getCompound("tank"));
         }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
-        final State state = ctx.getState();
+        State state = ctx.getState();
         state.comparatorHelper.update(ctx, state.tank.getFluidAmount());
         boolean isActive = !state.tank.isEmpty();
         if (state.active != isActive) {
@@ -205,26 +188,39 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
             BlockPos posIn = position.posInMultiblock();
             RelativeBlockFace side = position.side();
-            if (side == null) return null;
-            if (INPUT_POIS.stream().anyMatch(p -> p.posInMultiblock().equals(posIn) && p.side() == side)) return state.inputHandler;
-            if (IO_POIS.stream().anyMatch(p -> p.posInMultiblock().equals(posIn) && p.side() == side)) return state.ioHandler;
-            if (posIn.equals(OUTPUT0_POI) && side == OUTPUT0_FACING) return state.output0Handler;
-            if (posIn.equals(OUTPUT1_POI) && side == OUTPUT1_FACING) return state.output1Handler;
-            if (posIn.equals(OUTPUT2_POI) && side == OUTPUT2_FACING) return state.output2Handler;
+            if (side == null) { return null; }
+            if (INPUT_POIS.stream().anyMatch(p -> p.posInMultiblock().equals(posIn) && p.side() == side)) { return state.inputHandler; }
+            if (IO_POIS.stream().anyMatch(p -> p.posInMultiblock().equals(posIn) && p.side() == side)) { return state.ioHandler; }
+            if ((posIn.equals(OUTPUT0_POI) && side == OUTPUT0_FACING) || (posIn.equals(OUTPUT1_POI) && side == OUTPUT1_FACING) || (posIn.equals(OUTPUT2_POI) && side == OUTPUT2_FACING)) { return state.outputHandler; }
             return null;
         });
     }
 
-    @Override public void dropExtraItems(State state, java.util.function.Consumer<net.minecraft.world.item.ItemStack> drop) { }
+    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { }
 
-    @Override @Nullable public List<Component> getOverlayText(State state, BlockPos pos, BlockHitResult hit, Player player, boolean hammer) {
-        if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) return List.of(ICFluidUtils.formatFluidStack(state.tank.getFluid()));
-        return null;
+    @Override @Nullable public List<Component> getOverlayText(State state, BlockPos pos, BlockHitResult hit, Player player, boolean hammer) { return ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND)) ? List.of(ICFluidUtils.formatFluidStack(state.tank.getFluid())) : null; }
+
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return ITShapes.get("steel_sheetmetal_tank").getter; }
+
+    @Override public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
+        if (!FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
+        ctx.markMasterDirty();
+        ctx.requestMasterBESync();
+        return ItemInteractionResult.SUCCESS;
     }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return SHAPE.getter; }
-
-    public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { ctx.markMasterDirty(); ctx.requestMasterBESync(); return ItemInteractionResult.SUCCESS; } else return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    private static void loadPois(List<PoIJSONSchema> pois) {
+        INPUT_POIS = MultiblockPOIHelper.getCapabilityPositions(pois, "fluid_input0");
+        IO_POIS = MultiblockPOIHelper.getCapabilityPositions(pois, "fluid_io0");
+        OUTPUT0_POI = MultiblockPOIHelper.getPosList(pois, "fluid_output0").getFirst();
+        OUTPUT1_POI = MultiblockPOIHelper.getPosList(pois, "fluid_output1").getFirst();
+        OUTPUT2_POI = MultiblockPOIHelper.getPosList(pois, "fluid_output2").getFirst();
+        OUTPUT0_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_output0");
+        OUTPUT1_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_output1");
+        OUTPUT2_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_output2");
+        COMPARATOR_BASE = MultiblockPOIHelper.getPosList(pois, "comparator_base0");
+        COMPARATOR_LAYERS = MultiblockPOIHelper.getPosList(pois, "comparator_layer0").stream().collect(Collectors.groupingBy(BlockPos::getY, TreeMap::new, ImmutableList.toImmutableList())).values().stream().collect(ImmutableList.toImmutableList());
+        COMPARATOR_HEIGHT = COMPARATOR_LAYERS.size() + 1;
+        LADDER_POSITIONS = Set.copyOf(MultiblockPOIHelper.getPosList(pois, "ladder"));
     }
 }
