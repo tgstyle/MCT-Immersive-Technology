@@ -1,20 +1,21 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
+
 import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
 import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
+import com.immersiveconvergence.api.util.TankPair;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.items.IItemHandler;
-
 import java.util.List;
 
 public class DistillerMenu extends BaseContainerMenu {
-    public final DistillerLogic.DistillerTank tanks;
+    public final TankPair tanks;
     public final IMutableEnergyStorage energy;
 
     public static DistillerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<DistillerLogic.State> ctx) {
@@ -36,12 +37,12 @@ public class DistillerMenu extends BaseContainerMenu {
                         ),
                         () -> {}
                 ),
-                DistillerLogic.DistillerTank.makeClient(),
+                new TankPair(v -> {}, DistillerLogic.inputTankCapacity(), DistillerLogic.outputTankCapacity()),
                 new MutableEnergyStorage(32000)
         );
     }
 
-    protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, DistillerLogic.DistillerTank tanks, IMutableEnergyStorage energy) {
+    protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, TankPair tanks, IMutableEnergyStorage energy) {
         super(ctx);
         this.tanks = tanks;
         this.energy = energy;

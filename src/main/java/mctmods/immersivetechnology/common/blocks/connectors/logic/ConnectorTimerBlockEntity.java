@@ -15,6 +15,7 @@ import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -330,10 +331,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
 
     @Override public int getMaxRSInput() { return 15; }
 
-    public boolean stillValid(Player player) {
-        if (level == null || level.getBlockEntity(worldPosition) != this) { return false; }
-        return player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D;
-    }
+    public boolean stillValid(Player player) { return level != null && level.getBlockEntity(worldPosition) == this && Reach.within(this, player); }
 
     @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) {
         return ConnectorTimerMenu.makeServer(MenuTypes.CONNECTOR_TIMER.getType(), id, inv, this);

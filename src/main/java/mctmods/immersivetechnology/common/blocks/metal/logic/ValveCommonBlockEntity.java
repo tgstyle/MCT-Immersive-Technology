@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 import java.text.DecimalFormat;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.network.OSDRequestMessage;
+import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -227,5 +228,5 @@ public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements 
 
     @Nonnull public abstract Component getDisplayName();
 
-    public abstract boolean stillValid(Player player);
+    public boolean stillValid(Player player) { return Reach.within(this, player); }
 }

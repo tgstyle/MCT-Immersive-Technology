@@ -1,11 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
-import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
-import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.Reach;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -20,23 +22,18 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import java.util.function.Consumer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
+import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements MenuProvider, IItemHandlerModifiable, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction {
-
     private ItemStack template = ItemStack.EMPTY;
     private final LazyOptional<IItemHandlerModifiable> itemHandler = LazyOptional.of(() -> this);
 
-    public CrateCreativeBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntities.CRATE_CREATIVE.get(), pos, state);
-    }
+    public CrateCreativeBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.CRATE_CREATIVE.get(), pos, state); }
 
     @Override public <T> @Nonnull LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) { return itemHandler.cast(); }
@@ -102,9 +99,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
             CompoundTag tag = stack.getTag();
             if (tag != null && tag.contains("template")) {
                 CompoundTag templateTag = tag.getCompound("template");
-                if (!templateTag.isEmpty()) {
-                    setTemplate(ItemStack.of(templateTag));
-                }
+                if (!templateTag.isEmpty()) { setTemplate(ItemStack.of(templateTag)); }
             }
         }
     }
@@ -113,12 +108,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
 
     @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
 
-    public boolean stillValid(Player player) {
-        if (level != null && !level.isClientSide) {
-            return !this.isRemoved() && player.distanceToSqr(Vec3.atCenterOf(getBlockPos())) <= 64.0D;
-        }
-        return false;
-    }
+    public boolean stillValid(Player player) { return level != null && !level.isClientSide && Reach.within(this, player); }
 
     @Override public int getSlots() { return 1; }
 

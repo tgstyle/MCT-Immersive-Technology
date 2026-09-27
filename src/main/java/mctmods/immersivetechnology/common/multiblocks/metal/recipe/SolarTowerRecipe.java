@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 
-public class SolarTowerRecipe extends MultiblockRecipe {
+public class SolarTowerRecipe extends MultiblockRecipe implements ISolarRecipe {
     public static RegistryObject<IERecipeSerializer<SolarTowerRecipe>> SERIALIZER;
     public static final CachedRecipeList<SolarTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.SOLAR_TOWER);
 
@@ -34,6 +34,12 @@ public class SolarTowerRecipe extends MultiblockRecipe {
         this.fluidInputList = Lists.newArrayList(this.input);
         this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
     }
+
+    @Override public FluidTagInput input() { return input; }
+
+    @Override public FluidStack fluidOutput() { return fluidOutput; }
+
+    @Override public double requiredTemp() { return requiredTemp; }
 
     public boolean matches(FluidStack fluid) { return input.testIgnoringAmount(fluid) && fluid.getAmount() >= input.getAmount(); }
 

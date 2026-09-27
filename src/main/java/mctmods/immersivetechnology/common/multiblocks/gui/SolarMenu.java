@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.ISolarMultiblockState;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarCollectorLogic;
+
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import com.immersiveconvergence.api.util.TankPair;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.ISolarMultiblockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
@@ -16,7 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
-
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Supplier;
@@ -59,7 +59,7 @@ public class SolarMenu extends BaseContainerMenu {
         if (mbStateSupplier != null) {
             ISolarMultiblockState s = mbStateSupplier.get();
             state.set(0, (int) s.getHeatLevel());
-            if (!this.usingPlayers.isEmpty()) { state.set(1, SolarTowerLogic.getSolarIncidenceAngleSection(this.usingPlayers.get(0).level())); }
+            if (!this.usingPlayers.isEmpty()) { state.set(1, SolarCollectorLogic.getSolarIncidenceAngleSection(this.usingPlayers.get(0).level())); }
             state.set(2, s.getDirCounts()[0]);
             state.set(3, s.getDirCounts()[1]);
             state.set(4, s.getDirCounts()[2]);

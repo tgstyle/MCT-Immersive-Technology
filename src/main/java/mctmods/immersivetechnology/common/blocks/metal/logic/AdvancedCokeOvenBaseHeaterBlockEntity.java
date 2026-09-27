@@ -1,14 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.client.split.ISubmodelOffsetProvider;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
-import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+
+import com.immersiveconvergence.api.block.BaseBlockEntity;
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.FacingLimitation;
+import com.immersiveconvergence.api.block.IClientTickableBE;
+import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.client.split.ISubmodelOffsetProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -24,15 +30,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-
 import java.util.function.BooleanSupplier;
-import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.block.ModProperties;
-import com.immersiveconvergence.api.block.FacingLimitation;
-import com.immersiveconvergence.api.block.BaseBlockEntity;
-import com.immersiveconvergence.api.block.IClientTickableBE;
-import com.immersiveconvergence.api.block.IServerTickableBE;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -161,28 +159,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
         soundVolume = fanSpeed / maxFanSpeed();
         soundPitch = 0.7f + 0.3f * soundVolume;
 
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) return;
-
-        if (active || fanSpeed > 0.01f) {
-            float att = (float) Math.max(player.distanceToSqr(soundPosCache) / 8, 1);
-            float vol = Math.max(5f * soundVolume, 0.01f) / att;
-            if (vol > 0.01f && !soundHandle.getAsBoolean()) {
-                soundHandle = MachineSound.startSound(
-                        () -> active || fanSpeed > 0.01f,
-                        () -> level != null && !isRemoved(),
-                        soundPosCache,
-                        Sounds.advancedCokeOvenFan,
-                        () -> {
-                            LocalPlayer p = Minecraft.getInstance().player;
-                            if (p == null) return 0f;
-                            float attenuation = (float) Math.max(p.distanceToSqr(soundPosCache) / 8, 1);
-                            return Math.max(5f * soundVolume, 0.01f) / attenuation;
-                        },
-                        () -> soundPitch
-                );
-            }
-        }
+        if ((active || fanSpeed > 0.01f) && ClientUtils.attenuated(soundPosCache, 8, Math.max(5f * soundVolume, 0.01f)) > 0.01f && !soundHandle.getAsBoolean()) { soundHandle = MachineSound.startSound(() -> active || fanSpeed > 0.01f, () -> level != null && !isRemoved(), soundPosCache, Sounds.advancedCokeOvenFan, () -> ClientUtils.attenuated(soundPosCache, 8, Math.max(5f * soundVolume, 0.01f)), () -> soundPitch); }
     }
 
     public float getFanRotation(float partialTicks) { return prevFanRotation + (fanRotation - prevFanRotation) * partialTicks; }

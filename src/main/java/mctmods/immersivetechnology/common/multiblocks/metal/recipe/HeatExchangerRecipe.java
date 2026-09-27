@@ -6,7 +6,6 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -41,11 +40,6 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
         this.output1 = output1;
         this.totalProcessTime = time;
         this.totalProcessEnergy = energy;
-
-        this.fluidInputList = Lists.newArrayList(this.input0);
-        if (this.input1 != null) this.fluidInputList.add(this.input1);
-        this.fluidOutputList = Lists.newArrayList(this.output0);
-        if (this.output1 != null) this.fluidOutputList.add(this.output1);
     }
 
     public HeatExchangerRecipe modifyTimeAndEnergy(Function<Double, Double> time, Function<Double, Double> energy) {

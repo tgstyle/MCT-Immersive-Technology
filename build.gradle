@@ -82,7 +82,7 @@ ext {
     version_jei = versionProps['version_jei']
     version_parchment = versionProps['version_parchment']
     version_ie = versionProps['version_ie']
-    version_ie_full = "${version_minecraft}-${version_ie}"
+    version_ie_full = version_minecraft + '-' + version_ie
     version_ie_curse = versionProps['version_ie_curse']
     version_ic = versionProps['version_ic']
     version_ic_curse = versionProps['version_ic_curse']
@@ -164,10 +164,11 @@ legacyForge {
     validateAccessTransformers = true
 
     mods {
-        "${mod_id}" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.datagen
-            sourceSet sourceSets.gametest
+        register(mod_id.toString()) { net.neoforged.moddevgradle.dsl.ModModel mod ->
+            SourceSetContainer sets = project.extensions.getByType(SourceSetContainer)
+            mod.modSourceSets.add(sets.named('main'))
+            mod.modSourceSets.add(sets.named('datagen'))
+            mod.modSourceSets.add(sets.named('gametest'))
         }
     }
 
@@ -179,7 +180,7 @@ legacyForge {
             client()
             sourceSet = sourceSets.main
             systemProperty 'forge.logging.markers', ''
-            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id.toString()
             jvmArgument '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
             programArguments.addAll '--username', 'tgstyle', '--width', '1920', '--height', '1080'
         }
@@ -187,7 +188,7 @@ legacyForge {
             server()
             sourceSet = sourceSets.main
             systemProperty 'forge.logging.markers', ''
-            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id.toString()
             jvmArgument '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
             programArguments.addAll '--nogui'
         }
@@ -196,18 +197,18 @@ legacyForge {
             sourceSet = sourceSets.datagen
             systemProperty 'forge.logging.markers', ''
             systemProperty 'fml.earlyprogresswindow', 'false'
-            programArguments.addAll '--mod', mod_id, '--all',
-                    '--output', file('src/generated/resources/').toString(), '--validate',
-                    '--existing', sourceSets.main.resources.srcDirs.first().toString()
+            programArguments.addAll '--mod', mod_id.toString(), '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(), '--validate',
+                    '--existing', file('src/main/resources/').getAbsolutePath()
         }
         gameTestServer {
             type = 'gameTestServer'
             sourceSet = sourceSets.gametest
             systemProperty 'forge.logging.markers', ''
-            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id.toString()
         }
         configureEach {
-            gameDirectory = project.file('run')
+            gameDirectory = layout.projectDirectory.dir('run')
         }
     }
 }
@@ -352,9 +353,9 @@ tasks.register('optimizePng') {
     doLast {
         pngFiles.each { File file ->
             long size = file.length()
-            execOps.exec {
-                executable 'optipng'
-                args '-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath
+            execOps.exec { ExecSpec spec ->
+                spec.executable('optipng')
+                spec.args('-q', '-o7', '-zm1-9', '-strip', 'all', file.absolutePath)
             }
             long newSize = file.length()
             if (newSize < size) {

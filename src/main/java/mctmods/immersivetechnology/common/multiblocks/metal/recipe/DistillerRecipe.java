@@ -6,7 +6,6 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -44,8 +43,6 @@ public class DistillerRecipe extends MultiblockRecipe {
         totalProcessTime = Lazy.of(() -> this.time);
         totalProcessEnergy = Lazy.of(() -> this.energy);
 
-        this.fluidInputList = Lists.newArrayList(this.input);
-        if (this.fluidOutput != null) this.fluidOutputList = Lists.newArrayList(this.fluidOutput);
         this.outputList = Lazy.of(NonNullList::create);
     }
 

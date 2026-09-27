@@ -6,7 +6,6 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,14 +46,6 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
 
         totalProcessTime = Lazy.of(() -> this.time);
         totalProcessEnergy = Lazy.of(() -> this.energy);
-
-        this.fluidInputList = Lists.newArrayList(fluidInput0);
-
-        List<FluidStack> outputs = Lists.newArrayList();
-        if (fluidOutput0 != null) outputs.add(fluidOutput0);
-        if (fluidOutput1 != null) outputs.add(fluidOutput1);
-        if (fluidOutput2 != null) outputs.add(fluidOutput2);
-        this.fluidOutputList = outputs.isEmpty() ? null : outputs;
 
         this.outputList = Lazy.of(NonNullList::create);
     }

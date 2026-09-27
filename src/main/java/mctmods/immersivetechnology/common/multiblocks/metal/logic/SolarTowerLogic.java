@@ -1,506 +1,90 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.util.TankPair;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import com.immersiveconvergence.api.util.MultiTankFluidHandler;
-import com.immersiveconvergence.api.util.MarkableFluidTank;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
-import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
-import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import com.immersiveconvergence.api.util.RecipeCache;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
+
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelper;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockBE;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
-import com.google.common.collect.ImmutableList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.ItemHandlerHelper;
-import java.util.HashSet;
+import net.minecraft.sounds.SoundEvent;
 import java.util.List;
-import java.util.Set;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
-import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
-import java.util.function.BiFunction;
-import com.immersiveconvergence.api.util.ConstrainedItemHandler;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
-import com.immersiveconvergence.api.multiblock.IDisplayContext;
-import com.immersiveconvergence.api.multiblock.ShapeData;
 
-public class SolarTowerLogic implements IMultiblockLogic<SolarTowerLogic.State>, IServerTickableComponent<SolarTowerLogic.State>, IClientTickableComponent<SolarTowerLogic.State>, IFluidOutputPump<SolarTowerLogic.State> {
-    private static final ShapeData SHAPE = ITShapes.get("solar_tower");
-    public static final int SLOT_INPUT_FILLED = 0;
-    public static final int SLOT_INPUT_EMPTY = 1;
-    public static final int SLOT_OUTPUT_EMPTY = 2;
-    public static final int SLOT_OUTPUT_FILLED = 3;
+public class SolarTowerLogic extends SolarCollectorLogic<SolarTowerRecipe, SolarTowerLogic.State> {
+    public static BlockPos REDSTONE_POI;
+    public static BlockPos RUNNING_SOUND_POI;
+    public static BlockPos LINK_POI;
+    public static BlockPos REFLECTOR_POI;
+    public static BlockPos SUN_POI;
+    public static List<BlockPos> INPUT_FLUID_POIS;
+    public static List<BlockPos> OUTPUT_FLUID_POIS;
+    private static RelativeBlockFace INPUT_FLUID_FACING;
+    private static RelativeBlockFace OUTPUT_FLUID_FACING;
 
-    public static int inputTankCapacity() { return ServerConfig.solarTowerInputTankCapacity; }
-    public static int outputTankCapacity() { return ServerConfig.solarTowerOutputTankCapacity; }
+    static { ITShapes.readPois("solar_tower", SolarTowerLogic::loadPois); }
 
     public static double workingHeatLevel() { return CommonConfig.solarTowerWorkingHeatLevel; }
-    private static double dayMinHeatLoss() { return ServerConfig.solarTowerDayMinHeatLoss; }
-    private static double lossPerSectionDrop() { return ServerConfig.solarTowerLossPerSectionDrop; }
-    private static double tempDependentLossFactor() { return ServerConfig.solarTowerTempDependentLossFactor; }
-    private static double heatIncreaseFactor() { return ServerConfig.solarTowerHeatIncreaseFactor; }
-    private static double tempToMinReflectorsDivisor() { return ServerConfig.solarTowerTempToMinReflectorsDivisor; }
-    private static double reflectorTierOffset() { return ServerConfig.solarTowerReflectorTierOffset; }
-    public static int progressLossOffTemp() { return ServerConfig.solarTowerProgressLossOffTemp; }
-    public static float speedMultiplier() { return (float) ServerConfig.solarTowerSpeedMultiplier; }
 
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("solar_tower").pointsOfInterest);
+    @Override protected double dayMinHeatLoss() { return ServerConfig.solarTowerDayMinHeatLoss; }
+    @Override protected double lossPerSectionDrop() { return ServerConfig.solarTowerLossPerSectionDrop; }
+    @Override protected double tempDependentLossFactor() { return ServerConfig.solarTowerTempDependentLossFactor; }
+    @Override protected double heatIncreaseFactor() { return ServerConfig.solarTowerHeatIncreaseFactor; }
+    @Override protected double tempToMinReflectorsDivisor() { return ServerConfig.solarTowerTempToMinReflectorsDivisor; }
+    @Override protected double reflectorTierOffset() { return ServerConfig.solarTowerReflectorTierOffset; }
+    @Override protected int progressLossOffTemp() { return ServerConfig.solarTowerProgressLossOffTemp; }
+    @Override protected float speedMultiplier() { return (float) ServerConfig.solarTowerSpeedMultiplier; }
 
-    public static final BlockPos REDSTONE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "redstone0").get(0);
-    public static final BlockPos RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final BlockPos LINK_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "link0").get(0);
-    public static final BlockPos REFLECTOR_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "reflector0").get(0);
-    public static final BlockPos SUN_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sun0").get(0);
-    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
+    @Override protected String shapeName() { return "solar_tower"; }
+    @Override protected BlockPos redstonePoi() { return REDSTONE_POI; }
+    @Override protected boolean enabled(IMultiblockContext<State> ctx) { return ctx.getState().rsState.isEnabled(ctx); }
+    @Override protected BlockPos soundPoi() { return RUNNING_SOUND_POI; }
+    @Override protected BlockPos linkPoi() { return LINK_POI; }
+    @Override protected BlockPos reflectorPoi() { return REFLECTOR_POI; }
+    @Override protected List<BlockPos> inputPois() { return INPUT_FLUID_POIS; }
+    @Override protected RelativeBlockFace inputFacing() { return INPUT_FLUID_FACING; }
+    @Override protected RelativeBlockFace outputFacing() { return OUTPUT_FLUID_FACING; }
+    @Override protected Supplier<SoundEvent> sound() { return Sounds.solarTower; }
+    @Override protected double soundFalloff() { return 32; }
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
-    @Override public Direction getOutputDirection(IMultiblockContext<State> ctx) { return ctx.getLevel().toAbsolute(OUTPUT_FACING); }
-
-    @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output()); }
-
-    @Override public void tickClient(IMultiblockContext<State> ctx) {
-        State state = ctx.getState();
-        if (!state.isSoundPlaying.getAsBoolean()) {
-            Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(RUNNING_SOUND_POI.getX() + 0.5, RUNNING_SOUND_POI.getY() + 0.5, RUNNING_SOUND_POI.getZ() + 0.5));
-            FluidStack fs = state.tanks.input().getFluid();
-            SolarTowerRecipe recipe = fs.getAmount() > 0 ? state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fs) : null;
-            double maxHeat = recipe != null ? recipe.requiredTemp : workingHeatLevel();
-            boolean shouldPlay = state.heatLevel >= maxHeat && state.sunVisible && state.reflectorStrength > 0;
-            if (shouldPlay) {
-                LocalPlayer player = Minecraft.getInstance().player;
-                if (player != null) {
-                    double distSq = player.distanceToSqr(soundVec);
-                    float att = (float) Math.max(distSq / 32, 1);
-                    float heatFactor = (float) (state.heatLevel / maxHeat);
-                    float vol = (2 * heatFactor) / att;
-                    if (vol > 0.01f) {
-                        state.soundId++;
-                        int thisId = state.soundId;
-                        state.isSoundPlaying = MachineSound.startSound(() -> {
-                            FluidStack fsActive = state.tanks.input().getFluid();
-                            SolarTowerRecipe recipeActive = fsActive.getAmount() > 0 ? state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsActive) : null;
-                            double maxHeatActive = recipeActive != null ? recipeActive.requiredTemp : workingHeatLevel();
-                            return state.heatLevel >= maxHeatActive && state.sunVisible && state.reflectorStrength > 0 && state.soundId == thisId;
-                        }, ctx.isValid(), soundVec, Sounds.solarTower, () -> {
-                            LocalPlayer playerVol = Minecraft.getInstance().player;
-                            if (playerVol == null) { return 0f; }
-                            float a = (float) Math.max(playerVol.distanceToSqr(soundVec) / 32, 1);
-                            FluidStack fsVol = state.tanks.input().getFluid();
-                            SolarTowerRecipe recipeVol = fsVol.getAmount() > 0 ? state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fsVol) : null;
-                            double maxHeatVol = recipeVol != null ? recipeVol.requiredTemp : workingHeatLevel();
-                            float heatFactorVol = (float) (state.heatLevel / maxHeatVol);
-                            return (2 * heatFactorVol) / a;
-                        }, () -> 1f);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override public void tickServer(IMultiblockContext<State> ctx) {
-        State state = ctx.getState();
-        IMultiblockLevel mlevel = ctx.getLevel();
-        Level level = mlevel.getRawLevel();
-        boolean update = false;
-        state.loadTicks++;
-        if (state.loadTicks > 10 && !state.isLoaded && !level.isClientSide) {
-            state.isLoaded = true;
-            updatePortNeighbors(mlevel);
-            SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, state.basePos);
-            state.registered = result.success;
-            state.failVertical = result.vertical;
-            state.requiredMove = result.requiredMove;
-            if (!state.registered && state.savedRegistered) {
-                int y = state.basePos.getY();
-                Set<BlockPos> towersAtY = SolarRegistry.getData(level).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
-                towersAtY.add(state.basePos);
-                SolarRegistry.getData(level).setDirty();
-                state.registered = true;
-                state.failVertical = false;
-                state.requiredMove = 0;
-            }
-            if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
-            update = true;
-        }
-        if (state.loadTicks > 20 && state.reCheckOnLoad && !level.isClientSide) { state.reCheckOnLoad = false; if (state.registered) { state.reflectorStrength = checkReflectorPositions(mlevel, state); } update = true; }
-        if (!state.registered) { return; }
-        boolean oldVisible = state.sunVisible;
-        state.sunVisible = level.canSeeSky(state.sunPos);
-        if (oldVisible != state.sunVisible) { update = true; }
-        long time = level.getGameTime();
-        boolean enabled = state.rsState.isEnabled(ctx);
-        if (!enabled && state.reflectorStrength > 0) { detachReflectorPositions(state); state.reflectorStrength = 0; update = true; }
-        if (enabled && (time % 60 == 0 || state.reflectorStrength == 0)) { state.reflectorStrength = checkReflectorPositions(mlevel, state); }
-        boolean wasActive = state.active;
-        update |= heatLogic(state, level, enabled);
-        update |= recipeLogic(state, level, enabled);
-        state.active = enabled && state.activeRecipe != null && state.heatLevel >= state.activeRecipe.requiredTemp;
-        if (wasActive != state.active) { update = true; }
-        ItemStack inputFilled = state.inventory.getStackInSlot(SLOT_INPUT_FILLED);
-        if (!inputFilled.isEmpty()) {
-            FluidActionResult res = FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, null, false);
-            if (res.isSuccess()) {
-                ItemStack resultItem = res.getResult();
-                ItemStack inputEmpty = state.inventory.getStackInSlot(SLOT_INPUT_EMPTY);
-                if (inputEmpty.isEmpty() || (ItemHandlerHelper.canItemStacksStack(resultItem, inputEmpty) && inputEmpty.getCount() + resultItem.getCount() <= inputEmpty.getMaxStackSize())) {
-                    res = FluidUtil.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, null, true);
-                    if (res.isSuccess()) { resultItem = res.getResult(); inputFilled.shrink(1); if (inputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_FILLED, ItemStack.EMPTY); } if (inputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_EMPTY, resultItem); } else { inputEmpty.grow(resultItem.getCount()); } update = true; }
-                }
-            }
-        }
-        ItemStack outputEmpty = state.inventory.getStackInSlot(SLOT_OUTPUT_EMPTY);
-        if (!outputEmpty.isEmpty()) {
-            FluidActionResult res = FluidUtil.tryFillContainer(outputEmpty, state.tanks.output(), Integer.MAX_VALUE, null, false);
-            if (res.isSuccess()) {
-                ItemStack resultItem = res.getResult();
-                ItemStack outputFilled = state.inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
-                if (outputFilled.isEmpty() || (ItemHandlerHelper.canItemStacksStack(resultItem, outputFilled) && outputFilled.getCount() + resultItem.getCount() <= outputFilled.getMaxStackSize())) {
-                    res = FluidUtil.tryFillContainer(outputEmpty, state.tanks.output(), Integer.MAX_VALUE, null, true);
-                    if (res.isSuccess()) { resultItem = res.getResult(); outputEmpty.shrink(1); if (outputEmpty.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_EMPTY, ItemStack.EMPTY); } if (outputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_OUTPUT_FILLED, resultItem); } else { outputFilled.grow(resultItem.getCount()); } update = true; }
-                }
-            }
-        }
-        pumpOutputs(ctx);
-        double workingLevel = state.activeRecipe != null ? state.activeRecipe.requiredTemp : workingHeatLevel();
-        int newComparatorValue = workingLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / workingLevel) : 0;
-        if (newComparatorValue != state.lastComparatorValue) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; update = true; }
-        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
-    }
-
-    private void updatePortNeighbors(IMultiblockLevel mlevel) { Level level = mlevel.getRawLevel(); BlockPos inputPos = mlevel.toAbsolute(INPUT_FLUID_POIS.get(0)); level.updateNeighborsAt(inputPos, level.getBlockState(inputPos).getBlock()); BlockPos outputPos = mlevel.toAbsolute(OUTPUT_FLUID_POIS.get(0)); level.updateNeighborsAt(outputPos, level.getBlockState(outputPos).getBlock()); }
-
-    private double checkReflectorPositions(IMultiblockLevel mlevel, State state) {
-        double totalMirrorStrength = 0;
-        int count = 0;
-        byte[] dirCountsTemp = new byte[4];
-        final Level level = mlevel.getRawLevel();
-        final BlockPos basePos = mlevel.toAbsolute(LINK_POI);
-        final BlockPos collectorPos = mlevel.toAbsolute(REFLECTOR_POI);
-        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(level, basePos, SOLAR_MIN_RANGE, SOLAR_MAX_RANGE);
-        Set<BlockPos> unattached = new HashSet<>();
-        for (BlockPos poiPos : reflectors) {
-            BlockEntity be = level.getBlockEntity(poiPos);
-            if (be instanceof IMultiblockBE<?> mbe) {
-                IMultiblockBEHelper<?> helper = mbe.getHelper();
-                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) {
-                    BlockPos currentTower = reflectorState.getTowerCollectorPosition();
-                    if (currentTower.equals(collectorPos)) { if (reflectorState.setTowerCollectorPosition(collectorPos)) { totalMirrorStrength += reflectorState.getSolarCollectorStrength(); int dir = getReflectorDir(poiPos.getX() - basePos.getX(), poiPos.getZ() - basePos.getZ()); dirCountsTemp[dir]++; count++; } }
-                    else { unattached.add(poiPos); }
-                }
-            }
-        }
-        for (BlockPos poiPos : unattached) {
-            if (count >= 24) { break; }
-            BlockEntity be = level.getBlockEntity(poiPos);
-            if (be instanceof IMultiblockBE<?> mbe) {
-                IMultiblockBEHelper<?> helper = mbe.getHelper();
-                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) {
-                    if (!reflectorState.isMirrorTaken) { if (reflectorState.setTowerCollectorPosition(collectorPos)) { totalMirrorStrength += reflectorState.getSolarCollectorStrength(); int dir = getReflectorDir(poiPos.getX() - basePos.getX(), poiPos.getZ() - basePos.getZ()); dirCountsTemp[dir]++; count++; } }
-                }
-            }
-        }
-        state.dirCounts = dirCountsTemp;
-        state.reflectorCount = (byte) count;
-        return totalMirrorStrength;
-    }
-
-    private int getReflectorDir(int dx, int dz) { if (Math.abs(dx) > Math.abs(dz)) { if (dx > 0) { return 1; } else { return 3; } } else { if (dz > 0) { return 2; } else { return 0; } } }
-
-    private boolean heatLogic(State state, Level level, boolean enabled) {
-        double inc = enabled ? getTemperatureIncrease(state, level) : 0;
-        double loss = getTemperatureLoss(state, level);
-        double oldHeat = state.heatLevel;
-        state.heatLevel = Math.max(0, state.heatLevel + inc - loss);
-        double maxHeat = state.activeRecipe != null ? state.activeRecipe.requiredTemp : workingHeatLevel();
-        state.heatLevel = Math.min(maxHeat, state.heatLevel);
-        return oldHeat != state.heatLevel;
-    }
-
-    private double getTemperatureIncrease(State state, Level level) {
-        double inc = 0;
-        if (state.registered && state.reflectorStrength > 0 && level.isDay() && !level.isRaining() && state.sunVisible) {
-            double effectiveStrength = state.reflectorStrength;
-            if (state.activeRecipe != null) {
-                double minReflectors = state.activeRecipe.requiredTemp / tempToMinReflectorsDivisor();
-                double bestReflectors = minReflectors + 2 * reflectorTierOffset();
-                effectiveStrength = Math.min(state.reflectorStrength, bestReflectors);
-            }
-            inc = effectiveStrength * heatIncreaseFactor() * getSolarIncidenceAngleSection(level);
-        }
-        return inc;
-    }
-
-    private double getTemperatureLoss(State state, Level level) {
-        double loss = dayMinHeatLoss();
-        int section = getSolarIncidenceAngleSection(level);
-        loss += lossPerSectionDrop() * (4 - section);
-        loss += state.heatLevel * tempDependentLossFactor();
-        return loss;
-    }
-
-    private boolean recipeLogic(State state, Level level, boolean enabled) {
-        FluidStack fs = state.tanks.input().getFluid();
-        if (fs.getAmount() <= 0) { state.activeRecipe = null; state.processProgress = 0; state.totalProcessTime = 0; return false; }
-        if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = SolarTowerRecipe.RECIPES.getById(level, state.activeRecipeId); state.activeRecipeId = null; }
-        if (state.activeRecipe == null || !state.activeRecipe.input.testIgnoringAmount(fs)) { state.activeRecipe = state.recipeGetter.apply(level, fs); state.processProgress = 0; state.totalProcessTime = 0; if (state.activeRecipe == null) { return false; } }
-        if (state.activeRecipe == null) { state.processProgress = 0; state.totalProcessTime = 0; return false; }
-        if (enabled && state.heatLevel >= state.activeRecipe.requiredTemp) { state.processProgress += (int) speedMultiplier(); } else { state.processProgress = Math.max(0, state.processProgress - progressLossOffTemp()); }
-        int total = state.activeRecipe.getTotalProcessTime();
-        if (state.processProgress >= total) {
-            assert state.activeRecipe.fluidOutput != null;
-            FluidStack out = state.activeRecipe.fluidOutput.copy();
-            if (state.tanks.output().fill(out, FluidAction.SIMULATE) == out.getAmount()) {
-                FluidStack drained = state.tanks.input().drain(state.activeRecipe.input.getAmount(), FluidAction.EXECUTE);
-                if (drained.getAmount() == state.activeRecipe.input.getAmount() && state.activeRecipe.input.testIgnoringAmount(drained)) {
-                    state.tanks.output().fill(out, FluidAction.EXECUTE);
-                    state.processProgress = 0;
-                    state.totalProcessTime = 0;
-                    return true;
-                }
-            }
-        }
-        boolean changed = state.totalProcessTime != total;
-        state.totalProcessTime = total;
-        return changed;
-    }
-
-    private void detachReflectorPositions(State state) {
-        Level level = state.levelSupplier.get();
-        if (level == null || level.isClientSide) { return; }
-        BlockPos collectorPos = state.collectorPos;
-        Set<BlockPos> reflectors = SolarRegistry.getReflectorsInRange(level, state.basePos, SOLAR_MIN_RANGE, SOLAR_MAX_RANGE);
-        for (BlockPos poiPos : reflectors) {
-            BlockEntity be = level.getBlockEntity(poiPos);
-            if (be instanceof IMultiblockBE<?> mbe) {
-                IMultiblockBEHelper<?> helper = mbe.getHelper();
-                if (helper != null && helper.getState() instanceof SolarReflectorLogic.State reflectorState) { reflectorState.detachTower(collectorPos); }
-            }
-        }
-    }
-
-    public static int getSolarIncidenceAngleSection(Level level) { int skyDarken = level.getSkyDarken(); if (skyDarken == 3) { return 1; } else if (skyDarken == 2) { return 2; } else if (skyDarken == 1) { return 3; } else if (skyDarken == 0) { return 4; } return 0; }
-
-    @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {
-        State state = ctx.getState();
-        if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            if (INPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.inputCap.cast(ctx); }
-            if (OUTPUT_FLUID_POIS.contains(position.posInMultiblock())) { return state.outputCap.cast(ctx); }
-        }
-        return LazyOptional.empty();
-    }
-
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
-
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) {
-        Level level = state.levelSupplier.get();
-        if (level != null && !level.isClientSide) { detachReflectorPositions(state); SolarRegistry.unregisterTower(level, state.basePos); }
-        MultiBlockInventoryUtils.dropItems(state.inventory, drop);
-        try {
-            if (state.inputCap != null) state.inputCap.get(null).invalidate();
-            if (state.outputCap != null) state.outputCap.get(null).invalidate();
-        } catch (Exception ignored) {}
-    }
-
-    public static class State implements ISolarMultiblockState, IDisplayContext {
-        public final BiFunction<Level, FluidStack, SolarTowerRecipe> recipeGetter = RecipeCache.cached(SolarTowerRecipe::findRecipe);
+    public static class State extends CollectorState<SolarTowerRecipe> {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
-        public final TankPair tanks;
-        public StoredCapability<IFluidHandler> inputCap;
-        public StoredCapability<IFluidHandler> outputCap;
-        public ConstrainedItemHandler inventory;
-        public double heatLevel = 0;
-        public double reflectorStrength = 0;
-        public byte reflectorCount = 0;
-        public final BlockPos basePos;
-        public final BlockPos collectorPos;
-        public final BlockPos sunPos;
-        public final Supplier<Level> levelSupplier;
-        public byte[] dirCounts = new byte[4];
-        public int processProgress = 0;
-        public int totalProcessTime = 0;
-        public SolarTowerRecipe activeRecipe = null;
-        private ResourceLocation activeRecipeId;
-        public boolean isLoaded = false;
-        public boolean registered;
-        public boolean failVertical = false;
-        public int requiredMove = 0;
-        public boolean active;
-        public int lastComparatorValue = -1;
-        public BooleanSupplier isSoundPlaying = () -> false;
-        private int soundId = 0;
-        public boolean sunVisible = true;
-        private int loadTicks = 0;
-        private boolean reCheckOnLoad = false;
-        private transient boolean savedRegistered = false;
 
-        public State(IInitialMultiblockContext<State> ctx) {
-            final Runnable markDirty = ctx.getMarkDirtyRunnable();
-            final Runnable sync = ctx.getSyncRunnable();
-            final Runnable onChanged = () -> { markDirty.run(); sync.run(); };
-            tanks = new TankPair(v -> onChanged.run(), inputTankCapacity(), outputTankCapacity());
-            inventory = new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), onChanged);
-            inputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.input(), false, true, onChanged));
-            outputCap = new StoredCapability<>(new MultiTankFluidHandler(tanks.output(), true, false, onChanged));
-            InitialMultiblockContext<State> initialContext = (InitialMultiblockContext<State>) ctx;
-            MultiblockOrientation orientation = initialContext.orientation();
-            BlockPos masterOffset = initialContext.masterOffset();
-            BlockPos masterPos = initialContext.masterBE().getBlockPos();
-            BlockPos origin = masterPos.subtract(orientation.getAbsoluteOffset(masterOffset));
-            this.basePos = origin.offset(orientation.getAbsoluteOffset(LINK_POI));
-            this.collectorPos = origin.offset(orientation.getAbsoluteOffset(REFLECTOR_POI));
-            this.sunPos = origin.offset(orientation.getAbsoluteOffset(SUN_POI));
-            this.levelSupplier = ctx.levelSupplier();
-            Level level = levelSupplier.get();
-            SolarRegistry.RegisterResult result;
-            if (level != null && !level.isClientSide) { result = SolarRegistry.registerTower(level, basePos); } else { result = new SolarRegistry.RegisterResult(); }
-            this.registered = result.success;
-            if (!this.registered) { this.failVertical = result.vertical; this.requiredMove = result.requiredMove; }
-        }
+        public State(IInitialMultiblockContext<State> ctx) { super(ctx, ServerConfig.solarTowerInputTankCapacity, ServerConfig.solarTowerOutputTankCapacity, SolarTowerRecipe::findRecipe, SolarTowerRecipe.RECIPES, LINK_POI, REFLECTOR_POI, SUN_POI); }
 
-        public double getHeatLevel() { return heatLevel; }
-
-        public byte[] getDirCounts() { return dirCounts; }
-
-        public int getProcessProgress() { return processProgress; }
-
-        public boolean isSunVisible() { return sunVisible; }
-
-        public TankPair getTanks() { return tanks; }
-
-        public ConstrainedItemHandler getInventory() { return inventory; }
+        @Override protected double workingHeat() { return workingHeatLevel(); }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
-            nbt.put("tanks", this.tanks.toNBT());
-            nbt.put("inventory", inventory.serializeNBT());
-            nbt.putDouble("heatLevel", heatLevel);
-            nbt.putDouble("reflectorStrength", reflectorStrength);
-            nbt.putByte("reflectorCount", reflectorCount);
-            nbt.putByteArray("dirCounts", dirCounts);
-            nbt.putInt("processProgress", processProgress);
-            nbt.putInt("totalProcessTime", totalProcessTime);
-            if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
-            nbt.putBoolean("registered", registered);
-            nbt.putBoolean("failVertical", failVertical);
-            nbt.putInt("requiredMove", requiredMove);
-            nbt.putBoolean("active", active);
+            super.writeSaveNBT(nbt);
+            rsState.writeSaveNBT(nbt);
         }
 
         @Override public void readSaveNBT(CompoundTag nbt) {
-            this.tanks.readNBT(nbt.getCompound("tanks"));
-            this.inventory.deserializeNBT(nbt.getCompound("inventory"));
-            heatLevel = nbt.getDouble("heatLevel");
-            reflectorStrength = nbt.getDouble("reflectorStrength");
-            reflectorCount = nbt.getByte("reflectorCount");
-            dirCounts = nbt.getByteArray("dirCounts");
-            processProgress = nbt.getInt("processProgress");
-            totalProcessTime = nbt.getInt("totalProcessTime");
-            if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
-            registered = nbt.getBoolean("registered");
-            failVertical = nbt.getBoolean("failVertical");
-            requiredMove = nbt.getInt("requiredMove");
-            active = nbt.getBoolean("active");
-            savedRegistered = nbt.getBoolean("registered");
-            reCheckOnLoad = nbt.getBoolean("registered");
-            isLoaded = false;
-            Level level = levelSupplier.get();
-            if (level != null && !level.isClientSide) {
-                SolarRegistry.RegisterResult result = SolarRegistry.registerTower(level, basePos);
-                this.registered = result.success;
-                this.failVertical = result.vertical;
-                this.requiredMove = result.requiredMove;
-                if (!this.registered && savedRegistered) {
-                    int y = basePos.getY();
-                    Set<BlockPos> towersAtY = SolarRegistry.getData(level).towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
-                    towersAtY.add(basePos);
-                    SolarRegistry.getData(level).setDirty();
-                    this.registered = true;
-                    this.failVertical = false;
-                    this.requiredMove = 0;
-                }
-            }
+            super.readSaveNBT(nbt);
+            rsState.readSaveNBT(nbt);
         }
+    }
 
-        @Override public void writeSyncNBT(CompoundTag nbt) { CompoundTag display = new CompoundTag(); writeDisplaySyncNBT(display); nbt.put("display", display); }
-
-        @Override public void readSyncNBT(CompoundTag nbt) { if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); } }
-
-        @Override public boolean isActive() { return active; }
-
-        @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
-
-        @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
-            nbt.put("tanks", this.tanks.toNBT());
-            nbt.putDouble("heatLevel", heatLevel);
-            nbt.putDouble("reflectorStrength", reflectorStrength);
-            nbt.putByteArray("dirCounts", dirCounts);
-            nbt.putBoolean("sunVisible", sunVisible);
-            nbt.putBoolean("active", active);
-            nbt.putInt("processProgress", processProgress);
-            nbt.putInt("totalProcessTime", totalProcessTime);
-        }
-
-        @Override public void readDisplaySyncNBT(CompoundTag nbt) {
-            this.tanks.readNBT(nbt.getCompound("tanks"));
-            heatLevel = nbt.getDouble("heatLevel");
-            reflectorStrength = nbt.getDouble("reflectorStrength");
-            dirCounts = nbt.getByteArray("dirCounts");
-            sunVisible = nbt.getBoolean("sunVisible");
-            active = nbt.getBoolean("active");
-            processProgress = nbt.getInt("processProgress");
-            totalProcessTime = nbt.getInt("totalProcessTime");
-        }
-    
-
-        @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            FluidStack input = tanks.input().getFluid();
-            SolarTowerRecipe recipe = input.isEmpty() ? null : SolarTowerRecipe.findRecipe(level, input);
-            lines.temperature(heatLevel, recipe != null ? recipe.requiredTemp : workingHeatLevel()).percent(totalProcessTime > 0 ? processProgress * 100 / totalProcessTime : 0);
-            if (input.isEmpty()) { lines.fuelEmpty(); }
-        }
-}
+    private static void loadPois(List<PoIJSONSchema> pois) {
+        REDSTONE_POI = MultiblockPOIHelper.getPosList(pois, "redstone0").get(0);
+        RUNNING_SOUND_POI = MultiblockPOIHelper.getPosList(pois, "sound0").get(0);
+        LINK_POI = MultiblockPOIHelper.getPosList(pois, "link0").get(0);
+        REFLECTOR_POI = MultiblockPOIHelper.getPosList(pois, "reflector0").get(0);
+        SUN_POI = MultiblockPOIHelper.getPosList(pois, "sun0").get(0);
+        INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(pois, "fluid_input0");
+        OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(pois, "fluid_output0");
+        INPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_input0");
+        OUTPUT_FLUID_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_output0");
+    }
 }

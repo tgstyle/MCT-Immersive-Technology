@@ -6,7 +6,6 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -16,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 
-public class MeltingRecipe extends MultiblockRecipe {
+public class MeltingRecipe extends MultiblockRecipe implements ISolarRecipe {
     public static RegistryObject<IERecipeSerializer<MeltingRecipe>> SERIALIZER;
     public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.MELTING);
 
@@ -31,9 +30,13 @@ public class MeltingRecipe extends MultiblockRecipe {
         this.fluidOutput = fluidOutput;
         this.time = time;
         this.requiredTemp = requiredTemp;
-        this.fluidInputList = Lists.newArrayList(this.input);
-        this.fluidOutputList = fluidOutput == null ? Lists.newArrayList() : Lists.newArrayList(fluidOutput);
     }
+
+    @Override public FluidTagInput input() { return input; }
+
+    @Override public FluidStack fluidOutput() { return fluidOutput; }
+
+    @Override public double requiredTemp() { return requiredTemp; }
 
     public boolean matches(FluidStack fluid) { return input.testIgnoringAmount(fluid) && fluid.getAmount() >= input.getAmount(); }
 

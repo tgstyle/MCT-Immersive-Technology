@@ -1,18 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
+
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.MenuSyncSerializers;
 import com.immersiveconvergence.api.gui.ModSlot;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
+import com.immersiveconvergence.api.util.TankPair;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.items.IItemHandler;
 import java.util.List;
 
 public class BoilerTankMenu extends BaseContainerMenu {
-    public final BoilerTankLogic.BoilerTanks tanks;
+    public final TankPair tanks;
     public float heatLevel = 0.0f;
     public double workingHeatLevel = BoilerTankLogic.defaultWorkingHeatLevel();
 
@@ -34,12 +36,12 @@ public class BoilerTankMenu extends BaseContainerMenu {
                         ),
                         () -> {}
                 ),
-                BoilerTankLogic.BoilerTanks.makeClient(),
+                new TankPair(v -> {}, BoilerTankLogic.tankCapacity(), BoilerTankLogic.tankCapacity()),
                 null
         );
     }
 
-    protected BoilerTankMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, BoilerTankLogic.BoilerTanks tanks, BoilerTankLogic.State state) {
+    protected BoilerTankMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, TankPair tanks, BoilerTankLogic.State state) {
         super(ctx);
         this.tanks = tanks;
         this.addSlot(new ModSlot.FluidContainer(inv, BoilerTankLogic.INPUT_SLOT_FILLED, 43, 15, 2));
@@ -54,5 +56,6 @@ public class BoilerTankMenu extends BaseContainerMenu {
     }
 
     public float getHeatLevel() { return heatLevel; }
+
     public double getWorkingHeatLevel() { return workingHeatLevel; }
 }

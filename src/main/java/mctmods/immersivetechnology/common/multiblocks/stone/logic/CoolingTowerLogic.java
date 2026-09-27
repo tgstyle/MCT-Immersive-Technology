@@ -1,40 +1,38 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.immersiveconvergence.api.util.MultiTankFluidHandler;
-import com.immersiveconvergence.api.util.MarkableFluidTank;
-import com.immersiveconvergence.api.multiblock.IDisplayContext;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.ServerConfig;
-import com.immersiveconvergence.api.client.MachineSound;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import com.immersiveconvergence.api.util.RecipeCache;
-import com.immersiveconvergence.api.multiblock.ShapeData;
+import mctmods.immersivetechnology.core.util.Climate;
+import mctmods.immersivetechnology.core.util.IDisplaySyncState;
+import mctmods.immersivetechnology.core.util.ProcessQueue;
+
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.util.MarkableFluidTank;
+import com.immersiveconvergence.api.util.MultiTankFluidHandler;
+import com.immersiveconvergence.api.util.RecipeCache;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.capabilities.Capability;
@@ -44,27 +42,25 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, IFluidOutputPump<CoolingTowerLogic.State> {
-    private static final ShapeData SHAPE = ITShapes.get("cooling_tower");
+    public static List<BlockPos> INPUT_FLUID_POIS;
+    public static List<BlockPos> OUTPUT_FLUID_POIS;
+    public static BlockPos PARTICLE_POI;
+    public static BlockPos SOUND_POI;
+    public static BlockPos COMPARATOR_POI;
+    private static RelativeBlockFace INPUT_FACING;
+    private static RelativeBlockFace OUTPUT_FACING;
+
+    static { ITShapes.readPois("cooling_tower", CoolingTowerLogic::loadPois); }
+
     public static int inputTankCapacity() { return ServerConfig.coolingTowerInputTankCapacity; }
+
     public static int outputTankCapacity() { return ServerConfig.coolingTowerOutputTankCapacity; }
-
-    private static final List<PoIJSONSchema> RAW_POIS = ImmutableList.copyOf(ITShapes.data("cooling_tower").pointsOfInterest);
-
-    public static final List<BlockPos> INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_input0");
-    public static final List<BlockPos> OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(RAW_POIS, "fluid_output0");
-    public static final BlockPos PARTICLE_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "particle0").get(0);
-    public static final BlockPos SOUND_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0").get(0);
-    public static final BlockPos COMPARATOR_POI = MultiblockPOIHelper.getPosList(RAW_POIS, "master").get(0);
-
-    private static final RelativeBlockFace INPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_input0");
-    private static final RelativeBlockFace OUTPUT_FACING = MultiblockPOIHelper.getFacing(RAW_POIS, "fluid_output0");
 
     @Override public List<BlockPos> getOutputPositions() { return OUTPUT_FLUID_POIS; }
 
@@ -72,31 +68,18 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override public List<MarkableFluidTank> getOutputTanks(State state) { return ImmutableList.of(state.tanks.output0, state.tanks.output1, state.tanks.output2); }
 
-    private double getBiomeSpeedMultiplier(IMultiblockContext<State> ctx) {
-        double tempFactor = ServerConfig.coolingTowerBiomeTempFactor;
-        double humidityFactor = ServerConfig.coolingTowerBiomeHumidityFactor;
-        if (tempFactor <= 0.0D && humidityFactor <= 0.0D) { return 1.0D; }
-        Level level = ctx.getLevel().getRawLevel();
-        if (tempFactor > 0.0D && level.dimension() == Level.NETHER) { return 0.0D; }
-        BlockPos worldPos = ctx.getLevel().toAbsolute(BlockPos.ZERO);
-        Biome biome = level.getBiome(worldPos).value();
-        double multiplier = 1.0D;
-        if (tempFactor > 0.0D) { multiplier -= (biome.getBaseTemperature() - 0.8D) * tempFactor; }
-        if (humidityFactor > 0.0D) { multiplier += 0.075D * humidityFactor * -((biome.getModifiedClimateSettings().downfall() - 0.5D) / 0.5D); }
-        return Math.max(multiplier, 0.01D);
-    }
-
     @Override public void tickClient(IMultiblockContext<CoolingTowerLogic.State> ctx) {
         CoolingTowerLogic.State state = ctx.getState();
-        if (state.active) { state.soundCooldown = 40; } else if (state.soundCooldown > 0) { state.soundCooldown--; }
+        if (state.active) { state.soundCooldown = 40; }
+        else if (state.soundCooldown > 0) { state.soundCooldown--; }
         spawnParticles(ctx, state, ctx.getLevel().getRawLevel());
         handleSounds(ctx, state);
     }
 
-    private void spawnParticles(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state, Level level) {
+    private static void spawnParticles(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state, Level level) {
         if (!state.active) { return; }
         RandomSource rand = RandomSource.create();
-        Vec3 particleVec = ctx.getLevel().toAbsolute(new Vec3(PARTICLE_POI.getX() + 0.5, PARTICLE_POI.getY() + 0.5, PARTICLE_POI.getZ() + 0.5));
+        Vec3 particleVec = ctx.getLevel().toAbsolute(Vec3.atCenterOf(PARTICLE_POI));
         if (!ClientUtils.particlesVisible(particleVec)) { return; }
         for (int i = 0; i < 3; i++) {
             double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
@@ -106,14 +89,10 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         }
     }
 
-    private void handleSounds(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state) {
+    private static void handleSounds(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state) {
         if (state.isSoundPlaying.getAsBoolean()) { return; }
-        Vec3 soundVec = ctx.getLevel().toAbsolute(new Vec3(SOUND_POI.getX() + 0.5, SOUND_POI.getY() + 0.5, SOUND_POI.getZ() + 0.5));
-        state.isSoundPlaying = MachineSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, Sounds.coolingTower, () -> {
-            LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) { return 0f; }
-            return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(soundVec)) / 16, 0);
-        }, () -> 1f);
+        Vec3 soundVec = ctx.getLevel().toAbsolute(Vec3.atCenterOf(SOUND_POI));
+        state.isSoundPlaying = MachineSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, Sounds.coolingTower, () -> ClientUtils.linearFalloff(soundVec, 16), () -> 1f);
     }
 
     @Override public void tickServer(IMultiblockContext<CoolingTowerLogic.State> ctx) {
@@ -123,9 +102,8 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         Level level = mlevel.getRawLevel();
         boolean wasActive = state.active;
         boolean prevTanksDirty = state.tanksDirty;
-
-        double biomeMult = getBiomeSpeedMultiplier(ctx);
-
+        state.processQueue.restore(level);
+        double biomeMult = Climate.coolingMultiplier(level, mlevel.toAbsolute(BlockPos.ZERO), ServerConfig.coolingTowerBiomeTempFactor, ServerConfig.coolingTowerBiomeHumidityFactor);
         for (int i = state.processQueue.size() - 1; i >= 0; i--) {
             CoolingTowerProcess process = state.processQueue.get(i);
             process.tick(state, biomeMult);
@@ -134,25 +112,13 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         if (biomeMult > 0.0D && state.processQueue.size() < getProcessQueueMaxLength()) {
             FluidStack in0 = state.tanks.input0.getFluid();
             FluidStack in1 = state.tanks.input1.getFluid();
-            CoolingTowerRecipe recipe = state.recipeGetter.apply(level, in0, in1);
-            boolean swapped = false;
-            if (recipe == null) {
-                recipe = state.recipeGetterSwapped.apply(level, in1, in0);
-                swapped = true;
-            }
-            if (recipe != null) {
-                FluidStack firstIn = swapped ? in1 : in0;
-                FluidStack secondIn = swapped ? in0 : in1;
-                if (firstIn.getAmount() >= recipe.input0.getAmount() && secondIn.getAmount() >= recipe.input1.getAmount()) {
-                    boolean canOutput = true;
-                    if (!recipe.fluidOutput0.isEmpty()) { canOutput &= state.tanks.output0.fill(recipe.fluidOutput0, FluidAction.SIMULATE) >= recipe.fluidOutput0.getAmount(); }
-                    if (!recipe.fluidOutput1.isEmpty()) { canOutput &= state.tanks.output1.fill(recipe.fluidOutput1, FluidAction.SIMULATE) >= recipe.fluidOutput1.getAmount(); }
-                    if (!recipe.fluidOutput2.isEmpty()) { canOutput &= state.tanks.output2.fill(recipe.fluidOutput2, FluidAction.SIMULATE) >= recipe.fluidOutput2.getAmount(); }
-                    if (canOutput) {
-                        CoolingTowerRecipe useRecipe = swapped ? new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.input1, recipe.input0, recipe.totalProcessTime) : recipe;
-                        state.processQueue.add(new CoolingTowerProcess(useRecipe));
-                    }
-                }
+            CoolingTowerRecipe recipe = CoolingTowerRecipe.findOriented(level, in0, in1, state.recipeGetter, state.recipeGetterSwapped);
+            if (recipe != null && in0.getAmount() >= recipe.input0.getAmount() && in1.getAmount() >= recipe.input1.getAmount()) {
+                boolean canOutput = true;
+                if (!recipe.fluidOutput0.isEmpty()) { canOutput &= state.tanks.output0.fill(recipe.fluidOutput0, FluidAction.SIMULATE) >= recipe.fluidOutput0.getAmount(); }
+                if (!recipe.fluidOutput1.isEmpty()) { canOutput &= state.tanks.output1.fill(recipe.fluidOutput1, FluidAction.SIMULATE) >= recipe.fluidOutput1.getAmount(); }
+                if (!recipe.fluidOutput2.isEmpty()) { canOutput &= state.tanks.output2.fill(recipe.fluidOutput2, FluidAction.SIMULATE) >= recipe.fluidOutput2.getAmount(); }
+                if (canOutput) { state.processQueue.add(new CoolingTowerProcess(recipe, in0, in1)); }
             }
         }
         state.active = !state.processQueue.isEmpty();
@@ -165,17 +131,25 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
                 int total = process.getRecipe().totalProcessTime;
                 newPercent = total > 0 ? process.getTicksProcessed() * 100 / total : 0;
             }
-            if (newPercent != state.processPercents[i]) { state.processPercents[i] = newPercent; percentsChanged = true; }
+            if (newPercent != state.processPercents[i]) {
+                state.processPercents[i] = newPercent;
+                percentsChanged = true;
+            }
         }
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         int newComparatorValue = (15 * state.processQueue.size()) / getProcessQueueMaxLength();
         boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) { ctx.setComparatorOutputFor(COMPARATOR_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
-        boolean update = activeChanged || percentsChanged || tanksChanged || comparatorChanged;
-        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+        if (comparatorChanged) {
+            ctx.setComparatorOutputFor(COMPARATOR_POI, newComparatorValue);
+            state.lastComparatorValue = newComparatorValue;
+        }
+        if (activeChanged || percentsChanged || tanksChanged || comparatorChanged) {
+            ctx.markMasterDirty();
+            ctx.requestMasterBESync();
+        }
     }
 
-    private int getProcessQueueMaxLength() { return 3; }
+    private static int getProcessQueueMaxLength() { return 3; }
 
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<CoolingTowerLogic.State> ctx, CapabilityPosition position, Capability<T> cap) {
         CoolingTowerLogic.State state = ctx.getState();
@@ -199,9 +173,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
 
     @Override public CoolingTowerLogic.State createInitialState(IInitialMultiblockContext<CoolingTowerLogic.State> ctx) { return new State(ctx); }
 
-    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return SHAPE.getter; }
+    @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ITShapes.get("cooling_tower").getter; }
 
-    public static class State implements IMultiblockState, IDisplayContext {
+    public static class State implements IDisplaySyncState, IDataReloadAware {
         public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetter = RecipeCache.cached3(CoolingTowerRecipe::findRecipe);
         public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> recipeGetterSwapped = RecipeCache.cached3(CoolingTowerRecipe::findRecipe);
         public final CoolingTowerTanks tanks;
@@ -212,7 +186,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         public final StoredCapability<IFluidHandler> output2Cap;
         public boolean active;
         public int soundCooldown = 0;
-        public List<CoolingTowerProcess> processQueue = new ArrayList<>();
+        public final ProcessQueue<CoolingTowerProcess> processQueue = new ProcessQueue<>(CoolingTowerProcess::toNBT, CoolingTowerProcess::fromNBT);
         public BooleanSupplier isSoundPlaying = () -> false;
         public int[] processPercents = new int[]{-1, -1, -1};
         public int lastComparatorValue = -1;
@@ -230,25 +204,19 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             this.output2Cap = new StoredCapability<>(MultiTankFluidHandler.drainOnly(tanks.output2, () -> onChanged.accept(null)));
         }
 
+        @Override public void onDataReload(IInitialMultiblockContext<?> context) { lastComparatorValue = -1; }
+
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
             nbt.putBoolean("active", active);
+            processQueue.write(nbt);
         }
 
         @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
             active = nbt.getBoolean("active");
+            processQueue.read(nbt);
             tanksDirty = false;
-        }
-
-        @Override public void writeSyncNBT(CompoundTag nbt) {
-            CompoundTag display = new CompoundTag();
-            writeDisplaySyncNBT(display);
-            nbt.put("display", display);
-        }
-
-        @Override public void readSyncNBT(CompoundTag nbt) {
-            if (nbt.contains("display", Tag.TAG_COMPOUND)) { readDisplaySyncNBT(nbt.getCompound("display")); }
         }
 
         @Override public boolean isActive() { return active; }
@@ -268,20 +236,16 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1};
             tanksDirty = false;
         }
-    
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            for (int percent : processPercents) { if (percent >= 0) { lines.percent(percent); } }
+            for (int percent : processPercents) {
+                if (percent >= 0) { lines.percent(percent); }
+            }
         }
-}
+    }
 
     public record CoolingTowerTanks(MarkableFluidTank input0, MarkableFluidTank input1, MarkableFluidTank output0, MarkableFluidTank output1, MarkableFluidTank output2) {
-
-        public CoolingTowerTanks(Consumer<Void> markDirty) {
-            this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty));
-        }
-
-        public static CoolingTowerTanks makeClient() { return new CoolingTowerTanks(v -> {}); }
+        public CoolingTowerTanks(Consumer<Void> markDirty) { this(new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(inputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty), new MarkableFluidTank(outputTankCapacity(), markDirty)); }
 
         public CompoundTag toNBT() {
             CompoundTag tag = new CompoundTag();
@@ -300,5 +264,15 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             output1.readFromNBT(tag.getCompound("output1"));
             output2.readFromNBT(tag.getCompound("output2"));
         }
+    }
+
+    private static void loadPois(List<PoIJSONSchema> pois) {
+        INPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(pois, "fluid_input0");
+        OUTPUT_FLUID_POIS = MultiblockPOIHelper.getPosList(pois, "fluid_output0");
+        PARTICLE_POI = MultiblockPOIHelper.getPosList(pois, "particle0").get(0);
+        SOUND_POI = MultiblockPOIHelper.getPosList(pois, "sound0").get(0);
+        COMPARATOR_POI = MultiblockPOIHelper.getPosList(pois, "master").get(0);
+        INPUT_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_input0");
+        OUTPUT_FACING = MultiblockPOIHelper.getFacing(pois, "fluid_output0");
     }
 }
