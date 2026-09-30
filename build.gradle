@@ -1,7 +1,23 @@
+import java.security.MessageDigest
+
 plugins {
     id 'idea'
     id 'java'
     id 'com.gtnewhorizons.retrofuturagradle' version '2.0.2'
+}
+
+class JarStamp {
+    static String hash(Set<File> files, File versionProps, File root) {
+        def digest = MessageDigest.getInstance('SHA-256')
+        files.sort { it.path }.each { File file ->
+            digest.update(root.toPath().relativize(file.toPath()).toString().getBytes('UTF-8'))
+            digest.update(file.bytes)
+        }
+        versionProps.readLines().findAll { !it.startsWith('#') && !it.startsWith('build_number=') }.sort().each { digest.update(it.getBytes('UTF-8')) }
+        digest.digest().encodeHex().toString()
+    }
+
+    static boolean changed(Set<File> files, File versionProps, File root, File stamp) { !stamp.isFile() || stamp.text != hash(files, versionProps, root) }
 }
 
 ext.configFile = file '../common/common-1.12.properties'
@@ -18,8 +34,35 @@ file('version.properties').withInputStream { versionProps.load(it) }
 def gradleProps = new Properties()
 file('gradle.properties').withInputStream { gradleProps.load(it) }
 
+def devSyncScript = null
+for (def dir = rootDir; dir != null && devSyncScript == null; dir = dir.parentFile) {
+    def candidate = new File(dir, '#scripts/mods-devsync.gradle')
+    if (candidate.isFile()) { devSyncScript = candidate }
+}
+if (devSyncScript != null) {
+    apply from: devSyncScript
+    build.finalizedBy 'devSync'
+}
+
+def icJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('ImmersiveConvergence-Legacy', versionProps['devsync_ic']), 'build/devsync-pins/ImmersiveConvergence-Legacy.jar')
+if (icJar == null) { logger.warn('No Immersive Convergence devSync pin: set devsync_ic in version.properties to a snapshot in the devsync cache') }
+
+def ifJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('Immersive-Fixes-Legacy', versionProps['devsync_if']), 'build/devsync-pins/Immersive-Fixes-Legacy.jar')
+if (ifJar == null) { logger.warn('No Immersive Fixes devSync pin: set devsync_if in version.properties to a snapshot in the devsync cache') }
+
+def esJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('EngineeredSchematics-Legacy', versionProps['devsync_es']), 'build/devsync-pins/EngineeredSchematics-Legacy.jar')
+if (esJar == null) { logger.warn('No Engineered Schematics devSync pin: set devsync_es in version.properties to a snapshot in the devsync cache') }
+
+def stampInputs = files(sourceSets.main.java.srcDirs, sourceSets.main.resources.srcDirs, file('build.gradle'), file('gradle.properties'), configFile, icJar == null ? [] : icJar, ifJar == null ? [] : ifJar, esJar == null ? [] : esJar).asFileTree
+def stampProps = file('version.properties')
+def stampRoot = rootDir
+def stampFile = layout.buildDirectory.file('jar-inputs.sha256')
+def currentBuild = versionProps.getProperty('build_number')?.toInteger() ?: 0
+def builtJar = layout.buildDirectory.file("libs/${gradleProps['modarchivename']}-${common.mcversion}-${versionProps.getProperty('version')}.${currentBuild}-${versionProps.getProperty('stage') ?: ''}.jar")
+def needsJar = { !builtJar.get().asFile.isFile() || JarStamp.changed(stampInputs.files, stampProps, stampRoot, stampFile.get().asFile) }
+
 def building = gradle.startParameter.taskNames*.toLowerCase().findAll { !(it ==~ /(.*:)?dev(jar|sync)/) }.any { it.contains('build') || it.contains('jar') || it.contains('assemble') }
-if (building) {
+if (building && needsJar()) {
     versionProps['build_number'] = ((versionProps.getProperty('build_number')?.toInteger() ?: 0) + 1).toString()
     file('version.properties').withOutputStream { versionProps.store(it, null) }
 }
@@ -88,25 +131,6 @@ configurations {
         canBeResolved = true
     }
 }
-
-def devSyncScript = null
-for (def dir = rootDir; dir != null && devSyncScript == null; dir = dir.parentFile) {
-    def candidate = new File(dir, '#scripts/mods-devsync.gradle')
-    if (candidate.isFile()) { devSyncScript = candidate }
-}
-if (devSyncScript != null) {
-    apply from: devSyncScript
-    build.finalizedBy 'devSync'
-}
-
-def icJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('ImmersiveConvergence-Legacy', versionProps['devsync_ic']), 'build/devsync-pins/ImmersiveConvergence-Legacy.jar')
-if (icJar == null) { logger.warn('No Immersive Convergence devSync pin: set devsync_ic in version.properties to a snapshot in the devsync cache') }
-
-def ifJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('Immersive-Fixes-Legacy', versionProps['devsync_if']), 'build/devsync-pins/Immersive-Fixes-Legacy.jar')
-if (ifJar == null) { logger.warn('No Immersive Fixes devSync pin: set devsync_if in version.properties to a snapshot in the devsync cache') }
-
-def esJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('EngineeredSchematics-Legacy', versionProps['devsync_es']), 'build/devsync-pins/EngineeredSchematics-Legacy.jar')
-if (esJar == null) { logger.warn('No Engineered Schematics devSync pin: set devsync_es in version.properties to a snapshot in the devsync cache') }
 
 dependencies {
     if (icJar != null) {
@@ -187,6 +211,12 @@ jar {
                 'FMLCorePluginContainsFMLMod': 'true'
         )
     }
+    onlyIf { needsJar() }
+}
+
+tasks.named('reobfJar').configure {
+    onlyIf { needsJar() }
+    doLast { stampFile.get().asFile.text = JarStamp.hash(stampInputs.files, stampProps, stampRoot) }
 }
 
 sourceSets.configureEach { it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next() }
