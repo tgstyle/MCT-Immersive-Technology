@@ -1,5 +1,6 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import java.security.MessageDigest
 
 plugins {
     id 'java-library'
@@ -8,6 +9,20 @@ plugins {
     id 'idea'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.6'
     id 'eclipse'
+}
+
+class JarStamp {
+    static String hash(Set<File> files, File versionProps, File root) {
+        def digest = MessageDigest.getInstance('SHA-256')
+        files.sort { it.path }.each { File file ->
+            digest.update(root.toPath().relativize(file.toPath()).toString().getBytes('UTF-8'))
+            digest.update(file.bytes)
+        }
+        versionProps.readLines().findAll { !it.startsWith('#') && !it.startsWith('build_number=') }.sort().each { digest.update(it.getBytes('UTF-8')) }
+        digest.digest().encodeHex().toString()
+    }
+
+    static boolean changed(Set<File> files, File versionProps, File root, File stamp) { !stamp.isFile() || stamp.text != hash(files, versionProps, root) }
 }
 
 gradle.projectsEvaluated {
@@ -45,10 +60,6 @@ ext.stage = stage
 ext.version_dualcodecs = versionProps.getProperty('version_dualcodecs') ?: '2.0.1'
 
 println "-> build.gradle applying version: $version (build ${nextBuild})"
-
-tasks.withType(Jar).configureEach {
-    archiveVersion.set(newVersion)
-}
 
 group = 'mctmods.immersivetechnology'
 
@@ -278,10 +289,24 @@ dependencies {
 def customGradle = rootProject.file('custom.gradle')
 if (customGradle.exists()) apply from: customGradle
 
+def stampInputs = files(sourceSets.main.java.srcDirs, sourceSets.main.resources.srcDirs, file('build.gradle'), file('gradle.properties'), customGradle.exists() ? customGradle : [], icJar == null ? [] : icJar).asFileTree
+def stampProps = file('version.properties')
+def stampRoot = rootDir
+def stampFile = layout.buildDirectory.file('jar-inputs.sha256')
+def builtJar = layout.buildDirectory.file("libs/MCT-ImmersiveTechnology-${version_minecraft}-${baseVersion}-b${currentBuild}-${stage}.jar")
+def needsJar = { !builtJar.get().asFile.isFile() || JarStamp.changed(stampInputs.files, stampProps, stampRoot, stampFile.get().asFile) }
+
+def jarVersion = needsJar() ? newVersion : "${baseVersion}-b${currentBuild}-${stage}"
+tasks.withType(Jar).configureEach {
+    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
+    archiveVersion.set(jarVersion)
+}
+
 tasks.register('bumpVersion') {
     def versionPropsFile = layout.projectDirectory.file('version.properties')
     inputs.file(versionPropsFile)
     outputs.upToDateWhen { false }
+    onlyIf { needsJar() }
 
     doLast {
         def props = new Properties()
@@ -330,8 +355,9 @@ datagenJar.dependsOn bumpVersion
 tasks.register('genIntellijRunsDummy') {}
 
 jar {
-    archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
+    onlyIf { needsJar() }
+    doLast { stampFile.get().asFile.text = JarStamp.hash(stampInputs.files, stampProps, stampRoot) }
 }
 
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
