@@ -1,5 +1,6 @@
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import java.security.MessageDigest
 
 plugins {
     id 'java-library'
@@ -8,6 +9,20 @@ plugins {
     id 'net.neoforged.moddev.legacyforge' version '2.0.140'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.6'
     id 'eclipse'
+}
+
+class JarStamp {
+    static String hash(Set<File> files, File versionProps, File root) {
+        def digest = MessageDigest.getInstance('SHA-256')
+        files.sort { it.path }.each { File file ->
+            digest.update(root.toPath().relativize(file.toPath()).toString().getBytes('UTF-8'))
+            digest.update(file.bytes)
+        }
+        versionProps.readLines().findAll { !it.startsWith('#') && !it.startsWith('build_number=') }.sort().each { digest.update(it.getBytes('UTF-8')) }
+        digest.digest().encodeHex().toString()
+    }
+
+    static boolean changed(Set<File> files, File versionProps, File root, File stamp) { !stamp.isFile() || stamp.text != hash(files, versionProps, root) }
 }
 
 configurations.configureEach {
@@ -291,7 +306,17 @@ if (customGradle.exists()) {
     apply from: customGradle
 }
 
+def stampInputs = files(sourceSets.main.java.srcDirs, sourceSets.main.resources.srcDirs, file('build.gradle'), file('gradle.properties'), customGradle.exists() ? customGradle : [], icJar == null ? [] : icJar, ifJar == null ? [] : ifJar).asFileTree
+def stampProps = file('version.properties')
+def stampRoot = rootDir
+def stampFile = layout.buildDirectory.file('jar-inputs.sha256')
+def builtJar = layout.buildDirectory.file("libs/MCT-ImmersiveTechnology-${version_minecraft}-${version}-b${version_buildnumber}-${stage}.jar")
+def needsJar = { !builtJar.get().asFile.isFile() || JarStamp.changed(stampInputs.files, stampProps, stampRoot, stampFile.get().asFile) }
+
+tasks.withType(Jar).configureEach { archiveVersion.set("${version}-b${version_buildnumber}-${stage}") }
+
 tasks.register('bumpVersion') {
+    onlyIf { needsJar() }
     doLast {
         def props = new Properties()
         file('version.properties').withInputStream { props.load(it) }
@@ -386,4 +411,10 @@ jar {
     // MDG's mixin { config } only feeds the dev runs; the release jar must carry
     // the attribute itself or no mixin applies in production.
     manifest { attributes 'MixinConfigs': "mixins.${mod_id}.json" }
+    onlyIf { needsJar() }
+}
+
+tasks.named('reobfJar').configure {
+    onlyIf { needsJar() }
+    doLast { stampFile.get().asFile.text = JarStamp.hash(stampInputs.files, stampProps, stampRoot) }
 }
