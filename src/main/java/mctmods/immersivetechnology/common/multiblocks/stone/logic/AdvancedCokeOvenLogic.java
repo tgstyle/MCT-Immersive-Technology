@@ -137,7 +137,8 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         if (recipe == null || state.processor.getQueueSize() >= state.processor.getMaxQueueSize()) { return; }
         if (state.inventory.getStackInSlot(SLOT_INPUT).getCount() < recipe.input.getCount() || ItemOutputs.overflows(state.inventory.getStackInSlot(SLOT_OUTPUT), recipe.itemOutput.get())) { return; }
         if (state.tanks.output.getFluidAmount() + recipe.creosoteOutput > state.tanks.output.getCapacity()) { return; }
-        state.processor.addProcessToQueue(new AdvancedCokeOvenProcess(recipe), level, false);
+        ItemStack input = state.inventory.getStackInSlot(SLOT_INPUT);
+        if (state.processor.addProcessToQueue(new AdvancedCokeOvenProcess(recipe), level, false)) { state.inventory.setStackInSlot(SLOT_INPUT, input.copyWithCount(input.getCount() - recipe.input.getCount())); }
     }
 
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {

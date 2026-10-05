@@ -63,7 +63,6 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
     @Override protected void processFinish(ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe> context, IMultiblockLevel level) {
         AdvancedCokeOvenRecipe recipe = getRecipe(level.getRawLevel());
         if (recipe == null) { return; }
-        context.getInventory().getStackInSlot(inputSlots[0]).shrink(recipe.input.getCount());
         ItemOutputs.merge(context.getInventory(), AdvancedCokeOvenLogic.SLOT_OUTPUT, recipe.itemOutput.get().copy());
         context.getInternalTanks()[0].fill(new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput), FluidAction.EXECUTE);
     }
