@@ -8,6 +8,7 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidSlave;
+import mctmods.immersivetechnology.common.util.compat.computers.ITComputerTables;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -38,22 +39,22 @@ public class BoilerSolidDriver extends DriverSidedTileEntity {
 
 		@Callback(doc = "function():number -- get the heat level of the solid boiler")
 		public Object[] getHeat(Context context, Arguments args) {
-			return new Object[] {getTileEntity().heatLevel};
+			return call(ITComputerTables.BOILER_SOLID, "getHeat");
 		}
 
 		@Callback(doc = "function():boolean -- get whether the pilot light is lit")
 		public Object[] isPilotLit(Context context, Arguments args) {
-			return new Object[] {getTileEntity().pilotLit};
+			return call(ITComputerTables.BOILER_SOLID, "isPilotLit");
 		}
 
 		@Callback(doc = "function():number -- get the remaining burn time of the current fuel")
 		public Object[] getBurnRemaining(Context context, Arguments args) {
-			return new Object[] {getTileEntity().burnRemaining};
+			return call(ITComputerTables.BOILER_SOLID, "getBurnRemaining");
 		}
 
 		@Callback(doc = "function():table -- get the fuel item in the input slot")
 		public Object[] getFuelStack(Context context, Arguments args) {
-			return new Object[] {getTileEntity().inventory.get(0)};
+			return call(ITComputerTables.BOILER_SOLID, "getFuelStack");
 		}
 
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")

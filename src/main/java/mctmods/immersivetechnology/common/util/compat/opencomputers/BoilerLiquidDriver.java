@@ -8,13 +8,11 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidSlave;
-import net.minecraft.item.ItemStack;
+import mctmods.immersivetechnology.common.util.compat.computers.ITComputerTables;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class BoilerLiquidDriver extends DriverSidedTileEntity {
@@ -41,31 +39,27 @@ public class BoilerLiquidDriver extends DriverSidedTileEntity {
 
 		@Callback(doc = "function():number -- get the heat level of the liquid boiler")
 		public Object[] getHeat(Context context, Arguments args) {
-			return new Object[] {getTileEntity().heatLevel};
+			return call(ITComputerTables.BOILER_LIQUID, "getHeat");
 		}
 
 		@Callback(doc = "function():boolean -- get whether the pilot light is lit")
 		public Object[] isPilotLit(Context context, Arguments args) {
-			return new Object[] {getTileEntity().pilotLit};
+			return call(ITComputerTables.BOILER_LIQUID, "isPilotLit");
 		}
 
 		@Callback(doc = "function():table -- get information about the internal fuel tank")
 		public Object[] getFuelTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[0].getInfo()};
+			return call(ITComputerTables.BOILER_LIQUID, "getFuelTankInfo");
 		}
 
 		@Callback(doc = "function():table -- get filled fluid canisters in all slots")
 		public Object[] getFullCanisters(Context context, Arguments args) {
-			HashMap<String, ItemStack> canisters = new HashMap<>(1);
-			canisters.put("fuel", getTileEntity().inventory.get(0));
-			return new Object[] {canisters};
+			return call(ITComputerTables.BOILER_LIQUID, "getFullCanisters");
 		}
 
 		@Callback(doc = "function():table -- get empty fluid canisters in all slots")
 		public Object[] getEmptyCanisters(Context context, Arguments args) {
-			HashMap<String, ItemStack> canisters = new HashMap<>(1);
-			canisters.put("fuel", getTileEntity().inventory.get(1));
-			return new Object[] {canisters};
+			return call(ITComputerTables.BOILER_LIQUID, "getEmptyCanisters");
 		}
 
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")

@@ -8,13 +8,11 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerSlave;
-import net.minecraft.item.ItemStack;
+import mctmods.immersivetechnology.common.util.compat.computers.ITComputerTables;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class SolarTowerDriver extends DriverSidedTileEntity {
@@ -42,33 +40,27 @@ public class SolarTowerDriver extends DriverSidedTileEntity {
 
 		@Callback(doc = "function():number -- get the total strength of the reflectors pointing at the tower, an increase by 1 is the strength of one fully uncovered reflector")
 		public Object[] getReflectors(Context context, Arguments args) {
-			return new Object[] {getTileEntity().reflectorStrength};
+			return call(ITComputerTables.SOLAR_TOWER, "getReflectors");
 		}
 
 		@Callback(doc = "function():table -- get information about the input tank")
 		public Object[] getInputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[0].getInfo()};
+			return call(ITComputerTables.SOLAR_TOWER, "getInputTankInfo");
 		}
 
 		@Callback(doc = "function():table -- get information about the output tank")
 		public Object[] getOutputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[1].getInfo()};
+			return call(ITComputerTables.SOLAR_TOWER, "getOutputTankInfo");
 		}
 
 		@Callback(doc = "function():table -- get filled fluid canisters in all slots")
 		public Object[] getFullCanisters(Context context, Arguments args) {
-			HashMap<String, ItemStack> canisters = new HashMap<>(2);
-			canisters.put("input", getTileEntity().inventory.get(1));
-			canisters.put("output", getTileEntity().inventory.get(3));
-			return new Object[] {canisters};
+			return call(ITComputerTables.SOLAR_TOWER, "getFullCanisters");
 		}
 
 		@Callback(doc = "function():table -- get empty fluid canisters in all slots")
 		public Object[] getEmptyCanisters(Context context, Arguments args) {
-			HashMap<String, ItemStack> canisters = new HashMap<>(2);
-			canisters.put("input", getTileEntity().inventory.get(0));
-			canisters.put("output", getTileEntity().inventory.get(2));
-			return new Object[] {canisters};
+			return call(ITComputerTables.SOLAR_TOWER, "getEmptyCanisters");
 		}
 
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")

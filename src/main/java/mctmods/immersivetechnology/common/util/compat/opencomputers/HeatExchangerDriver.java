@@ -8,6 +8,7 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHeatExchangerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityHeatExchangerSlave;
+import mctmods.immersivetechnology.common.util.compat.computers.ITComputerTables;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -39,22 +40,22 @@ public class HeatExchangerDriver extends DriverSidedTileEntity {
 
         @Callback(doc = "function():table -- get information about the first input tank")
         public Object[] getFirstInputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().tanks[0].getInfo()};
+            return call(ITComputerTables.HEAT_EXCHANGER, "getFirstInputTankInfo");
         }
 
         @Callback(doc = "function():table -- get information about the second input tank")
         public Object[] getSecondInputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().tanks[1].getInfo()};
+            return call(ITComputerTables.HEAT_EXCHANGER, "getSecondInputTankInfo");
         }
 
         @Callback(doc = "function():table -- get information about the first output tank")
         public Object[] getFirstOutputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().tanks[2].getInfo()};
+            return call(ITComputerTables.HEAT_EXCHANGER, "getFirstOutputTankInfo");
         }
 
         @Callback(doc = "function():table -- get information about the second output tank")
         public Object[] getSecondOutputTankInfo(Context context, Arguments args) {
-            return new Object[] {getTileEntity().tanks[3].getInfo()};
+            return call(ITComputerTables.HEAT_EXCHANGER, "getSecondOutputTankInfo");
         }
 
         @Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")

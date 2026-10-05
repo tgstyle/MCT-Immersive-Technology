@@ -122,6 +122,10 @@ repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://maven.minecraftforge.net' }
     maven { url = 'https://maven.cleanroommc.com' }
+    maven {
+        url = 'https://squiddev.cc/maven/'
+        content { includeGroup 'org.squiddev' }
+    }
     mavenCentral()
 }
 
@@ -157,6 +161,7 @@ dependencies {
     compileOnly(rfg.deobf("curse.maven:${common.advr_version}") as String)
     compileOnly(rfg.deobf("curse.maven:${common.libv_version}") as String)
     compileOnly(rfg.deobf("curse.maven:${common.opcm_version}") as String)
+    compileOnly(rfg.deobf('org.squiddev:cc-tweaked-1.12.2:1.89.2') as String)
 
     compileOnly(rfg.deobf("${common.crft_version}") as String)
     compileOnly(rfg.deobf("${common.zens_version}") as String)

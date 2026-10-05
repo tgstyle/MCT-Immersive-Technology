@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.util.compat;
 
 import mctmods.immersivetechnology.common.util.ITLogger;
+import mctmods.immersivetechnology.common.util.compat.computercraft.CCHelper;
 import mctmods.immersivetechnology.common.util.compat.crafttweaker.CraftTweakerHelper;
 import mctmods.immersivetechnology.common.util.compat.opencomputers.OCHelper;
 import mctmods.immersivetechnology.common.util.compat.top.OneProbeHelper;
@@ -28,6 +29,7 @@ public abstract class ITCompatModule {
 		moduleClasses.put("crafttweaker", CraftTweakerHelper.class);
 		moduleClasses.put("theoneprobe", OneProbeHelper.class);
 		moduleClasses.put("opencomputers", OCHelper.class);
+		moduleClasses.put("computercraft", CCHelper.class);
 	}
 
 	public static void doModulesPreInit() {

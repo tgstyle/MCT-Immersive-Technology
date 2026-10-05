@@ -8,6 +8,7 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteamTurbineMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySteamTurbineSlave;
+import mctmods.immersivetechnology.common.util.compat.computers.ITComputerTables;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -39,17 +40,17 @@ public class SteamTurbineDriver extends DriverSidedTileEntity {
 
 		@Callback(doc = "function():number -- get the turbine speed in RPM")
 		public Object[] getSpeed(Context context, Arguments args) {
-			return new Object[] {getTileEntity().speed};
+			return call(ITComputerTables.STEAM_TURBINE, "getSpeed");
 		}
 
 		@Callback(doc = "function():table -- get information about the turbine steam level")
 		public Object[] getTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[0].getInfo()};
+			return call(ITComputerTables.STEAM_TURBINE, "getTankInfo");
 		}
 
 		@Callback(doc = "function():table -- get information about the turbine output tank level")
 		public Object[] getOutputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[1].getInfo()};
+			return call(ITComputerTables.STEAM_TURBINE, "getOutputTankInfo");
 		}
 
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")

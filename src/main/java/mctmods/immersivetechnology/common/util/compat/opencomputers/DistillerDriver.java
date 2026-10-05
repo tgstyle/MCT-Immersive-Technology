@@ -8,13 +8,11 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerMaster;
 import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityDistillerSlave;
-import net.minecraft.item.ItemStack;
+import mctmods.immersivetechnology.common.util.compat.computers.ITComputerTables;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class DistillerDriver extends DriverSidedTileEntity {
@@ -42,38 +40,32 @@ public class DistillerDriver extends DriverSidedTileEntity {
 
 		@Callback(doc = "function():table -- get information about the input tank")
 		public Object[] getInputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[0].getInfo()};
+			return call(ITComputerTables.DISTILLER, "getInputTankInfo");
 		}
 
 		@Callback(doc = "function():table -- get information about the output tank")
 		public Object[] getOutputTankInfo(Context context, Arguments args) {
-			return new Object[] {getTileEntity().tanks[1].getInfo()};
+			return call(ITComputerTables.DISTILLER, "getOutputTankInfo");
 		}
 
 		@Callback(doc = "function():number -- get the stored energy level")
 		public Object[] getEnergyStored(Context context, Arguments args) {
-			return new Object[] {getTileEntity().energyStorage.getEnergyStored()};
+			return call(ITComputerTables.DISTILLER, "getEnergyStored");
 		}
 
 		@Callback(doc = "function():number -- get the maximum energy capacity")
 		public Object[] getMaxEnergyStored(Context context, Arguments args) {
-			return new Object[] {getTileEntity().energyStorage.getMaxEnergyStored()};
+			return call(ITComputerTables.DISTILLER, "getMaxEnergyStored");
 		}
 
 		@Callback(doc = "function():table -- get filled fluid canisters in all slots")
 		public Object[] getFullCanisters(Context context, Arguments args) {
-			HashMap<String, ItemStack> canisters = new HashMap<>(2);
-			canisters.put("input", getTileEntity().inventory.get(1));
-			canisters.put("output", getTileEntity().inventory.get(3));
-			return new Object[] {canisters};
+			return call(ITComputerTables.DISTILLER, "getFullCanisters");
 		}
 
 		@Callback(doc = "function():table -- get empty fluid canisters in all slots")
 		public Object[] getEmptyCanisters(Context context, Arguments args) {
-			HashMap<String, ItemStack> canisters = new HashMap<>(2);
-			canisters.put("input", getTileEntity().inventory.get(0));
-			canisters.put("output", getTileEntity().inventory.get(2));
-			return new Object[] {canisters};
+			return call(ITComputerTables.DISTILLER, "getEmptyCanisters");
 		}
 
 		@Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine")
