@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.proxy;
 
+import mctmods.immersivetechnology.core.integration.computer.ComputerIntegration;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
@@ -20,6 +21,7 @@ public class CommonProxy {
     public static void modConstruction(IEventBus event) {
         Reference.IT_LOGGER.info("Registering IT Content!");
         MultiblockRegistry.forceClassLoad();
+        ComputerIntegration.register();
         MenuTypes.REGISTER.register(event);
         RecipeTypes.init(event);
         Sounds.init(event);
