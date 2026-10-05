@@ -67,10 +67,10 @@ import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
 public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRecipe, S extends SolarCollectorLogic.CollectorState<R>> implements IMultiblockLogic<S>, IServerTickableComponent<S>, IClientTickableComponent<S>, IFluidOutputPump<S> {
-    private static final int SLOT_INPUT_FILLED = 0;
-    private static final int SLOT_INPUT_EMPTY = 1;
-    private static final int SLOT_OUTPUT_EMPTY = 2;
-    private static final int SLOT_OUTPUT_FILLED = 3;
+    public static final int SLOT_INPUT_FILLED = 0;
+    public static final int SLOT_INPUT_EMPTY = 1;
+    public static final int SLOT_OUTPUT_EMPTY = 2;
+    public static final int SLOT_OUTPUT_FILLED = 3;
 
     protected abstract String shapeName();
     protected abstract BlockPos redstonePoi();

@@ -109,6 +109,7 @@ ext {
     version_puzzleslib_curse = versionProps['version_puzzleslib_curse']
     version_held_item_tooltips_curse = versionProps['version_held_item_tooltips_curse']
     version_mixin = versionProps['version_mixin']
+    version_cctweaked = versionProps['version_cctweaked']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
     mod_authors = gradleProps['mod_authors']
@@ -253,7 +254,7 @@ repositories {
         }
     }
     maven {
-        url = 'https://squiddev.cc/maven/'
+        url = 'https://maven.squiddev.cc/'
         content {
             includeGroup("cc.tweaked")
             includeModule("org.squiddev", "Cobalt")
@@ -286,6 +287,9 @@ dependencies {
     modImplementation "curse.maven:${version_journeymap_curse}"
     modImplementation "curse.maven:${version_puzzleslib_curse}"
     modImplementation "curse.maven:${version_held_item_tooltips_curse}"
+
+    modCompileOnly "cc.tweaked:cc-tweaked-${version_minecraft}-forge-api:${version_cctweaked}"
+    modRuntimeOnly "cc.tweaked:cc-tweaked-${version_minecraft}-forge:${version_cctweaked}"
 
     modDatagenImplementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"
 
