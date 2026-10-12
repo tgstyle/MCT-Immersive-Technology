@@ -7,6 +7,10 @@ assignees: ''
 
 ---
 
+**If not filled out properly the issue will be closed.**
+
+**Missing details mean back-and-forth questions before anything gets fixed, which wastes your time and ours.**
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
