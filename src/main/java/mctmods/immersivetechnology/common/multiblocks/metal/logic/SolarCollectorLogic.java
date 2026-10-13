@@ -11,7 +11,6 @@ import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistryData;
 
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -32,6 +31,7 @@ import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
@@ -162,11 +162,11 @@ public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRec
     private static boolean emptyInputContainer(CollectorState<?> state) {
         ItemStack inputFilled = state.inventory.getStackInSlot(SLOT_INPUT_FILLED);
         if (inputFilled.isEmpty()) { return false; }
-        FluidActionResult res = FluidUtils.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, FluidAction.SIMULATE);
+        FluidActionResult res = ICFluidUtils.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, FluidAction.SIMULATE);
         if (!res.isSuccess()) { return false; }
         ItemStack inputEmpty = state.inventory.getStackInSlot(SLOT_INPUT_EMPTY);
         if (ItemOutputs.overflows(inputEmpty, res.getResult())) { return false; }
-        res = FluidUtils.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, FluidAction.EXECUTE);
+        res = ICFluidUtils.tryEmptyContainer(inputFilled, state.tanks.input(), Integer.MAX_VALUE, FluidAction.EXECUTE);
         if (!res.isSuccess()) { return false; }
         inputFilled.shrink(1);
         if (inputFilled.isEmpty()) { state.inventory.setStackInSlot(SLOT_INPUT_FILLED, ItemStack.EMPTY); }
@@ -177,7 +177,7 @@ public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRec
     private static boolean fillOutputContainer(CollectorState<?> state) {
         ItemStack outputEmpty = state.inventory.getStackInSlot(SLOT_OUTPUT_EMPTY);
         if (outputEmpty.isEmpty()) { return false; }
-        ItemStack resultItem = FluidUtils.fillFluidContainer(state.tanks.output(), outputEmpty, state.inventory.getStackInSlot(SLOT_OUTPUT_FILLED), null);
+        ItemStack resultItem = ICFluidUtils.fillFluidContainer(state.tanks.output(), outputEmpty, state.inventory.getStackInSlot(SLOT_OUTPUT_FILLED), null);
         if (resultItem.isEmpty()) { return false; }
         ItemStack outputFilled = state.inventory.getStackInSlot(SLOT_OUTPUT_FILLED);
         if (ItemOutputs.overflows(outputFilled, resultItem)) { return false; }

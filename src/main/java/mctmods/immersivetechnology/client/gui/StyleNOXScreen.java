@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 
-import blusunrize.immersiveengineering.api.client.TextUtils;
+import com.immersiveconvergence.api.util.ICTextUtils;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -112,7 +112,7 @@ public class StyleNOXScreen extends BaseContainerScreen<StyleNOXMenu> {
             this.energy = energy;
         }
 
-        @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) { tooltip.add(TextUtils.applyFormat(Component.translatable(GuiEnergyArea.KEY_ENERGY_STORED, energy.getEnergyStored(), energy.getMaxEnergyStored()), ChatFormatting.GRAY)); }
+        @Override protected void fillTooltipOverArea(int mouseX, int mouseY, List<Component> tooltip) { tooltip.add(ICTextUtils.applyFormat(Component.translatable(GuiEnergyArea.KEY_ENERGY_STORED, energy.getEnergyStored(), energy.getMaxEnergyStored()), ChatFormatting.GRAY)); }
 
         @Override public void draw(GuiGraphics graphics) {
             int height = area.getHeight();

@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
 
-import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
-import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorage;
+import com.immersiveconvergence.api.energy.IICEnergyStorage;
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
@@ -16,11 +16,11 @@ import java.util.List;
 
 public class DistillerMenu extends BaseContainerMenu {
     public final TankPair tanks;
-    public final IMutableEnergyStorage energy;
+    public final IICEnergyStorage energy;
 
     public static DistillerMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<DistillerLogic.State> ctx) {
         final DistillerLogic.State state = ctx.mbContext().getState();
-        return new DistillerMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory(), state.getTanks(), state.getEnergy());
+        return new DistillerMenu(multiblockCtx(type, id, ctx), invPlayer, state.getInventory(), state.getTanks(), state.getEnergyStorage());
     }
 
     public static DistillerMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
@@ -38,11 +38,11 @@ public class DistillerMenu extends BaseContainerMenu {
                         () -> {}
                 ),
                 new TankPair(v -> {}, DistillerLogic.inputTankCapacity(), DistillerLogic.outputTankCapacity()),
-                new MutableEnergyStorage(32000)
+                new ICEnergyStorage(32000)
         );
     }
 
-    protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, TankPair tanks, IMutableEnergyStorage energy) {
+    protected DistillerMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, TankPair tanks, IICEnergyStorage energy) {
         super(ctx);
         this.tanks = tanks;
         this.energy = energy;

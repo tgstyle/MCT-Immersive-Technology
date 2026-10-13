@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MechanicalLoad;
 import mctmods.immersivetechnology.core.util.TurbineProvider;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -319,8 +319,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public final TankPair tanks;
         public final IFluidHandler fluidInputHandler;
         public final IFluidHandler fluidOutputHandler;
-        public final AveragingEnergyStorage energyStorageHV;
-        public final AveragingEnergyStorage energyStorageMV;
+        public final ICEnergyStorageAveraging energyStorageHV;
+        public final ICEnergyStorageAveraging energyStorageMV;
         public Supplier<IEnergyStorage> mvInput;
         private final BiFunction<Level, FluidStack, GasTurbineRecipe> recipeGetter;
         public int speed = 0;
@@ -362,8 +362,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             this.tanks = new TankPair(v -> onChanged.run(), ServerConfig.gasTurbineInputTankCapacity, ServerConfig.gasTurbineOutputTankCapacity);
             this.fluidInputHandler = new MultiTankFluidHandler(tanks.input(), false, true, onChanged);
             this.fluidOutputHandler = new MultiTankFluidHandler(tanks.output(), true, false, onChanged);
-            this.energyStorageHV = new AveragingEnergyStorage(ServerConfig.gasTurbineEnergyCapacityHV);
-            this.energyStorageMV = new AveragingEnergyStorage(ServerConfig.gasTurbineEnergyCapacityMV);
+            this.energyStorageHV = new ICEnergyStorageAveraging(ServerConfig.gasTurbineEnergyCapacityHV);
+            this.energyStorageMV = new ICEnergyStorageAveraging(ServerConfig.gasTurbineEnergyCapacityMV);
             this.recipeGetter = RecipeCache.cached(GasTurbineRecipe::findRecipe);
             bindOutputs(ctx);
             this.inertia = new RotationInertiaProcess(baseMass(), driveTorque(), friction(), maxSpeed());
@@ -405,9 +405,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
         @Override public boolean isActive() { return active; }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energyStorageHV; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energyStorageHV; }
 
-        @Override public List<AveragingEnergyStorage> getEnergies() { return List.of(energyStorageHV, energyStorageMV); }
+        @Override public List<IEnergyStorage> getEnergies() { return List.of(energyStorageHV, energyStorageMV); }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
 

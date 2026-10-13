@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.client.models.multiblock.StyleNOXModels;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.core.ClientConfig;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
@@ -76,7 +76,7 @@ public class StyleNOXRenderer extends BaseBlockEntityRenderer<MultiblockBlockEnt
         if (model == splitModel) { return; }
         rodQuads.clear();
         for (int i = 0; i < 9; i++) { rodQuads.add(new ArrayList<>()); }
-        for (BakedQuad quad : model.getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null)) {
+        for (BakedQuad quad : model.getQuads(null, null, ICUtils.RANDOM_SOURCE, ModelData.EMPTY, null)) {
             int[] vertices = quad.getVertices();
             int stride = vertices.length / 4;
             float x = 0, z = 0;

@@ -11,8 +11,7 @@ import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -31,6 +30,7 @@ import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
@@ -118,7 +118,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         state.active = state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         tryEnqueueProcess(state, ctx.getLevel().getRawLevel(), recipeHolder);
         FluidContainers.emptyBucket(state.tanks.input(), state.inventory, SLOT_INPUT_FILLED, SLOT_INPUT_EMPTY);
-        FluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
+        ICFluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         pumpOutputs(ctx);
         ItemOutputs.eject(state.inventory, state.outputRef, SLOT_INPUT_EMPTY, SLOT_OUTPUT_FILLED, OUTPUT_SLOT);
         boolean activeChanged = wasActive != state.active;
@@ -195,7 +195,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<DistillerRecipe> processor;
-        public final AveragingEnergyStorage energy;
+        public final ICEnergyStorageAveraging energy;
         public boolean active;
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
@@ -269,7 +269,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             inventoryDirty = false;
         }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
 
         @Override public IFluidTank[] getInternalTanks() { return tankArray; }
 

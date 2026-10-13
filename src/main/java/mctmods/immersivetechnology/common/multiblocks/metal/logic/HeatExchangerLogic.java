@@ -9,7 +9,7 @@ import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -19,12 +19,12 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockCon
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
@@ -41,6 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -172,13 +173,13 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType shapeType) { return ITShapes.get("heat_exchanger").getter; }
 
-    public static class State implements IDisplaySyncState, ProcessContext.ProcessContextInMachine<HeatExchangerRecipe>, IDataReloadAware {
+    public static class State implements IDisplaySyncState, IProcessContext.IProcessContextInMachine<HeatExchangerRecipe>, IDataReloadAware {
         private static final IItemHandlerModifiable EMPTY_INVENTORY = new EmptyItemHandler();
         public final RecipeCache.TriFunction<Level, FluidStack, FluidStack, RecipeHolder<HeatExchangerRecipe>> recipeGetter = RecipeCache.cached3(HeatExchangerRecipe::findRecipe);
         public final HeatExchangerTanks tanks;
         public final IFluidHandler[] inputCap = new IFluidHandler[2];
         public final IFluidHandler[] outputCap = new IFluidHandler[2];
-        public final AveragingEnergyStorage energy;
+        public final ICEnergyStorageAveraging energy;
         public boolean active = false;
         public RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
         public final MultiblockProcessor.InMachineProcessor<HeatExchangerRecipe> processor;
@@ -226,7 +227,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input0, tanks.input1, tanks.output0, tanks.output1}; }
 
-        @Override public List<AveragingEnergyStorage> getEnergies() { return List.of(energy); }
+        @Override public List<IEnergyStorage> getEnergies() { return List.of(energy); }
 
         @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
@@ -247,7 +248,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
             queueSize = nbt.getInt("queueSize");
         }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
 
         @Override public IItemHandlerModifiable getInventory() { return EMPTY_INVENTORY; }
 

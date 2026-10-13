@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.items;
 
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import com.immersiveconvergence.api.block.HammerUse;
+import com.immersiveconvergence.api.util.ICTextUtils;
+import com.immersiveconvergence.core.lib.ICLib;
 import mctmods.immersivetechnology.core.util.Advancements;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -43,8 +43,8 @@ public class FormationTool extends Item {
 
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nonnull TooltipContext context, @Nonnull List<Component> tooltipComponents, @Nonnull TooltipFlag tooltipFlag) {
-        addInfo(tooltipComponents, Lib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
-        addInfo(tooltipComponents, Lib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
+        addInfo(tooltipComponents, ICLib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
+        addInfo(tooltipComponents, ICLib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
 
     private void addInfo(List<Component> list, String titleKey, ItemStack stack, String nbtKey) {
@@ -56,7 +56,7 @@ public class FormationTool extends Item {
         ListTag tagList = tag.getList(nbtKey, Tag.TAG_STRING);
 
         if (!Screen.hasShiftDown()) {
-            list.add(title.append(" ").append(Component.translatable(Lib.DESC_INFO + "holdShift")));
+            list.add(title.append(" ").append(Component.translatable(ICLib.DESC_INFO + "holdShift")));
         } else {
             list.add(title);
             for (int i = 0; i < tagList.size(); i++) {
@@ -64,7 +64,7 @@ public class FormationTool extends Item {
                 if (mbName == null) continue;
                 MultiblockHandler.IMultiblock multiblock = MultiblockHandler.getByUniqueName(mbName);
                 if (multiblock != null) {
-                    list.add(TextUtils.applyFormat(multiblock.getDisplayName(), ChatFormatting.DARK_GRAY));
+                    list.add(ICTextUtils.applyFormat(multiblock.getDisplayName(), ChatFormatting.DARK_GRAY));
                 }
             }
         }

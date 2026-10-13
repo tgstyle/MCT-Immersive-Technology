@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
+import com.immersiveconvergence.api.energy.ICEnergyStorage;
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 
-import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +21,7 @@ public class StyleNOXMenu extends BaseContainerMenu {
     public static final int SPENT_X = 149;
     public static final int SPENT_Y = 18;
     public final StyleNOXLogic.StyleNOXTank tanks;
-    public final MutableEnergyStorage energy;
+    public final ICEnergyStorage energy;
     @Nullable private final IMultiblockContext<StyleNOXLogic.State> mbContext;
     public int rodLevel = 0;
     public int reactorState = 0;
@@ -55,7 +55,7 @@ public class StyleNOXMenu extends BaseContainerMenu {
         super(ctx);
         this.tanks = tanks;
         this.mbContext = mbContext;
-        this.energy = new MutableEnergyStorage(StyleNOXLogic.energyCapacity());
+        this.energy = new ICEnergyStorage(StyleNOXLogic.energyCapacity());
         for (int slot = 0; slot < StyleNOXLogic.FUEL_SLOTS; slot++) { this.addSlot(new ModSlot.Input(inv, slot, fuelSlotX(slot), fuelSlotY(slot))); }
         this.addSlot(new ModSlot.Output(inv, StyleNOXLogic.SLOT_SPENT, SPENT_X, SPENT_Y));
         ownSlotCount = StyleNOXLogic.FUEL_SLOTS + 1;
@@ -63,7 +63,7 @@ public class StyleNOXMenu extends BaseContainerMenu {
         addGenericData(MenuSyncData.fluid(tanks.water()));
         addGenericData(MenuSyncData.fluid(tanks.steam()));
         addGenericData(MenuSyncData.fluid(tanks.co2()));
-        addGenericData(MenuSyncData.int32(() -> state != null ? state.getEnergy().getEnergyStored() : energy.getEnergyStored(), energy::setStoredEnergy));
+        addGenericData(MenuSyncData.int32(() -> state != null ? state.getEnergyStorage().getEnergyStored() : energy.getEnergyStored(), energy::setStoredEnergy));
         addGenericData(MenuSyncData.int32(() -> state != null ? state.rodLevel : rodLevel, v -> this.rodLevel = v));
         addGenericData(MenuSyncData.int32(() -> state != null ? state.reactorState.ordinal() : reactorState, v -> this.reactorState = v));
         addGenericData(MenuSyncData.int32(() -> state != null ? state.startupProgress : startupProgress, v -> this.startupProgress = v));

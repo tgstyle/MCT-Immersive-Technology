@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -186,7 +186,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
     }
 
     public static class State implements IDisplaySyncState, IDataReloadAware {
-        public final AveragingEnergyStorage energy;
+        public final ICEnergyStorageAveraging energy;
         public boolean active = false;
         public int speed = 0;
         public int lastComparatorValue = -1;
@@ -236,7 +236,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
 
         @Override public boolean isActive() { return active; }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) { lines.rpm(speed, effectiveMaxSpeed); }
     }

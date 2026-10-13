@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
@@ -284,7 +284,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         public final IFluidHandler waterInputCap;
         public final IFluidHandler steamOutputCap;
         public final IFluidHandler co2InputCap;
-        public final AveragingEnergyStorage energy;
+        public final ICEnergyStorageAveraging energy;
         private final BiFunction<Level, ItemStack, RecipeHolder<StyleNOXRecipe>> recipeGetter = RecipeCache.cached(StyleNOXRecipe::findRecipe);
         private final BiFunction<Level, FluidStack, BoilerTankRecipe> boilerRecipeGetter = RecipeCache.cached(BoilerTankRecipe::findRecipe);
         public ReactorState reactorState = ReactorState.IDLE;
@@ -408,7 +408,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
 
         @Override public boolean isActive() { return active; }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.water(), tanks.steam(), tanks.co2()}; }
 

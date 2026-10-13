@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.fluid.IICFluidPipe;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
@@ -28,7 +28,7 @@ import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.RO
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IFluidHandler, IFluidPipe {
+public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IFluidHandler, IICFluidPipe {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
         @Override @Nonnull public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
