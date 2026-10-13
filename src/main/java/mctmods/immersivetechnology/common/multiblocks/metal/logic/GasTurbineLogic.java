@@ -10,7 +10,7 @@ import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MechanicalLoad;
 import mctmods.immersivetechnology.core.util.TurbineProvider;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -321,8 +321,8 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         public final TankPair tanks;
         public final StoredCapability<IFluidHandler> fluidCap;
         public final StoredCapability<IFluidHandler> fluidCapExhaust;
-        public final AveragingEnergyStorage energyStorageHV = new AveragingEnergyStorage(ServerConfig.gasTurbineEnergyCapacityHV);
-        public final AveragingEnergyStorage energyStorageMV = new AveragingEnergyStorage(ServerConfig.gasTurbineEnergyCapacityMV);
+        public final ICEnergyStorageAveraging energyStorageHV = new ICEnergyStorageAveraging(ServerConfig.gasTurbineEnergyCapacityHV);
+        public final ICEnergyStorageAveraging energyStorageMV = new ICEnergyStorageAveraging(ServerConfig.gasTurbineEnergyCapacityMV);
         public final StoredCapability<IEnergyStorage> energyCapHV = new StoredCapability<>(energyStorageHV);
         public final StoredCapability<IEnergyStorage> energyCapMV = new StoredCapability<>(energyStorageMV);
         public CapabilityReference<IEnergyStorage> mvInput;
@@ -411,9 +411,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
 
         @Override public boolean isActive() { return active; }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energyStorageHV; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energyStorageHV; }
 
-        @Override public List<AveragingEnergyStorage> getEnergies() { return List.of(energyStorageHV, energyStorageMV); }
+        @Override public List<IEnergyStorage> getEnergies() { return List.of(energyStorageHV, energyStorageMV); }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
 

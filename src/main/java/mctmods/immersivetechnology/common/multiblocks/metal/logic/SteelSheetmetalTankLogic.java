@@ -5,15 +5,13 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.RedstoneInput;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.logic.interfaces.MBOverlayText;
 import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.block.IMBOverlayText;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
@@ -48,7 +46,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, MBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State> {
+public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, IMBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State> {
     public static BlockPos REDSTONE_POI;
     private static List<CapabilityPosition> INPUT_POIS;
     private static List<CapabilityPosition> IO_POIS;
@@ -130,8 +128,6 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
         @Override public boolean isActive() { return active; }
 
-        @Override public List<AveragingEnergyStorage> getEnergies() { return ImmutableList.of(); }
-
         @Override public IItemHandlerModifiable getInventory() { return null; }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
@@ -182,7 +178,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return ITShapes.get("steel_sheetmetal_tank").getter; }
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
-        if (!FluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { return InteractionResult.PASS; }
+        if (!ICFluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { return InteractionResult.PASS; }
         ctx.markMasterDirty();
         ctx.requestMasterBESync();
         return InteractionResult.SUCCESS;

@@ -10,8 +10,7 @@ import mctmods.immersivetechnology.core.util.FluidContainers;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -29,6 +28,7 @@ import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
@@ -130,7 +130,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         }
 
         FluidContainers.emptyBucket(state.tanks.input(), state.inventory, SLOT_INPUT_FILLED, SLOT_INPUT_EMPTY);
-        FluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
+        ICFluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         pumpOutputs(ctx);
 
         boolean activeChanged = wasActive != state.active;
@@ -207,7 +207,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<MeltingRecipe> processor;
-        public final AveragingEnergyStorage energy;
+        public final ICEnergyStorageAveraging energy;
         public boolean active;
         public BooleanSupplier isSoundPlaying = () -> false;
         public double heatLevel = 0.0;
@@ -268,7 +268,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             tanksDirty = false;
         }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
         @Override public IFluidTank[] getInternalTanks() { return tankArray; }
         @Override public int[] getOutputTanks() { return new int[]{1}; }
         @Override public int[] getOutputSlots() { return new int[0]; }

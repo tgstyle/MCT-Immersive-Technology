@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.core.util;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 
-public class SyncEnergyStorage extends AveragingEnergyStorage {
+public class SyncEnergyStorage extends ICEnergyStorageAveraging {
     private final Runnable onChanged;
 
     public SyncEnergyStorage(int capacity, Runnable onChanged) {

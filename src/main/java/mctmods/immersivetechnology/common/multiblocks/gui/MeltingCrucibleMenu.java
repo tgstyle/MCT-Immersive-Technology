@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
-import blusunrize.immersiveengineering.api.energy.IMutableEnergyStorage;
-import blusunrize.immersiveengineering.api.energy.MutableEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorage;
+import com.immersiveconvergence.api.energy.IICEnergyStorage;
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
@@ -25,7 +25,7 @@ public class MeltingCrucibleMenu extends BaseContainerMenu {
     public final SimpleContainerData state;
     public final FluidTank inputTank;
     public final FluidTank outputTank;
-    public final IMutableEnergyStorage energy;
+    public final IICEnergyStorage energy;
     private final Supplier<MeltingCrucibleLogic.State> mbStateSupplier;
 
     public static MeltingCrucibleMenu makeServer(MenuType<?> type, int id, Inventory invPlayer, MultiblockMenuContext<? extends MeltingCrucibleLogic.State> ctx) {
@@ -34,10 +34,10 @@ public class MeltingCrucibleMenu extends BaseContainerMenu {
     }
 
     public static MeltingCrucibleMenu makeClient(MenuType<?> type, int id, Inventory invPlayer) {
-        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.inputTankCapacity()), new FluidTank(MeltingCrucibleLogic.outputTankCapacity()), new MutableEnergyStorage(MeltingCrucibleLogic.energyCapacity()), () -> null);
+        return new MeltingCrucibleMenu(clientCtx(type, id), invPlayer, new ConstrainedItemHandler(List.of(ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT, ConstrainedItemHandler.IOConstraint.FLUID_INPUT, ConstrainedItemHandler.IOConstraint.OUTPUT), () -> {}), new FluidTank(MeltingCrucibleLogic.inputTankCapacity()), new FluidTank(MeltingCrucibleLogic.outputTankCapacity()), new ICEnergyStorage(MeltingCrucibleLogic.energyCapacity()), () -> null);
     }
 
-    private MeltingCrucibleMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, IMutableEnergyStorage energy, Supplier<MeltingCrucibleLogic.State> mbStateSupplier) {
+    private MeltingCrucibleMenu(MenuContext ctx, Inventory inventoryPlayer, IItemHandler inv, FluidTank input, FluidTank output, IICEnergyStorage energy, Supplier<MeltingCrucibleLogic.State> mbStateSupplier) {
         super(ctx);
         this.inputTank = input;
         this.outputTank = output;

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
@@ -23,9 +23,9 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSeriali
 
     @Override public ElectrolyticCrucibleBatteryRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext context) {
         FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack fluidOutput0 = json.has("result0") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result0")) : null;
-        FluidStack fluidOutput1 = json.has("result1") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result1")) : null;
-        FluidStack fluidOutput2 = json.has("result2") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result2")) : null;
+        FluidStack fluidOutput0 = json.has("result0") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result0")) : null;
+        FluidStack fluidOutput1 = json.has("result1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result1")) : null;
+        FluidStack fluidOutput2 = json.has("result2") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result2")) : null;
         ItemStack itemOutput = json.has("item_output") ? ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "item_output")) : ItemStack.EMPTY;
         int energy = GsonHelper.getAsInt(json, "energy");
         int time = GsonHelper.getAsInt(json, "time");

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
@@ -22,7 +22,7 @@ public class SteamTurbineRecipeSerializer extends IERecipeSerializer<SteamTurbin
     @Override public SteamTurbineRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
         FluidTagInput input = FluidTagInput.deserialize(json.getAsJsonObject("input"));
         FluidStack fluidOutput = null;
-        if (json.has("output")) fluidOutput = ApiUtils.jsonDeserializeFluidStack(json.getAsJsonObject("output"));
+        if (json.has("output")) fluidOutput = ICUtils.jsonDeserializeFluidStack(json.getAsJsonObject("output"));
         int time = GsonHelper.getAsInt(json, "time");
         float torque = json.has("torque") ? GsonHelper.getAsFloat(json, "torque") : 1.0f;
         return new SteamTurbineRecipe(recipeId, input, fluidOutput, time, torque);

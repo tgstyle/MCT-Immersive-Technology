@@ -11,9 +11,7 @@ import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
@@ -27,15 +25,17 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.ShapeType;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapability;
 import blusunrize.immersiveengineering.api.utils.CapabilityReference;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessor;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.ICFluidUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
@@ -94,7 +94,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             return;
         }
         Vec3 particlePos = level.toAbsolute(new Vec3(SMOKE_POI.getX() + 0.5, SMOKE_POI.getY() + 0.9, SMOKE_POI.getZ() + 0.5));
-        if (ClientUtils.particlesVisible(particlePos)) { level.getRawLevel().addAlwaysVisibleParticle(Particles.CAMPFIRE_SMOKE.get(), particlePos.x, particlePos.y, particlePos.z, ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625), 0.05, ApiUtils.RANDOM.nextDouble(-0.00625, 0.00625)); }
+        if (ClientUtils.particlesVisible(particlePos)) { level.getRawLevel().addAlwaysVisibleParticle(Particles.CAMPFIRE_SMOKE.get(), particlePos.x, particlePos.y, particlePos.z, ICUtils.RANDOM.nextDouble(-0.00625, 0.00625), 0.05, ICUtils.RANDOM.nextDouble(-0.00625, 0.00625)); }
         Vec3 soundPos = level.toAbsolute(Vec3.atCenterOf(SOUND_POI));
         if (ClientUtils.attenuated(soundPos, 8, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.advancedCokeOven, () -> ClientUtils.attenuated(soundPos, 8, 1), () -> 1f); }
     }
@@ -107,7 +107,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         state.processor.tickServer(state, ctx.getLevel(), state.rsState.isEnabled(ctx));
         tryEnqueueProcess(state, level, state.recipeGetter.apply(level, state.inventory.getStackInSlot(SLOT_INPUT)));
         state.active = !state.processor.getQueue().isEmpty();
-        FluidUtils.fillFluidContainer(state.tanks.output, SLOT_EMPTY_CONTAINER, SLOT_FILLED_CONTAINER, state.inventory);
+        ICFluidUtils.fillFluidContainer(state.tanks.output, SLOT_EMPTY_CONTAINER, SLOT_FILLED_CONTAINER, state.inventory);
         pumpOutputs(ctx);
         ItemOutputs.eject(state.inventory, state.outputRef, SLOT_OUTPUT, SLOT_FILLED_CONTAINER);
         var queue = state.processor.getQueue();
@@ -160,7 +160,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return InteractionResult.SUCCESS; }
 
-    public static class State implements IDisplaySyncState, ContainerData, ProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, IDataReloadAware {
+    public static class State implements IDisplaySyncState, ContainerData, IProcessContext.ProcessContextInMachine<AdvancedCokeOvenRecipe>, BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, IDataReloadAware {
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
         public static final int NUM_SLOTS = 2;
@@ -177,7 +177,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         private final StoredCapability<IItemHandler> itemInputCap;
         private CapabilityReference<IItemHandler> outputRef;
         public BooleanSupplier isSoundPlaying = () -> false;
-        private final AveragingEnergyStorage energy = new AveragingEnergyStorage(0);
+        private final ICEnergyStorageAveraging energy = new ICEnergyStorageAveraging(0);
         public boolean tanksDirty = false;
         public int lastComparatorValue = -1;
 
@@ -252,7 +252,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         @Override public int getCount() { return NUM_SLOTS; }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
 
         @Override public IFluidTank[] getInternalTanks() { return tankArray; }
 

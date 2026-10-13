@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.connectors.logic;
 
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.utils.SafeChunkUtils;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.core.lib.ICLib;
 import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
 import blusunrize.immersiveengineering.api.wires.WireType;
 import blusunrize.immersiveengineering.api.wires.redstone.IRedstoneConnector;
 import blusunrize.immersiveengineering.api.wires.redstone.RedstoneNetworkHandler;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.*;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IStateBasedDirectional;
 import blusunrize.immersiveengineering.common.blocks.generic.ImmersiveConnectableBlockEntity;
 import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
@@ -46,7 +46,7 @@ import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider , ITileSyncReceiver {
+public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
@@ -255,9 +255,9 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         }
         float time = (float) this.target / 20;
         DyeColor color = redstoneChannel;
-        Component channelInfo = Component.translatable(Lib.DESC_INFO + "redstoneChannel.send", color.getName());
+        Component channelInfo = Component.translatable(ICLib.DESC_INFO + "redstoneChannel.send", color.getName());
         String ioKey = (ioMode == 0) ? "input" : "output";
-        Component modeInfo = Component.translatable(Lib.DESC_INFO + "blockSide.io." + ioKey);
+        Component modeInfo = Component.translatable(ICLib.DESC_INFO + "blockSide.io." + ioKey);
         Component delayInfo = Component.literal(String.format("%.1f Sec.", time));
         return new Component[]{channelInfo, modeInfo, delayInfo};
     }
@@ -316,7 +316,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     @Override public boolean canHammerRotate(@Nonnull Direction side, @Nonnull Vec3 hit, @Nonnull net.minecraft.world.entity.LivingEntity entity) { return false; }
 
     @Override public void onChange(ConnectionPoint cp, RedstoneNetworkHandler handler) {
-        if (level != null && !level.isClientSide && SafeChunkUtils.isChunkSafe(level, worldPosition)) {
+        if (level != null && !level.isClientSide && ICUtils.isChunkSafe(level, worldPosition)) {
             setChanged();
             markContainingBlockForUpdate(getBlockState());
             BlockPos offsetPos = worldPosition.relative(getRSOutputFace());

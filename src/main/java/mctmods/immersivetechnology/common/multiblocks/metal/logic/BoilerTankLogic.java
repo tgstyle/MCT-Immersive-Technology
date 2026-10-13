@@ -7,7 +7,6 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.FluidContainers;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 
-import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
@@ -24,6 +23,7 @@ import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
+import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
@@ -99,7 +99,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             else { state.recipeTimeRemaining = Math.min(state.recipeTimeRemaining + ServerConfig.boilerTankProgressLossPerTick, state.lastRecipe.getTotalProcessTime()); }
             if (previousProgress != state.recipeTimeRemaining) { update = true; }
         }
-        if (state.tanks.output().getFluidAmount() > 0 && FluidUtils.fillFluidContainer(state.tanks.output(), OUTPUT_SLOT_EMPTY, OUTPUT_SLOT_FILLED, state.inventory)) { update = true; }
+        if (state.tanks.output().getFluidAmount() > 0 && ICFluidUtils.fillFluidContainer(state.tanks.output(), OUTPUT_SLOT_EMPTY, OUTPUT_SLOT_FILLED, state.inventory)) { update = true; }
         pumpOutputs(ctx);
         if (FluidContainers.emptyBucket(state.tanks.input(), state.inventory, INPUT_SLOT_FILLED, INPUT_SLOT_EMPTY)) { update = true; }
         int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;

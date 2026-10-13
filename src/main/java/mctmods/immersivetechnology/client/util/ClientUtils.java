@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.util;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -68,5 +68,5 @@ public class ClientUtils {
         if (particlesVisible(smokePos)) { level.addAlwaysVisibleParticle(new ColoredSmoke(0.2F, 0.2F, 0.2F), smokePos.x, smokePos.y, smokePos.z, 0, 0.125, 0); }
     }
 
-    private static double smokeDrift() { return ApiUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
+    private static double smokeDrift() { return ICUtils.RANDOM.nextDouble(-0.015625, 0.015625); }
 }

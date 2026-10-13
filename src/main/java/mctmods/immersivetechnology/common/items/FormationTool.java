@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.items;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
-import blusunrize.immersiveengineering.api.Lib;
-import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import com.immersiveconvergence.api.block.HammerUse;
+import com.immersiveconvergence.api.util.ICNBT;
+import com.immersiveconvergence.api.util.ICTextUtils;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.core.lib.ICLib;
 import mctmods.immersivetechnology.core.util.Advancements;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -42,22 +42,22 @@ public class FormationTool extends Item {
     @Override @Nonnull public Component getName(@Nonnull ItemStack pStack) { return Component.translatable(this.getDescriptionId(pStack)); }
 
     @Override public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
-        addInfo(tooltip, Lib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
-        addInfo(tooltip, Lib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
+        addInfo(tooltip, ICLib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
+        addInfo(tooltip, ICLib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
 
     private void addInfo(List<Component> list, String titleKey, ItemStack stack, String nbtKey) {
-        if (!ItemNBTHelper.hasKey(stack, nbtKey, Tag.TAG_LIST)) { return; }
+        if (!ICNBT.hasKey(stack, nbtKey, Tag.TAG_LIST)) { return; }
         MutableComponent title = Component.translatable(titleKey);
         ListTag tagList = stack.getOrCreateTag().getList(nbtKey, Tag.TAG_STRING);
-        if (!Screen.hasShiftDown()) { list.add(title.append(" ").append(Component.translatable(Lib.DESC_INFO + "holdShift"))); }
+        if (!Screen.hasShiftDown()) { list.add(title.append(" ").append(Component.translatable(ICLib.DESC_INFO + "holdShift"))); }
         else {
             list.add(title);
             for (int i = 0; i < tagList.size(); i++) {
                 ResourceLocation mbName = ResourceLocation.tryParse(tagList.getString(i));
                 if (mbName == null) { continue; }
                 MultiblockHandler.IMultiblock multiblock = MultiblockHandler.getByUniqueName(mbName);
-                if (multiblock != null) { list.add(TextUtils.applyFormat(multiblock.getDisplayName(), ChatFormatting.DARK_GRAY)); }
+                if (multiblock != null) { list.add(ICTextUtils.applyFormat(multiblock.getDisplayName(), ChatFormatting.DARK_GRAY)); }
             }
         }
     }
@@ -69,12 +69,12 @@ public class FormationTool extends Item {
         Direction side = context.getClickedFace();
         List<ResourceLocation> permittedMultiblocks = null;
         List<ResourceLocation> interdictedMultiblocks = null;
-        if (ItemNBTHelper.hasKey(stack, "multiblockPermission")) {
+        if (ICNBT.hasKey(stack, "multiblockPermission")) {
             ListTag list = stack.getOrCreateTag().getList("multiblockPermission", Tag.TAG_STRING);
             permittedMultiblocks = parseMultiblockNames(list, player, "permission");
             if (permittedMultiblocks == null) { return InteractionResult.FAIL; }
         }
-        if (ItemNBTHelper.hasKey(stack, "multiblockInterdiction")) {
+        if (ICNBT.hasKey(stack, "multiblockInterdiction")) {
             ListTag list = stack.getOrCreateTag().getList("multiblockInterdiction", Tag.TAG_STRING);
             interdictedMultiblocks = parseMultiblockNames(list, player, "interdiction");
             if (interdictedMultiblocks == null) { return InteractionResult.FAIL; }
@@ -124,7 +124,7 @@ public class FormationTool extends Item {
 
     @Override @Nonnull public ItemStack getCraftingRemainingItem(@Nonnull ItemStack stack) {
         ItemStack container = stack.copy();
-        if (container.hurt(1, ApiUtils.RANDOM_SOURCE, null)) { return ItemStack.EMPTY; }
+        if (container.hurt(1, ICUtils.RANDOM_SOURCE, null)) { return ItemStack.EMPTY; }
         else { return container; }
     }
 

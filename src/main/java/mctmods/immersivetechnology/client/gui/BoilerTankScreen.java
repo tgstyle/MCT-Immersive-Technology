@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.client.gui;
 
-import blusunrize.immersiveengineering.api.client.TextUtils;
+import com.immersiveconvergence.api.util.ICTextUtils;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import com.immersiveconvergence.api.client.gui.GuiInfoArea;
@@ -40,7 +40,7 @@ public class BoilerTankScreen extends BaseContainerScreen<BoilerTankMenu> {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();
                         double maxHeat = menu.getWorkingHeatLevel();
-                        tooltip.add(TextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), (int)heatLevel, (int)maxHeat), ChatFormatting.RED));
+                        tooltip.add(ICTextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), (int)heatLevel, (int)maxHeat), ChatFormatting.RED));
                     }
 
                     @Override public void draw(GuiGraphics graphics) { }

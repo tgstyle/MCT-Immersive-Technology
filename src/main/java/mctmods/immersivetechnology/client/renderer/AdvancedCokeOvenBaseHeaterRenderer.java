@@ -5,7 +5,7 @@ import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -48,7 +48,7 @@ public class AdvancedCokeOvenBaseHeaterRenderer extends BaseBlockEntityRenderer<
 
     private void renderDynamicModel(StandaloneModel model, PoseStack matrix, MultiBufferSource buffer, Level level, BlockPos pos, int light) {
         matrix.pushPose();
-        List<BakedQuad> quads = model.get().getQuads(null, null, ApiUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
+        List<BakedQuad> quads = model.get().getQuads(null, null, ICUtils.RANDOM_SOURCE, ModelData.EMPTY, null);
         RenderUtils.renderModelTESRFancy(quads, buffer.getBuffer(RenderType.solid()), matrix, level, pos, false, 0xffffff, light);
         matrix.popPose();
     }

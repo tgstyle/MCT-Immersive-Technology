@@ -11,7 +11,7 @@ import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.RedstoneInput;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import blusunrize.immersiveengineering.api.energy.AveragingEnergyStorage;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -187,7 +187,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public final ConstrainedItemHandler inventory;
         private final IFluidTank[] tankArray;
         public final MultiblockProcessor.InMachineProcessor<ElectrolyticCrucibleBatteryRecipe> processor;
-        public final AveragingEnergyStorage energy;
+        public final ICEnergyStorageAveraging energy;
         public boolean active;
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
@@ -243,7 +243,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
             inventoryDirty = false;
         }
 
-        @Override public AveragingEnergyStorage getEnergy() { return energy; }
+        @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
 
         @Override public IFluidTank[] getInternalTanks() { return tankArray; }
 

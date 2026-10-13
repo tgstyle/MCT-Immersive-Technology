@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.ApiUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
 import com.google.gson.JsonObject;
@@ -21,8 +21,8 @@ public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchan
     @Override public HeatExchangerRecipe readFromJson(ResourceLocation id, JsonObject json, ICondition.IContext context) {
         FluidTagInput input0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
         FluidTagInput input1 = json.has("input1") ? FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1")) : null;
-        FluidStack output0 = ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0"));
-        FluidStack output1 = json.has("output1") ? ApiUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output1")) : null;
+        FluidStack output0 = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0"));
+        FluidStack output1 = json.has("output1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output1")) : null;
         int energy = GsonHelper.getAsInt(json, "energy");
         int time = GsonHelper.getAsInt(json, "time");
         return new HeatExchangerRecipe(id, input0, input1, output0, output1, energy, time)

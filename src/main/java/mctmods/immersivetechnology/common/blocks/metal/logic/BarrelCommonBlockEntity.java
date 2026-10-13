@@ -7,6 +7,7 @@ import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 
@@ -47,7 +48,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
 
     protected static final int transferSpeed = FluidType.BUCKET_VOLUME;
-    protected final Map<Direction, CapabilityReference<IFluidHandler>> neighbors = ImmutableMap.of(Direction.DOWN, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.DOWN), Direction.UP, CapabilityReference.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.UP));
+    protected final Map<Direction, CapabilityReference<IFluidHandler>> neighbors = ImmutableMap.of(Direction.DOWN, ICUtils.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.DOWN), Direction.UP, ICUtils.forNeighbor(this, ForgeCapabilities.FLUID_HANDLER, Direction.UP));
     private final LazyOptional<IFluidHandler> nonsidedHandler = LazyOptional.of(() -> new SidedFluidHandler(this, null));
     private final LazyOptional<IFluidHandler> upHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.UP));
     private final LazyOptional<IFluidHandler> downHandler = LazyOptional.of(() -> new SidedFluidHandler(this, Direction.DOWN));

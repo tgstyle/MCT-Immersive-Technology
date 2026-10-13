@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.fluid.IICFluidPipe;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -30,7 +30,7 @@ import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.RO
 
 import javax.annotation.Nonnull;
 
-public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IFluidHandler, IFluidPipe {
+public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IFluidHandler, IICFluidPipe {
     public static class DummyTank implements IFluidHandler {
         @Override public int getTanks() { return 1; }
         @Override @Nonnull public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
@@ -158,8 +158,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         boolean isPipe = dst instanceof FluidPipeBlockEntity;
         FluidStack fillStack = fluidStack.copy();
         fillStack.setAmount(canAccept);
-        boolean hadTag = fillStack.hasTag() && fillStack.getTag().contains(IFluidPipe.NBT_PRESSURIZED);
-        if (isPipe && !hadTag) { fillStack.getOrCreateTag().putBoolean(IFluidPipe.NBT_PRESSURIZED, true); }
+        boolean hadTag = fillStack.hasTag() && fillStack.getTag().contains(IICFluidPipe.NBT_PRESSURIZED);
+        if (isPipe && !hadTag) { fillStack.getOrCreateTag().putBoolean(IICFluidPipe.NBT_PRESSURIZED, true); }
         busy = true;
         int toReturn = destination.fill(fillStack, doFill);
         busy = false;
