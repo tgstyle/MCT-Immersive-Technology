@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,12 +14,12 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidRecipe> {
+public class BoilerSolidRecipeSerializer extends ICRecipeSerializer<BoilerSolidRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_SOLID.iconStack(); }
 
     @Override
     protected DualMapCodec<RegistryFriendlyByteBuf, BoilerSolidRecipe> codecs() {
-        MapCodec<IngredientWithSize> inputCodec = IngredientWithSize.CODEC.fieldOf("input");
+        MapCodec<ICIngredientWithSize> inputCodec = ICIngredientWithSize.CODEC.fieldOf("input");
 
         MapCodec<BoilerSolidRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 inputCodec.forGetter(BoilerSolidRecipe::input),
@@ -30,7 +30,7 @@ public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidR
         StreamCodec<RegistryFriendlyByteBuf, BoilerSolidRecipe> streamCodec = new StreamCodec<>() {
             @Override
             public @Nonnull BoilerSolidRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
-                IngredientWithSize input = IngredientWithSize.STREAM_CODEC.decode(buf);
+                ICIngredientWithSize input = ICIngredientWithSize.STREAM_CODEC.decode(buf);
                 double heatPerTick = buf.readDouble();
                 double targetHeat = buf.readDouble();
                 return new BoilerSolidRecipe(input, heatPerTick, targetHeat);
@@ -38,7 +38,7 @@ public class BoilerSolidRecipeSerializer extends IERecipeSerializer<BoilerSolidR
 
             @Override
             public void encode(@Nonnull RegistryFriendlyByteBuf buf, BoilerSolidRecipe recipe) {
-                IngredientWithSize.STREAM_CODEC.encode(buf, recipe.input());
+                ICIngredientWithSize.STREAM_CODEC.encode(buf, recipe.input());
                 buf.writeDouble(recipe.heatPerTick());
                 buf.writeDouble(recipe.targetHeat());
             }

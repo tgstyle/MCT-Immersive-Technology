@@ -3,9 +3,9 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -21,7 +21,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe> {
+public class StyleNOXRecipeSerializer extends ICRecipeSerializer<StyleNOXRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.STYLENOX.iconStack(); }
 
     @Override protected DualMapCodec<RegistryFriendlyByteBuf, StyleNOXRecipe> codecs() {
@@ -33,8 +33,8 @@ public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe>
                 .fieldOf("co2Tag");
 
         MapCodec<StyleNOXRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                IngredientWithSize.CODECS.codec().fieldOf("input").forGetter(StyleNOXRecipe::input),
-                TagOutput.CODECS.codec().fieldOf("result").forGetter(StyleNOXRecipe::output),
+                ICIngredientWithSize.CODECS.codec().fieldOf("input").forGetter(StyleNOXRecipe::input),
+                ICTagOutput.CODECS.codec().fieldOf("result").forGetter(StyleNOXRecipe::output),
                 waterTagCodec.forGetter(StyleNOXRecipe::waterTag),
                 Codec.INT.fieldOf("waterAmount").forGetter(StyleNOXRecipe::waterAmount),
                 co2TagCodec.forGetter(StyleNOXRecipe::co2Tag),
@@ -46,8 +46,8 @@ public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe>
 
         StreamCodec<RegistryFriendlyByteBuf, StyleNOXRecipe> streamCodec = new StreamCodec<>() {
             @Override public @Nonnull StyleNOXRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
-                IngredientWithSize input = IngredientWithSize.CODECS.streamCodec().decode(buf);
-                TagOutput output = TagOutput.CODECS.streamCodec().decode(buf);
+                ICIngredientWithSize input = ICIngredientWithSize.CODECS.streamCodec().decode(buf);
+                ICTagOutput output = ICTagOutput.CODECS.streamCodec().decode(buf);
                 TagKey<Fluid> waterTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int waterAmount = buf.readVarInt();
                 TagKey<Fluid> co2Tag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
@@ -59,8 +59,8 @@ public class StyleNOXRecipeSerializer extends IERecipeSerializer<StyleNOXRecipe>
             }
 
             @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, StyleNOXRecipe recipe) {
-                IngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
-                TagOutput.CODECS.streamCodec().encode(buf, recipe.output());
+                ICIngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
+                ICTagOutput.CODECS.streamCodec().encode(buf, recipe.output());
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.waterTag());
                 buf.writeVarInt(recipe.waterAmount());
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.co2Tag());

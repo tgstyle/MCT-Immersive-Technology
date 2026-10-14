@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class DistillerRecipeSerializer extends IERecipeSerializer<DistillerRecipe> {
+public class DistillerRecipeSerializer extends ICRecipeSerializer<DistillerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.DISTILLER.iconStack(); }
 
     @Override

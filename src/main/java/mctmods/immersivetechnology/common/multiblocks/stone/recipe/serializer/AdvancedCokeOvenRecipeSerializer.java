@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,15 +15,15 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
+public class AdvancedCokeOvenRecipeSerializer extends ICRecipeSerializer<AdvancedCokeOvenRecipe> {
     @Override
     public ItemStack getIcon() { return MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(); }
 
     @Override
     protected DualMapCodec<RegistryFriendlyByteBuf, AdvancedCokeOvenRecipe> codecs() {
         MapCodec<AdvancedCokeOvenRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                IngredientWithSize.CODECS.codec().fieldOf("input").forGetter(AdvancedCokeOvenRecipe::input),
-                TagOutput.CODECS.codec().fieldOf("result").forGetter(AdvancedCokeOvenRecipe::itemOutput),
+                ICIngredientWithSize.CODECS.codec().fieldOf("input").forGetter(AdvancedCokeOvenRecipe::input),
+                ICTagOutput.CODECS.codec().fieldOf("result").forGetter(AdvancedCokeOvenRecipe::itemOutput),
                 Codec.INT.fieldOf("time").forGetter(AdvancedCokeOvenRecipe::time),
                 Codec.INT.fieldOf("creosote").forGetter(AdvancedCokeOvenRecipe::creosoteOutput)
         ).apply(instance, AdvancedCokeOvenRecipe::new));
@@ -31,8 +31,8 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
         StreamCodec<RegistryFriendlyByteBuf, AdvancedCokeOvenRecipe> streamCodec = new StreamCodec<>() {
             @Override
             public @Nonnull AdvancedCokeOvenRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
-                IngredientWithSize input = IngredientWithSize.CODECS.streamCodec().decode(buf);
-                TagOutput itemOutput = TagOutput.CODECS.streamCodec().decode(buf);
+                ICIngredientWithSize input = ICIngredientWithSize.CODECS.streamCodec().decode(buf);
+                ICTagOutput itemOutput = ICTagOutput.CODECS.streamCodec().decode(buf);
                 int time = buf.readVarInt();
                 int creosoteOutput = buf.readVarInt();
                 return new AdvancedCokeOvenRecipe(input, itemOutput, time, creosoteOutput);
@@ -40,8 +40,8 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
 
             @Override
             public void encode(@Nonnull RegistryFriendlyByteBuf buf, AdvancedCokeOvenRecipe recipe) {
-                IngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
-                TagOutput.CODECS.streamCodec().encode(buf, recipe.itemOutput());
+                ICIngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
+                ICTagOutput.CODECS.streamCodec().encode(buf, recipe.itemOutput());
                 buf.writeVarInt(recipe.time());
                 buf.writeVarInt(recipe.creosoteOutput());
             }

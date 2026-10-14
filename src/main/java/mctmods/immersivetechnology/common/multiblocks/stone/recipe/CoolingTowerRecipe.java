@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import com.immersiveconvergence.api.util.RecipeCache;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
@@ -21,9 +21,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoolingTowerRecipe extends MultiblockRecipe {
+public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, CoolingTowerRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.COOLING_TOWER);
+    public static final ICCachedRecipeList<CoolingTowerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.COOLING_TOWER);
 
     private final ResourceLocation id;
     public final TagKey<Fluid> inputTag0;
@@ -36,7 +36,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
     private final int time;
 
     public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
-        super(TagOutput.EMPTY, RecipeTypes.COOLING_TOWER, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.COOLING_TOWER, time, 0);
         this.id = id;
         this.inputTag0 = inputTag0;
         this.amount0 = amount0;
@@ -88,7 +88,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return time; }
 

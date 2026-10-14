@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
 
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -25,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class StyleNOXRecipeBuilder implements RecipeBuilder {
-    private IngredientWithSize input;
-    private TagOutput output;
+    private ICIngredientWithSize input;
+    private ICTagOutput output;
     private TagKey<Fluid> waterTag;
     private int waterAmount;
     private TagKey<Fluid> co2Tag;
@@ -41,13 +41,13 @@ public class StyleNOXRecipeBuilder implements RecipeBuilder {
 
     public static StyleNOXRecipeBuilder builder() { return new StyleNOXRecipeBuilder(); }
 
-    public StyleNOXRecipeBuilder addInput(IngredientWithSize input) {
+    public StyleNOXRecipeBuilder addInput(ICIngredientWithSize input) {
         this.input = input;
         return this;
     }
 
     public StyleNOXRecipeBuilder addOutput(ItemStack output) {
-        this.output = new TagOutput(output);
+        this.output = new ICTagOutput(output);
         return this;
     }
 

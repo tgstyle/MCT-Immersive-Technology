@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.ElectrolyticCrucibleBatteryRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -20,9 +20,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
+public class ElectrolyticCrucibleBatteryRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, ElectrolyticCrucibleBatteryRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
+    public static final ICCachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -35,7 +35,7 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
     private final int energy;
 
     public ElectrolyticCrucibleBatteryRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput0, @Nullable FluidStack fluidOutput1, @Nullable FluidStack fluidOutput2, ItemStack itemOutput, int energy, int time) {
-        super(TagOutput.EMPTY, RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, time, energy, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY, time, energy);
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput0 = fluidOutput0;
@@ -74,7 +74,7 @@ public class ElectrolyticCrucibleBatteryRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return time; }
 

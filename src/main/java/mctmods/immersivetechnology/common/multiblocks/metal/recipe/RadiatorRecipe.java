@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.RadiatorRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -20,9 +20,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class RadiatorRecipe extends MultiblockRecipe {
+public class RadiatorRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, RadiatorRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<RadiatorRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.RADIATOR);
+    public static final ICCachedRecipeList<RadiatorRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.RADIATOR);
 
     private final ResourceLocation id;
     public final TagKey<Fluid> fluidTag;
@@ -31,7 +31,7 @@ public class RadiatorRecipe extends MultiblockRecipe {
     private final int time;
 
     public RadiatorRecipe(ResourceLocation id, TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time) {
-        super(TagOutput.EMPTY, RecipeTypes.RADIATOR, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.RADIATOR, time, 0);
         this.id = id;
         this.fluidTag = fluidTag;
         this.amount = amount;
@@ -67,7 +67,7 @@ public class RadiatorRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return time; }
 

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -24,8 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
-    private IngredientWithSize input;
-    private TagOutput itemOutput;
+    private ICIngredientWithSize input;
+    private ICTagOutput itemOutput;
     private int time;
     private int creosoteOutput;
 
@@ -42,28 +42,28 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
     }
 
     public AdvancedCokeOvenRecipeBuilder addInput(Item input) {
-        this.input = new IngredientWithSize(Ingredient.of(input));
+        this.input = new ICIngredientWithSize(Ingredient.of(input));
         return this;
     }
 
     public AdvancedCokeOvenRecipeBuilder addInput(TagKey<Item> input, int count) {
-        this.input = new IngredientWithSize(Ingredient.of(input), count);
+        this.input = new ICIngredientWithSize(Ingredient.of(input), count);
         return this;
     }
 
     public AdvancedCokeOvenRecipeBuilder addOutput(Item output) {
-        this.itemOutput = new TagOutput(output);
+        this.itemOutput = new ICTagOutput(output);
         return this;
     }
 
     @SuppressWarnings("unused")
     public AdvancedCokeOvenRecipeBuilder addOutput(ItemStack output) {
-        this.itemOutput = new TagOutput(output);
+        this.itemOutput = new ICTagOutput(output);
         return this;
     }
 
     public AdvancedCokeOvenRecipeBuilder addOutput(TagKey<Item> output, int count) {
-        this.itemOutput = new TagOutput(output, count);
+        this.itemOutput = new ICTagOutput(output, count);
         return this;
     }
 

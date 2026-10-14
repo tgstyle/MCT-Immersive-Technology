@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import blusunrize.immersiveengineering.api.crafting.IERecipeTypes;
+import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeType;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
@@ -10,7 +10,7 @@ import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.world.item.crafting.Recipe;
 
 public class JEIRecipeTypes {
-    public static final RecipeType<CokeOvenRecipe> ADVANCED_COKE_OVEN = create(IERecipeTypes.COKE_OVEN);
+    public static final RecipeType<?> ADVANCED_COKE_OVEN = create(ICCokeOvenRecipe.recipeType());
     public static final RecipeType<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN_CUSTOM = create(RecipeTypes.ADVANCED_COKE_OVEN);
     public static final RecipeType<BoilerLiquidRecipe> BOILER_LIQUID = create(RecipeTypes.BOILER_LIQUID);
     public static final RecipeType<BoilerSolidRecipe> BOILER_SOLID = create(RecipeTypes.BOILER_SOLID);
@@ -26,7 +26,7 @@ public class JEIRecipeTypes {
     public static final RecipeType<SteamTurbineRecipe> STEAM_TURBINE = create(RecipeTypes.STEAM_TURBINE);
     public static final RecipeType<StyleNOXRecipe> STYLENOX = create(RecipeTypes.STYLENOX);
 
-    private static <T extends Recipe<?>> RecipeType<T> create(IERecipeTypes.TypeWithClass<T> type) {
+    private static <T extends Recipe<?>> RecipeType<T> create(ICRecipeType<T> type) {
         return new RecipeType<>(type.type().getId(), type.recipeClass());
     }
 }

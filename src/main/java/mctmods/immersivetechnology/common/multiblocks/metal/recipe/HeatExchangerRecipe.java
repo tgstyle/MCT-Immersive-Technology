@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.HeatExchangerRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -21,9 +21,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class HeatExchangerRecipe extends MultiblockRecipe {
+public class HeatExchangerRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, HeatExchangerRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<HeatExchangerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.HEAT_EXCHANGER);
+    public static final ICCachedRecipeList<HeatExchangerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.HEAT_EXCHANGER);
 
     public float timeModifier = 1;
     public float energyModifier = 1;
@@ -39,7 +39,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
     private final int baseProcessEnergy;
 
     public HeatExchangerRecipe(@SuppressWarnings("unused") ResourceLocation id, TagKey<Fluid> input0Tag, int input0Amount, @Nullable TagKey<Fluid> input1Tag, int input1Amount, FluidStack output0, @Nullable FluidStack output1, int energy, int time) {
-        super(TagOutput.EMPTY, RecipeTypes.HEAT_EXCHANGER, time, energy, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.HEAT_EXCHANGER, time, energy);
         this.input0Tag = input0Tag;
         this.input0Amount = input0Amount;
         this.input1Tag = input1Tag;
@@ -95,7 +95,7 @@ public class HeatExchangerRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getMultipleProcessTicks() { return 0; }
 }

@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
     "has_slab_sheetmetal_iron": {

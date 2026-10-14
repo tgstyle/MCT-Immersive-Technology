@@ -3,10 +3,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.DistillerRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
@@ -20,9 +20,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DistillerRecipe extends MultiblockRecipe {
+public class DistillerRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, DistillerRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.DISTILLER);
+    public static final ICCachedRecipeList<DistillerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.DISTILLER);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -33,7 +33,7 @@ public class DistillerRecipe extends MultiblockRecipe {
     private final int energy;
 
     public DistillerRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
-        super(TagOutput.EMPTY, RecipeTypes.DISTILLER, time, energy, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.DISTILLER, time, energy);
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput = fluidOutput;
@@ -68,7 +68,7 @@ public class DistillerRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return time; }
 

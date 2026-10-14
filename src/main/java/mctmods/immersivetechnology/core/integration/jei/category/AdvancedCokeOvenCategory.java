@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.core.integration.jei.category;
 
 import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
-import blusunrize.immersiveengineering.common.register.IEFluids;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.core.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.core.lib.Reference;
@@ -48,7 +48,7 @@ public class AdvancedCokeOvenCategory extends BaseRecipeCategory<AdvancedCokeOve
         ItemStack itemOut = recipe.itemOutput.get();
         builder.addSlot(RecipeIngredientRole.OUTPUT, 59, 19).addItemStack(itemOut.isEmpty() ? ItemStack.EMPTY : itemOut);
 
-        FluidStack fluidOut = (recipe.creosoteOutput > 0) ? new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput) : FluidStack.EMPTY;
+        FluidStack fluidOut = (recipe.creosoteOutput > 0) ? new FluidStack(ICCokeOvenRecipe.creosote(),recipe.creosoteOutput) : FluidStack.EMPTY;
         int tankCapacity = Math.max(1000, recipe.creosoteOutput);
 
         var fluidSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, 103, 4)

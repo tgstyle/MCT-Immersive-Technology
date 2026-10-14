@@ -1,8 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.*;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.immersiveconvergence.api.capability.HeatCapabilities;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerLiquidRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.HolderLookup;
@@ -19,9 +21,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BoilerLiquidRecipe extends MultiblockRecipe {
+public class BoilerLiquidRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, BoilerLiquidRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<BoilerLiquidRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
+    public static final ICCachedRecipeList<BoilerLiquidRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -31,7 +33,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
     private final Lazy<Integer> totalProcessTime;
 
     public BoilerLiquidRecipe(TagKey<Fluid> fluidTag, int amount, int time, double heatPerTick, double targetHeat) {
-        super(TagOutput.EMPTY, RecipeTypes.BOILER_LIQUID, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.BOILER_LIQUID, time, 0);
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.time = time;
@@ -71,7 +73,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
 
     @Override public @Nonnull ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return totalProcessTime.get(); }
 

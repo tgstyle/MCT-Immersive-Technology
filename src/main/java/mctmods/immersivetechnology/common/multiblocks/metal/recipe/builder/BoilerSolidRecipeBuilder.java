@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BoilerSolidRecipeBuilder implements RecipeBuilder {
-    private IngredientWithSize input;
+    private ICIngredientWithSize input;
     private double heatPerTick;
     private double targetHeat;
 
@@ -35,11 +35,11 @@ public class BoilerSolidRecipeBuilder implements RecipeBuilder {
     }
 
     public BoilerSolidRecipeBuilder addInput(TagKey<Item> itemTag, int amount) {
-        this.input = new IngredientWithSize(Ingredient.of(itemTag), amount);
+        this.input = new ICIngredientWithSize(Ingredient.of(itemTag), amount);
         return this;
     }
 
-    public BoilerSolidRecipeBuilder addInput(IngredientWithSize ingredient) {
+    public BoilerSolidRecipeBuilder addInput(ICIngredientWithSize ingredient) {
         this.input = ingredient;
         return this;
     }

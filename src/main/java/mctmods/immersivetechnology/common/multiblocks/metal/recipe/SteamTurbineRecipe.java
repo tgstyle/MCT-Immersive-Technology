@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.SteamTurbineRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.HolderLookup;
@@ -19,9 +19,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class SteamTurbineRecipe extends MultiblockRecipe {
+public class SteamTurbineRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, SteamTurbineRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.STEAM_TURBINE);
+    public static final ICCachedRecipeList<SteamTurbineRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.STEAM_TURBINE);
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -30,7 +30,7 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
     private final int time;
 
     public SteamTurbineRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time, float torque) {
-        super(TagOutput.EMPTY, RecipeTypes.STEAM_TURBINE, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+        super(ICTagOutput.EMPTY, RecipeTypes.STEAM_TURBINE, time, 0);
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput = fluidOutput;
@@ -58,7 +58,7 @@ public class SteamTurbineRecipe extends MultiblockRecipe {
         return null;
     }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 

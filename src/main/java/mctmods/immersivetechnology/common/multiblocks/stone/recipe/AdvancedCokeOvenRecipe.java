@@ -1,12 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.CokeOvenRecipe;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.TagOutput;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
-import blusunrize.immersiveengineering.common.register.IEFluids;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICTagOutput;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.AdvancedCokeOvenRecipeSerializer;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.HolderLookup;
@@ -23,34 +22,34 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
+public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, AdvancedCokeOvenRecipeSerializer> SERIALIZER;
-    public static final CachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.ADVANCED_COKE_OVEN);
+    public static final ICCachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.ADVANCED_COKE_OVEN);
 
     private static final List<RecipeHolder<AdvancedCokeOvenRecipe>> IE_COPIED_RECIPES = new ArrayList<>();
 
-    public final IngredientWithSize input;
-    public final TagOutput itemOutput;
+    public final ICIngredientWithSize input;
+    public final ICTagOutput itemOutput;
     public final int time;
     public final int creosoteOutput;
 
     private static int copiedAtReload = -1;
 
-    public AdvancedCokeOvenRecipe(IngredientWithSize input, TagOutput itemOutput, int time, int creosoteOutput) {
-        super(itemOutput, RecipeTypes.ADVANCED_COKE_OVEN, time, 0, () -> new MultiblockRecipe.RecipeMultiplier(() -> 1.0, () -> 1.0));
+    public AdvancedCokeOvenRecipe(ICIngredientWithSize input, ICTagOutput itemOutput, int time, int creosoteOutput) {
+        super(itemOutput, RecipeTypes.ADVANCED_COKE_OVEN, time, 0);
         this.input = input;
         this.itemOutput = itemOutput;
         this.time = time;
         this.creosoteOutput = creosoteOutput;
         setInputListWithSizes(List.of(input));
-        this.fluidOutputList = List.of(new FluidStack(IEFluids.CREOSOTE.getStill(), creosoteOutput));
+        this.fluidOutputList = List.of(new FluidStack(ICCokeOvenRecipe.creosote(), creosoteOutput));
     }
 
     public boolean matches(ItemStack stack) {
         return this.input.testIgnoringSize(stack);
     }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() {
+    @Override protected ICRecipeSerializer<?> getICSerializer() {
         return SERIALIZER.get();
     }
 
@@ -60,8 +59,8 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
 
     @Override public int getMultipleProcessTicks() { return 0; }
 
-    public IngredientWithSize input() { return input; }
-    public TagOutput itemOutput() { return itemOutput; }
+    public ICIngredientWithSize input() { return input; }
+    public ICTagOutput itemOutput() { return itemOutput; }
     public int time() { return time; }
     public int creosoteOutput() { return creosoteOutput; }
 
@@ -102,19 +101,18 @@ public class AdvancedCokeOvenRecipe extends MultiblockRecipe {
     }
 
     public static void copyIECokeOvenRecipes(Level level) {
-        if (copiedAtReload == CachedRecipeList.getReloadCount() && !IE_COPIED_RECIPES.isEmpty()) { return; }
+        if (copiedAtReload == ICCachedRecipeList.reloadCount() && !IE_COPIED_RECIPES.isEmpty()) { return; }
         IE_COPIED_RECIPES.clear();
-        copiedAtReload = CachedRecipeList.getReloadCount();
-        for (RecipeHolder<CokeOvenRecipe> holder : CokeOvenRecipe.RECIPES.getRecipes(level)) {
-            CokeOvenRecipe r = holder.value();
-            ItemStack[] ieStacks = r.input.getMatchingStacks();
+        copiedAtReload = ICCachedRecipeList.reloadCount();
+        for (ICCokeOvenRecipe r : ICCokeOvenRecipe.getRecipes(level)) {
+            ItemStack[] ieStacks = r.input().getMatchingStacks();
             boolean alreadyHas = false;
             if (ieStacks.length > 0) {
                 for (RecipeHolder<AdvancedCokeOvenRecipe> h : RECIPES.getRecipes(level)) { if (h.value().matches(ieStacks[0])) { alreadyHas = true; break; } }
             }
             if (!alreadyHas) {
-                AdvancedCokeOvenRecipe copied = new AdvancedCokeOvenRecipe(r.input, r.output, r.time, r.creosoteOutput);
-                ResourceLocation copiedId = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "advanced_coke_oven/copied/" + holder.id().getNamespace() + "/" + holder.id().getPath());
+                AdvancedCokeOvenRecipe copied = new AdvancedCokeOvenRecipe(r.input(), r.output(), r.time(), r.creosoteOutput());
+                ResourceLocation copiedId = ResourceLocation.fromNamespaceAndPath("immersivetechnology", "advanced_coke_oven/copied/" + r.id().getNamespace() + "/" + r.id().getPath());
                 IE_COPIED_RECIPES.add(new RecipeHolder<>(copiedId, copied));
             }
         }
