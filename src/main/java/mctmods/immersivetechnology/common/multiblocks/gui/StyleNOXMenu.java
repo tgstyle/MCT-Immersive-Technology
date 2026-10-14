@@ -6,7 +6,7 @@ import com.immersiveconvergence.api.gui.MenuSyncData;
 import com.immersiveconvergence.api.gui.ModSlot;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;

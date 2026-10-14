@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
+import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;

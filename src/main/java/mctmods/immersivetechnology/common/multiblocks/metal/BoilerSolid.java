@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
+import com.immersiveconvergence.api.multiblock.BlockMatcher;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.multiblock.FormationCandidate;

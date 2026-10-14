@@ -7,10 +7,10 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.core.ClientConfig;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockBEHelperMaster;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
+import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;

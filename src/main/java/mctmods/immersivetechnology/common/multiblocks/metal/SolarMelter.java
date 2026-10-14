@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
+import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;

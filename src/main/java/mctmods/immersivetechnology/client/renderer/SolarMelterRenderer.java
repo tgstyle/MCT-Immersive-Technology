@@ -5,9 +5,9 @@ import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
+import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;

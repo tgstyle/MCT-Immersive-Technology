@@ -11,12 +11,12 @@ import mctmods.immersivetechnology.common.multiblocks.stone.AdvancedCokeOven;
 import mctmods.immersivetechnology.common.multiblocks.stone.CoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
+import com.immersiveconvergence.api.multiblock.MultiblockHandler;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.blocks.MultiblockRegistration;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
 
-import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;

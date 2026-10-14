@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.proxy;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;

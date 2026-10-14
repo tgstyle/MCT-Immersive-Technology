@@ -1,10 +1,9 @@
 package mctmods.immersivetechnology.common.items;
 
-import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import com.immersiveconvergence.api.block.HammerUse;
+import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 import com.immersiveconvergence.api.util.ICTextUtils;
 import com.immersiveconvergence.core.lib.ICLib;
-import mctmods.immersivetechnology.core.util.Advancements;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -16,7 +15,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class FormationTool extends Item {
     public FormationTool() { super(new Properties()); }
@@ -62,10 +61,8 @@ public class FormationTool extends Item {
             for (int i = 0; i < tagList.size(); i++) {
                 ResourceLocation mbName = ResourceLocation.tryParse(tagList.getString(i));
                 if (mbName == null) continue;
-                MultiblockHandler.IMultiblock multiblock = MultiblockHandler.getByUniqueName(mbName);
-                if (multiblock != null) {
-                    list.add(ICTextUtils.applyFormat(multiblock.getDisplayName(), ChatFormatting.DARK_GRAY));
-                }
+                Component displayName = MultiblockRegistry.displayName(mbName);
+                if (displayName != null) { list.add(ICTextUtils.applyFormat(displayName, ChatFormatting.DARK_GRAY)); }
             }
         }
     }
@@ -96,25 +93,10 @@ public class FormationTool extends Item {
         final Direction multiblockSide = (side.getAxis() == Direction.Axis.Y && player != null)
                 ? Direction.fromYRot(player.getYRot()).getOpposite() : side;
 
-        for (MultiblockHandler.IMultiblock mb : MultiblockHandler.getMultiblocks()) {
-            if (mb.isBlockTrigger(world.getBlockState(pos), multiblockSide, world)) {
-                boolean isAllowed = true;
-                if (permittedMultiblocks != null) isAllowed = permittedMultiblocks.contains(mb.getUniqueName());
-                else if (interdictedMultiblocks != null) isAllowed = !interdictedMultiblocks.contains(mb.getUniqueName());
-
-                if (!isAllowed) continue;
-                if (MultiblockHandler.postMultiblockFormationEvent(player, mb, pos, stack).isCanceled()) continue;
-
-                boolean formed = mb.createStructure(world, pos, multiblockSide, player);
-                if (formed) {
-                    if (player instanceof ServerPlayer sPlayer) {
-                        Advancements.TRIGGER_MULTIBLOCK.trigger(sPlayer, mb, stack);
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-
+        final List<ResourceLocation> permitted = permittedMultiblocks;
+        final List<ResourceLocation> interdicted = interdictedMultiblocks;
+        Predicate<ResourceLocation> allowed = name -> permitted != null ? permitted.contains(name) : interdicted == null || !interdicted.contains(name);
+        if (MultiblockRegistry.formFirstMatching(world, pos, multiblockSide, player, stack, allowed)) { return InteractionResult.SUCCESS; }
         return HammerUse.onBlock(world, pos, side, player, context.getHand(), context.getClickLocation());
     }
 
@@ -124,7 +106,7 @@ public class FormationTool extends Item {
         for (int i = 0; i < data.size(); ++i) {
             String listEntry = data.getString(i);
             ResourceLocation asRL = ResourceLocation.tryParse(listEntry);
-            if (asRL == null || MultiblockHandler.getByUniqueName(asRL) == null) {
+            if (asRL == null || MultiblockRegistry.displayName(asRL) == null) {
                 if (player != null && !player.level().isClientSide) {
                     player.displayClientMessage(Component.literal("Invalid " + prefix + " entry: " + listEntry), false);
                 }

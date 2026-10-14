@@ -7,9 +7,9 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.RedstoneInput;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.particles.ColoredSmoke;
