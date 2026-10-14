@@ -22,7 +22,7 @@ public class CommonProxy {
         Reference.IT_LOGGER.info("Registering IT Content!");
         MultiblockRegistry.forceClassLoad();
         ComputerIntegration.register();
-        MenuTypes.REGISTER.register(event);
+        MenuTypes.init(event);
         RecipeTypes.init(event);
         Sounds.init(event);
         Particles.REGISTER.register(event);

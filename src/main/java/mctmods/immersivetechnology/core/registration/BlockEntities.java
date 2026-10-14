@@ -4,6 +4,8 @@ import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimer
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.ICMods;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -13,6 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 @SuppressWarnings("ConstantConditions")
 public class BlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> REGISTER_IE = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MODID);
 
 
     public static final RegistryObject<BlockEntityType<AdvancedCokeOvenBaseHeaterBlockEntity>> ADVANCED_COKE_OVEN_BASEHEATER = REGISTER.register(
@@ -57,25 +60,28 @@ public class BlockEntities {
             () -> BlockEntityType.Builder.of(TrashItemBlockEntity::new, ModBlocks.Metal.TRASH_ITEM.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER.register(
+    public static final RegistryObject<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER_IE.register(
             "valve_fluid",
             () -> BlockEntityType.Builder.of(ValveFluidBlockEntity::new, ModBlocks.Metal.VALVE_FLUID.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER.register(
+    public static final RegistryObject<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER_IE.register(
             "valve_load",
             () -> BlockEntityType.Builder.of(ValveLoadBlockEntity::new, ModBlocks.Metal.VALVE_LOAD.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER.register(
+    public static final RegistryObject<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER_IE.register(
             "valve_limiter",
             () -> BlockEntityType.Builder.of(ValveLimiterBlockEntity::new, ModBlocks.Metal.VALVE_LIMITER.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ConnectorTimerBlockEntity>> CONNECTOR_TIMER = REGISTER.register(
+    public static final RegistryObject<BlockEntityType<ConnectorTimerBlockEntity>> CONNECTOR_TIMER = REGISTER_IE.register(
             "connector_timer",
             () -> BlockEntityType.Builder.of(ConnectorTimerBlockEntity::new, ModBlocks.Connector.CONNECTOR_TIMER.get()).build(null)
     );
 
-    public static void init(IEventBus event) { REGISTER.register(event); }
+    public static void init(IEventBus event) {
+        REGISTER.register(event);
+        if (ICMods.immersiveEngineering()) { REGISTER_IE.register(event); }
+    }
 }

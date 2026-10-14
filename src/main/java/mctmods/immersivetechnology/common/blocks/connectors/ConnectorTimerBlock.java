@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
+import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.energy.ICWires;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
-import blusunrize.immersiveengineering.common.items.WireCoilItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -99,19 +100,15 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
     @Override @Nonnull public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         ItemStack held = player.getItemInHand(hand);
 
-        if (!held.isEmpty() && held.getItem() instanceof WireCoilItem) { return InteractionResult.PASS; }
+        if (ICWires.isWireCoil(held)) { return InteractionResult.PASS; }
+        if (BlockToolGates.isScrewdriver.test(held)) { return screwdriverUseSide(hit.getDirection(), player, hand, level, pos, hit); }
+        if (player.isCrouching()) { return InteractionResult.PASS; }
 
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) {
-            if (player.isCrouching()) {
-                timer.setIoMode((timer.getIoMode() == 0) ? 1 : 0);
-                timer.setChanged();
-                timer.markContainingBlockForUpdate(null);
-                level.blockEvent(pos, this, 254, 0);
-            }
-            else { NetworkHooks.openScreen((ServerPlayer) player, timer, buf -> buf.writeBlockPos(pos)); }
+            NetworkHooks.openScreen((ServerPlayer) player, timer, buf -> buf.writeBlockPos(pos));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

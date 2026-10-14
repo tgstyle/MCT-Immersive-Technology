@@ -1,14 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.connectors.logic;
 
+import com.immersiveconvergence.api.block.BlockToolGates;
+import com.immersiveconvergence.api.energy.ICConnectionPoint;
+import com.immersiveconvergence.api.energy.ICConnectorRedstoneBlockEntity;
+import com.immersiveconvergence.api.energy.ICWireType;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.core.lib.ICLib;
-import blusunrize.immersiveengineering.api.wires.ConnectionPoint;
-import blusunrize.immersiveengineering.api.wires.WireType;
-import blusunrize.immersiveengineering.api.wires.redstone.IRedstoneConnector;
-import blusunrize.immersiveengineering.api.wires.redstone.RedstoneNetworkHandler;
-import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IStateBasedDirectional;
-import blusunrize.immersiveengineering.common.blocks.generic.ImmersiveConnectableBlockEntity;
-import blusunrize.immersiveengineering.common.items.ScrewdriverItem;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.ModProperties;
@@ -33,7 +30,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -46,7 +42,7 @@ import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity implements IServerTickableBE, IStateBasedDirectional, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, IRedstoneConnector, MenuProvider , ITileSyncReceiver {
+public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity implements IServerTickableBE, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
@@ -92,8 +88,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
             currentInput = Math.max(power1, power2);
             if (neighborState.hasProperty(RedStoneWireBlock.POWER)) { currentInput = Math.max(currentInput, neighborState.getValue(RedStoneWireBlock.POWER)); }
         } else {
-            RedstoneNetworkHandler handler = globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class);
-            currentInput = (handler != null) ? handler.getValue(redstoneChannel.getId()) : 0;
+            currentInput = redstoneNetworkValue(redstoneChannel.getId());
         }
 
         long worldTime = level.getGameTime();
@@ -111,15 +106,12 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         if (desiredOutput != lastOutput) {
             lastOutput = desiredOutput;
             rsDirty = true;
-            onChange(null, null);
+            redstoneChanged();
         }
     }
 
     @Override public final void tickServer() {
-        if (rsDirty) {
-            RedstoneNetworkHandler handler = globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class);
-            if (handler != null) { handler.updateValues(); }
-        }
+        if (rsDirty) { updateRedstoneNetwork(); }
         tickServerLogic();
     }
 
@@ -150,7 +142,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
 
     @Override public boolean isRSOutput() { return ioMode == 1; }
 
-    @Override public void updateInput(byte[] signals, ConnectionPoint cp) {
+    @Override public void redstoneInput(byte[] signals, @Nonnull ICConnectionPoint cp) {
         if (isRSInput() || isRSOutput()) { signals[redstoneChannel.getId()] = (byte) Math.max(lastOutput, signals[redstoneChannel.getId()]); }
         rsDirty = false;
     }
@@ -160,9 +152,8 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         if (player.isShiftKeyDown()) { redstoneChannel = DyeColor.byId((redstoneChannel.getId() + 1) % 16); }
         else { ioMode = (ioMode == 0) ? 1 : 0; }
         setChanged();
-        RedstoneNetworkHandler handler = globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class);
-        if (handler != null) { handler.updateValues(); }
-        onChange(null, null);
+        updateRedstoneNetwork();
+        redstoneChanged();
         markContainingBlockForUpdate(null);
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -206,9 +197,8 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
 
         if (needsNetworkUpdate) {
             setChanged();
-            RedstoneNetworkHandler handler = globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class);
-            if (handler != null) { handler.updateValues(); }
-            onChange(null, null);
+            updateRedstoneNetwork();
+            redstoneChanged();
         }
         if (needsBlockUpdate) {
             markContainingBlockForUpdate(null);
@@ -220,7 +210,6 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     }
 
     @Override public void writeCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
-        super.writeCustomNBT(nbt, descPacket);
         nbt.putInt("target", target);
         nbt.putInt("rotation", rotation);
         nbt.putInt("lastOutput", lastOutput);
@@ -230,7 +219,6 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     }
 
     @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
-        super.readCustomNBT(nbt, descPacket);
         target = nbt.getInt("target");
         if (nbt.contains("rotation")) { rotation = nbt.getInt("rotation"); }
         lastOutput = nbt.getInt("lastOutput");
@@ -239,9 +227,9 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         if (nbt.contains("output")) { outputClient = nbt.getInt("output"); }
     }
 
-    @Override @Nonnull public Vec3 getConnectionOffset(ConnectionPoint here, ConnectionPoint other, WireType type) {
+    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICConnectionPoint other, @Nonnull ICWireType cable) {
         Direction wireSide = getInputSide();
-        double conRadius = type.getRenderDiameter() / 2;
+        double conRadius = cable.getRenderDiameter() / 2;
         boolean onGround = getFacing().getAxis().isVertical();
         double offset = onGround ? (0.025 - conRadius) : (0.4 - conRadius);
         double yBase = onGround ? 0.95 : 0.5;
@@ -251,7 +239,7 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
     @Override @Nonnull public Component[] getOverlayText(Player player, HitResult mop, boolean hammer) {
         if (!hammer) {
             ItemStack held = player.getMainHandItem();
-            if (held.isEmpty() || !(held.getItem() instanceof ScrewdriverItem)) { return new Component[0]; }
+            if (held.isEmpty() || !BlockToolGates.isScrewdriver.test(held)) { return new Component[0]; }
         }
         float time = (float) this.target / 20;
         DyeColor color = redstoneChannel;
@@ -301,21 +289,13 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
         return result;
     }
 
-    @Override public boolean canConnectCable(WireType cableType, ConnectionPoint target, Vec3i offset) {
-        return WireType.REDSTONE_CATEGORY.equals(cableType.getCategory());
+    @Override public boolean acceptsCable(@Nonnull ICWireType cable, @Nonnull ICConnectionPoint target, @Nonnull Vec3i offset) {
+        return ICWireType.REDSTONE_CATEGORY.equals(cable.getCategory());
     }
 
-    @Override @Nonnull public Property<Direction> getFacingProperty() { return ModProperties.FACING_ALL; }
+    @Nonnull public Direction getFacing() { return getBlockState().getValue(ModProperties.FACING_ALL); }
 
-    @Override @Nonnull public blusunrize.immersiveengineering.common.blocks.PlacementLimitation getFacingLimitation() {
-        return blusunrize.immersiveengineering.common.blocks.PlacementLimitation.SIDE_CLICKED;
-    }
-
-    @Override public boolean mirrorFacingOnPlacement(@Nonnull net.minecraft.world.entity.LivingEntity placer) { return true; }
-
-    @Override public boolean canHammerRotate(@Nonnull Direction side, @Nonnull Vec3 hit, @Nonnull net.minecraft.world.entity.LivingEntity entity) { return false; }
-
-    @Override public void onChange(ConnectionPoint cp, RedstoneNetworkHandler handler) {
+    @Override public void redstoneChanged() {
         if (level != null && !level.isClientSide && ICUtils.isChunkSafe(level, worldPosition)) {
             setChanged();
             markContainingBlockForUpdate(getBlockState());
@@ -328,8 +308,6 @@ public class ConnectorTimerBlockEntity extends ImmersiveConnectableBlockEntity i
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         }
     }
-
-    @Override public int getMaxRSInput() { return 15; }
 
     public boolean stillValid(Player player) { return level != null && level.getBlockEntity(worldPosition) == this && Reach.within(this, player); }
 

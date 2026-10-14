@@ -5,6 +5,7 @@ import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.gui.*;
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
@@ -90,10 +91,12 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
-            MenuScreens.register(MenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
-            MenuScreens.register(MenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
-            MenuScreens.register(MenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
-            MenuScreens.register(MenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
+            if (ICMods.immersiveEngineering()) {
+                MenuScreens.register(MenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
+                MenuScreens.register(MenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
+                MenuScreens.register(MenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
+                MenuScreens.register(MenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
+            }
 
             ManualInstance instance = ManualHelper.getManual();
 

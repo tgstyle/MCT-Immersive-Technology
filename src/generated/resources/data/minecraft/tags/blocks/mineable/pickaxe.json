@@ -18,15 +18,27 @@
     "immersivetechnology:barrel_creative",
     "immersivetechnology:barrel_open",
     "immersivetechnology:barrel_steel",
-    "immersivetechnology:connector_timer",
+    {
+      "id": "immersivetechnology:connector_timer",
+      "required": false
+    },
     "immersivetechnology:reinforced_coke_brick",
     "immersivetechnology:slab_reinforced_coke_brick",
     "immersivetechnology:technology_engineering",
     "immersivetechnology:trash_energy",
     "immersivetechnology:trash_fluid",
     "immersivetechnology:trash_item",
-    "immersivetechnology:valve_fluid",
-    "immersivetechnology:valve_limiter",
-    "immersivetechnology:valve_load"
+    {
+      "id": "immersivetechnology:valve_fluid",
+      "required": false
+    },
+    {
+      "id": "immersivetechnology:valve_limiter",
+      "required": false
+    },
+    {
+      "id": "immersivetechnology:valve_load",
+      "required": false
+    }
   ]
 }

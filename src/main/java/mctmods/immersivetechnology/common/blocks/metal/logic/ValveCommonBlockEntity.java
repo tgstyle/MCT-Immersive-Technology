@@ -24,13 +24,13 @@ import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OP
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.FacingLimitation;
-import com.immersiveconvergence.api.block.BaseBlockEntity;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.energy.ICConnectableBlockEntity;
 
 import javax.annotation.Nonnull;
 
-public abstract class ValveCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
+public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity implements IServerTickableBE, IClientTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
