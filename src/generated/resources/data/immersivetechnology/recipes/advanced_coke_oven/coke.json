@@ -1,5 +1,14 @@
 {
   "type": "immersivetechnology:advanced_coke_oven",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:tag_empty",
+        "tag": "forge:coal_coke"
+      }
+    }
+  ],
   "creosote": 500,
   "input": {
     "item": "minecraft:coal"
