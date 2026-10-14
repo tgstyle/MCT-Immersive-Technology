@@ -54,7 +54,7 @@ public class BoilerSolidRecipe extends ICMultiblockRecipe {
 
     @Override
     @Nonnull
-    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+    public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) {
         return ItemStack.EMPTY;
     }
 

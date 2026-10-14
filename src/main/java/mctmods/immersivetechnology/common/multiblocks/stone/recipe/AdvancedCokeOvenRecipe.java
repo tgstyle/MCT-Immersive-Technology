@@ -53,7 +53,7 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
         return SERIALIZER.get();
     }
 
-    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider access) {
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider access) {
         return this.itemOutput.get();
     }
 

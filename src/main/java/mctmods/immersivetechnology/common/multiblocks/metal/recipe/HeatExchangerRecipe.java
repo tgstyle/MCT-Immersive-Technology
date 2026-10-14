@@ -93,7 +93,7 @@ public class HeatExchangerRecipe extends ICMultiblockRecipe {
         return (int) (baseProcessEnergy * energyModifier);
     }
 
-    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 

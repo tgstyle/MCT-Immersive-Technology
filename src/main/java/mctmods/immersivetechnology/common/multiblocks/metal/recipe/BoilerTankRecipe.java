@@ -66,7 +66,7 @@ public class BoilerTankRecipe extends ICMultiblockRecipe {
         return null;
     }
 
-    @Override public @Nonnull ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override public @Nonnull ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 

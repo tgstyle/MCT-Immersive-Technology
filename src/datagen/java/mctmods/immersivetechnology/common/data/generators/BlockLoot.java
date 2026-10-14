@@ -10,6 +10,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -30,9 +31,6 @@ public class BlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.Metal.TRASH_ENERGY.get());
         dropSelf(ModBlocks.Metal.TRASH_FLUID.get());
         dropSelf(ModBlocks.Metal.TRASH_ITEM.get());
-        dropSelf(ModBlocks.Metal.VALVE_FLUID.get());
-        dropSelf(ModBlocks.Metal.VALVE_LIMITER.get());
-        dropSelf(ModBlocks.Metal.VALVE_LOAD.get());
         dropSelf(ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get());
         dropSelf(ModBlocks.Metal.GRAPHITE_MODERATOR.get());
         dropSelf(ModBlocks.Metal.NUCLEAR_ENGINEERING.get());
@@ -47,6 +45,7 @@ public class BlockLoot extends BlockLootSubProvider {
         add(ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM.get(), createOreDrop(ModBlocks.Metal.DEEPSLATE_ORE_MAGNESIUM.get(), ModItems.RAW_MAGNESIUM.get()));
         dropSelf(ModBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());
+        ModBlocks.NEEDS_IE.forEach(entry -> add(entry.get(), LootTable.lootTable().withPool(createPoolBuilder().add(TagEntry.tagContents(ModItemTags.drops(entry))))));
         registerMultiblocksNoDrop();
     }
 

@@ -86,7 +86,7 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
         return recipe == null ? null : new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.inputTag1, recipe.amount1, recipe.inputTag0, recipe.amount0, recipe.time);
     }
 
-    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 

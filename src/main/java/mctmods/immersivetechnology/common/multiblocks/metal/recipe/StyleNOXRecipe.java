@@ -65,7 +65,7 @@ public class StyleNOXRecipe extends ICMultiblockRecipe {
         return null;
     }
 
-    @Override @Nonnull public ItemStack getResultItem(HolderLookup.Provider access) { return this.output.get(); }
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider access) { return this.output.get(); }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 

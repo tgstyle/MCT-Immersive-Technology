@@ -1,7 +1,9 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.registration.BlockEntry;
 import com.immersiveconvergence.api.registration.ItemEntry;
 import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.HolderLookup.Provider;
@@ -61,7 +63,10 @@ public class ModItemTags extends ItemTagsProvider {
         copy(cBlockTag("ores/chromium"), cItemTag("ores/chromium"));
         copy(cBlockTag("ores/magnesium"), cItemTag("ores/magnesium"));
         copy(cBlockTag("ores"), cItemTag("ores"));
+        ModBlocks.NEEDS_IE.forEach(entry -> tag(drops(entry)).addOptional(entry.getId()));
     }
+
+    static TagKey<Item> drops(BlockEntry<?> entry) { return ItemTags.create(Reference.rl("drops/" + entry.getId().getPath())); }
 
     private void registerMaterial(String category, String material, ItemEntry<?> item) {
         tag(cItemTag(category + "/" + material)).add(item.get());

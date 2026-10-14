@@ -71,7 +71,7 @@ public class BoilerLiquidRecipe extends ICMultiblockRecipe {
     public double heatPerTick() { return heatPerTick; }
     public double targetHeat() { return targetHeat; }
 
-    @Override public @Nonnull ItemStack getResultItem(HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
+    @Override public @Nonnull ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
