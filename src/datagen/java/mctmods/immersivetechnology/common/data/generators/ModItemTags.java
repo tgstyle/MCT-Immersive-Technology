@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.registration.ModBlocks;
+import mctmods.immersivetechnology.core.registration.ModBlocks.BlockEntry;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.HolderLookup.Provider;
@@ -8,6 +10,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -28,5 +32,8 @@ public class ModItemTags extends ItemTagsProvider {
         tag(ModTags.formationTools).add(ModItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
         tag(ModTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver"));
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "tools/hammers"))).add(ModItems.FORMATION_TOOL.get());
+        ModBlocks.NEEDS_IE.forEach(entry -> tag(drops(entry)).addOptional(entry.getId()));
     }
+
+    static TagKey<Item> drops(BlockEntry<?> entry) { return ItemTags.create(Reference.rl("drops/" + entry.getId().getPath())); }
 }

@@ -49,7 +49,7 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
         return null;
     }
 
-    @Override public @Nonnull ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override public @Nonnull ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 

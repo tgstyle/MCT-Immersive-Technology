@@ -10,8 +10,9 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "immersivetechnology:valve_fluid"
+          "type": "minecraft:tag",
+          "expand": false,
+          "name": "immersivetechnology:drops/valve_fluid"
         }
       ],
       "rolls": 1.0

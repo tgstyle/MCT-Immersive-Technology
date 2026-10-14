@@ -57,6 +57,8 @@
   "gui.immersivetechnology.apply": "Apply",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s heat per tick",
   "gui.immersivetechnology.boiler.total_heat": "%s total heat",
+  "gui.immersivetechnology.config.redstone_color": "Redstone Signal Color:",
+  "gui.immersivetechnology.config.redstone_iomode": "Redstone IO Mode:",
   "gui.immersivetechnology.crate_creative": "Creative Storage Crate",
   "gui.immersivetechnology.direction_east": "E",
   "gui.immersivetechnology.direction_north": "N",

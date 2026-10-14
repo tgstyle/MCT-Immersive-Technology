@@ -57,6 +57,8 @@
   "gui.immersivetechnology.apply": "適用",
   "gui.immersivetechnology.boiler.heat_per_tick": "1ティックあたり %1$s 熱",
   "gui.immersivetechnology.boiler.total_heat": "総熱量 %s",
+  "gui.immersivetechnology.config.redstone_color": "レッドストーン信号の色:",
+  "gui.immersivetechnology.config.redstone_iomode": "レッドストーン入出力モード:",
   "gui.immersivetechnology.crate_creative": "クリエイティブ収納クレート",
   "gui.immersivetechnology.direction_east": "東",
   "gui.immersivetechnology.direction_north": "北",

@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "immersivetechnology:connector_timer",
+      "required": false
+    }
+  ]
+}

@@ -11,7 +11,6 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.Objects;
 
 public class CoolingTowerRecipeBuilder extends ICFinishedRecipe<CoolingTowerRecipeBuilder> {
-    private int inputCount = 0;
     private int outputCount = 0;
 
     public CoolingTowerRecipeBuilder() { super(CoolingTowerRecipe.SERIALIZER.get()); }

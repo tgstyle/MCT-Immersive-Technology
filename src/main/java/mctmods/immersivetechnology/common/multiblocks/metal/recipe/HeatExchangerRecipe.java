@@ -64,7 +64,7 @@ public class HeatExchangerRecipe extends ICMultiblockRecipe {
 
     @Override public int getTotalProcessEnergy() { return this.totalProcessEnergy; }
 
-    @Override @Nonnull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 }

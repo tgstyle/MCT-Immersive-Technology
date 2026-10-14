@@ -57,6 +57,8 @@
   "gui.immersivetechnology.apply": "Použít",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s tepla za tik",
   "gui.immersivetechnology.boiler.total_heat": "Celkové teplo: %s",
+  "gui.immersivetechnology.config.redstone_color": "Barva ruditového signálu:",
+  "gui.immersivetechnology.config.redstone_iomode": "Režim ruditového vstupu/výstupu:",
   "gui.immersivetechnology.crate_creative": "Kreativní úložná bedna",
   "gui.immersivetechnology.direction_east": "V",
   "gui.immersivetechnology.direction_north": "S",

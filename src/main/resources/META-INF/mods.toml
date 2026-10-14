@@ -28,9 +28,9 @@ side="BOTH"
 
 [[dependencies.immersivetechnology]]
 modId="immersiveengineering"
-mandatory=true
+mandatory=false
 versionRange="[${version_ie},]"
-ordering="NONE"
+ordering="AFTER"
 side="BOTH"
 
 [[dependencies.immersivetechnology]]

@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "immersivetechnology:valve_fluid",
+      "required": false
+    }
+  ]
+}

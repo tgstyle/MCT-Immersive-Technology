@@ -91,13 +91,13 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
 
         ArrayList<Component> tooltip = new ArrayList<>();
         if (this.buttonInOut != null && this.buttonInOut.isHoveredOrFocused()) {
-            tooltip.add(Component.translatable("gui.immersiveengineering.config.redstone_iomode"));
+            tooltip.add(Component.translatable("gui.immersivetechnology.config.redstone_iomode"));
             tooltip.add(ICTextUtils.applyFormat(this.buttonInOut.getState().getTextComponent(), ChatFormatting.GRAY));
         }
         if (this.colorButtons != null) {
             for (int i = 0; i < this.colorButtons.length; ++i) {
                 if (this.colorButtons[i].isHoveredOrFocused()) {
-                    tooltip.add(Component.translatable("gui.immersiveengineering.config.redstone_color"));
+                    tooltip.add(Component.translatable("gui.immersivetechnology.config.redstone_color"));
                     tooltip.add(ICTextUtils.applyFormat(Component.translatable("color.minecraft." + DyeColor.byId(i).getName()), ChatFormatting.GRAY));
                 }
             }

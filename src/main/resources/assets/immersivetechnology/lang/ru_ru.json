@@ -57,6 +57,8 @@
   "gui.immersivetechnology.apply": "Применить",
   "gui.immersivetechnology.boiler.heat_per_tick": "%1$s тепла за тик",
   "gui.immersivetechnology.boiler.total_heat": "Всего тепла: %s",
+  "gui.immersivetechnology.config.redstone_color": "Цвет сигнала редстоуна:",
+  "gui.immersivetechnology.config.redstone_iomode": "Режим ввода-вывода редстоуна:",
   "gui.immersivetechnology.crate_creative": "Творческий ящик хранения",
   "gui.immersivetechnology.direction_east": "В",
   "gui.immersivetechnology.direction_north": "С",

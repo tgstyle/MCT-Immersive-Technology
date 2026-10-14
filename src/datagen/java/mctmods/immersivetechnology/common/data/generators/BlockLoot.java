@@ -9,6 +9,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -25,18 +26,14 @@ public class BlockLoot extends BlockLootSubProvider {
         registerEntity(ModBlocks.Metal.BARREL_OPEN.getRegObject());
         registerEntity(ModBlocks.Metal.BARREL_STEEL.getRegObject());
 
-        dropSelf(ModBlocks.Connector.CONNECTOR_TIMER.get());
         dropSelf(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
         dropSelf(ModBlocks.Metal.TRASH_ENERGY.get());
         dropSelf(ModBlocks.Metal.TRASH_FLUID.get());
         dropSelf(ModBlocks.Metal.TRASH_ITEM.get());
-        dropSelf(ModBlocks.Metal.VALVE_FLUID.get());
-        dropSelf(ModBlocks.Metal.VALVE_LIMITER.get());
-        dropSelf(ModBlocks.Metal.VALVE_LOAD.get());
         dropSelf(ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get());
         dropSelf(ModBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());
-        dropSelf(ModBlocks.Connector.CONNECTOR_TIMER.get());
+        ModBlocks.NEEDS_IE.forEach(entry -> add(entry.get(), LootTable.lootTable().withPool(createPoolBuilder().add(TagEntry.tagContents(ModItemTags.drops(entry))))));
 
         registerMultiblocksNoDrop();
 

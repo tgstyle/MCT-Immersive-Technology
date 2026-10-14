@@ -31,14 +31,14 @@ public class AdvancedCokeOvenCategory extends BaseRecipeCategory<AdvancedCokeOve
     public AdvancedCokeOvenCategory(IGuiHelper helper) {
         super(helper, JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM, "block.immersivetechnology.advanced_coke_oven");
 
-        ResourceLocation background = Reference.makeTextureLocation("immersiveengineering", "coke_oven");
+        ResourceLocation background = Reference.makeTextureLocation("advanced_coke_oven");
         IDrawableStatic back = helper.createDrawable(background, 26, 16, 123, 55);
         setRecipeBackground(back);
         setIcon(MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack());
 
         tankOverlay = helper.createDrawable(background, 178, 33, 16, 47);
 
-        IDrawableStatic flameStatic = helper.createDrawable(background, 177, 0, 14, 14);
+        IDrawableStatic flameStatic = helper.createDrawable(background, 176, 12, 14, 14);
         flame = helper.createAnimatedDrawable(flameStatic, 500, IDrawableAnimated.StartDirection.TOP, true);
     }
 
@@ -63,6 +63,6 @@ public class AdvancedCokeOvenCategory extends BaseRecipeCategory<AdvancedCokeOve
     @Override public void draw(@Nonnull AdvancedCokeOvenRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, @Nonnull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         getRecipeBackground().draw(guiGraphics, 0, 0);
         tankOverlay.draw(guiGraphics, 103, 4);
-        flame.draw(guiGraphics, 31, 20);
+        flame.draw(guiGraphics, 33, 20);
     }
 }

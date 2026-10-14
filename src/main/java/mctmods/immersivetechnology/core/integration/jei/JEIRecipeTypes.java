@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
-import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeType;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
@@ -27,7 +26,11 @@ public class JEIRecipeTypes {
     public static final RecipeType<SolarTowerRecipe> SOLAR_TOWER = create(RecipeTypes.SOLAR_TOWER);
     public static final RecipeType<SteamTurbineRecipe> STEAM_TURBINE = create(RecipeTypes.STEAM_TURBINE);
 
-    public static List<RecipeType<?>> advancedCokeOvenTypes() { return ICMods.immersiveEngineering() ? List.of(create(ICCokeOvenRecipe.recipeType()), ADVANCED_COKE_OVEN_CUSTOM) : List.of(ADVANCED_COKE_OVEN_CUSTOM); }
+    public static List<RecipeType<?>> advancedCokeOvenTypes() {
+        ICRecipeType<?> cokeOven = ICCokeOvenRecipe.recipeType();
+        if (cokeOven == null) { return List.of(ADVANCED_COKE_OVEN_CUSTOM); }
+        return List.of(create(cokeOven), ADVANCED_COKE_OVEN_CUSTOM);
+    }
 
     private static <T extends Recipe<?>> RecipeType<T> create(ICRecipeType<T> type) {
         assert type.type().getId() != null;

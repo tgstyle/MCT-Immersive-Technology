@@ -57,6 +57,8 @@
   "gui.immersivetechnology.apply": "적용",
   "gui.immersivetechnology.boiler.heat_per_tick": "틱당 %1$s 열",
   "gui.immersivetechnology.boiler.total_heat": "총 열: %s",
+  "gui.immersivetechnology.config.redstone_color": "레드스톤 신호 색상:",
+  "gui.immersivetechnology.config.redstone_iomode": "레드스톤 입출력 모드:",
   "gui.immersivetechnology.crate_creative": "크리에이티브 저장 상자",
   "gui.immersivetechnology.direction_east": "동",
   "gui.immersivetechnology.direction_north": "북",

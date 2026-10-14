@@ -57,6 +57,8 @@
   "gui.immersivetechnology.apply": "套用",
   "gui.immersivetechnology.boiler.heat_per_tick": "每 tick %1$s 熱量",
   "gui.immersivetechnology.boiler.total_heat": "總熱量 %s",
+  "gui.immersivetechnology.config.redstone_color": "紅石訊號顏色：",
+  "gui.immersivetechnology.config.redstone_iomode": "紅石輸入輸出模式：",
   "gui.immersivetechnology.crate_creative": "創造模式存儲箱",
   "gui.immersivetechnology.direction_east": "東",
   "gui.immersivetechnology.direction_north": "北",

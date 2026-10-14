@@ -10,8 +10,9 @@
       ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "immersivetechnology:connector_timer"
+          "type": "minecraft:tag",
+          "expand": false,
+          "name": "immersivetechnology:drops/connector_timer"
         }
       ],
       "rolls": 1.0

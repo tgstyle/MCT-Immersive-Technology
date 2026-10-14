@@ -50,7 +50,7 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
 
     @Override protected ICRecipeSerializer<AdvancedCokeOvenRecipe> getICSerializer() { return SERIALIZER.get(); }
 
-    @Override public @Nonnull ItemStack getResultItem(RegistryAccess access) { return this.itemOutput.get(); }
+    @Override public @Nonnull ItemStack getResultItem(@Nonnull RegistryAccess access) { return this.itemOutput.get(); }
 
     public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input, @Nullable AdvancedCokeOvenRecipe hint) {
         if (input.isEmpty()) return null;
