@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.block.StairsBlock;
 import com.immersiveconvergence.api.block.ModWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
@@ -31,6 +32,7 @@ public class ModBlocks {
     public static final Map<ResourceLocation, ModBlocks.BlockEntry<? extends StairsBlock>> TO_STAIRS = new HashMap<>();
     public static final Map<ResourceLocation, ModBlocks.BlockEntry<? extends ModWallBlock>> TO_WALL = new HashMap<>();
 
+    public static final Collection<BlockEntry<?>> NEEDS_IE = new ArrayList<>();
     private static final HashMap<String, Supplier<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
 
@@ -184,7 +186,9 @@ public class ModBlocks {
                     METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new TrashItemBlock(TrashItemBlockEntity::new, p)
             );
+        }
 
+        private static void initValves() {
             VALVE_FLUID = new BlockEntry<>(
                     "valve_fluid",
                     METAL_PROPERTIES_NO_OCCLUSION,
@@ -202,6 +206,7 @@ public class ModBlocks {
                     METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new ValveLimiterBlock(ValveLimiterBlockEntity::new, p)
             );
+            NEEDS_IE.addAll(List.of(VALVE_FLUID, VALVE_LIMITER, VALVE_LOAD));
         }
     }
 
@@ -237,6 +242,7 @@ public class ModBlocks {
 
     public static void initBlocks() {
         Metal.init();
+        if (ICMods.immersiveEngineering()) { Metal.initValves(); }
         Stone.init();
         Wooden.init();
         TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);

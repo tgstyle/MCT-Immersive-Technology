@@ -6,6 +6,7 @@ import blusunrize.lib.manual.ManualEntry;
 import blusunrize.lib.manual.ManualInstance;
 import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.gui.*;
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
@@ -215,9 +216,11 @@ public class ClientProxy extends CommonProxy {
         event.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
         event.register(MenuTypes.STYLENOX_MENU.getType(), StyleNOXScreen::new);
         event.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
-        event.register(MenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
-        event.register(MenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
-        event.register(MenuTypes.VALVE_LOAD.getType(), ValveLoadScreen::new);
+        if (ICMods.immersiveEngineering()) {
+            event.register(MenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
+            event.register(MenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
+            event.register(MenuTypes.VALVE_LOAD.getType(), ValveLoadScreen::new);
+        }
     }
 
     @SubscribeEvent

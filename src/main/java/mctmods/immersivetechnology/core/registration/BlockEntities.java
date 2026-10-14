@@ -4,6 +4,7 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.*;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
 import mctmods.immersivetechnology.core.lib.Reference;
 
+import com.immersiveconvergence.api.ICMods;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -13,10 +14,12 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @SuppressWarnings("ConstantConditions")
 public class BlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Reference.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> REGISTER_IE = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Reference.MODID);
 
     public static final Supplier<BlockEntityType<AdvancedCokeOvenBaseHeaterBlockEntity>> ADVANCED_COKE_OVEN_BASEHEATER = REGISTER.register(
             "advanced_coke_oven_baseheater",
@@ -60,43 +63,43 @@ public class BlockEntities {
             () -> BlockEntityType.Builder.of(TrashItemBlockEntity::new, ModBlocks.Metal.TRASH_ITEM.get()).build(null)
     );
 
-    public static final Supplier<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER.register(
+    public static final Supplier<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER_IE.register(
             "valve_fluid",
             () -> BlockEntityType.Builder.of(ValveFluidBlockEntity::new, ModBlocks.Metal.VALVE_FLUID.get()).build(null)
     );
 
-    public static final Supplier<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER.register(
+    public static final Supplier<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER_IE.register(
             "valve_load",
             () -> BlockEntityType.Builder.of(ValveLoadBlockEntity::new, ModBlocks.Metal.VALVE_LOAD.get()).build(null)
     );
 
-    public static final Supplier<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER.register(
+    public static final Supplier<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER_IE.register(
             "valve_limiter",
             () -> BlockEntityType.Builder.of(ValveLimiterBlockEntity::new, ModBlocks.Metal.VALVE_LIMITER.get()).build(null)
     );
 
-    public static final List<Supplier<?>> FLUID_BES = List.of(
+    public static final List<Supplier<?>> FLUID_BES = withIE(List.of(
             BARREL_STEEL,
             BARREL_CREATIVE,
             BARREL_OPEN,
-            TRASH_FLUID,
-            VALVE_FLUID
-    );
+            TRASH_FLUID
+    ), VALVE_FLUID);
 
     public static final List<Supplier<?>> ENERGY_BES = List.of(
             TRASH_ENERGY,
             ADVANCED_COKE_OVEN_BASEHEATER
     );
 
-    public static final List<Supplier<?>> ITEM_BES = List.of(
+    public static final List<Supplier<?>> ITEM_BES = withIE(List.of(
             CRATE_CREATIVE,
-            TRASH_ITEM,
-            VALVE_LIMITER
-    );
+            TRASH_ITEM
+    ), VALVE_LIMITER);
 
+    private static List<Supplier<?>> withIE(List<Supplier<?>> types, Supplier<?> ieType) { return ICMods.immersiveEngineering() ? Stream.concat(types.stream(), Stream.of(ieType)).toList() : types; }
 
     public static void init(IEventBus event) {
         REGISTER.register(event);
+        if (ICMods.immersiveEngineering()) { REGISTER_IE.register(event); }
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {

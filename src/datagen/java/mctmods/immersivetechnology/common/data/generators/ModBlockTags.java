@@ -131,7 +131,8 @@ public class ModBlockTags extends BlockTagsProvider {
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, List<ModBlocks.BlockEntry<?>> entries) {
         entries.sort(Comparator.comparing(ModBlocks.BlockEntry::getId));
         for (ModBlocks.BlockEntry<?> entry : entries) {
-            tag.add(entry.get());
+            if (ModBlocks.NEEDS_IE.contains(entry)) { tag.addOptional(entry.getId()); }
+            else { tag.add(entry.get()); }
             ModBlocks.BlockEntry<?> slab = ModBlocks.TO_SLAB.get(entry.getId());
             if (slab != null) { tag.add(slab.get()); }
             ModBlocks.BlockEntry<?> stairs = ModBlocks.TO_STAIRS.get(entry.getId());

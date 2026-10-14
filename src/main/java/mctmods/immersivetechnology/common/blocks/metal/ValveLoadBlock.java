@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import blusunrize.immersiveengineering.common.items.WireCoilItem;
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.energy.ICWires;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.core.registration.ModTags;
@@ -124,7 +124,7 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
             if (player.isCrouching()) { valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1); valve.updateRedstoneState(); valve.efficientSetChanged(); }else {
-                if (heldItem.getItem() instanceof WireCoilItem) { return InteractionResult.PASS; }
+                if (ICWires.isWireCoil(heldItem)) { return InteractionResult.PASS; }
                 player.openMenu(valve, buf -> buf.writeBlockPos(pos));
             }
             return InteractionResult.SUCCESS;

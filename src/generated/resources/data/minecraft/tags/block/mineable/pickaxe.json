@@ -39,8 +39,17 @@
     "immersivetechnology:trash_energy",
     "immersivetechnology:trash_fluid",
     "immersivetechnology:trash_item",
-    "immersivetechnology:valve_fluid",
-    "immersivetechnology:valve_limiter",
-    "immersivetechnology:valve_load"
+    {
+      "id": "immersivetechnology:valve_fluid",
+      "required": false
+    },
+    {
+      "id": "immersivetechnology:valve_limiter",
+      "required": false
+    },
+    {
+      "id": "immersivetechnology:valve_load",
+      "required": false
+    }
   ]
 }
