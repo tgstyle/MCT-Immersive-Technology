@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -16,11 +16,11 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
+public class MeltingRecipeSerializer extends ICRecipeSerializer<MeltingRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.SOLAR_MELTER.iconStack(); }
 
     @Override public MeltingRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
-        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
+        ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack fluidOutput = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
         int time = GsonHelper.getAsInt(json, "time");
         double requiredTemp = GsonHelper.getAsDouble(json, "requiredTemp");
@@ -28,7 +28,7 @@ public class MeltingRecipeSerializer extends IERecipeSerializer<MeltingRecipe> {
     }
 
     @Override @Nullable public MeltingRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
+        ICFluidTagInput input = ICFluidTagInput.read(buffer);
         FluidStack fluidOutput = buffer.readFluidStack();
         int time = buffer.readInt();
         double requiredTemp = buffer.readDouble();

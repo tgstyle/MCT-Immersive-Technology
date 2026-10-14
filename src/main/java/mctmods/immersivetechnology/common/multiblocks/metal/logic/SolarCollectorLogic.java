@@ -8,8 +8,6 @@ import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistryData;
 
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IClientTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
@@ -27,6 +25,8 @@ import blusunrize.immersiveengineering.api.multiblocks.blocks.util.StoredCapabil
 import blusunrize.immersiveengineering.common.blocks.multiblocks.blockimpl.InitialMultiblockContext;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
@@ -66,7 +66,7 @@ import java.util.function.Supplier;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
 import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
-public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRecipe, S extends SolarCollectorLogic.CollectorState<R>> implements IMultiblockLogic<S>, IServerTickableComponent<S>, IClientTickableComponent<S>, IFluidOutputPump<S> {
+public abstract class SolarCollectorLogic<R extends ICMultiblockRecipe & ISolarRecipe, S extends SolarCollectorLogic.CollectorState<R>> implements IMultiblockLogic<S>, IServerTickableComponent<S>, IClientTickableComponent<S>, IFluidOutputPump<S> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
     public static final int SLOT_OUTPUT_EMPTY = 2;
@@ -340,7 +340,7 @@ public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRec
         catch (Exception ignored) {}
     }
 
-    public abstract static class CollectorState<R extends MultiblockRecipe & ISolarRecipe> implements ISolarMultiblockState, IDisplaySyncState, IDataReloadAware {
+    public abstract static class CollectorState<R extends ICMultiblockRecipe & ISolarRecipe> implements ISolarMultiblockState, IDisplaySyncState, IDataReloadAware {
         public final TankPair tanks;
         public final StoredCapability<IFluidHandler> inputCap;
         public final StoredCapability<IFluidHandler> outputCap;
@@ -359,7 +359,7 @@ public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRec
         private ResourceLocation activeRecipeId;
         private final RecipeCache.HintedGetter2<Level, FluidStack, R> recipeFinder;
         private final BiFunction<Level, FluidStack, R> recipeGetter;
-        private final CachedRecipeList<R> recipeList;
+        private final ICCachedRecipeList<R> recipeList;
         public boolean isLoaded = false;
         public boolean registered;
         public boolean failVertical = false;
@@ -373,7 +373,7 @@ public abstract class SolarCollectorLogic<R extends MultiblockRecipe & ISolarRec
         private boolean reCheckOnLoad = false;
         private transient boolean savedRegistered = false;
 
-        protected CollectorState(IInitialMultiblockContext<?> ctx, int inputCapacity, int outputCapacity, RecipeCache.HintedGetter2<Level, FluidStack, R> recipeFinder, CachedRecipeList<R> recipeList, BlockPos linkPoi, BlockPos reflectorPoi, BlockPos sunPoi) {
+        protected CollectorState(IInitialMultiblockContext<?> ctx, int inputCapacity, int outputCapacity, RecipeCache.HintedGetter2<Level, FluidStack, R> recipeFinder, ICCachedRecipeList<R> recipeList, BlockPos linkPoi, BlockPos reflectorPoi, BlockPos sunPoi) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
             Runnable sync = ctx.getSyncRunnable();
             Runnable onChanged = () -> {

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -15,13 +15,13 @@ import net.minecraftforge.common.util.Lazy;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<AdvancedCokeOvenRecipe> {
+public class AdvancedCokeOvenRecipeSerializer extends ICRecipeSerializer<AdvancedCokeOvenRecipe> {
     @Override
     public ItemStack getIcon() { return MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(); }
 
     @Override
     public AdvancedCokeOvenRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        IngredientWithSize input = IngredientWithSize.deserialize(json.get("input"));
+        ICIngredientWithSize input = ICIngredientWithSize.deserialize(json.get("input"));
         Lazy<ItemStack> itemOutput = readOutput(json.get("result"));
         int time = GsonHelper.getAsInt(json, "time");
         int creosoteOutput = GsonHelper.getAsInt(json, "creosote");
@@ -31,7 +31,7 @@ public class AdvancedCokeOvenRecipeSerializer extends IERecipeSerializer<Advance
     @Nullable
     @Override
     public AdvancedCokeOvenRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        IngredientWithSize input = IngredientWithSize.read(buffer);
+        ICIngredientWithSize input = ICIngredientWithSize.read(buffer);
         Lazy<ItemStack> itemOutput = readLazyStack(buffer);
         int time = buffer.readInt();
         int creosoteOutput = buffer.readInt();

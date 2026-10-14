@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.common.multiblocks.stone.recipe;
 
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.util.RecipeCache;
 import net.minecraft.core.NonNullList;
@@ -20,19 +20,19 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoolingTowerRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<CoolingTowerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<CoolingTowerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.COOLING_TOWER);
+public class CoolingTowerRecipe extends ICMultiblockRecipe {
+    public static RegistryObject<ICRecipeSerializer<CoolingTowerRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<CoolingTowerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.COOLING_TOWER);
 
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
     public final FluidStack fluidOutput2;
-    public final FluidTagInput input0;
-    public final FluidTagInput input1;
+    public final ICFluidTagInput input0;
+    public final ICFluidTagInput input1;
     public final int totalProcessTime;
     private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
 
-    public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, FluidTagInput input0, FluidTagInput input1, int time) {
+    public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, ICFluidTagInput input0, ICFluidTagInput input1, int time) {
         super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.COOLING_TOWER, id);
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;
@@ -65,7 +65,7 @@ public class CoolingTowerRecipe extends MultiblockRecipe {
 
     @Override public @Nonnull ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return totalProcessTime; }
 

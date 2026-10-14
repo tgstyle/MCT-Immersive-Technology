@@ -7,7 +7,7 @@ import mctmods.immersivetechnology.core.util.ItemOutputs;
 import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
-import blusunrize.immersiveengineering.common.register.IEFluids;
+import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -64,7 +64,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
         AdvancedCokeOvenRecipe recipe = getRecipe(level.getRawLevel());
         if (recipe == null) { return; }
         ItemOutputs.merge(context.getInventory(), AdvancedCokeOvenLogic.SLOT_OUTPUT, recipe.itemOutput.get().copy());
-        context.getInternalTanks()[0].fill(new FluidStack(IEFluids.CREOSOTE.getStill(), recipe.creosoteOutput), FluidAction.EXECUTE);
+        context.getInternalTanks()[0].fill(new FluidStack(ICCokeOvenRecipe.creosote(), recipe.creosoteOutput), FluidAction.EXECUTE);
     }
 
     public int getCurrentProcessTime() { return this.processTick; }

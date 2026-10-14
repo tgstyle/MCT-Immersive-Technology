@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICSerializableRecipe;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -16,17 +16,17 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class GasTurbineRecipe extends IESerializableRecipe {
-    public static RegistryObject<IERecipeSerializer<GasTurbineRecipe>> SERIALIZER;
-    public static final CachedRecipeList<GasTurbineRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.GAS_TURBINE);
+public class GasTurbineRecipe extends ICSerializableRecipe {
+    public static RegistryObject<ICRecipeSerializer<GasTurbineRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<GasTurbineRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.GAS_TURBINE);
 
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
     public final float torque;
     private final int time;
     Lazy<Integer> totalProcessTime;
 
-    public GasTurbineRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, float torque) {
+    public GasTurbineRecipe(ResourceLocation id, ICFluidTagInput input, @Nullable FluidStack fluidOutput, int time, float torque) {
         super(LAZY_EMPTY, RecipeTypes.GAS_TURBINE, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
@@ -35,7 +35,7 @@ public class GasTurbineRecipe extends IESerializableRecipe {
         totalProcessTime = Lazy.of(() -> this.time);
     }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override @Nonnull public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 

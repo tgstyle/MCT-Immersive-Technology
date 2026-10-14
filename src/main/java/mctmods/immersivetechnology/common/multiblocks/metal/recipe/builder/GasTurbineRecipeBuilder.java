@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import net.minecraft.tags.TagKey;
@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
-public class GasTurbineRecipeBuilder extends IEFinishedRecipe<GasTurbineRecipeBuilder> {
+public class GasTurbineRecipeBuilder extends ICFinishedRecipe<GasTurbineRecipeBuilder> {
     public GasTurbineRecipeBuilder() { super(GasTurbineRecipe.SERIALIZER.get()); }
 
     public static GasTurbineRecipeBuilder builder() { return new GasTurbineRecipeBuilder(); }

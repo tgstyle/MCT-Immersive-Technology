@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 
-public class BoilerLiquidRecipeBuilder extends IEFinishedRecipe<BoilerLiquidRecipeBuilder> {
+public class BoilerLiquidRecipeBuilder extends ICFinishedRecipe<BoilerLiquidRecipeBuilder> {
     public BoilerLiquidRecipeBuilder() {
         super(BoilerLiquidRecipe.SERIALIZER.get());
         this.maxInputCount = 1;

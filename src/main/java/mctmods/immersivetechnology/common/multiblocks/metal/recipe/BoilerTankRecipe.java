@@ -2,10 +2,12 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.*;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.capability.HeatCapabilities;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -17,16 +19,16 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BoilerTankRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<BoilerTankRecipe>> SERIALIZER;
-    public static final CachedRecipeList<BoilerTankRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.BOILER_TANK);
+public class BoilerTankRecipe extends ICMultiblockRecipe {
+    public static RegistryObject<ICRecipeSerializer<BoilerTankRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<BoilerTankRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_TANK);
 
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     public final FluidStack output;
     public final double requiredHeat;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerTankRecipe(ResourceLocation id, FluidTagInput input, FluidStack output, int time, double requiredHeat) {
+    public BoilerTankRecipe(ResourceLocation id, ICFluidTagInput input, FluidStack output, int time, double requiredHeat) {
         super(LAZY_EMPTY, RecipeTypes.BOILER_TANK, id);
         this.input = input;
         this.output = output;
@@ -37,7 +39,7 @@ public class BoilerTankRecipe extends MultiblockRecipe {
         this.fluidOutputList = Lists.newArrayList(this.output);
     }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override @Nonnull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 

@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-public class MeltingRecipeBuilder extends IEFinishedRecipe<MeltingRecipeBuilder> {
+public class MeltingRecipeBuilder extends ICFinishedRecipe<MeltingRecipeBuilder> {
     private MeltingRecipeBuilder() { super(MeltingRecipe.SERIALIZER.get()); }
 
     public static MeltingRecipeBuilder builder() { return new MeltingRecipeBuilder(); }

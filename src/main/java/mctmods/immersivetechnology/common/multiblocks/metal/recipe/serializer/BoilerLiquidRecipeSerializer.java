@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerLiquidLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
@@ -15,11 +15,11 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiquidRecipe> {
+public class BoilerLiquidRecipeSerializer extends ICRecipeSerializer<BoilerLiquidRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_LIQUID.iconStack(); }
 
     @Override public BoilerLiquidRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context) {
-        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
+        ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         int time = GsonHelper.getAsInt(json, "time");
         double heatPerTick = GsonHelper.getAsDouble(json, "heatPerTick");
         double targetHeat = GsonHelper.getAsDouble(json, "targetHeat", BoilerLiquidLogic.defaultWorkingHeatLevel());
@@ -27,7 +27,7 @@ public class BoilerLiquidRecipeSerializer extends IERecipeSerializer<BoilerLiqui
     }
 
     @Override @Nullable public BoilerLiquidRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
+        ICFluidTagInput input = ICFluidTagInput.read(buffer);
         int time = buffer.readInt();
         double heatPerTick = buffer.readDouble();
         double targetHeat = buffer.readDouble();

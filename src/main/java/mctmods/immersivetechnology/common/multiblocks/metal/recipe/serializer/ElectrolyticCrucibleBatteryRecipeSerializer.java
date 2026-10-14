@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -17,12 +17,12 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
+public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
 
     @Override public ItemStack getIcon() { return MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(); }
 
     @Override public ElectrolyticCrucibleBatteryRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext context) {
-        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
+        ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack fluidOutput0 = json.has("result0") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result0")) : null;
         FluidStack fluidOutput1 = json.has("result1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result1")) : null;
         FluidStack fluidOutput2 = json.has("result2") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result2")) : null;
@@ -33,7 +33,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends IERecipeSeriali
     }
 
     @Override @Nullable public ElectrolyticCrucibleBatteryRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
+        ICFluidTagInput input = ICFluidTagInput.read(buffer);
         boolean hasOut0 = buffer.readBoolean();
         FluidStack out0 = hasOut0 ? buffer.readFluidStack() : null;
         boolean hasOut1 = buffer.readBoolean();

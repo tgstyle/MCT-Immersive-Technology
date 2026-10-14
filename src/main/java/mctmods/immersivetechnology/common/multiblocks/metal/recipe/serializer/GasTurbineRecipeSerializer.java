@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -16,11 +16,11 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRecipe> {
+public class GasTurbineRecipeSerializer extends ICRecipeSerializer<GasTurbineRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.GAS_TURBINE.iconStack(); }
 
     @Override public GasTurbineRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
-        FluidTagInput input = FluidTagInput.deserialize(json.getAsJsonObject("input"));
+        ICFluidTagInput input = ICFluidTagInput.deserialize(json.getAsJsonObject("input"));
         FluidStack fluidOutput = null;
         if (json.has("output")) fluidOutput = ICUtils.jsonDeserializeFluidStack(json.getAsJsonObject("output"));
         int time = GsonHelper.getAsInt(json, "time");
@@ -29,7 +29,7 @@ public class GasTurbineRecipeSerializer extends IERecipeSerializer<GasTurbineRec
     }
 
     @Override @Nullable public GasTurbineRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
+        ICFluidTagInput input = ICFluidTagInput.read(buffer);
         boolean hasOutput = buffer.readBoolean();
         FluidStack fluidOutput = hasOutput ? buffer.readFluidStack() : null;
         int time = buffer.readInt();

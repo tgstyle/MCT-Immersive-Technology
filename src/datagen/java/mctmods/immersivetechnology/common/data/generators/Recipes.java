@@ -1,12 +1,9 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import blusunrize.immersiveengineering.api.IETags;
-import blusunrize.immersiveengineering.api.EnumMetals;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
-import blusunrize.immersiveengineering.common.register.IEBlocks;
-import blusunrize.immersiveengineering.common.register.IEItems;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.builders.ICIEConditional;
+import com.immersiveconvergence.api.crafting.builders.ICIEContent;
+import com.immersiveconvergence.api.crafting.builders.ICMixerRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.CoolingTowerRecipeBuilder;
@@ -23,20 +20,21 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class Recipes extends RecipeProvider {
@@ -65,37 +63,44 @@ public class Recipes extends RecipeProvider {
     private void multiblockRecipes() { Reference.IT_LOGGER.info("Starting Multiblock Recipe Registration"); }
 
     private void itemRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.STEEL).plate).define('C', IEBlocks.StoneDecoration.COKEBRICK.get()).pattern("P").pattern("C").unlockedBy("has_steel_plate", has(IETags.getTagsFor(EnumMetals.STEEL).plate)).save(consumer, toResourceLocation("reinforced_coke_brick"));
+        Consumer<FinishedRecipe> ie = ICIEConditional.wrap(consumer);
+        Item componentIron = ICIEContent.item(ICIEContent.COMPONENT_IRON);
+        Item circuitBoard = ICIEContent.item(ICIEContent.CIRCUIT_BOARD);
+        Item connectorRedstone = ICIEContent.item(ICIEContent.CONNECTOR_REDSTONE);
+        Item slabSheetmetalIron = ICIEContent.item(ICIEContent.SLAB_SHEETMETAL_IRON);
+        Item slabSheetmetalSteel = ICIEContent.item(ICIEContent.SLAB_SHEETMETAL_STEEL);
+        Item furnaceHeater = ICIEContent.item(ICIEContent.FURNACE_HEATER);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('P', forgeTag("plates/steel")).define('C', ICIEContent.item(ICIEContent.COKEBRICK)).pattern("P").pattern("C").unlockedBy("has_steel_plate", has(forgeTag("plates/steel"))).save(ie, toResourceLocation("reinforced_coke_brick"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('S', ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get()).pattern("S").pattern("S").unlockedBy("has_slab_reinforced_coke_brick", has(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get())).save(consumer, toResourceLocation("reinforced_coke_brick_slab_back"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get().asItem(), 6).define('B', ModBlocks.Stone.REINFORCED_COKE_BRICK.get()).pattern("BBB").unlockedBy("has_reinforced_coke_brick", has(ModBlocks.Stone.REINFORCED_COKE_BRICK.get())).save(consumer, toResourceLocation("reinforced_coke_brick_slab"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get().asItem(), 4).define('C', IETags.getItemTag(IETags.getTagsFor(EnumMetals.COPPER).sheetmetal)).define('S', Ingredient.of(IEItems.Ingredients.COMPONENT_STEEL.get())).define('E', IETags.getTagsFor(EnumMetals.ELECTRUM).ingot).pattern("CSC").pattern("SES").pattern("CSC").unlockedBy("has_copper_sheetmetal", has(IETags.getItemTag(IETags.getTagsFor(EnumMetals.COPPER).sheetmetal))).save(consumer, toResourceLocation("technology_engineering"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get().asItem(), 4).define('C', forgeTag("sheetmetals/copper")).define('S', Ingredient.of(ICIEContent.item(ICIEContent.COMPONENT_STEEL))).define('E', forgeTag("ingots/electrum")).pattern("CSC").pattern("SES").pattern("CSC").unlockedBy("has_copper_sheetmetal", has(forgeTag("sheetmetals/copper"))).save(ie, toResourceLocation("technology_engineering"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_OPEN.get().asItem(), 1).define('S', Ingredient.of(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).getId()).get())).define('B', Ingredient.of(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).get())).pattern("S S").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_iron", has(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.IRON).getId()).get())).save(consumer, toResourceLocation("barrel_open"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_STEEL.get().asItem(), 1).define('S', Ingredient.of(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).getId()).get())).define('B', Ingredient.of(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).get())).pattern("SSS").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_steel", has(IEBlocks.TO_SLAB.get(IEBlocks.Metals.SHEETMETAL.get(EnumMetals.STEEL).getId()).get())).save(consumer, toResourceLocation("barrel_steel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_OPEN.get().asItem(), 1).define('S', Ingredient.of(slabSheetmetalIron)).define('B', Ingredient.of(ICIEContent.item(ICIEContent.SHEETMETAL_IRON))).pattern("S S").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_iron", has(slabSheetmetalIron)).save(ie, toResourceLocation("barrel_open"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_STEEL.get().asItem(), 1).define('S', Ingredient.of(slabSheetmetalSteel)).define('B', Ingredient.of(ICIEContent.item(ICIEContent.SHEETMETAL_STEEL))).pattern("SSS").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_steel", has(slabSheetmetalSteel)).save(ie, toResourceLocation("barrel_steel"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ITEM.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('C', Tags.Items.CHESTS_WOODEN).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_item"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_FLUID.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('B', IEBlocks.MetalDevices.FLUID_PUMP.get()).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PBP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_fluid"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ENERGY.get().asItem(), 1).define('P', IETags.getTagsFor(EnumMetals.IRON).plate).define('C', IEBlocks.MetalDecoration.HV_COIL.get()).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("trash_energy"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ITEM.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('C', Tags.Items.CHESTS_WOODEN).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(consumer, toResourceLocation("trash_item"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_FLUID.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('B', ICIEContent.item(ICIEContent.FLUID_PUMP)).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PBP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("trash_fluid"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ENERGY.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('C', ICIEContent.item(ICIEContent.COIL_HV)).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("trash_energy"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Connector.CONNECTOR_TIMER.get().asItem(), 1).define('G', Tags.Items.GLASS_PANES).define('C', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "logic_circuit")))).define('Q', Items.QUARTZ).pattern("GCG").pattern("PPP").pattern("GQG").unlockedBy("has_redstone_connector", has(IEBlocks.Connectors.CONNECTOR_REDSTONE.get())).save(consumer, toResourceLocation("connector_timer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Connector.CONNECTOR_TIMER.get().asItem(), 1).define('G', Tags.Items.GLASS_PANES).define('C', connectorRedstone).define('P', ICIEContent.item(ICIEContent.LOGIC_CIRCUIT)).define('Q', Items.QUARTZ).pattern("GCG").pattern("PPP").pattern("GQG").unlockedBy("has_redstone_connector", has(connectorRedstone)).save(ie, toResourceLocation("connector_timer"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_FLUID.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', IEBlocks.MetalDevices.FLUID_PIPE.get()).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("valve_fluid"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LIMITER.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "conveyor_basic")))).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("valve_limiter"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LOAD.get().asItem(), 2).define('L', IETags.getTagsFor(EnumMetals.IRON).plate).define('R', IEBlocks.Connectors.CONNECTOR_REDSTONE.get()).define('P', IEBlocks.Connectors.getEnergyConnector("HV", false).get()).define('I', IEItems.Ingredients.COMPONENT_IRON.get()).define('C', IEItems.Ingredients.CIRCUIT_BOARD.get()).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate)).save(consumer, toResourceLocation("valve_load"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_FLUID.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.FLUID_PIPE)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("valve_fluid"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LIMITER.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.CONVEYOR_BASIC)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("valve_limiter"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LOAD.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.CONNECTOR_HV)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("valve_load"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), 1).define('S', IETags.getItemTag(IETags.getTagsFor(EnumMetals.IRON).sheetmetal)).define('H', IEBlocks.MetalDevices.FURNACE_HEATER.get()).define('R', Items.REDSTONE).pattern("SSS").pattern("HRH").pattern("SSS").unlockedBy("has_furnace_heater", has(IEBlocks.MetalDevices.FURNACE_HEATER.get())).save(consumer, toResourceLocation("advanced_coke_oven_baseheater"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), 1).define('S', forgeTag("sheetmetals/iron")).define('H', furnaceHeater).define('R', Items.REDSTONE).pattern("SSS").pattern("HRH").pattern("SSS").unlockedBy("has_furnace_heater", has(furnaceHeater)).save(ie, toResourceLocation("advanced_coke_oven_baseheater"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FORMATION_TOOL.get(), 1).define('I', IETags.getTagsFor(EnumMetals.IRON).ingot).define('E', IETags.getTagsFor(EnumMetals.ELECTRUM).ingot).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(IETags.getTagsFor(EnumMetals.IRON).ingot)).save(consumer, toResourceLocation("formation_tool"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FORMATION_TOOL.get(), 1).define('I', forgeTag("ingots/iron")).define('E', forgeTag("ingots/electrum")).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(forgeTag("ingots/iron"))).save(consumer, toResourceLocation("formation_tool"));
     }
 
     private void recipesAdvancedCokeOven(@Nonnull Consumer<FinishedRecipe> out) {
-        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL).addOutput(IETags.coalCoke, 1).setCreosote(500).setTime(600).build(out, toResourceLocation("advanced_coke_oven/coke"));
-        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL_BLOCK).addOutput(IETags.getItemTag(IETags.coalCokeBlock), 1).setCreosote(5000).setTime(5400).build(out, toResourceLocation("advanced_coke_oven/coke_block"));
+        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL).addOutput(forgeTag("coal_coke"), 1).setCreosote(500).setTime(600).build(out, toResourceLocation("advanced_coke_oven/coke"));
+        AdvancedCokeOvenRecipeBuilder.builder(Items.COAL_BLOCK).addOutput(forgeTag("storage_blocks/coal_coke"), 1).setCreosote(5000).setTime(5400).build(out, toResourceLocation("advanced_coke_oven/coke_block"));
         AdvancedCokeOvenRecipeBuilder.builder(ItemTags.LOGS, 1).addOutput(Items.CHARCOAL).setCreosote(250).setTime(600).build(out, toResourceLocation("advanced_coke_oven/charcoal"));
     }
 
     private void recipesBoilerLiquid(@Nonnull Consumer<FinishedRecipe> out) {
-        BoilerLiquidRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 10).setTime(10).setHeatPerTick(0.1).setTargetHeat(600.0).build(out, toResourceLocation("boiler_liquid/biodiesel"));
+        BoilerLiquidRecipeBuilder.builder().addInput(forgeFluidTag("biodiesel"), 10).setTime(10).setHeatPerTick(0.1).setTargetHeat(600.0).build(out, toResourceLocation("boiler_liquid/biodiesel"));
 
         var gasolineBuilder = BoilerLiquidRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 50).setTime(10).setHeatPerTick(0.1).setTargetHeat(600.0);
         ResourceLocation gasolineId = toResourceLocation("boiler_liquid/gasoline");
@@ -110,7 +115,7 @@ public class Recipes extends RecipeProvider {
 
     private void recipesBoilerSolid(@Nonnull Consumer<FinishedRecipe> out) {
         BoilerSolidRecipeBuilder.builder().addInput(ItemTags.COALS, 1).setHeatPerTick(0.1).setTargetHeat(600.0).build(out, toResourceLocation("boiler_solid/coal"));
-        BoilerSolidRecipeBuilder.builder().addInput(IETags.coalCoke, 1).setHeatPerTick(0.1).setTargetHeat(600.0).build(out, toResourceLocation("boiler_solid/coal_coke"));
+        BoilerSolidRecipeBuilder.builder().addInput(forgeTag("coal_coke"), 1).setHeatPerTick(0.1).setTargetHeat(600.0).build(out, toResourceLocation("boiler_solid/coal_coke"));
     }
 
     private void recipesBoilerTank(@Nonnull Consumer<FinishedRecipe> out) {
@@ -124,19 +129,19 @@ public class Recipes extends RecipeProvider {
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ModItems.SALT.get(), 1);
-        DistillerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 1000), new FluidStack(ModFluids.DISTILLED_WATER.getStill(), 500), 20, 10000).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
+        DistillerRecipeBuilder.builder(new ICFluidTagInput(FluidTags.WATER, 1000), new FluidStack(ModFluids.DISTILLED_WATER.getStill(), 500), 20, 10000).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
     }
 
     private void recipesElectrolyticCrucibleBattery(@Nonnull Consumer<FinishedRecipe> out) {
-        ElectrolyticCrucibleBatteryRecipeBuilder.builder(new FluidTagInput(ModTags.fluidSaltSlurry, 1000), new FluidStack(ModFluids.CHLORINE.getStill(), 1000), 614400, 300).addFluidOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addFluidOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).build(out, toResourceLocation("electrolytic_crucible_battery/hydrogen"));
+        ElectrolyticCrucibleBatteryRecipeBuilder.builder(new ICFluidTagInput(ModTags.fluidSaltSlurry, 1000), new FluidStack(ModFluids.CHLORINE.getStill(), 1000), 614400, 300).addFluidOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addFluidOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).build(out, toResourceLocation("electrolytic_crucible_battery/hydrogen"));
     }
 
     private void recipesHeatExchanger(@Nonnull Consumer<FinishedRecipe> out) {
-        HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ModTags.fluidFlueGas, 1000), new FluidStack(ModFluids.STEAM.getStill(), 450), null, 640, 10).build(out, toResourceLocation("heat_exchanger/water_fluegas"));
-        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ModTags.fluidDistilledWater, 250), new FluidTagInput(ModTags.fluidFlueGas, 1000), new FluidStack(ModFluids.STEAM.getStill(), 500), null, 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_fluegas"));
-        HeatExchangerRecipeBuilder.builder(new FluidTagInput(FluidTags.WATER, 250), new FluidTagInput(ModTags.fluidMoltenSalt, 80), new FluidStack(ModFluids.STEAM.getStill(), 450), new FluidStack(ModFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/water_moltensalt"));
-        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ModTags.fluidDistilledWater, 250), new FluidTagInput(ModTags.fluidMoltenSalt, 80), new FluidStack(ModFluids.STEAM.getStill(), 500), new FluidStack(ModFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_moltensalt"));
-        HeatExchangerRecipeBuilder.builder(new FluidTagInput(ModTags.fluidExhaustSteam, 500), new FluidTagInput(FluidTags.WATER, 4500), new FluidStack(ModFluids.DISTILLED_WATER.getStill(), 250), new FluidStack(ModFluids.HOT_WATER.getStill(), 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/exhauststeam_water"));
+        HeatExchangerRecipeBuilder.builder(new ICFluidTagInput(FluidTags.WATER, 250), new ICFluidTagInput(ModTags.fluidFlueGas, 1000), new FluidStack(ModFluids.STEAM.getStill(), 450), null, 640, 10).build(out, toResourceLocation("heat_exchanger/water_fluegas"));
+        HeatExchangerRecipeBuilder.builder(new ICFluidTagInput(ModTags.fluidDistilledWater, 250), new ICFluidTagInput(ModTags.fluidFlueGas, 1000), new FluidStack(ModFluids.STEAM.getStill(), 500), null, 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_fluegas"));
+        HeatExchangerRecipeBuilder.builder(new ICFluidTagInput(FluidTags.WATER, 250), new ICFluidTagInput(ModTags.fluidMoltenSalt, 80), new FluidStack(ModFluids.STEAM.getStill(), 450), new FluidStack(ModFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/water_moltensalt"));
+        HeatExchangerRecipeBuilder.builder(new ICFluidTagInput(ModTags.fluidDistilledWater, 250), new ICFluidTagInput(ModTags.fluidMoltenSalt, 80), new FluidStack(ModFluids.STEAM.getStill(), 500), new FluidStack(ModFluids.HEATED_SALT.getStill(), 80), 640, 10).build(out, toResourceLocation("heat_exchanger/distwater_moltensalt"));
+        HeatExchangerRecipeBuilder.builder(new ICFluidTagInput(ModTags.fluidExhaustSteam, 500), new ICFluidTagInput(FluidTags.WATER, 4500), new FluidStack(ModFluids.DISTILLED_WATER.getStill(), 250), new FluidStack(ModFluids.HOT_WATER.getStill(), 4500), 160, 5).build(out, toResourceLocation("heat_exchanger/exhauststeam_water"));
     }
 
     private void recipesMelting(@Nonnull Consumer<FinishedRecipe> out) {
@@ -145,8 +150,8 @@ public class Recipes extends RecipeProvider {
     }
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
-        MixerRecipeBuilder.builder(ModFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(ModTags.saltForge, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
-        MixerRecipeBuilder.builder(ModFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(new IngredientWithSize(Tags.Items.GRAVEL, 4)).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
+        ICMixerRecipeBuilder.builder(ModFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(ModTags.saltForge, 4).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
+        ICMixerRecipeBuilder.builder(ModFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(Tags.Items.GRAVEL, 4).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
     }
 
     private void recipesRadiator(@Nonnull Consumer<FinishedRecipe> out) {
@@ -165,7 +170,7 @@ public class Recipes extends RecipeProvider {
         SteamTurbineRecipeBuilder.builder().addInput(ModTags.fluidSteam, 100).addOutput(ModFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).build(out, toResourceLocation("steam_turbine/steam"));
         SteamTurbineRecipeBuilder.builder().addInput(ModTags.fluidSteamForge, 100).addOutput(ModFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).build(out, toResourceLocation("steam_turbine/steam_forge"));
 
-        GasTurbineRecipeBuilder.builder().addInput(IETags.fluidBiodiesel, 160).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/biodiesel"));
+        GasTurbineRecipeBuilder.builder().addInput(forgeFluidTag("biodiesel"), 160).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/biodiesel"));
         GasTurbineRecipeBuilder.builder().addInput(ModTags.fluidHydrogen, 100).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).build(out, toResourceLocation("gas_turbine/hydrogen"));
 
         var gasolineBuilder = GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", "gasoline")), 800).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f);
@@ -189,6 +194,11 @@ public class Recipes extends RecipeProvider {
         PATH_COUNT.put(resourceLocation, 1);
         return Reference.rl(resourceLocation);
     }
+
+    private static TagKey<Item> forgeTag(String path) { return ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", path)); }
+
+    @SuppressWarnings("SameParameterValue")
+    private static TagKey<Fluid> forgeFluidTag(String path) { return FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", path)); }
 
     @SuppressWarnings("SameParameterValue")
     private static ICondition modLoaded(String modId) { return new ModLoadedCondition(modId); }

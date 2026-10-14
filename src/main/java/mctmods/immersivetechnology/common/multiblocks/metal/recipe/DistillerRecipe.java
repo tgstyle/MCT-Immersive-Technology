@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -18,11 +18,11 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DistillerRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<DistillerRecipe>> SERIALIZER;
-    public static final CachedRecipeList<DistillerRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.DISTILLER);
+public class DistillerRecipe extends ICMultiblockRecipe {
+    public static RegistryObject<ICRecipeSerializer<DistillerRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<DistillerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.DISTILLER);
 
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
     public final ItemStack itemOutput;
     public final float chance;
@@ -31,7 +31,7 @@ public class DistillerRecipe extends MultiblockRecipe {
     Lazy<Integer> totalProcessTime;
     Lazy<Integer> totalProcessEnergy;
 
-    public DistillerRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
+    public DistillerRecipe(ResourceLocation id, ICFluidTagInput input, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
         super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.DISTILLER, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
@@ -58,7 +58,7 @@ public class DistillerRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return totalProcessTime.get(); }
 

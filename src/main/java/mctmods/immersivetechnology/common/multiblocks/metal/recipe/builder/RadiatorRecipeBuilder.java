@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
 import net.minecraft.tags.TagKey;
@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Objects;
 
-public class RadiatorRecipeBuilder extends IEFinishedRecipe<RadiatorRecipeBuilder> {
+public class RadiatorRecipeBuilder extends ICFinishedRecipe<RadiatorRecipeBuilder> {
     public RadiatorRecipeBuilder() { super(RadiatorRecipe.SERIALIZER.get()); }
 
     public static RadiatorRecipeBuilder builder() { return new RadiatorRecipeBuilder(); }

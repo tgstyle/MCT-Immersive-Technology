@@ -1,20 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Objects;
 
-public class DistillerRecipeBuilder extends IEFinishedRecipe<DistillerRecipeBuilder> {
+public class DistillerRecipeBuilder extends ICFinishedRecipe<DistillerRecipeBuilder> {
     public DistillerRecipeBuilder() {
         super(DistillerRecipe.SERIALIZER.get());
         this.maxInputCount = 2;
     }
 
-    public static DistillerRecipeBuilder builder(FluidTagInput fluidIn, FluidStack primaryFluidOutput, int time, int energy) {
+    public static DistillerRecipeBuilder builder(ICFluidTagInput fluidIn, FluidStack primaryFluidOutput, int time, int energy) {
         return new DistillerRecipeBuilder().addFluidTag("input", fluidIn).addFluid("result", primaryFluidOutput).setTime(time).setEnergy(energy);
     }
 

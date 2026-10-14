@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-public class SolarTowerRecipeBuilder extends IEFinishedRecipe<SolarTowerRecipeBuilder> {
+public class SolarTowerRecipeBuilder extends ICFinishedRecipe<SolarTowerRecipeBuilder> {
     private SolarTowerRecipeBuilder() { super(SolarTowerRecipe.SERIALIZER.get()); }
 
     public static SolarTowerRecipeBuilder builder() { return new SolarTowerRecipeBuilder(); }

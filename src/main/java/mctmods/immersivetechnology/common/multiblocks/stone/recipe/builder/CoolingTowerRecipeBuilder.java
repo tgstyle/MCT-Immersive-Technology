@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import net.minecraft.tags.TagKey;
@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Objects;
 
-public class CoolingTowerRecipeBuilder extends IEFinishedRecipe<CoolingTowerRecipeBuilder> {
+public class CoolingTowerRecipeBuilder extends ICFinishedRecipe<CoolingTowerRecipeBuilder> {
     private int inputCount = 0;
     private int outputCount = 0;
 

@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -15,12 +15,12 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowerRecipe> {
+public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowerRecipe> {
     @Override public net.minecraft.world.item.ItemStack getIcon() { return MultiblockRegistry.COOLING_TOWER.iconStack(); }
 
     @Override public CoolingTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
-        FluidTagInput input0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
-        FluidTagInput input1 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1"));
+        ICFluidTagInput input0 = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
+        ICFluidTagInput input1 = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1"));
         FluidStack output0 = json.has("output0") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0")) : null;
         FluidStack output1 = json.has("output1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output1")) : null;
         FluidStack output2 = json.has("output2") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output2")) : null;
@@ -29,8 +29,8 @@ public class CoolingTowerRecipeSerializer extends IERecipeSerializer<CoolingTowe
     }
 
     @Override @Nullable public CoolingTowerRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input0 = FluidTagInput.read(buffer);
-        FluidTagInput input1 = FluidTagInput.read(buffer);
+        ICFluidTagInput input0 = ICFluidTagInput.read(buffer);
+        ICFluidTagInput input1 = ICFluidTagInput.read(buffer);
         FluidStack output0 = buffer.readBoolean() ? buffer.readFluidStack() : null;
         FluidStack output1 = buffer.readBoolean() ? buffer.readFluidStack() : null;
         FluidStack output2 = buffer.readBoolean() ? buffer.readFluidStack() : null;

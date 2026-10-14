@@ -2,10 +2,12 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.*;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.capability.HeatCapabilities;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -17,17 +19,17 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BoilerLiquidRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<BoilerLiquidRecipe>> SERIALIZER;
-    public static final CachedRecipeList<BoilerLiquidRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
+public class BoilerLiquidRecipe extends ICMultiblockRecipe {
+    public static RegistryObject<ICRecipeSerializer<BoilerLiquidRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<BoilerLiquidRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
 
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     private final int time;
     private final double heatPerTick;
     private final double targetHeat;
     Lazy<Integer> totalProcessTime;
 
-    public BoilerLiquidRecipe(ResourceLocation id, FluidTagInput input, int time, double heatPerTick, double targetHeat) {
+    public BoilerLiquidRecipe(ResourceLocation id, ICFluidTagInput input, int time, double heatPerTick, double targetHeat) {
         super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.BOILER_LIQUID, id);
         this.input = input;
         this.time = time;
@@ -49,7 +51,7 @@ public class BoilerLiquidRecipe extends MultiblockRecipe {
 
     @Override @Nonnull public ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return totalProcessTime.get(); }
 

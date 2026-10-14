@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.common.collect.Lists;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -19,16 +19,16 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class RadiatorRecipe extends MultiblockRecipe {
-    public static RegistryObject<IERecipeSerializer<RadiatorRecipe>> SERIALIZER;
-    public static final CachedRecipeList<RadiatorRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.RADIATOR);
+public class RadiatorRecipe extends ICMultiblockRecipe {
+    public static RegistryObject<ICRecipeSerializer<RadiatorRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<RadiatorRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.RADIATOR);
 
     public final FluidStack fluidOutput;
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     public final int totalProcessTime;
     private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
 
-    public RadiatorRecipe(ResourceLocation id, FluidStack fluidOutput, FluidTagInput input, int time) {
+    public RadiatorRecipe(ResourceLocation id, FluidStack fluidOutput, ICFluidTagInput input, int time) {
         super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.RADIATOR, id);
         this.fluidOutput = fluidOutput;
         this.input = input;
@@ -51,7 +51,7 @@ public class RadiatorRecipe extends MultiblockRecipe {
 
     @Override public @Nonnull ItemStack getResultItem(RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getTotalProcessTime() { return totalProcessTime; }
 

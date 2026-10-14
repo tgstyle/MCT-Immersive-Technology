@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.registration;
 
-import blusunrize.immersiveengineering.api.crafting.IERecipeTypes.TypeWithClass;
+import com.immersiveconvergence.api.crafting.ICRecipeType;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
@@ -20,19 +20,19 @@ public class RecipeTypes {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Reference.MODID);
     private static final DeferredRegister<RecipeType<?>> REGISTER = DeferredRegister.create(Registries.RECIPE_TYPE, Reference.MODID);
 
-    public static final TypeWithClass<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("advanced_coke_oven", AdvancedCokeOvenRecipe.class);
-    public static final TypeWithClass<BoilerLiquidRecipe> BOILER_LIQUID = register("boiler_liquid", BoilerLiquidRecipe.class);
-    public static final TypeWithClass<BoilerSolidRecipe> BOILER_SOLID = register("boiler_solid", BoilerSolidRecipe.class);
-    public static final TypeWithClass<BoilerTankRecipe> BOILER_TANK = register("boiler_tank", BoilerTankRecipe.class);
-    public static final TypeWithClass<CoolingTowerRecipe> COOLING_TOWER = register("cooling_tower", CoolingTowerRecipe.class);
-    public static final TypeWithClass<DistillerRecipe> DISTILLER = register("distiller", DistillerRecipe.class);
-    public static final TypeWithClass<ElectrolyticCrucibleBatteryRecipe> ELECTROLYTIC_CRUCIBLE_BATTERY = register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipe.class);
-    public static final TypeWithClass<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
-    public static final TypeWithClass<HeatExchangerRecipe> HEAT_EXCHANGER = register("heat_exchanger", HeatExchangerRecipe.class);
-    public static final TypeWithClass<MeltingRecipe> MELTING = register("melting", MeltingRecipe.class);
-    public static final TypeWithClass<RadiatorRecipe> RADIATOR = register("radiator", RadiatorRecipe.class);
-    public static final TypeWithClass<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
-    public static final TypeWithClass<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
+    public static final ICRecipeType<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("advanced_coke_oven", AdvancedCokeOvenRecipe.class);
+    public static final ICRecipeType<BoilerLiquidRecipe> BOILER_LIQUID = register("boiler_liquid", BoilerLiquidRecipe.class);
+    public static final ICRecipeType<BoilerSolidRecipe> BOILER_SOLID = register("boiler_solid", BoilerSolidRecipe.class);
+    public static final ICRecipeType<BoilerTankRecipe> BOILER_TANK = register("boiler_tank", BoilerTankRecipe.class);
+    public static final ICRecipeType<CoolingTowerRecipe> COOLING_TOWER = register("cooling_tower", CoolingTowerRecipe.class);
+    public static final ICRecipeType<DistillerRecipe> DISTILLER = register("distiller", DistillerRecipe.class);
+    public static final ICRecipeType<ElectrolyticCrucibleBatteryRecipe> ELECTROLYTIC_CRUCIBLE_BATTERY = register("electrolytic_crucible_battery", ElectrolyticCrucibleBatteryRecipe.class);
+    public static final ICRecipeType<GasTurbineRecipe> GAS_TURBINE = register("gas_turbine", GasTurbineRecipe.class);
+    public static final ICRecipeType<HeatExchangerRecipe> HEAT_EXCHANGER = register("heat_exchanger", HeatExchangerRecipe.class);
+    public static final ICRecipeType<MeltingRecipe> MELTING = register("melting", MeltingRecipe.class);
+    public static final ICRecipeType<RadiatorRecipe> RADIATOR = register("radiator", RadiatorRecipe.class);
+    public static final ICRecipeType<SolarTowerRecipe> SOLAR_TOWER = register("solar_tower", SolarTowerRecipe.class);
+    public static final ICRecipeType<SteamTurbineRecipe> STEAM_TURBINE = register("steam_turbine", SteamTurbineRecipe.class);
 
     static {
         AdvancedCokeOvenRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("advanced_coke_oven", AdvancedCokeOvenRecipeSerializer::new);
@@ -50,9 +50,7 @@ public class RecipeTypes {
         SteamTurbineRecipe.SERIALIZER = RECIPE_SERIALIZERS.register("steam_turbine", SteamTurbineRecipeSerializer::new);
     }
 
-    private static <T extends Recipe<?>> TypeWithClass<T> register(String name, Class<T> type) {
-        return new TypeWithClass<>(REGISTER.register(name, () -> new RecipeType<>() {}), type);
-    }
+    private static <T extends Recipe<?>> ICRecipeType<T> register(String name, Class<T> type) { return ICRecipeType.register(REGISTER, name, type); }
 
     public static void init(IEventBus modEventBus) {
         REGISTER.register(modEventBus);

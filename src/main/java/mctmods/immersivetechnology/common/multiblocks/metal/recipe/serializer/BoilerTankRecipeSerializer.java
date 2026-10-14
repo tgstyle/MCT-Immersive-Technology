@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 
 import com.google.gson.JsonObject;
 
@@ -21,11 +21,11 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRecipe> {
+public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_TANK.iconStack(); }
 
     @Override public BoilerTankRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
-        FluidTagInput input = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
+        ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
         FluidStack output = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
         int time = GsonHelper.getAsInt(json, "time", 1);
         double requiredHeat = GsonHelper.getAsDouble(json, "requiredHeat", BoilerTankLogic.defaultWorkingHeatLevel());
@@ -33,7 +33,7 @@ public class BoilerTankRecipeSerializer extends IERecipeSerializer<BoilerTankRec
     }
 
     @Override @Nullable public BoilerTankRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input = FluidTagInput.read(buffer);
+        ICFluidTagInput input = ICFluidTagInput.read(buffer);
         FluidStack output = buffer.readFluidStack();
         int time = buffer.readInt();
         double requiredHeat = buffer.readDouble();

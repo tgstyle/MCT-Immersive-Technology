@@ -1,23 +1,23 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class AdvancedCokeOvenRecipeBuilder extends IEFinishedRecipe<AdvancedCokeOvenRecipeBuilder> {
+public class AdvancedCokeOvenRecipeBuilder extends ICFinishedRecipe<AdvancedCokeOvenRecipeBuilder> {
     private AdvancedCokeOvenRecipeBuilder() { super(AdvancedCokeOvenRecipe.SERIALIZER.get()); }
 
     public static AdvancedCokeOvenRecipeBuilder builder(Item input) { return new AdvancedCokeOvenRecipeBuilder().addInput(input); }
 
     public static AdvancedCokeOvenRecipeBuilder builder(TagKey<Item> input, int count) { return new AdvancedCokeOvenRecipeBuilder().addInput(input, count); }
 
-    public AdvancedCokeOvenRecipeBuilder addInput(Item input) { return addIngredient("input", IngredientWithSize.of(new ItemStack(input))); }
+    public AdvancedCokeOvenRecipeBuilder addInput(Item input) { return addIngredient("input", ICIngredientWithSize.of(new ItemStack(input))); }
 
-    public AdvancedCokeOvenRecipeBuilder addInput(TagKey<Item> input, int count) { return addIngredient("input", new IngredientWithSize(input, count)); }
+    public AdvancedCokeOvenRecipeBuilder addInput(TagKey<Item> input, int count) { return addIngredient("input", new ICIngredientWithSize(input, count)); }
 
     public AdvancedCokeOvenRecipeBuilder addOutput(Item output) { return addItem("result", output); }
 

@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -15,12 +15,12 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchangerRecipe> {
+public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchangerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.HEAT_EXCHANGER.iconStack(); }
 
     @Override public HeatExchangerRecipe readFromJson(ResourceLocation id, JsonObject json, ICondition.IContext context) {
-        FluidTagInput input0 = FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
-        FluidTagInput input1 = json.has("input1") ? FluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1")) : null;
+        ICFluidTagInput input0 = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
+        ICFluidTagInput input1 = json.has("input1") ? ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1")) : null;
         FluidStack output0 = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0"));
         FluidStack output1 = json.has("output1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output1")) : null;
         int energy = GsonHelper.getAsInt(json, "energy");
@@ -30,9 +30,9 @@ public class HeatExchangerRecipeSerializer extends IERecipeSerializer<HeatExchan
     }
 
     @Override public HeatExchangerRecipe fromNetwork(@Nonnull ResourceLocation id, @Nonnull FriendlyByteBuf buffer) {
-        FluidTagInput input0 = FluidTagInput.read(buffer);
+        ICFluidTagInput input0 = ICFluidTagInput.read(buffer);
         boolean hasInput1 = buffer.readBoolean();
-        FluidTagInput input1 = hasInput1 ? FluidTagInput.read(buffer) : null;
+        ICFluidTagInput input1 = hasInput1 ? ICFluidTagInput.read(buffer) : null;
         FluidStack output0 = buffer.readFluidStack();
         boolean hasOutput1 = buffer.readBoolean();
         FluidStack output1 = hasOutput1 ? buffer.readFluidStack() : null;

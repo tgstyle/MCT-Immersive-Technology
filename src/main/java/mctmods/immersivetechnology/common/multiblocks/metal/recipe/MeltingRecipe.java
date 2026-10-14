@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,16 +15,16 @@ import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nullable;
 
-public class MeltingRecipe extends MultiblockRecipe implements ISolarRecipe {
-    public static RegistryObject<IERecipeSerializer<MeltingRecipe>> SERIALIZER;
-    public static final CachedRecipeList<MeltingRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.MELTING);
+public class MeltingRecipe extends ICMultiblockRecipe implements ISolarRecipe {
+    public static RegistryObject<ICRecipeSerializer<MeltingRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<MeltingRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.MELTING);
 
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     public final FluidStack fluidOutput;
     private final int time;
     public final double requiredTemp;
 
-    public MeltingRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
+    public MeltingRecipe(ResourceLocation id, ICFluidTagInput input, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
         super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.MELTING, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
@@ -32,7 +32,7 @@ public class MeltingRecipe extends MultiblockRecipe implements ISolarRecipe {
         this.requiredTemp = requiredTemp;
     }
 
-    @Override public FluidTagInput input() { return input; }
+    @Override public ICFluidTagInput input() { return input; }
 
     @Override public FluidStack fluidOutput() { return fluidOutput; }
 
@@ -49,7 +49,7 @@ public class MeltingRecipe extends MultiblockRecipe implements ISolarRecipe {
         return null;
     }
 
-    @Override protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override public int getMultipleProcessTicks() { return 1; }
 

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import blusunrize.immersiveengineering.api.crafting.builders.IEFinishedRecipe;
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
 import net.minecraft.tags.TagKey;
@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
 
-public class SteamTurbineRecipeBuilder extends IEFinishedRecipe<SteamTurbineRecipeBuilder> {
+public class SteamTurbineRecipeBuilder extends ICFinishedRecipe<SteamTurbineRecipeBuilder> {
     public SteamTurbineRecipeBuilder() { super(SteamTurbineRecipe.SERIALIZER.get()); }
 
     public static SteamTurbineRecipeBuilder builder() { return new SteamTurbineRecipeBuilder(); }

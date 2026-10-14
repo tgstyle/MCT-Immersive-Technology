@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
-import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
-import blusunrize.immersiveengineering.api.crafting.IERecipeSerializer;
-import blusunrize.immersiveengineering.api.crafting.IESerializableRecipe;
-import blusunrize.immersiveengineering.api.crafting.cache.CachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICSerializableRecipe;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -16,17 +16,17 @@ import net.minecraftforge.registries.RegistryObject;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class SteamTurbineRecipe extends IESerializableRecipe {
-    public static RegistryObject<IERecipeSerializer<SteamTurbineRecipe>> SERIALIZER;
-    public static final CachedRecipeList<SteamTurbineRecipe> RECIPES = new CachedRecipeList<>(RecipeTypes.STEAM_TURBINE);
+public class SteamTurbineRecipe extends ICSerializableRecipe {
+    public static RegistryObject<ICRecipeSerializer<SteamTurbineRecipe>> SERIALIZER;
+    public static final ICCachedRecipeList<SteamTurbineRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.STEAM_TURBINE);
 
-    public final FluidTagInput input;
+    public final ICFluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
     public final float torque;
     private final int time;
     Lazy<Integer> totalProcessTime;
 
-    public SteamTurbineRecipe(ResourceLocation id, FluidTagInput input, @Nullable FluidStack fluidOutput, int time, float torque) {
+    public SteamTurbineRecipe(ResourceLocation id, ICFluidTagInput input, @Nullable FluidStack fluidOutput, int time, float torque) {
         super(LAZY_EMPTY, RecipeTypes.STEAM_TURBINE, id);
         this.input = input;
         this.fluidOutput = fluidOutput;
@@ -36,7 +36,7 @@ public class SteamTurbineRecipe extends IESerializableRecipe {
     }
 
     @Override
-    protected IERecipeSerializer<?> getIESerializer() { return SERIALIZER.get(); }
+    protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     @Override @Nonnull public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
 

@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -17,24 +16,25 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class ModBlockTags extends BlockTagsProvider {
-    private static final MultiblockRegistration<?>[] MULTIBLOCKS = {
-            MultiblockRegistry.ADVANCED_COKE_OVEN,
-            MultiblockRegistry.ALTERNATOR,
-            MultiblockRegistry.BOILER_LIQUID,
-            MultiblockRegistry.BOILER_SOLID,
-            MultiblockRegistry.BOILER_TANK,
-            MultiblockRegistry.COOLING_TOWER,
-            MultiblockRegistry.DISTILLER,
-            MultiblockRegistry.GAS_TURBINE,
-            MultiblockRegistry.HEAT_EXCHANGER,
-            MultiblockRegistry.SOLAR_MELTER,
-            MultiblockRegistry.SOLAR_REFLECTOR,
-            MultiblockRegistry.SOLAR_TOWER,
-            MultiblockRegistry.STEAM_TURBINE,
-            MultiblockRegistry.STEEL_SHEETMETAL_TANK
-    };
+    private static final List<Supplier<? extends Block>> MULTIBLOCKS = List.of(
+            MultiblockRegistry.ADVANCED_COKE_OVEN.block(),
+            MultiblockRegistry.ALTERNATOR.block(),
+            MultiblockRegistry.BOILER_LIQUID.block(),
+            MultiblockRegistry.BOILER_SOLID.block(),
+            MultiblockRegistry.BOILER_TANK.block(),
+            MultiblockRegistry.COOLING_TOWER.block(),
+            MultiblockRegistry.DISTILLER.block(),
+            MultiblockRegistry.GAS_TURBINE.block(),
+            MultiblockRegistry.HEAT_EXCHANGER.block(),
+            MultiblockRegistry.SOLAR_MELTER.block(),
+            MultiblockRegistry.SOLAR_REFLECTOR.block(),
+            MultiblockRegistry.SOLAR_TOWER.block(),
+            MultiblockRegistry.STEAM_TURBINE.block(),
+            MultiblockRegistry.STEEL_SHEETMETAL_TANK.block()
+    );
 
     public ModBlockTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, Reference.MODID, existingFileHelper); }
 
@@ -83,7 +83,7 @@ public class ModBlockTags extends BlockTagsProvider {
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag) {
-        for (MultiblockRegistration<?> entry : MULTIBLOCKS) { tag.add(entry.block().get()); }
+        for (Supplier<? extends Block> block : MULTIBLOCKS) { tag.add(block.get()); }
     }
 
     private void registerMineable(IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tag, ModBlocks.BlockEntry<?>... entries) { registerMineable(tag, Arrays.asList(entries)); }
