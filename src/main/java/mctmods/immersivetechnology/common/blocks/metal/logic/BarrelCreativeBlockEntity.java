@@ -1,13 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
 import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.fluid.IICFluidPipe;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 
-import blusunrize.immersiveengineering.api.IEApiDataComponents;
-import com.mojang.datafixers.util.Unit;
 import java.text.DecimalFormat;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -60,7 +59,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
             if (handler == null) { continue; }
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
-            FluidStack toFill = ICFluidUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = ICFluidUtils.copyFluidStackWithAmount(fsToOffer, accepted);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }
@@ -163,7 +162,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
         } else {
             this.selectedFluid = fluidStack.copy();
             this.selectedFluid.setAmount(1);
-            this.selectedFluid.set(IEApiDataComponents.FLUID_PRESSURIZED.get(), Unit.INSTANCE);
+            IICFluidPipe.markPressurized(this.selectedFluid);
         }
         setChanged();
     }
@@ -197,7 +196,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
     private FluidStack pressurizedCopy(FluidStack src, int amt) {
         if (src.isEmpty()) { return FluidStack.EMPTY; }
         FluidStack fs = src.copyWithAmount(amt);
-        fs.set(IEApiDataComponents.FLUID_PRESSURIZED.get(), Unit.INSTANCE);
+        IICFluidPipe.markPressurized(fs);
         return fs;
     }
 }

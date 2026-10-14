@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.fluid.IICFluidPipe;
@@ -104,11 +103,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         for (Direction d : Direction.values()) {
             BlockPos adjPos = worldPosition.relative(d);
             BlockEntity adj = level.getBlockEntity(adjPos);
-            if (adj instanceof FluidPipeBlockEntity pipe) {
-                Direction pipeSide = d.getOpposite();
-                pipe.updateConnectionByte(pipeSide);
-                pipe.markContainingBlockForUpdate(null);
-                pipe.setChanged();
+            if (IICFluidPipe.isPipe(adj)) {
+                IICFluidPipe.refreshConnection(adj, d.getOpposite());
             } else if (adj != null) {
                 adj.invalidateCapabilities();
                 adj.setChanged();
