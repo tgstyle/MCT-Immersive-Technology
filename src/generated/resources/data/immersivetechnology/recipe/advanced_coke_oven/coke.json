@@ -1,4 +1,13 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:coal_coke"
+      }
+    }
+  ],
   "type": "immersivetechnology:advanced_coke_oven",
   "creosote": 500,
   "input": {

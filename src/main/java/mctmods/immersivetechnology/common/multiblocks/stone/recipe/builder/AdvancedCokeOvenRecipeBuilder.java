@@ -15,6 +15,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
 
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 
@@ -26,6 +29,7 @@ import java.util.Map;
 public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
     private ICIngredientWithSize input;
     private ICTagOutput itemOutput;
+    private TagKey<Item> outputTag;
     private int time;
     private int creosoteOutput;
 
@@ -64,6 +68,7 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
 
     public AdvancedCokeOvenRecipeBuilder addOutput(TagKey<Item> output, int count) {
         this.itemOutput = new ICTagOutput(output, count);
+        this.outputTag = output;
         return this;
     }
 
@@ -104,6 +109,7 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
         AdvancedCokeOvenRecipe recipe = new AdvancedCokeOvenRecipe(
                 this.input, this.itemOutput, this.time, this.creosoteOutput);
 
-        output.accept(id, recipe, advancement.build(id.withPrefix("recipes/")));
+        ICondition[] conditions = outputTag == null ? new ICondition[0] : new ICondition[] {new NotCondition(new TagEmptyCondition(outputTag.location()))};
+        output.accept(id, recipe, advancement.build(id.withPrefix("recipes/")), conditions);
     }
 }
