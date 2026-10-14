@@ -6,7 +6,6 @@ import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
-import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -87,10 +86,10 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = worldPosition.relative(dir);
             BlockEntity neighbor = level.getBlockEntity(neighborPos);
-            boolean isPipe = neighbor instanceof FluidPipeBlockEntity;
+            boolean isPipe = IICFluidPipe.isPipe(neighbor);
 
             FluidStack fsToOffer = baseFs.copy();
-            if (isPipe) { fsToOffer.getOrCreateTag().putBoolean(IICFluidPipe.NBT_PRESSURIZED, true); }
+            if (isPipe) { IICFluidPipe.markPressurized(fsToOffer); }
 
             LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());
             if (!cap.isPresent()) { continue; }
@@ -99,7 +98,7 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
             int accepted = handler.fill(fsToOffer, FluidAction.SIMULATE);
             if (accepted <= 0) { continue; }
 
-            FluidStack toFill = ICFluidUtils.copyFluidStackWithAmount(fsToOffer, accepted, false);
+            FluidStack toFill = ICFluidUtils.copyFluidStackWithAmount(fsToOffer, accepted);
             int filled = handler.fill(toFill, FluidAction.EXECUTE);
             thisTickOutput += filled;
         }

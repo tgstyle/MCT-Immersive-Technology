@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import blusunrize.immersiveengineering.common.blocks.metal.FluidPipeBlockEntity;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.fluid.IICFluidPipe;
 import com.immersiveconvergence.api.block.IServerTickableBE;
@@ -117,11 +116,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         for (Direction d : Direction.values()) {
             BlockPos adjPos = worldPosition.relative(d);
             BlockEntity adj = level.getBlockEntity(adjPos);
-            if (adj instanceof FluidPipeBlockEntity pipe) {
-                Direction pipeSide = d.getOpposite();
-                pipe.updateConnectionByte(pipeSide);
-                pipe.markContainingBlockForUpdate(null);
-                pipe.setChanged();
+            if (IICFluidPipe.isPipe(adj)) {
+                IICFluidPipe.refreshConnection(adj, d.getOpposite());
             } else if (adj != null) {
                 adj.invalidateCaps();
                 adj.setChanged();
@@ -155,11 +151,11 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
         if (canAccept == 0) return 0;
         BlockEntity dst = level.getBlockEntity(worldPosition.relative(blockFacing.getOpposite()));
-        boolean isPipe = dst instanceof FluidPipeBlockEntity;
+        boolean isPipe = IICFluidPipe.isPipe(dst);
         FluidStack fillStack = fluidStack.copy();
         fillStack.setAmount(canAccept);
         boolean hadTag = fillStack.hasTag() && fillStack.getTag().contains(IICFluidPipe.NBT_PRESSURIZED);
-        if (isPipe && !hadTag) { fillStack.getOrCreateTag().putBoolean(IICFluidPipe.NBT_PRESSURIZED, true); }
+        if (isPipe && !hadTag) { IICFluidPipe.markPressurized(fillStack); }
         busy = true;
         int toReturn = destination.fill(fillStack, doFill);
         busy = false;
