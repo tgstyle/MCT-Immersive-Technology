@@ -4,9 +4,9 @@ import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOv
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
+import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachine;
+import com.immersiveconvergence.api.multiblock.process.ProcessContext;
 import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
 import net.minecraft.nbt.CompoundTag;

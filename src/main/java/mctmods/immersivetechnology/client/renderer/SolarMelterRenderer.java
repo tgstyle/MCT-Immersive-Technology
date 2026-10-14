@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
+import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.immersiveconvergence.api.particles.ColoredBeam;
 import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;

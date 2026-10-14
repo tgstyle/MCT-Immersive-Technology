@@ -11,7 +11,7 @@ import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
+import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;

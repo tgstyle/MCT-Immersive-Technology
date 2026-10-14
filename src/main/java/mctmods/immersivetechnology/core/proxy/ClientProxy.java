@@ -14,7 +14,7 @@ import com.immersiveconvergence.api.client.mirror.MirrorModelLoader;
 import com.immersiveconvergence.api.fluid.FluidEntry;
 import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.split.SplitModelHandler;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import net.minecraft.core.BlockPos;

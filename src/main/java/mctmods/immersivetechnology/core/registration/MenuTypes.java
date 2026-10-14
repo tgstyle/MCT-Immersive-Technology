@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.gui.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;

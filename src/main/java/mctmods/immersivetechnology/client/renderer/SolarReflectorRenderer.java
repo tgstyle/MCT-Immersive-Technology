@@ -7,10 +7,10 @@ import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 
 import com.immersiveconvergence.api.util.ICUtils;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockBEHelperMaster;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.registry.MultiblockBlockEntityMaster;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.MultiblockOrientation;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockBEHelperMaster;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
+import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

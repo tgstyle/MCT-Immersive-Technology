@@ -1,9 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
-  "conditions": {
-    "type": "forge:mod_loaded",
-    "modid": "immersiveengineering"
-  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
   "criteria": {
     "has_slab_sheetmetal_steel": {
       "conditions": {

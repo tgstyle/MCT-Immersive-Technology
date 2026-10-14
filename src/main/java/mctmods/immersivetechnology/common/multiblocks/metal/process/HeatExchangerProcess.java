@@ -4,9 +4,9 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.HeatExchangerL
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
 import mctmods.immersivetechnology.core.util.ProcessUtils;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockLevel;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcessInMachine;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.process.ProcessContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
+import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachine;
+import com.immersiveconvergence.api.multiblock.process.ProcessContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;

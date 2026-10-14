@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.core.registration;
 
-import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.MultiblockRegistration;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import com.immersiveconvergence.api.multiblock.MultiblockHandler;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.blocks.MultiblockRegistration;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
 import com.immersiveconvergence.api.multiblock.ClearTank;
 import com.immersiveconvergence.api.multiblock.ClearTankRegistry;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;

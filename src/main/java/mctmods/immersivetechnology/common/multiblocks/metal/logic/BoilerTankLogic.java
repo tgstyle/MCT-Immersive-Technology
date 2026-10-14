@@ -7,12 +7,12 @@ import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.util.FluidContainers;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IServerTickableComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockLogic;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.*;
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.util.*;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.capability.IHeatConsumer;

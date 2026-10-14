@@ -1,9 +1,11 @@
 {
   "type": "immersiveengineering:mixer",
-  "conditions": {
-    "type": "forge:mod_loaded",
-    "modid": "immersiveengineering"
-  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
+    }
+  ],
   "energy": 3200,
   "fluid": {
     "amount": 1000,

@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.util;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

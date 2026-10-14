@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.util;
 
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.immersiveconvergence.api.util.ICItemUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;

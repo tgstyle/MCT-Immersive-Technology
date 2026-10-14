@@ -6,10 +6,10 @@ import mctmods.immersivetechnology.core.CommonConfig;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.RedstoneControl;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IInitialMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.util.RelativeBlockFace;
+import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import net.minecraft.core.BlockPos;

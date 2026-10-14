@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.util;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import net.minecraft.core.BlockPos;
 
 public class RedstoneInput {

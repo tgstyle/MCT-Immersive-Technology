@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.core.util;
 
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.immersiveconvergence.api.capability.IHeatConsumer;
 
 public class HeatUtils {

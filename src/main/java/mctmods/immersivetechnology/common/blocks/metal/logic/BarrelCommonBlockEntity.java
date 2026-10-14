@@ -11,7 +11,7 @@ import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 
-import blusunrize.immersiveengineering.api.utils.CapabilityReference;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.gui.helper;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.logic.IMultiblockState;
+import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;

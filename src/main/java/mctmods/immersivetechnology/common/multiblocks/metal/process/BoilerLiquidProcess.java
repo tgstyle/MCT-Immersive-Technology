@@ -4,8 +4,8 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerLiquidLo
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
 import mctmods.immersivetechnology.core.util.Ignition;
 
-import blusunrize.immersiveengineering.api.multiblocks.blocks.component.IMultiblockComponent;
-import blusunrize.immersiveengineering.api.multiblocks.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
