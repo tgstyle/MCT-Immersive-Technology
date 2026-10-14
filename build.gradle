@@ -108,7 +108,6 @@ ext {
     version_journeymap_curse = versionProps['version_journeymap_curse']
     version_puzzleslib_curse = versionProps['version_puzzleslib_curse']
     version_held_item_tooltips_curse = versionProps['version_held_item_tooltips_curse']
-    version_mixin = versionProps['version_mixin']
     version_cctweaked = versionProps['version_cctweaked']
     mod_license = gradleProps['mod_license']
     mod_name = gradleProps['mod_name']
@@ -266,11 +265,6 @@ repositories {
     }
 }
 
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "mixins.${mod_id}.json"
-}
-
 dependencies {
     modCompileOnly "mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}"
     modCompileOnly "mezz.jei:jei-${version_minecraft}-common-api:${version_jei}"
@@ -292,8 +286,6 @@ dependencies {
     modRuntimeOnly "cc.tweaked:cc-tweaked-${version_minecraft}-forge:${version_cctweaked}"
 
     modDatagenImplementation "blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie_full}:datagen"
-
-    annotationProcessor "org.spongepowered:mixin:${version_mixin}:processor"
 
     if (icJar != null) {
         implementation files(icJar)
@@ -412,9 +404,6 @@ datagenJar.dependsOn bumpVersion
 jar {
     archiveBaseName.set("MCT-ImmersiveTechnology-${version_minecraft}")
     archiveClassifier.set('')
-    // MDG's mixin { config } only feeds the dev runs; the release jar must carry
-    // the attribute itself or no mixin applies in production.
-    manifest { attributes 'MixinConfigs': "mixins.${mod_id}.json" }
     onlyIf { needsJar() }
 }
 

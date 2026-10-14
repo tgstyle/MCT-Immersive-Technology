@@ -1,11 +1,9 @@
 package mctmods.immersivetechnology.core.proxy;
 
-import blusunrize.immersiveengineering.api.ManualHelper;
-import blusunrize.lib.manual.ManualEntry;
-import blusunrize.lib.manual.ManualInstance;
-import blusunrize.lib.manual.Tree.InnerNode;
 import mctmods.immersivetechnology.client.gui.*;
 import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.manual.ICManual;
+import com.immersiveconvergence.api.manual.ICManualCategory;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
@@ -44,7 +42,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -98,9 +95,7 @@ public class ClientProxy extends CommonProxy {
                 MenuScreens.register(MenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
             }
 
-            ManualInstance instance = ManualHelper.getManual();
-
-            ManualHelper.addConfigGetter(key -> switch (key) {
+            ICManual.addConfigGetter(key -> switch (key) {
                 case "advanced_coke_oven.baseheater_energy_consumption" -> ServerConfig.advancedCokeOvenBaseheaterEnergyConsumption;
                 case "alternator.alternator_energy_capacity" -> ServerConfig.alternatorEnergyCapacity;
                 case "alternator.alternator_max_output" -> ServerConfig.alternatorMaxOutput;
@@ -116,111 +111,18 @@ public class ClientProxy extends CommonProxy {
                 case "fluid_pipe.unpressurized" -> ServerConfig.fluidPipeAmountUnpressurized;
                 default -> null;
             });
-            InnerNode<ResourceLocation, ManualEntry> parent_category = instance.getRoot().getOrCreateSubnode(Reference.rl("main"), 99);
-
-            ManualEntry.ManualEntryBuilder builder = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            builder.readFromFile(Reference.rl("intro"));
-            instance.addEntry(parent_category, builder.create());
-
-            InnerNode<ResourceLocation, ManualEntry> power_category = parent_category.getOrCreateSubnode(Reference.rl("it_power"), 0);
-            InnerNode<ResourceLocation, ManualEntry> processing_category = parent_category.getOrCreateSubnode(Reference.rl("it_processing"), 1);
-
-            ManualEntry.ManualEntryBuilder multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("advanced_coke_oven"));
-            instance.addEntry(processing_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("alternator"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("boiler_liquid"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("boiler_solid"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("boiler_tank"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("cooling_tower"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("distiller"));
-            instance.addEntry(processing_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("electrolytic_crucible_battery"));
-            instance.addEntry(processing_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("gas_turbine"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("heat_exchanger"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("melting_crucible"));
-            instance.addEntry(processing_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("radiator"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("solar_melter"));
-            instance.addEntry(processing_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("solar_reflector"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("solar_tower"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("steam_turbine"));
-            instance.addEntry(power_category, multiblock.create());
-
-            multiblock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            multiblock.readFromFile(Reference.rl("steel_sheetmetal_tank"));
-            instance.addEntry(processing_category, multiblock.create());
-
-            ManualEntry.ManualEntryBuilder normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("open_barrel"));
-            instance.addEntry(parent_category, normalBlock.create());
-
-            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("steel_barrel"));
-            instance.addEntry(parent_category, normalBlock.create());
-
-            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("barrel_creative"));
-            instance.addEntry(parent_category, normalBlock.create());
-
-            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("valves"));
-            instance.addEntry(parent_category, normalBlock.create());
-
-            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("technologists_wrench"));
-            instance.addEntry(parent_category, normalBlock.create());
-
-            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("fluid_pipes"));
-            instance.addEntry(parent_category, normalBlock.create());
-
-            normalBlock = new ManualEntry.ManualEntryBuilder(ManualHelper.getManual());
-            normalBlock.readFromFile(Reference.rl("redstone_timer"));
-            instance.addEntry(parent_category, normalBlock.create());
+            ICManualCategory main = ICManual.category(Reference.rl("main"), 99);
+            ICManual.addEntry(main, Reference.rl("intro"));
+            ICManualCategory power = main.sub(Reference.rl("it_power"), 0);
+            ICManualCategory processing = main.sub(Reference.rl("it_processing"), 1);
+            addManualEntries(power, "alternator", "boiler_liquid", "boiler_solid", "boiler_tank", "cooling_tower", "gas_turbine", "heat_exchanger", "radiator", "solar_reflector", "solar_tower", "steam_turbine");
+            addManualEntries(processing, "advanced_coke_oven", "distiller", "electrolytic_crucible_battery", "melting_crucible", "solar_melter", "steel_sheetmetal_tank");
+            addManualEntries(main, "open_barrel", "steel_barrel", "barrel_creative", "valves", "technologists_wrench", "fluid_pipes", "redstone_timer");
         });
+    }
+
+    private static void addManualEntries(ICManualCategory category, String... names) {
+        for (String name : names) { ICManual.addEntry(category, Reference.rl(name)); }
     }
 
     @SubscribeEvent
