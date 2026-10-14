@@ -1,6 +1,8 @@
 package mctmods.immersivetechnology.core;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.fluid.ICPipes;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -450,6 +452,7 @@ public class ServerConfig {
 
             fluidPipeAmountPressurized = FLUID_PIPE_AMOUNT_PRESSURIZED.get();
             fluidPipeAmountUnpressurized = FLUID_PIPE_AMOUNT_UNPRESSURIZED.get();
+            ICPipes.setTransferableAmounts(fluidPipeAmountUnpressurized, fluidPipeAmountPressurized);
 
             gasTurbineInputTankCapacity = GAS_TURBINE_INPUT_TANK_CAPACITY.get();
             gasTurbineOutputTankCapacity = GAS_TURBINE_OUTPUT_TANK_CAPACITY.get();

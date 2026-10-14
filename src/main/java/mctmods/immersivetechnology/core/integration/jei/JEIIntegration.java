@@ -16,6 +16,7 @@ import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocusFactory;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -85,9 +86,8 @@ public class JEIIntegration implements IModPlugin {
         registration.addRecipes(JEIRecipeTypes.STYLENOX, getStyleNOXRecipes());
     }
 
-    @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN);
-        registration.addRecipeCatalyst(MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(), JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM);
+    @Override public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
+        for (RecipeType<?> type : JEIRecipeTypes.advancedCokeOvenTypes()) { registration.addRecipeCatalyst(MultiblockRegistry.ADVANCED_COKE_OVEN.iconStack(), type); }
         registration.addRecipeCatalyst(MultiblockRegistry.BOILER_LIQUID.iconStack(), JEIRecipeTypes.BOILER_LIQUID);
         registration.addRecipeCatalyst(MultiblockRegistry.BOILER_SOLID.iconStack(), JEIRecipeTypes.BOILER_SOLID);
         registration.addRecipeCatalyst(MultiblockRegistry.BOILER_TANK.iconStack(), JEIRecipeTypes.BOILER_TANK);
@@ -332,7 +332,7 @@ public class JEIIntegration implements IModPlugin {
         return new IGuiClickableArea() {
             @Override @Nonnull public Rect2i getArea() { return area; }
             @Override public void getTooltip(@Nonnull ITooltipBuilder tooltip) { tooltip.add(Component.translatable("jei.tooltip.show.recipes")); }
-            @Override public void onClick(@Nonnull IFocusFactory focusFactory, @Nonnull IRecipesGui recipesGui) { recipesGui.showTypes(List.of(JEIRecipeTypes.ADVANCED_COKE_OVEN, JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM)); }
+            @Override public void onClick(@Nonnull IFocusFactory focusFactory, @Nonnull IRecipesGui recipesGui) { recipesGui.showTypes(JEIRecipeTypes.advancedCokeOvenTypes()); }
         };
     }
 

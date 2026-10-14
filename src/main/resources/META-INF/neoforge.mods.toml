@@ -39,6 +39,3 @@ mandatory=true
 versionRange="${version_ic}"
 ordering="NONE"
 side="BOTH"
-
-[[mixins]]
-config="mixins.immersivetechnology.json"

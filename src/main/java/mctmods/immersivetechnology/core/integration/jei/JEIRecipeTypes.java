@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeType;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
@@ -9,8 +10,9 @@ import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.world.item.crafting.Recipe;
 
+import java.util.List;
+
 public class JEIRecipeTypes {
-    public static final RecipeType<?> ADVANCED_COKE_OVEN = create(ICCokeOvenRecipe.recipeType());
     public static final RecipeType<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN_CUSTOM = create(RecipeTypes.ADVANCED_COKE_OVEN);
     public static final RecipeType<BoilerLiquidRecipe> BOILER_LIQUID = create(RecipeTypes.BOILER_LIQUID);
     public static final RecipeType<BoilerSolidRecipe> BOILER_SOLID = create(RecipeTypes.BOILER_SOLID);
@@ -25,6 +27,8 @@ public class JEIRecipeTypes {
     public static final RecipeType<SolarTowerRecipe> SOLAR_TOWER = create(RecipeTypes.SOLAR_TOWER);
     public static final RecipeType<SteamTurbineRecipe> STEAM_TURBINE = create(RecipeTypes.STEAM_TURBINE);
     public static final RecipeType<StyleNOXRecipe> STYLENOX = create(RecipeTypes.STYLENOX);
+
+    public static List<RecipeType<?>> advancedCokeOvenTypes() { return ICMods.immersiveEngineering() ? List.of(RecipeType.createFromVanilla(ICCokeOvenRecipe.recipeType().get()), ADVANCED_COKE_OVEN_CUSTOM) : List.of(ADVANCED_COKE_OVEN_CUSTOM); }
 
     private static <T extends Recipe<?>> RecipeType<T> create(ICRecipeType<T> type) {
         return new RecipeType<>(type.type().getId(), type.recipeClass());
