@@ -49,7 +49,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -268,8 +267,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
 
         @Override public boolean isActive() { return active; }
-
-        @Override public IItemHandlerModifiable getInventory() { return null; }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
 

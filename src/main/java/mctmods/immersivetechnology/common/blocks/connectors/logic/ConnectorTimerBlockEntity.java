@@ -32,17 +32,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity implements IServerTickableBE, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction, BlockInterfaces.IBlockBounds, BlockInterfaces.IBlockOverlayText, MenuProvider , ITileSyncReceiver {
+public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity implements IServerTickableBE, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction,BlockInterfaces.IBlockOverlayText, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
@@ -248,15 +244,6 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         Component modeInfo = Component.translatable(ICLib.DESC_INFO + "blockSide.io." + ioKey);
         Component delayInfo = Component.literal(String.format("%.1f Sec.", time));
         return new Component[]{channelInfo, modeInfo, delayInfo};
-    }
-
-    @Override @Nonnull public VoxelShape getBlockBounds(@Nullable CollisionContext context) {
-        Direction facing = getFacing();
-        return switch (facing) {
-            case UP, DOWN -> Shapes.box(0.25, 0, 0.25, 0.75, 1, 0.75);
-            case NORTH, SOUTH -> Shapes.box(0.25, 0, 0, 0.75, 0.75, 1);
-            case EAST, WEST -> Shapes.box(0, 0.25, 0.25, 1, 0.75, 0.75);
-        };
     }
 
     @Override public int getStrongRSOutput(Direction side) {

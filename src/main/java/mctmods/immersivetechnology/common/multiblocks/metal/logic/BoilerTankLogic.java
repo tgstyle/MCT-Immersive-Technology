@@ -224,7 +224,7 @@ public class BoilerTankLogic implements IMultiblockLogic<BoilerTankLogic.State>,
             if (nbt.contains("workingHeatLevel")) { workingHeatLevel = nbt.getDouble("workingHeatLevel"); }
         }
 
-        @Override public void addDisplayLines(Level level, DisplayLines lines) { lines.temperature(heatLevel, workingHeatLevel).percent((totalProcessTime > 0 && recipeTimeRemaining > 0) ? (totalProcessTime - recipeTimeRemaining) * 100 / totalProcessTime : 0); }
+        @Override public void addDisplayLines(Level level, DisplayLines lines) { lines.temperature(heatLevel, workingHeatLevel).percent(totalProcessTime > 0 ? (totalProcessTime - recipeTimeRemaining) * 100 / totalProcessTime : 0); }
     }
 
     private static void loadPois(List<PoIJSONSchema> pois) {

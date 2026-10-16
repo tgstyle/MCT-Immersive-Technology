@@ -268,7 +268,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
             for (int percent : processPercents) {
-                if (percent >= 0) { lines.percent(percent); }
+                lines.percent(Math.max(percent, 0));
             }
         }
     }

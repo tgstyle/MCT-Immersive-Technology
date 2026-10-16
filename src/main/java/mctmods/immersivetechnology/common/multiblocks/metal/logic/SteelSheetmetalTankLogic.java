@@ -35,7 +35,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -127,8 +126,6 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         @Override public void onDataReload(IInitialMultiblockContext<?> context) { comparatorHelper = newComparator(); }
 
         @Override public boolean isActive() { return active; }
-
-        @Override public IItemHandlerModifiable getInventory() { return null; }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
 

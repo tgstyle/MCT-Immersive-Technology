@@ -44,6 +44,7 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
@@ -128,13 +129,18 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
             state.totalProcessTime = 0;
             progressChanged = true;
         }
-        int newQueueSize = state.processQueue.size();
-        boolean queueSizeChanged = newQueueSize != state.queueSize;
-        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        int[] newPercents = new int[state.processQueue.size()];
+        for (int i = 0; i < newPercents.length; i++) {
+            RadiatorProcess process = state.processQueue.get(i);
+            int total = process.getRecipe().getTotalProcessTime();
+            newPercents[i] = total > 0 ? process.getTicksProcessed() * 100 / total : 0;
+        }
+        boolean percentsChanged = !Arrays.equals(newPercents, state.processPercents);
+        if (percentsChanged) { state.processPercents = newPercents; }
         int newComparatorValue = state.totalProcessTime > 0 ? (15 * state.processProgress) / state.totalProcessTime : 0;
         boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, comparatorPositions());
         state.lastComparatorValue = newComparatorValue;
-        if (wasActive != state.active || progressChanged || queueSizeChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
+        if (wasActive != state.active || progressChanged || percentsChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
@@ -172,7 +178,7 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
         public BooleanSupplier isSoundPlaying = () -> false;
         public int processProgress = 0;
         public int totalProcessTime = 0;
-        public int queueSize = 0;
+        public int[] processPercents = new int[0];
         public int lastComparatorValue = -1;
         public double radiationEfficiency = 0.0D;
 
@@ -208,7 +214,7 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
             nbt.put("tanks", tanks.toNBT());
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
-            nbt.putInt("queueSize", queueSize);
+            nbt.putIntArray("processPercents", processPercents);
             nbt.putDouble("radiationEfficiency", radiationEfficiency);
         }
 
@@ -217,13 +223,13 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
             tanks.readNBT(nbt.getCompound("tanks"));
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
-            queueSize = nbt.getInt("queueSize");
+            processPercents = nbt.getIntArray("processPercents");
             radiationEfficiency = nbt.getDouble("radiationEfficiency");
         }
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            if (active) { lines.percent(totalProcessTime > 0 ? processProgress * 100 / totalProcessTime : 0); }
-            lines.text("Active processes: " + queueSize).text("Reflector efficiency").percent((int) Math.round(radiationEfficiency * 100.0D));
+            for (int percent : processPercents) { lines.percent(percent); }
+            lines.text("Reflector efficiency").percent((int) Math.round(radiationEfficiency * 100.0D));
         }
     }
 }

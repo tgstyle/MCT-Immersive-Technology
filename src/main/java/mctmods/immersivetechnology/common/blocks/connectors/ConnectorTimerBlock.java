@@ -25,6 +25,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -33,6 +36,9 @@ import java.util.function.BiFunction;
 
 public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntity> {
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
+    private static final VoxelShape SHAPE_VERTICAL = Shapes.box(0.25, 0, 0.25, 0.75, 1, 0.75);
+    private static final VoxelShape SHAPE_NORTH_SOUTH = Shapes.box(0.25, 0, 0, 0.75, 0.75, 1);
+    private static final VoxelShape SHAPE_EAST_WEST = Shapes.box(0, 0.25, 0.25, 1, 0.75, 0.75);
 
     public ConnectorTimerBlock(BiFunction<BlockPos, BlockState, ConnectorTimerBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
@@ -42,6 +48,14 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ModProperties.FACING_ALL, ROTATION);
+    }
+
+    @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+        return switch (state.getValue(ModProperties.FACING_ALL)) {
+            case UP, DOWN -> SHAPE_VERTICAL;
+            case NORTH, SOUTH -> SHAPE_NORTH_SOUTH;
+            case EAST, WEST -> SHAPE_EAST_WEST;
+        };
     }
 
     @Override public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return BlockEntities.CONNECTOR_TIMER.get().create(pos, state); }

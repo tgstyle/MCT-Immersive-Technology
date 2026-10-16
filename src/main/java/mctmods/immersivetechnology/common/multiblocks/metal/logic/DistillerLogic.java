@@ -117,14 +117,19 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         ICFluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
         pumpOutputs(ctx);
         ItemOutputs.eject(state.inventory, state.outputRef, SLOT_INPUT_EMPTY, SLOT_OUTPUT_FILLED, OUTPUT_SLOT);
-        int newQueueSize = state.processor.getQueueSize();
-        boolean queueSizeChanged = newQueueSize != state.queueSize;
-        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        var queue = state.processor.getQueue();
+        int newPercent = -1;
+        if (!queue.isEmpty()) {
+            int maxTicks = queue.get(0).getMaxTicks(ctx.getLevel().getRawLevel());
+            newPercent = maxTicks > 0 ? queue.get(0).processTick * 100 / maxTicks : 0;
+        }
+        boolean percentChanged = newPercent != state.processPercent;
+        if (percentChanged) { state.processPercent = newPercent; }
         int maxEnergy = state.energy.getMaxEnergyStored();
         int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
         boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
         state.lastComparatorValue = newComparatorValue;
-        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || queueSizeChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
+        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || percentChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static void tryEnqueueProcess(State state, Level level, DistillerRecipe recipe) {
@@ -177,7 +182,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
-        public int queueSize = 0;
+        public int processPercent = -1;
         public int lastComparatorValue = -1;
         public DistillerRecipe lastRecipeCache;
 
@@ -244,7 +249,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             nbt.put("tanks", tanks.toNBT());
             energy.save(nbt, "energy");
             nbt.put("inventory", inventory.serializeNBT());
-            nbt.putInt("queueSize", queueSize);
+            nbt.putInt("processPercent", processPercent);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
@@ -252,12 +257,12 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             tanks.readNBT(nbt.getCompound("tanks"));
             energy.load(nbt, "energy");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
-            queueSize = nbt.getInt("queueSize");
+            processPercent = nbt.contains("processPercent") ? nbt.getInt("processPercent") : -1;
             tanksDirty = false;
             inventoryDirty = false;
         }
 
-        @Override public void addDisplayLines(Level level, DisplayLines lines) { if (queueSize > 0) { lines.text("Processing (" + queueSize + " queued)"); } }
+        @Override public void addDisplayLines(Level level, DisplayLines lines) { if (processPercent >= 0) { lines.percent(processPercent); } }
     }
 
     private static void loadPois(List<PoIJSONSchema> pois) {
