@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.immersiveconvergence.api.crafting.conditions.ICIEEnabledCondition;
 import com.immersiveconvergence.api.crafting.builders.ICAlloyRecipeBuilder;
 import com.immersiveconvergence.api.crafting.builders.ICArcFurnaceRecipeBuilder;
 import com.immersiveconvergence.api.crafting.builders.ICCrusherRecipeBuilder;
@@ -280,7 +280,7 @@ public class Recipes extends RecipeProvider {
     private static TagKey<Item> cTag(String path) { return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", path)); }
 
 
-    private static RecipeOutput withIE(RecipeOutput output) { return output.withConditions(new ModLoadedCondition(ICMods.IMMERSIVE_ENGINEERING)); }
+    private static RecipeOutput withIE(RecipeOutput output) { return output.withConditions(ICIEEnabledCondition.INSTANCE); }
 
     private static String toPath(ItemLike item) { return BuiltInRegistries.ITEM.getKey(item.asItem()).getPath(); }
 

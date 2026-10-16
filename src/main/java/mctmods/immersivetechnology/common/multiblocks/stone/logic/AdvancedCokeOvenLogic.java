@@ -26,6 +26,7 @@ import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessor;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IProcessContext;
@@ -112,13 +113,17 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         ItemOutputs.eject(state.inventory, state.outputRef, SLOT_OUTPUT, SLOT_FILLED_CONTAINER);
         var queue = state.processor.getQueue();
         int newComparatorValue = 0;
+        int newPercent = -1;
         if (!queue.isEmpty()) {
             int maxTicks = queue.getFirst().getMaxTicks(level);
             newComparatorValue = maxTicks > 0 ? (15 * queue.getFirst().processTick) / maxTicks : 0;
+            newPercent = maxTicks > 0 ? queue.getFirst().processTick * 100 / maxTicks : 0;
         }
+        boolean percentChanged = newPercent != state.processPercent;
+        if (percentChanged) { state.processPercent = newPercent; }
         boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
         state.lastComparatorValue = newComparatorValue;
-        if (wasActive != state.active || prevTanksDirty != state.tanksDirty || comparatorChanged) { ctx.markDirtyAndSync(); }
+        if (wasActive != state.active || prevTanksDirty != state.tanksDirty || percentChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     @Override public List<BlockPos> getOutputPositions() { return List.of(OUTPUT_FLUID_POI.posInMultiblock()); }
@@ -172,6 +177,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         private final ICEnergyStorageAveraging energy = new ICEnergyStorageAveraging(0);
         public boolean tanksDirty = false;
         public int lastComparatorValue = -1;
+        public int processPercent = -1;
 
         public State(IInitialMultiblockContext<State> ctx) {
             Runnable markDirty = ctx.getMarkDirtyRunnable();
@@ -222,13 +228,17 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
         @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT(provider));
+            nbt.putInt("processPercent", processPercent);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
+            processPercent = nbt.contains("processPercent") ? nbt.getInt("processPercent") : -1;
             tanksDirty = false;
         }
+
+        @Override public void addDisplayLines(Level level, DisplayLines lines) { if (processPercent >= 0) { lines.percent(processPercent); } }
 
         @Override public int get(int index) {
             if (processor.getQueue().isEmpty()) { return 0; }

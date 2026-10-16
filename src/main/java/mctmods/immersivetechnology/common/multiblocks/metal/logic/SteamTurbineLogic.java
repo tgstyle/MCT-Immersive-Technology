@@ -44,7 +44,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -264,8 +263,6 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
 
         @Override public boolean isActive() { return active; }
-
-        @Override public IItemHandlerModifiable getInventory() { return null; }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input(), tanks.output()}; }
 

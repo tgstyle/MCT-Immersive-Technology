@@ -126,14 +126,19 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         boolean energyChanged = prevEnergy != currentEnergy;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         boolean inventoryChanged = prevInventoryDirty != state.inventoryDirty;
-        int newQueueSize = state.processor.getQueueSize();
-        boolean queueSizeChanged = newQueueSize != state.queueSize;
-        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        var queue = state.processor.getQueue();
+        int newPercent = -1;
+        if (!queue.isEmpty()) {
+            int maxTicks = queue.getFirst().getMaxTicks(ctx.getLevel().getRawLevel());
+            newPercent = maxTicks > 0 ? queue.getFirst().processTick * 100 / maxTicks : 0;
+        }
+        boolean percentChanged = newPercent != state.processPercent;
+        if (percentChanged) { state.processPercent = newPercent; }
         int maxEnergy = state.energy.getMaxEnergyStored();
         int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
         boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
         state.lastComparatorValue = newComparatorValue;
-        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || queueSizeChanged || comparatorChanged;
+        boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || percentChanged || comparatorChanged;
         if (update) { ctx.markDirtyAndSync(); }
     }
 
@@ -200,7 +205,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         public BooleanSupplier isSoundPlaying = () -> false;
         public boolean tanksDirty = false;
         public boolean inventoryDirty = false;
-        public int queueSize = 0;
+        public int processPercent = -1;
         public int lastComparatorValue = -1;
         public RecipeHolder<DistillerRecipe> lastRecipeCache;
 
@@ -281,7 +286,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             nbt.put("tanks", tanks.toNBT(provider));
             energy.save(nbt, "energy");
             nbt.put("inventory", inventory.serializeNBT(provider));
-            nbt.putInt("queueSize", queueSize);
+            nbt.putInt("processPercent", processPercent);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -289,13 +294,13 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
             tanks.readNBT(nbt.getCompound("tanks"), provider);
             energy.load(nbt, "energy");
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
-            queueSize = nbt.getInt("queueSize");
+            processPercent = nbt.contains("processPercent") ? nbt.getInt("processPercent") : -1;
             tanksDirty = false;
             inventoryDirty = false;
         }
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            if (queueSize > 0) { lines.text("Processing (" + queueSize + " queued)"); }
+            if (processPercent >= 0) { lines.percent(processPercent); }
         }
     }
 

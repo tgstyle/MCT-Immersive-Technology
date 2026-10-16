@@ -152,13 +152,18 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         int currentEnergy = state.energy.getEnergyStored();
         boolean energyChanged = prevEnergy != currentEnergy;
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
-        int newQueueSize = state.processor.getQueueSize();
-        boolean queueSizeChanged = newQueueSize != state.queueSize;
-        if (queueSizeChanged) { state.queueSize = newQueueSize; }
+        var queue = state.processor.getQueue();
+        int newPercent = -1;
+        if (!queue.isEmpty()) {
+            int maxTicks = queue.getFirst().getMaxTicks(level);
+            newPercent = maxTicks > 0 ? queue.getFirst().processTick * 100 / maxTicks : 0;
+        }
+        boolean percentChanged = newPercent != state.processPercent;
+        if (percentChanged) { state.processPercent = newPercent; }
         int newComparatorValue = (int) Math.min(15, (15 * state.heatLevel) / workingHeatLevel());
         boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
         state.lastComparatorValue = newComparatorValue;
-        boolean update = activeChanged || energyChanged || tanksChanged || queueSizeChanged || comparatorChanged;
+        boolean update = activeChanged || energyChanged || tanksChanged || percentChanged || comparatorChanged;
 
         if (update) { ctx.markDirtyAndSync(); }
     }
@@ -241,7 +246,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         public MeltingRecipe activeRecipe = null;
         private ResourceLocation activeRecipeId;
         public boolean tanksDirty = false;
-        public int queueSize = 0;
+        public int processPercent = -1;
         public int lastComparatorValue = -1;
 
         public State(IInitialMultiblockContext<State> ctx) {
@@ -307,7 +312,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putDouble("heatLevel", heatLevel);
             if (activeRecipeId != null) { nbt.putString("activeRecipe", activeRecipeId.toString()); }
-            nbt.putInt("queueSize", queueSize);
+            nbt.putInt("processPercent", processPercent);
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -317,7 +322,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }
-            queueSize = nbt.getInt("queueSize");
+            processPercent = nbt.contains("processPercent") ? nbt.getInt("processPercent") : -1;
             tanksDirty = false;
         }
 
@@ -325,7 +330,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             FluidStack input = tanks.input().getFluid();
             MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
             lines.temperature(heatLevel, recipe != null ? recipe.requiredTemp : workingHeatLevel());
-            if (queueSize > 0) { lines.text("Processing (" + queueSize + " queued)"); }
+            if (processPercent >= 0) { lines.percent(processPercent); }
             if (input.isEmpty()) { lines.fuelEmpty(); }
         }
     }

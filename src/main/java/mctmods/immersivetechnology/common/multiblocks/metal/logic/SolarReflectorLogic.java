@@ -29,8 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.fluids.IFluidTank;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -419,10 +417,6 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         }
 
         @Override public boolean isActive() { return active; }
-
-        @Override public IItemHandlerModifiable getInventory() { return null; }
-
-        @Override public IFluidTank[] getInternalTanks() { return null; }
 
         @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("isMirrorTaken", isMirrorTaken);

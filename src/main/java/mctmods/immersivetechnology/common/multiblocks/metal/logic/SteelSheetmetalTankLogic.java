@@ -38,7 +38,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -146,8 +145,6 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         @Override public void onDataReload(IInitialMultiblockContext<?> context) { comparatorHelper = newComparator(); }
 
         @Override public boolean isActive() { return active; }
-
-        @Override public IItemHandlerModifiable getInventory() { return null; }
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tank}; }
 

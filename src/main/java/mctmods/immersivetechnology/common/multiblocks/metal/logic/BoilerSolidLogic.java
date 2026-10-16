@@ -280,7 +280,7 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            lines.temperature(heatLevel, workingHeatLevel).percent((totalBurnTime > 0 && burnRemaining > 0) ? (totalBurnTime - burnRemaining) * 100 / totalBurnTime : 0);
+            lines.temperature(heatLevel, workingHeatLevel).percent(totalBurnTime > 0 ? (totalBurnTime - burnRemaining) * 100 / totalBurnTime : 0);
             if (inventory.getStackInSlot(INPUT_FUEL_SLOT).isEmpty()) { lines.fuelEmpty(); }
         }
     }
