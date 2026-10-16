@@ -137,6 +137,7 @@ overlay.immersivetech.redstone_inverted=Redstone Mode Inverted
 
 #GUI
 gui.immersivetech.empty=Empty
+gui.immersivetech.fuel_empty=Fuel: Empty
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
 gui.immersivetech.if_per_tick=%s IF/t

@@ -137,6 +137,7 @@ overlay.immersivetech.redstone_inverted=레드스톤 모드 반전
 
 #GUI
 gui.immersivetech.empty=비어 있음
+gui.immersivetech.fuel_empty=연료: 없음
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
 gui.immersivetech.if_per_tick=%s IF/t

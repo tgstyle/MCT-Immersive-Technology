@@ -83,6 +83,7 @@ overlay.immersivetech.redstone_off=Режим редстоуну: вимкнен
 overlay.immersivetech.redstone_normal=Режим редстоуну: звичайний
 overlay.immersivetech.redstone_inverted=Режим редстоуну: інвертований
 gui.immersivetech.empty=Порожньо
+gui.immersivetech.fuel_empty=Паливо: Порожньо
 gui.immersivetech.ticks=%s т
 gui.immersivetech.seconds=%s с
 gui.immersivetech.if_per_tick=%s IF/т

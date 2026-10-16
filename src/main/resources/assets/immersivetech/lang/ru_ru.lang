@@ -137,6 +137,7 @@ overlay.immersivetech.redstone_inverted=Режим редстоуна инвер
 
 #GUI
 gui.immersivetech.empty=Пусто
+gui.immersivetech.fuel_empty=Топливо: Пусто
 gui.immersivetech.ticks=%sт
 gui.immersivetech.seconds=%sс
 gui.immersivetech.if_per_tick=%s IF/т

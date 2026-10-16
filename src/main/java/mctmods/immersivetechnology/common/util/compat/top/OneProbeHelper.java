@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -90,6 +91,8 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
         probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER).spacing(2))
                 .progress(percent, 100, probeInfo.defaultProgressStyle().numberFormat(NumberFormat.FULL).suffix("%"));
     }
+
+    private static void addFuelEmpty(IProbeInfo probeInfo) { probeInfo.text(TextFormatting.GRAY + "{*gui.immersivetech.fuel_empty*}"); }
 
     private static void addTemperatureRaw(IProbeInfo probeInfo, double heatLevel, double workingLevel) {
         int current = (int)heatLevel;
@@ -174,6 +177,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
             addTemperatureRaw(probeInfo, master.heatLevel, master.workingHeatLevel);
+            if (master.tanks[0].getFluidAmount() <= 0) { addFuelEmpty(probeInfo); }
         }
     }
 
@@ -190,6 +194,8 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             addTemperatureRaw(probeInfo, master.heatLevel, master.workingHeatLevel);
+            addProcessPercent(probeInfo, master.totalBurnTime > 0 ? (master.totalBurnTime - master.burnRemaining) * 100 / master.totalBurnTime : 0);
+            if (master.inventory.get(0).isEmpty()) { addFuelEmpty(probeInfo); }
         }
     }
 
@@ -273,6 +279,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
 
             addEnergyDisplay(probeInfo, master.starterStorage.getEnergyStored(), master.starterStorage.getMaxEnergyStored());
             addEnergyDisplay(probeInfo, master.sparkplugStorage.getEnergyStored(), master.sparkplugStorage.getMaxEnergyStored());
+            if (master.tanks[0].getFluidAmount() <= 0) { addFuelEmpty(probeInfo); }
         }
     }
 
@@ -289,8 +296,10 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
-            int currentProg = master.processTimeMax > 0 ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
-            addProcessPercent(probeInfo, currentProg);
+            if (master.processTimeRemaining > 0) {
+                int currentProg = master.processTimeMax > 0 ? (master.processTimeMax - master.processTimeRemaining) * 100 / master.processTimeMax : 0;
+                addProcessPercent(probeInfo, currentProg);
+            }
         }
     }
 
@@ -328,6 +337,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
             int currentProg = maxProg - master.processTimeRemaining;
             int percent = maxProg > 0 ? currentProg * 100 / maxProg : 0;
             addProcessPercent(probeInfo, percent);
+            if (master.inventory.get(0).isEmpty()) { addFuelEmpty(probeInfo); }
         }
     }
 
@@ -394,6 +404,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 currentProg = Math.max(0, Math.min(100, currentProg));
             }
             addProcessPercent(probeInfo, currentProg);
+            if (master.tanks[0].getFluidAmount() <= 0) { addFuelEmpty(probeInfo); }
         }
     }
 
@@ -410,6 +421,7 @@ public class OneProbeHelper extends ITCompatModule implements Function<ITheOnePr
                 if (master == null) return;
             } else return;
             for (FluidTank tank : master.tanks) addFluidTankDisplay(probeInfo, tank);
+            if (master.tanks[0].getFluidAmount() <= 0) { addFuelEmpty(probeInfo); }
         }
     }
 

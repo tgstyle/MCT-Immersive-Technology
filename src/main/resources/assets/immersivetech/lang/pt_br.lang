@@ -137,6 +137,7 @@ overlay.immersivetech.redstone_inverted=Modo Redstone Invertido
 
 #GUI
 gui.immersivetech.empty=Vazio
+gui.immersivetech.fuel_empty=Combustível: Vazio
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
 gui.immersivetech.if_per_tick=%s IF/t

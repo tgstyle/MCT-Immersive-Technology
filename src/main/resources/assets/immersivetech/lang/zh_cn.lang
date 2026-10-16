@@ -137,6 +137,7 @@ overlay.immersivetech.redstone_inverted=红石模式反转
 
 #GUI
 gui.immersivetech.empty=空
+gui.immersivetech.fuel_empty=燃料：空
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
 gui.immersivetech.if_per_tick=%s IF/t

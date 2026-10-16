@@ -83,6 +83,7 @@ overlay.immersivetech.redstone_off=Modo redstone: Apagado
 overlay.immersivetech.redstone_normal=Modo redstone: Normal
 overlay.immersivetech.redstone_inverted=Modo redstone: Invertido
 gui.immersivetech.empty=Vacío
+gui.immersivetech.fuel_empty=Combustible: Vacío
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
 gui.immersivetech.if_per_tick=%s IF/t

@@ -83,6 +83,7 @@ overlay.immersivetech.redstone_off=レッドストーン: オフ
 overlay.immersivetech.redstone_normal=レッドストーン: 通常
 overlay.immersivetech.redstone_inverted=レッドストーン: 反転
 gui.immersivetech.empty=空
+gui.immersivetech.fuel_empty=燃料: 空
 gui.immersivetech.ticks=%s tick
 gui.immersivetech.seconds=%s秒
 gui.immersivetech.if_per_tick=%s IF/t

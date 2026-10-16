@@ -83,6 +83,7 @@ overlay.immersivetech.redstone_off=Režim redstone: Vypnuto
 overlay.immersivetech.redstone_normal=Režim redstone: Normální
 overlay.immersivetech.redstone_inverted=Režim redstone: Invertovaný
 gui.immersivetech.empty=Prázdné
+gui.immersivetech.fuel_empty=Palivo: Prázdné
 gui.immersivetech.ticks=%st
 gui.immersivetech.seconds=%ss
 gui.immersivetech.if_per_tick=%s IF/t
