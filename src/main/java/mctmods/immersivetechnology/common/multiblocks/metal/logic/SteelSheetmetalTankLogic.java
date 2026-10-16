@@ -172,8 +172,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         boolean isActive = !state.tank.isEmpty();
         if (state.active != isActive) {
             state.active = isActive;
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
+            ctx.markDirtyAndSync();
         }
         pumpOutputs(ctx);
     }
@@ -194,14 +193,13 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { }
 
-    @Override @Nullable public List<Component> getOverlayText(State state, BlockPos pos, BlockHitResult hit, Player player, boolean hammer) { return ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND)) ? List.of(ICFluidUtils.formatFluidStack(state.tank.getFluid())) : null; }
+    @Override @Nullable public List<Component> getOverlayText(State state, Player player, boolean hammer) { return ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND)) ? List.of(ICFluidUtils.formatFluidStack(state.tank.getFluid())) : null; }
 
     @Override public Function<BlockPos, VoxelShape> shapeGetter(ShapeType forType) { return ITShapes.get("steel_sheetmetal_tank").getter; }
 
     @Override public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (!ICFluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION; }
-        ctx.markMasterDirty();
-        ctx.requestMasterBESync();
+        ctx.markDirtyAndSync();
         return ItemInteractionResult.SUCCESS;
     }
 

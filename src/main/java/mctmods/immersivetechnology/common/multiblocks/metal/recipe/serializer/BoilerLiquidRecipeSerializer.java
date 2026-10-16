@@ -27,7 +27,7 @@ public class BoilerLiquidRecipeSerializer extends ICRecipeSerializer<BoilerLiqui
         MapCodec<BoilerLiquidRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 fluidTagCodec.forGetter(BoilerLiquidRecipe::fluidTag),
                 Codec.INT.fieldOf("inputAmount").forGetter(BoilerLiquidRecipe::amount),
-                Codec.INT.fieldOf("time").forGetter(BoilerLiquidRecipe::time),
+                Codec.INT.fieldOf("time").forGetter(BoilerLiquidRecipe::getBaseTime),
                 Codec.DOUBLE.fieldOf("heatPerTick").forGetter(BoilerLiquidRecipe::heatPerTick),
                 Codec.DOUBLE.fieldOf("targetHeat").forGetter(BoilerLiquidRecipe::targetHeat)
         ).apply(instance, BoilerLiquidRecipe::new));
@@ -38,7 +38,7 @@ public class BoilerLiquidRecipeSerializer extends ICRecipeSerializer<BoilerLiqui
                 StreamCodec.of(RegistryFriendlyByteBuf::writeVarInt, RegistryFriendlyByteBuf::readVarInt),
                 BoilerLiquidRecipe::amount,
                 StreamCodec.of(RegistryFriendlyByteBuf::writeVarInt, RegistryFriendlyByteBuf::readVarInt),
-                BoilerLiquidRecipe::time,
+                BoilerLiquidRecipe::getBaseTime,
                 StreamCodec.of(RegistryFriendlyByteBuf::writeDouble, RegistryFriendlyByteBuf::readDouble),
                 BoilerLiquidRecipe::heatPerTick,
                 StreamCodec.of(RegistryFriendlyByteBuf::writeDouble, RegistryFriendlyByteBuf::readDouble),

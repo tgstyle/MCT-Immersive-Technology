@@ -124,10 +124,10 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         boolean percentsChanged = updateProcessPercents(state, ctx.getLevel().getRawLevel());
         int outputCapacity = state.tanks.output0.getCapacity();
         int newComparatorValue = outputCapacity > 0 ? (15 * state.tanks.output0.getFluidAmount()) / outputCapacity : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) { for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); } state.lastComparatorValue = newComparatorValue; }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
         boolean update = activeChanged || energyChanged || tanksChanged || inventoryChanged || percentsChanged || comparatorChanged;
-        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+        if (update) { ctx.markDirtyAndSync(); }
     }
 
     private boolean updateProcessPercents(State state, Level level) {
@@ -231,18 +231,17 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public ElectrolyticCrucibleBatteryTanks getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            nbt.put("energy", energy.serializeNBT(provider));
+            energy.save(nbt, "energy");
             nbt.put("tanks", this.tanks.toNBT(provider));
-            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("processor", processor.toNBT());
             nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putBoolean("active", active);
         }
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            CompoundTag energyTag = nbt.getCompound("energy");
-            if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
+            energy.load(nbt, "energy");
             this.tanks.readNBT(nbt.getCompound("tanks"), provider);
-            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), ElectrolyticCrucibleBatteryProcess::new, provider);
+            this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), ElectrolyticCrucibleBatteryProcess::new);
             this.inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
             tanksDirty = false;
@@ -258,7 +257,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT(provider));
-            nbt.put("energy", energy.serializeNBT(provider));
+            energy.save(nbt, "energy");
             nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putIntArray("processPercents", processPercents);
         }
@@ -266,8 +265,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            CompoundTag energyTag = nbt.getCompound("energy");
-            if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
+            energy.load(nbt, "energy");
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             int[] percents = nbt.getIntArray("processPercents");
             processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1};

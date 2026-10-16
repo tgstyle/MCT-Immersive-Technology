@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.common.items;
 
 import com.immersiveconvergence.api.block.HammerUse;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
-import com.immersiveconvergence.api.util.ICTextUtils;
 import com.immersiveconvergence.core.lib.ICLib;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -62,7 +61,7 @@ public class FormationTool extends Item {
                 ResourceLocation mbName = ResourceLocation.tryParse(tagList.getString(i));
                 if (mbName == null) continue;
                 Component displayName = MultiblockRegistry.displayName(mbName);
-                if (displayName != null) { list.add(ICTextUtils.applyFormat(displayName, ChatFormatting.DARK_GRAY)); }
+                if (displayName != null) { list.add(displayName.copy().withStyle(ChatFormatting.DARK_GRAY)); }
             }
         }
     }

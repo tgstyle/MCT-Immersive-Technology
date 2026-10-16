@@ -12,7 +12,6 @@ import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 
@@ -37,6 +36,4 @@ public class CommonProxy {
     public void reinitializeGUI() {}
 
     public Level getClientWorld() { return null; }
-
-    public Player getClientPlayer() { return null; }
 }

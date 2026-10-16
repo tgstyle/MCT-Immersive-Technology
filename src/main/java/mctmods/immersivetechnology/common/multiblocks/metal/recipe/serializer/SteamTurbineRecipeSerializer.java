@@ -33,7 +33,7 @@ public class SteamTurbineRecipeSerializer extends ICRecipeSerializer<SteamTurbin
                 fluidTagCodec.forGetter(SteamTurbineRecipe::fluidTag),
                 Codec.INT.fieldOf("inputAmount").forGetter(SteamTurbineRecipe::amount),
                 fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
-                Codec.INT.fieldOf("time").forGetter(SteamTurbineRecipe::time),
+                Codec.INT.fieldOf("time").forGetter(SteamTurbineRecipe::getBaseTime),
                 Codec.FLOAT.fieldOf("torque").forGetter(SteamTurbineRecipe::torque)
         ).apply(instance, SteamTurbineRecipe::new));
 
@@ -53,7 +53,7 @@ public class SteamTurbineRecipeSerializer extends ICRecipeSerializer<SteamTurbin
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY));
-                buf.writeVarInt(recipe.time());
+                buf.writeVarInt(recipe.getBaseTime());
                 buf.writeFloat(recipe.torque());
             }
         };

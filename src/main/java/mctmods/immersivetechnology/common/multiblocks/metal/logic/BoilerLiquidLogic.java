@@ -122,15 +122,9 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
         FluidContainers.emptyBucket(fuel, state.inventory, INPUT_FUEL_SLOT_FILLED, INPUT_FUEL_SLOT_EMPTY);
         state.active = state.pilotLit && fullMode && state.heatLevel >= state.workingHeatLevel;
         int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (prevHeatLevel != state.heatLevel || prevPilotLit != state.pilotLit || wasActive != state.active || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (prevHeatLevel != state.heatLevel || prevPilotLit != state.pilotLit || wasActive != state.active || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     @Override public void registerCapabilities(IMultiblockComponent.CapabilityRegistrar<State> register) {

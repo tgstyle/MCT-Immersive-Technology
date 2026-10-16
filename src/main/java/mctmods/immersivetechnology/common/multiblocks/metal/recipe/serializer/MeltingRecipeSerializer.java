@@ -38,7 +38,7 @@ public class MeltingRecipeSerializer extends ICRecipeSerializer<MeltingRecipe> {
                 inputTagCodec.forGetter(MeltingRecipe::inputTag),
                 inputAmountCodec.forGetter(MeltingRecipe::inputAmount),
                 fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
-                timeCodec.forGetter(MeltingRecipe::getTotalProcessTime),
+                timeCodec.forGetter(MeltingRecipe::getBaseTime),
                 requiredTempCodec.forGetter(r -> r.requiredTemp)
         ).apply(instance, (tag, amount, output, time, temp) -> {
             FluidStack out = output.isEmpty() ? null : output;
@@ -63,7 +63,7 @@ public class MeltingRecipeSerializer extends ICRecipeSerializer<MeltingRecipe> {
                 buf.writeVarInt(recipe.inputAmount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, out);
-                buf.writeVarInt(recipe.getTotalProcessTime());
+                buf.writeVarInt(recipe.getBaseTime());
                 buf.writeDouble(recipe.requiredTemp);
             }
         };

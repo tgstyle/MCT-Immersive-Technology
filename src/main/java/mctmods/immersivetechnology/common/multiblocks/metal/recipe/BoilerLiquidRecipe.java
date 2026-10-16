@@ -1,24 +1,20 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerLiquidRecipeSerializer;
+import mctmods.immersivetechnology.core.registration.RecipeTypes;
+
 import com.immersiveconvergence.api.capability.HeatCapabilities;
 import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.BoilerLiquidRecipeSerializer;
-import mctmods.immersivetechnology.core.registration.RecipeTypes;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerLiquidRecipe extends ICMultiblockRecipe {
@@ -27,19 +23,15 @@ public class BoilerLiquidRecipe extends ICMultiblockRecipe {
 
     public final TagKey<Fluid> fluidTag;
     private final int amount;
-    private final int time;
     private final double heatPerTick;
     private final double targetHeat;
-    private final Lazy<Integer> totalProcessTime;
 
     public BoilerLiquidRecipe(TagKey<Fluid> fluidTag, int amount, int time, double heatPerTick, double targetHeat) {
         super(ICTagOutput.EMPTY, RecipeTypes.BOILER_LIQUID, time, 0);
         this.fluidTag = fluidTag;
         this.amount = amount;
-        this.time = time;
         this.heatPerTick = heatPerTick;
         this.targetHeat = Math.min(targetHeat, HeatCapabilities.maxHeat());
-        this.totalProcessTime = Lazy.of(() -> this.time);
     }
 
     public boolean matches(FluidStack stack) {
@@ -52,13 +44,7 @@ public class BoilerLiquidRecipe extends ICMultiblockRecipe {
 
     public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerLiquidRecipe hint) {
         if (input.isEmpty() || input.getAmount() <= 0) return null;
-        if (hint != null && hint.matches(input)) return hint;
-
-        for (RecipeHolder<BoilerLiquidRecipe> holder : RECIPES.getRecipes(level)) {
-            BoilerLiquidRecipe recipe = holder.value();
-            if (recipe.matches(input)) return recipe;
-        }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.matches(input), hint);
     }
 
     public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input) {
@@ -67,19 +53,10 @@ public class BoilerLiquidRecipe extends ICMultiblockRecipe {
 
     public TagKey<Fluid> fluidTag() { return fluidTag; }
     public int amount() { return amount; }
-    public int time() { return time; }
     public double heatPerTick() { return heatPerTick; }
     public double targetHeat() { return targetHeat; }
 
-    @Override public @Nonnull ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return totalProcessTime.get(); }
-
-    @Override public int getTotalProcessEnergy() { return 0; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 
     public double getHeatPerTick() { return heatPerTick; }
 

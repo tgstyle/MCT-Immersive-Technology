@@ -50,8 +50,8 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
                 input1AmountCodec.forGetter(r -> Optional.ofNullable(r.getInput1Amount() > 0 ? r.getInput1Amount() : null)),
                 output0Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.output0(), FluidStack.EMPTY)),
                 output1Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.output1(), FluidStack.EMPTY)),
-                energyCodec.forGetter(HeatExchangerRecipe::getTotalProcessEnergy),
-                timeCodec.forGetter(HeatExchangerRecipe::getTotalProcessTime)
+                energyCodec.forGetter(HeatExchangerRecipe::getBaseEnergy),
+                timeCodec.forGetter(HeatExchangerRecipe::getBaseTime)
         ).apply(instance, (in0Tag, in0Amt, in1TagOpt, in1AmtOpt, out0, out1, energy, time) -> {
             TagKey<Fluid> in1Tag = in1TagOpt.orElse(null);
             int in1Amt = in1AmtOpt.orElse(0);
@@ -95,8 +95,8 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
                     FluidStack out1 = java.util.Objects.requireNonNullElse(recipe.output1(), FluidStack.EMPTY);
                     FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, out1);
                 }
-                buf.writeVarInt(recipe.getTotalProcessEnergy());
-                buf.writeVarInt(recipe.getTotalProcessTime());
+                buf.writeVarInt(recipe.getBaseEnergy());
+                buf.writeVarInt(recipe.getBaseTime());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

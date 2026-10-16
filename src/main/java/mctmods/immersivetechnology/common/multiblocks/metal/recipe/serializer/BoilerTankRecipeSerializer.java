@@ -33,7 +33,7 @@ public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRec
                 fluidTagCodec.forGetter(BoilerTankRecipe::fluidTag),
                 Codec.INT.fieldOf("inputAmount").forGetter(BoilerTankRecipe::amount),
                 outputCodec.forGetter(BoilerTankRecipe::output),
-                Codec.INT.fieldOf("time").forGetter(BoilerTankRecipe::time),
+                Codec.INT.fieldOf("time").forGetter(BoilerTankRecipe::getBaseTime),
                 Codec.DOUBLE.fieldOf("requiredHeat").forGetter(BoilerTankRecipe::requiredHeat)
         ).apply(instance, BoilerTankRecipe::new));
 
@@ -53,7 +53,7 @@ public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRec
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.STREAM_CODEC.encode(buf, recipe.output());
-                buf.writeVarInt(recipe.time());
+                buf.writeVarInt(recipe.getBaseTime());
                 buf.writeDouble(recipe.requiredHeat());
             }
         };

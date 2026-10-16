@@ -24,7 +24,7 @@ public class AdvancedCokeOvenRecipeSerializer extends ICRecipeSerializer<Advance
         MapCodec<AdvancedCokeOvenRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ICIngredientWithSize.CODECS.codec().fieldOf("input").forGetter(AdvancedCokeOvenRecipe::input),
                 ICTagOutput.CODECS.codec().fieldOf("result").forGetter(AdvancedCokeOvenRecipe::itemOutput),
-                Codec.INT.fieldOf("time").forGetter(AdvancedCokeOvenRecipe::time),
+                Codec.INT.fieldOf("time").forGetter(AdvancedCokeOvenRecipe::getBaseTime),
                 Codec.INT.fieldOf("creosote").forGetter(AdvancedCokeOvenRecipe::creosoteOutput)
         ).apply(instance, AdvancedCokeOvenRecipe::new));
 
@@ -42,7 +42,7 @@ public class AdvancedCokeOvenRecipeSerializer extends ICRecipeSerializer<Advance
             public void encode(@Nonnull RegistryFriendlyByteBuf buf, AdvancedCokeOvenRecipe recipe) {
                 ICIngredientWithSize.CODECS.streamCodec().encode(buf, recipe.input());
                 ICTagOutput.CODECS.streamCodec().encode(buf, recipe.itemOutput());
-                buf.writeVarInt(recipe.time());
+                buf.writeVarInt(recipe.getBaseTime());
                 buf.writeVarInt(recipe.creosoteOutput());
             }
         };

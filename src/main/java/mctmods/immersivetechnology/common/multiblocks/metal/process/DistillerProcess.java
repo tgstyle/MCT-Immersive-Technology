@@ -8,7 +8,6 @@ import mctmods.immersivetechnology.core.util.ProcessUtils;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachine;
 import com.immersiveconvergence.api.multiblock.process.ProcessContext;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -19,8 +18,6 @@ public class DistillerProcess extends MultiblockProcessInMachine<DistillerRecipe
     public DistillerProcess(RecipeHolder<DistillerRecipe> recipeHolder) { super(recipeHolder, 0); }
 
     public DistillerProcess(BiFunction<Level, ResourceLocation, DistillerRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); }
-
-    public DistillerProcess(BiFunction<Level, ResourceLocation, DistillerRecipe> getRecipe, CompoundTag data, HolderLookup.Provider ignoredProvider) { this(getRecipe, data); }
 
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<DistillerRecipe> context, IMultiblockLevel level) {
         DistillerRecipe recipe = getLevelData(level.getRawLevel()).recipe();

@@ -413,7 +413,7 @@ public class JEIIntegration implements IModPlugin {
 
     private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenCustomRecipes() {
         assert Minecraft.getInstance().level != null;
-        return AdvancedCokeOvenRecipe.getAllRecipes(Minecraft.getInstance().level);
+        return AdvancedCokeOvenRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList();
     }
     private List<BoilerLiquidRecipe> getBoilerLiquidRecipes() { assert Minecraft.getInstance().level != null; return BoilerLiquidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }
     private List<BoilerSolidRecipe> getBoilerSolidRecipes() { assert Minecraft.getInstance().level != null; return BoilerSolidRecipe.RECIPES.getRecipes(Minecraft.getInstance().level).stream().map(RecipeHolder::value).toList(); }

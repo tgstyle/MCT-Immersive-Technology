@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -175,9 +174,9 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
 
     @Override @Nonnull public FacingLimitation getFacingLimitation() { return FacingLimitation.SIDE_CLICKED; }
 
-    @Override public boolean mirrorFacingOnPlacement(@Nonnull LivingEntity placer) { return false; }
+    @Override public boolean mirrorFacingOnPlacement() { return false; }
 
-    @Override public boolean canHammerRotate(@Nonnull Direction side, @Nonnull Vec3 hit, LivingEntity entity) { return false; }
+    @Override public boolean canHammerRotate() { return false; }
 
     @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
         if (level == null || level.isClientSide) return false;

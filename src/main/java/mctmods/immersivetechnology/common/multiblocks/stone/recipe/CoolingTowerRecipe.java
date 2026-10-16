@@ -8,17 +8,14 @@ import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
 import com.immersiveconvergence.api.util.RecipeCache;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CoolingTowerRecipe extends ICMultiblockRecipe {
@@ -33,7 +30,6 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
     public final FluidStack fluidOutput2;
-    private final int time;
 
     public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
         super(ICTagOutput.EMPTY, RecipeTypes.COOLING_TOWER, time, 0);
@@ -45,7 +41,6 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;
         this.fluidOutput2 = fluidOutput2;
-        this.time = time;
     }
 
     public CoolingTowerRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
@@ -71,28 +66,15 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
 
     @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1, @Nullable CoolingTowerRecipe hint) {
         if (fluidInput0 == null || fluidInput0.isEmpty() || fluidInput1 == null || fluidInput1.isEmpty()) return null;
-        if (hint != null && hint.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= hint.getInput0Amount() && fluidInput1.getAmount() >= hint.getInput1Amount()) return hint;
-        for (var holder : RECIPES.getRecipes(level)) {
-            CoolingTowerRecipe recipe = holder.value();
-            if (recipe.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= recipe.getInput0Amount() && fluidInput1.getAmount() >= recipe.getInput1Amount()) return recipe;
-        }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= recipe.getInput0Amount() && fluidInput1.getAmount() >= recipe.getInput1Amount(), hint);
     }
 
     @Nullable public static CoolingTowerRecipe findOriented(Level level, FluidStack tank0, FluidStack tank1, RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> direct, RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> reversed) {
         CoolingTowerRecipe recipe = direct.apply(level, tank0, tank1);
         if (recipe != null) { return recipe; }
         recipe = reversed.apply(level, tank1, tank0);
-        return recipe == null ? null : new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.inputTag1, recipe.amount1, recipe.inputTag0, recipe.amount0, recipe.time);
+        return recipe == null ? null : new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.inputTag1, recipe.amount1, recipe.inputTag0, recipe.amount0, recipe.getBaseTime());
     }
 
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return time; }
-
-    @Override public int getTotalProcessEnergy() { return 0; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

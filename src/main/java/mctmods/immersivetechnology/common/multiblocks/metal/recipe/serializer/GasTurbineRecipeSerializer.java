@@ -36,7 +36,7 @@ public class GasTurbineRecipeSerializer extends ICRecipeSerializer<GasTurbineRec
                 fluidTagCodec.forGetter(GasTurbineRecipe::fluidTag),
                 amountCodec.forGetter(GasTurbineRecipe::amount),
                 fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
-                timeCodec.forGetter(GasTurbineRecipe::time),
+                timeCodec.forGetter(GasTurbineRecipe::getBaseTime),
                 torqueCodec.forGetter(GasTurbineRecipe::torque)
         ).apply(instance, GasTurbineRecipe::new));
 
@@ -56,7 +56,7 @@ public class GasTurbineRecipeSerializer extends ICRecipeSerializer<GasTurbineRec
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY));
-                buf.writeVarInt(recipe.time());
+                buf.writeVarInt(recipe.getBaseTime());
                 buf.writeFloat(recipe.torque());
             }
         };

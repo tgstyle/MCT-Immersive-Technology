@@ -38,7 +38,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -159,9 +158,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Level getClientWorld() { return Minecraft.getInstance().level; }
-
-    @Override
-    public Player getClientPlayer() { return Minecraft.getInstance().player; }
 
     @SubscribeEvent
     public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {

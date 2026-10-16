@@ -157,15 +157,9 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         }
         state.wasEnabled = currentlyEnabled;
         int newComparatorValue = state.effectiveMaxSpeed > 0 ? (15 * state.speed) / state.effectiveMaxSpeed : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue);
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (previouslyActive != state.active || state.speed % 5 == 0 || previousSpeed != state.speed || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
+        state.lastComparatorValue = newComparatorValue;
+        if (previouslyActive != state.active || state.speed % 5 == 0 || previousSpeed != state.speed || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static float consume(State state, Level level) {

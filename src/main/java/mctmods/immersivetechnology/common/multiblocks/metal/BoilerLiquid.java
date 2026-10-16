@@ -8,7 +8,6 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerLiquidLo
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class BoilerLiquid extends MachineTemplateMultiblock {
 
     public BoilerLiquid() { super(Reference.rl("multiblocks/boiler_liquid"), () -> ITShapes.get("boiler_liquid"), MultiblockRegistry.BOILER_LIQUID); }
 
-    @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates, @Nullable Player player) {
+    @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates) {
         return FormationCandidate.preferFacing(world, candidates, BoilerLiquidLogic.HEAT_OUTPUT_POIS, BoilerLiquidLogic.HEAT_OUTPUT_FACING, HeatCapabilities.HEAT_CONSUMER);
     }
 }

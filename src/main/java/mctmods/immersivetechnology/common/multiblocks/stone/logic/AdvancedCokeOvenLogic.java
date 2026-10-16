@@ -116,15 +116,9 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             int maxTicks = queue.getFirst().getMaxTicks(level);
             newComparatorValue = maxTicks > 0 ? (15 * queue.getFirst().processTick) / maxTicks : 0;
         }
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || prevTanksDirty != state.tanksDirty || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || prevTanksDirty != state.tanksDirty || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     @Override public List<BlockPos> getOutputPositions() { return List.of(OUTPUT_FLUID_POI.posInMultiblock()); }
@@ -159,7 +153,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
     @Override public ItemInteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) { return ItemInteractionResult.SUCCESS; }
 
-    public static class State implements IDisplaySyncState, ContainerData, IProcessContext.IProcessContextInMachine<AdvancedCokeOvenRecipe>, BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>, IDataReloadAware {
+    public static class State implements IDisplaySyncState, ContainerData, IProcessContext.IProcessContextInMachine<AdvancedCokeOvenRecipe>, BurnProcessHandler.IFurnaceEnvironment, IDataReloadAware {
         public static final int MAX_PROCESS_TIME = 0;
         public static final int REMAINING_PROCESS_TIME = 1;
         public static final int NUM_SLOTS = 2;
@@ -208,7 +202,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.put("tanks", tanks.toNBT(provider));
-            nbt.put("processor", processor.toNBT(provider));
+            nbt.put("processor", processor.toNBT());
             nbt.put("inventory", inventory.serializeNBT(provider));
             nbt.putBoolean("active", active);
             CompoundTag rsTag = new CompoundTag();
@@ -218,7 +212,7 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), AdvancedCokeOvenProcess::create, provider);
+            processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), AdvancedCokeOvenProcess::new);
             inventory.deserializeNBT(provider, nbt.getCompound("inventory"));
             active = nbt.getBoolean("active");
             if (nbt.contains("rsState", Tag.TAG_COMPOUND)) { rsState.readSaveNBT(nbt.getCompound("rsState"), provider); }
@@ -263,21 +257,12 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
 
         @Override public IItemHandlerModifiable getInventory() { return inventory; }
 
-        @Override @Nullable public AdvancedCokeOvenRecipe getRecipeForInput(Level level) {
-            RecipeHolder<AdvancedCokeOvenRecipe> holder = AdvancedCokeOvenRecipe.findRecipe(level, inventory.getStackInSlot(SLOT_INPUT), null);
-            return holder != null ? holder.value() : null;
-        }
-
-        @Override public int getBurnTimeOf(Level level, ItemStack fuel) { return 0; }
-
         @Override public double getProcessSpeed(IMultiblockLevel level) {
             int heaters = activeHeater(level, BASEHEATER0_POI) + activeHeater(level, BASEHEATER1_POI);
             return (ServerConfig.advancedCokeOvenSpeedBase + heaters * ServerConfig.advancedCokeOvenBaseheaterSpeedIncrease) * (1 + heaters * (ServerConfig.advancedCokeOvenBaseheaterSpeedMultiplier - 1));
         }
 
         private static int activeHeater(IMultiblockLevel level, BlockPos poi) { return level.getRawLevel().getBlockEntity(level.toAbsolute(poi)) instanceof AdvancedCokeOvenBaseHeaterBlockEntity heater && heater.doSpeedup() ? 1 : 0; }
-
-        @Override public void turnOff(IMultiblockLevel level) { }
     }
 
     public record AdvancedCokeOvenTank(MarkableFluidTank output) {

@@ -26,7 +26,6 @@ public class Ignition {
         ItemStack held = player.getItemInHand(hand);
         if (held.is(ModTags.igniters_consume)) { held.shrink(1); }
         else if (held.getMaxDamage() > 0) { held.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND); }
-        ctx.markMasterDirty();
-        ctx.requestMasterBESync();
+        ctx.markDirtyAndSync();
     }
 }

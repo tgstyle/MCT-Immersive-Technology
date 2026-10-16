@@ -148,10 +148,10 @@ public class Recipes extends RecipeProvider {
     }
 
     private void recipesMixer() {
-        ICMixerRecipeBuilder.builder().output(ModFluids.SALT_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(ModTags.saltForge, 4).setEnergy(3200).build(ieRecipes, toResourceLocation("mixer/salt_slurry"));
-        ICMixerRecipeBuilder.builder().output(ModFluids.GRAVEL_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(Tags.Items.GRAVELS, 4).setEnergy(3200).build(ieRecipes, toResourceLocation("mixer/gravel_slurry"));
-        ICMixerRecipeBuilder.builder().output(ModFluids.SULFURIC_ACID.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(cTag("dusts/sulfur"), 4).setEnergy(3200).build(ieRecipes, toResourceLocation("mixer/sulfuric_acid"));
-        ICMixerRecipeBuilder.builder().output(ModFluids.CRUDE_NITRATE.getStill(), 1000).fluidInput(ModTags.fluidSulfuricAcid, 1000).input(cTag("dusts/saltpeter"), 4).setEnergy(3200).build(ieRecipes, toResourceLocation("mixer/crude_nitrate"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.SALT_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(ModTags.saltForge, 4).energy(3200).build(ieRecipes, toResourceLocation("mixer/salt_slurry"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.GRAVEL_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(Tags.Items.GRAVELS, 4).energy(3200).build(ieRecipes, toResourceLocation("mixer/gravel_slurry"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.SULFURIC_ACID.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(cTag("dusts/sulfur"), 4).energy(3200).build(ieRecipes, toResourceLocation("mixer/sulfuric_acid"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.CRUDE_NITRATE.getStill(), 1000).fluidInput(ModTags.fluidSulfuricAcid, 1000).input(cTag("dusts/saltpeter"), 4).energy(3200).build(ieRecipes, toResourceLocation("mixer/crude_nitrate"));
     }
 
     private void recipesSolarTower(RecipeOutput output) {
@@ -210,9 +210,9 @@ public class Recipes extends RecipeProvider {
         alloyMetal(output, "magnox", ModItems.INGOT_MAGNOX, ModItems.DUST_MAGNOX);
         ICMineralMixBuilder.builder().dimensionOverworld().addOverworldSpoils().ore(Blocks.CALCITE, 0.6f).ore(Blocks.DRIPSTONE_BLOCK, 0.2f).ore(cTag("ores/magnesium"), 0.1f).ore(cTag("ores/chromium"), 0.1f).weight(5).failchance(0.2f).build(ieRecipes, toResourceLocation("mineral/dolomite"));
 
-        ICArcFurnaceRecipeBuilder.builder().input(cTag("ingots/steel"), 6).additive(cTag("ingots/chromium"), 2).additive(cTag("ingots/nickel")).output(cTag("ingots/stainless_steel"), 9).setTime(100).setEnergy(51200).build(ieRecipes, toResourceLocation("arcfurnace/alloy_stainless_steel"));
-        ICAlloyRecipeBuilder.builder().input(cTag("ingots/magnesium"), 3).input(cTag("ingots/aluminum"), 1).output(cTag("ingots/magnox"), 4).build(ieRecipes, toResourceLocation("alloysmelter/magnox"));
-        ICArcFurnaceRecipeBuilder.builder().input(cTag("ingots/magnesium"), 3).additive(cTag("ingots/aluminum")).output(cTag("ingots/magnox"), 4).setTime(100).setEnergy(51200).build(ieRecipes, toResourceLocation("arcfurnace/alloy_magnox"));
+        ICArcFurnaceRecipeBuilder.builder().input(cTag("ingots/steel"), 6).additive(cTag("ingots/chromium"), 2).additive(cTag("ingots/nickel")).output(cTag("ingots/stainless_steel"), 9).time(100).energy(51200).build(ieRecipes, toResourceLocation("arcfurnace/alloy_stainless_steel"));
+        ICAlloyRecipeBuilder.builder().input(cTag("ingots/magnesium"), 3).input(cTag("ingots/aluminum"), 1).result(cTag("ingots/magnox"), 4).build(ieRecipes, toResourceLocation("alloysmelter/magnox"));
+        ICArcFurnaceRecipeBuilder.builder().input(cTag("ingots/magnesium"), 3).additive(cTag("ingots/aluminum")).output(cTag("ingots/magnox"), 4).time(100).energy(51200).build(ieRecipes, toResourceLocation("arcfurnace/alloy_magnox"));
 
         add3x3Conversion(ModItems.INGOT_STAINLESS_STEEL.get(), ModItems.NUGGET_STAINLESS_STEEL.get(), cTag("nuggets/stainless_steel"), output);
         plateAndRod(output, "stainless_steel", ModItems.INGOT_STAINLESS_STEEL, ModItems.PLATE_STAINLESS_STEEL, true);
@@ -226,9 +226,9 @@ public class Recipes extends RecipeProvider {
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Metal.REACTOR_CLADDING.get().asItem(), 1).define('p', cTag("plates/stainless_steel")).pattern("ppp").pattern("ppp").pattern("ppp").unlockedBy("has_plate_stainless_steel", has(ModItems.PLATE_STAINLESS_STEEL.get())).save(output, toResourceLocation("reactor_cladding"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Metal.NUCLEAR_ENGINEERING.get().asItem(), 4).define('T', ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get()).define('U', cTag("ingots/uranium")).define('P', cTag("plates/stainless_steel")).pattern("PTP").pattern("UTU").pattern("PTP").unlockedBy("has_technology_engineering", has(ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get())).save(output, toResourceLocation("nuclear_engineering"));
 
-        ICMetalPressRecipeBuilder.builder().input(cTag("ingots/uranium")).mold(ICIEContent.MOLD_ROD).output(ModItems.PELLET_URANIUM.get(), 2).setEnergy(2400).build(ieRecipes, toResourceLocation("metalpress/pellet_uranium"));
+        ICMetalPressRecipeBuilder.builder().input(cTag("ingots/uranium"), 1).mold(ICIEContent.MOLD_ROD).result(ModItems.PELLET_URANIUM.get(), 2).energy(2400).build(ieRecipes, toResourceLocation("metalpress/pellet_uranium"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.FUEL_ELEMENT.get(), 1).define('x', ModItems.PELLET_URANIUM.get()).define('y', cTag("plates/magnox")).pattern("xyx").pattern("x x").pattern("xyx").unlockedBy("has_pellet_uranium", has(ModItems.PELLET_URANIUM.get())).save(output, toResourceLocation("fuel_element"));
-        ICCrusherRecipeBuilder.builder().input(ModItems.SPENT_ELEMENT.get()).output(cTag("dusts/spent_fuel"), 3).setEnergy(6000).build(ieRecipes, toResourceLocation("crusher/spent_element"));
+        ICCrusherRecipeBuilder.builder().input(ModItems.SPENT_ELEMENT.get()).result(cTag("dusts/spent_fuel"), 3).energy(6000).build(ieRecipes, toResourceLocation("crusher/spent_element"));
     }
 
     private void oreMetal(RecipeOutput output, String name, ItemEntry<?> ingot, ItemEntry<?> dust, ItemEntry<?> raw, ModBlocks.BlockEntry<?> storage, ModBlocks.BlockEntry<?> ore, ModBlocks.BlockEntry<?> deepslateOre) {
@@ -243,10 +243,10 @@ public class Recipes extends RecipeProvider {
         addSmeltingBlasting(dust.get(), ingot.get(), 0f, output, "ingot_" + name + "_from_dust");
         ICHammerCrushingRecipeBuilder.builder(oreTag, dustTag).build(ieRecipes, toResourceLocation("crafting/hammercrushing_" + name));
         ICHammerCrushingRecipeBuilder.builder(rawTag, dustTag).build(ieRecipes, toResourceLocation("crafting/raw_hammercrushing_" + name));
-        ICCrusherRecipeBuilder.builder().input(oreTag).output(dustTag, 2).setEnergy(6000).build(ieRecipes, toResourceLocation("crusher/ore_" + name));
-        ICCrusherRecipeBuilder.builder().input(rawTag).output(dustTag, 1).addSecondary(dustTag, 1/3f).setEnergy(6000).build(ieRecipes, toResourceLocation("crusher/raw_ore_" + name));
-        ICArcFurnaceRecipeBuilder.builder().input(oreTag).output(ingotTag, 2).slag(cTag("slag"), 1).setTime(200).setEnergy(102400).build(ieRecipes, toResourceLocation("arcfurnace/ore_" + name));
-        ICArcFurnaceRecipeBuilder.builder().input(rawTag).output(ingotTag, 1).secondary(ingotTag, 0.5f).setTime(100).setEnergy(25600).build(ieRecipes, toResourceLocation("arcfurnace/raw_ore_" + name));
+        ICCrusherRecipeBuilder.builder().input(oreTag, 1).result(dustTag, 2).energy(6000).build(ieRecipes, toResourceLocation("crusher/ore_" + name));
+        ICCrusherRecipeBuilder.builder().input(rawTag, 1).result(dustTag, 1).secondary(dustTag, 1/3f).energy(6000).build(ieRecipes, toResourceLocation("crusher/raw_ore_" + name));
+        ICArcFurnaceRecipeBuilder.builder().input(oreTag, 1).output(ingotTag, 2).slag(cTag("slag"), 1).time(200).energy(102400).build(ieRecipes, toResourceLocation("arcfurnace/ore_" + name));
+        ICArcFurnaceRecipeBuilder.builder().input(rawTag, 1).output(ingotTag, 1).secondary(ingotTag, 0.5f).time(100).energy(25600).build(ieRecipes, toResourceLocation("arcfurnace/raw_ore_" + name));
         crushAndSmeltIngot(name);
     }
 
@@ -256,15 +256,15 @@ public class Recipes extends RecipeProvider {
     }
 
     private void crushAndSmeltIngot(String name) {
-        ICCrusherRecipeBuilder.builder().input(cTag("ingots/" + name)).output(cTag("dusts/" + name), 1).setEnergy(3000).build(ieRecipes, toResourceLocation("crusher/ingot_" + name));
-        ICArcFurnaceRecipeBuilder.builder().input(cTag("dusts/" + name)).output(cTag("ingots/" + name), 1).setTime(100).setEnergy(51200).build(ieRecipes, toResourceLocation("arcfurnace/dust_" + name));
+        ICCrusherRecipeBuilder.builder().input(cTag("ingots/" + name), 1).result(cTag("dusts/" + name), 1).energy(3000).build(ieRecipes, toResourceLocation("crusher/ingot_" + name));
+        ICArcFurnaceRecipeBuilder.builder().input(cTag("dusts/" + name), 1).output(cTag("ingots/" + name), 1).time(100).energy(51200).build(ieRecipes, toResourceLocation("arcfurnace/dust_" + name));
     }
 
     private void plateAndRod(RecipeOutput output, String name, ItemEntry<?> ingot, ItemEntry<?> plate, boolean hasRod) {
         TagKey<Item> ingotTag = cTag("ingots/" + name);
-        ICMetalPressRecipeBuilder.builder().input(ingotTag).mold(ICIEContent.MOLD_PLATE).output(cTag("plates/" + name), 1).setEnergy(2400).build(ieRecipes, toResourceLocation("metalpress/plate_" + name));
+        ICMetalPressRecipeBuilder.builder().input(ingotTag, 1).mold(ICIEContent.MOLD_PLATE).result(cTag("plates/" + name), 1).energy(2400).build(ieRecipes, toResourceLocation("metalpress/plate_" + name));
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, plate.get()).requires(ingotTag).requires(ICIEContent.HAMMERS).unlockedBy("has_ingot_" + name, has(ingot.get())).save(withIE(output), toResourceLocation("plate_" + name + "_hammering"));
-        if (hasRod) { ICMetalPressRecipeBuilder.builder().input(ingotTag).mold(ICIEContent.MOLD_ROD).output(cTag("rods/" + name), 2).setEnergy(2400).build(ieRecipes, toResourceLocation("metalpress/rod_" + name)); }
+        if (hasRod) { ICMetalPressRecipeBuilder.builder().input(ingotTag, 1).mold(ICIEContent.MOLD_ROD).result(cTag("rods/" + name), 2).energy(2400).build(ieRecipes, toResourceLocation("metalpress/rod_" + name)); }
     }
 
     private void add3x3Conversion(ItemLike bigItem, ItemLike smallItem, TagKey<Item> smallTag, RecipeOutput output) {

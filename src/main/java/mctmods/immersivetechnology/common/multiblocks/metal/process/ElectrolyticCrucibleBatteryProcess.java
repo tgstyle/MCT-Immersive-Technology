@@ -8,23 +8,29 @@ import mctmods.immersivetechnology.core.util.ProcessUtils;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachine;
 import com.immersiveconvergence.api.multiblock.process.ProcessContext;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {
-    public ElectrolyticCrucibleBatteryProcess(RecipeHolder<ElectrolyticCrucibleBatteryRecipe> recipeHolder) { super(recipeHolder, 0); }
+    public ElectrolyticCrucibleBatteryProcess(RecipeHolder<ElectrolyticCrucibleBatteryRecipe> recipeHolder) {
+        super(recipeHolder, 0);
+        setInputTanks(0);
+    }
 
     public ElectrolyticCrucibleBatteryProcess(BiFunction<Level, ResourceLocation, ElectrolyticCrucibleBatteryRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); }
 
-    public ElectrolyticCrucibleBatteryProcess(BiFunction<Level, ResourceLocation, ElectrolyticCrucibleBatteryRecipe> getRecipe, CompoundTag data, HolderLookup.Provider ignoredProvider) { this(getRecipe, data); }
+    @Override protected List<SizedFluidIngredient> getRecipeFluidInputs(Level level) {
+        ElectrolyticCrucibleBatteryRecipe recipe = getLevelData(level).recipe();
+        return recipe == null ? List.of() : List.of(SizedFluidIngredient.of(recipe.fluidTag, recipe.getInputAmount()));
+    }
 
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe> context, IMultiblockLevel level) {
-        ElectrolyticCrucibleBatteryRecipe recipe = getLevelData(level.getRawLevel()).recipe();
-        if (recipe == null || (this.processTick == 0 && ProcessUtils.drainFails(context.getInternalTanks()[0], recipe.getInputAmount(), recipe::matches))) {
+        if (getLevelData(level.getRawLevel()).recipe() == null) {
             this.clearProcess = true;
             return;
         }

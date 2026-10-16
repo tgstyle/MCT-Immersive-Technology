@@ -37,8 +37,8 @@ public class DistillerRecipeSerializer extends ICRecipeSerializer<DistillerRecip
                 fluidOutputCodec.forGetter(DistillerRecipe::fluidOutput),
                 itemOutputCodec.forGetter(DistillerRecipe::itemOutput),
                 Codec.FLOAT.optionalFieldOf("chance", 0.0f).forGetter(DistillerRecipe::chance),
-                Codec.INT.fieldOf("time").forGetter(DistillerRecipe::time),
-                Codec.INT.fieldOf("energy").forGetter(DistillerRecipe::energy)
+                Codec.INT.fieldOf("time").forGetter(DistillerRecipe::getBaseTime),
+                Codec.INT.fieldOf("energy").forGetter(DistillerRecipe::getBaseEnergy)
         ).apply(instance, DistillerRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, DistillerRecipe> streamCodec = new StreamCodec<>() {
@@ -62,8 +62,8 @@ public class DistillerRecipeSerializer extends ICRecipeSerializer<DistillerRecip
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, fluidOut);
                 ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, recipe.itemOutput());
                 buf.writeFloat(recipe.chance());
-                buf.writeVarInt(recipe.time());
-                buf.writeVarInt(recipe.energy());
+                buf.writeVarInt(recipe.getBaseTime());
+                buf.writeVarInt(recipe.getBaseEnergy());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

@@ -67,7 +67,7 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
     }
 
     public AdvancedCokeOvenRecipeBuilder addOutput(TagKey<Item> output, int count) {
-        this.itemOutput = new ICTagOutput(output, count);
+        this.itemOutput = new ICTagOutput(new ICIngredientWithSize(Ingredient.of(output), count));
         this.outputTag = output;
         return this;
     }

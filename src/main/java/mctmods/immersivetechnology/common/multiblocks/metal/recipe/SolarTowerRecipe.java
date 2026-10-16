@@ -7,17 +7,14 @@ import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe {
@@ -28,7 +25,6 @@ public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe
     public final TagKey<Fluid> inputTag;
     private final int inputAmount;
     @Nullable public final FluidStack fluidOutput;
-    private final int time;
     public final double requiredTemp;
 
     public SolarTowerRecipe(ResourceLocation id, TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
@@ -37,7 +33,6 @@ public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe
         this.inputTag = inputTag;
         this.inputAmount = inputAmount;
         this.fluidOutput = fluidOutput;
-        this.time = time;
         this.requiredTemp = requiredTemp;
     }
 
@@ -60,21 +55,8 @@ public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe
 
     @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid, @Nullable SolarTowerRecipe hint) {
         if (fluid == null || fluid.isEmpty()) return null;
-        if (hint != null && hint.matches(fluid) && fluid.getAmount() >= hint.getInputAmount()) return hint;
-        for (var holder : RECIPES.getRecipes(level)) {
-            SolarTowerRecipe recipe = holder.value();
-            if (recipe.matches(fluid) && fluid.getAmount() >= recipe.getInputAmount()) return recipe;
-        }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.matches(fluid) && fluid.getAmount() >= recipe.getInputAmount(), hint);
     }
 
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return time; }
-
-    @Override public int getTotalProcessEnergy() { return 0; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

@@ -9,7 +9,6 @@ import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachin
 import com.immersiveconvergence.api.multiblock.process.ProcessContext;
 import com.immersiveconvergence.api.crafting.ICCokeOvenRecipe;
 import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -38,10 +37,8 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
         this.maxProcessTime = data.getInt("maxProcessTime");
     }
 
-    public static AdvancedCokeOvenProcess create(BiFunction<Level, ResourceLocation, AdvancedCokeOvenRecipe> getRecipe, CompoundTag data, Object ignored) { return new AdvancedCokeOvenProcess(getRecipe, data); }
-
-    @Override public void writeExtraDataToNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.writeExtraDataToNBT(nbt, provider);
+    @Override protected void writeExtraDataToNBT(CompoundTag nbt) {
+        super.writeExtraDataToNBT(nbt);
         nbt.putFloat("tickRemainder", tickRemainder);
         nbt.putInt("maxProcessTime", maxProcessTime);
     }
@@ -51,7 +48,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
             this.clearProcess = true;
             return;
         }
-        @SuppressWarnings("unchecked") BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
+        BurnProcessHandler.IFurnaceEnvironment env = (BurnProcessHandler.IFurnaceEnvironment) context;
         float total = this.tickRemainder + (float) env.getProcessSpeed(level);
         int wholeTicks = (int) total;
         this.tickRemainder = total - wholeTicks;

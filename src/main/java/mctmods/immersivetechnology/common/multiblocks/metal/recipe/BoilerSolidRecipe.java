@@ -10,14 +10,11 @@ import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerSolidRecipe extends ICMultiblockRecipe {
@@ -44,39 +41,10 @@ public class BoilerSolidRecipe extends ICMultiblockRecipe {
 
     public static BoilerSolidRecipe findRecipe(Level level, ItemStack input, @Nullable BoilerSolidRecipe hint) {
         if (input.isEmpty()) return null;
-        if (hint != null && hint.input.testIgnoringSize(input)) return hint;
-        for (RecipeHolder<BoilerSolidRecipe> holder : RECIPES.getRecipes(level)) {
-            BoilerSolidRecipe recipe = holder.value();
-            if (recipe.input.testIgnoringSize(input)) return recipe;
-        }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.input.testIgnoringSize(input), hint);
     }
 
-    @Override
-    @Nonnull
-    public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    protected ICRecipeSerializer<?> getICSerializer() {
-        return SERIALIZER.get();
-    }
-
-    @Override
-    public int getTotalProcessTime() {
-        return 0;
-    }
-
-    @Override
-    public int getTotalProcessEnergy() {
-        return 0;
-    }
-
-    @Override
-    public int getMultipleProcessTicks() {
-        return 0;
-    }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
     public double getHeatPerTick() {
         return heatPerTick;

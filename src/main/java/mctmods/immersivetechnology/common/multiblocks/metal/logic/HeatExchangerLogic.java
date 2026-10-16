@@ -120,15 +120,9 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
         int maxEnergy = state.energy.getMaxEnergyStored();
         int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || !prevTanksNBT.equals(state.tanks.toNBT(provider)) || progressChanged || queueSizeChanged || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || !prevTanksNBT.equals(state.tanks.toNBT(provider)) || progressChanged || queueSizeChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static void tryEnqueueProcess(State state, Level level, RecipeHolder<HeatExchangerRecipe> recipeHolder) {
@@ -206,8 +200,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.put("tanks", tanks.toNBT(provider));
-            nbt.put("energy", energy.serializeNBT(provider));
-            nbt.put("processor", processor.toNBT(provider));
+            energy.save(nbt, "energy");
+            nbt.put("processor", processor.toNBT());
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
             rsState.writeSaveNBT(nbt, provider);
@@ -215,9 +209,8 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            CompoundTag energyTag = nbt.getCompound("energy");
-            if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
-            processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), HeatExchangerProcess::new, provider);
+            energy.load(nbt, "energy");
+            processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), HeatExchangerProcess::new);
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
             rsState.readSaveNBT(nbt, provider);
@@ -232,7 +225,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT(provider));
-            nbt.put("energy", energy.serializeNBT(provider));
+            energy.save(nbt, "energy");
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
             nbt.putInt("queueSize", queueSize);
@@ -241,8 +234,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            CompoundTag energyTag = nbt.getCompound("energy");
-            if (!energyTag.isEmpty()) { energy.deserializeNBT(provider, energyTag); }
+            energy.load(nbt, "energy");
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
             queueSize = nbt.getInt("queueSize");

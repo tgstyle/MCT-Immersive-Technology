@@ -47,7 +47,7 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
                 output0Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput0(), FluidStack.EMPTY)),
                 output1Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput1(), FluidStack.EMPTY)),
                 output2Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput2(), FluidStack.EMPTY)),
-                timeCodec.forGetter(CoolingTowerRecipe::getTotalProcessTime)
+                timeCodec.forGetter(CoolingTowerRecipe::getBaseTime)
         ).apply(instance, (tag0, amt0, tag1, amt1, out0, out1, out2, t) -> {
             FluidStack o0 = out0.isEmpty() ? FluidStack.EMPTY : out0;
             FluidStack o1 = out1.isEmpty() ? FluidStack.EMPTY : out1;
@@ -84,7 +84,7 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, o1);
                 FluidStack o2 = java.util.Objects.requireNonNullElse(recipe.fluidOutput2(), FluidStack.EMPTY);
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, o2);
-                buf.writeVarInt(recipe.getTotalProcessTime());
+                buf.writeVarInt(recipe.getBaseTime());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

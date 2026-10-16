@@ -40,8 +40,8 @@ public class StyleNOXRecipeSerializer extends ICRecipeSerializer<StyleNOXRecipe>
                 co2TagCodec.forGetter(StyleNOXRecipe::co2Tag),
                 Codec.INT.fieldOf("co2Amount").forGetter(StyleNOXRecipe::co2Amount),
                 FluidStack.CODEC.fieldOf("steamOutput").forGetter(StyleNOXRecipe::steamOutput),
-                Codec.INT.fieldOf("time").forGetter(StyleNOXRecipe::getTotalProcessTime),
-                Codec.INT.fieldOf("energy").forGetter(StyleNOXRecipe::getTotalProcessEnergy)
+                Codec.INT.fieldOf("time").forGetter(StyleNOXRecipe::getBaseTime),
+                Codec.INT.fieldOf("energy").forGetter(StyleNOXRecipe::getBaseEnergy)
         ).apply(instance, StyleNOXRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, StyleNOXRecipe> streamCodec = new StreamCodec<>() {
@@ -66,8 +66,8 @@ public class StyleNOXRecipeSerializer extends ICRecipeSerializer<StyleNOXRecipe>
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.co2Tag());
                 buf.writeVarInt(recipe.co2Amount());
                 FluidStack.STREAM_CODEC.encode(buf, recipe.steamOutput());
-                buf.writeVarInt(recipe.getTotalProcessTime());
-                buf.writeVarInt(recipe.getTotalProcessEnergy());
+                buf.writeVarInt(recipe.getBaseTime());
+                buf.writeVarInt(recipe.getBaseEnergy());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

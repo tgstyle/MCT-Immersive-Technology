@@ -7,10 +7,8 @@ import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -18,15 +16,11 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class HeatExchangerRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, HeatExchangerRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<HeatExchangerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.HEAT_EXCHANGER);
-
-    public float timeModifier = 1;
-    public float energyModifier = 1;
 
     public final TagKey<Fluid> input0Tag;
     private final int input0Amount;
@@ -34,9 +28,6 @@ public class HeatExchangerRecipe extends ICMultiblockRecipe {
     private final int input1Amount;
     public final FluidStack output0;
     @Nullable public final FluidStack output1;
-
-    private final int baseProcessTime;
-    private final int baseProcessEnergy;
 
     public HeatExchangerRecipe(@SuppressWarnings("unused") ResourceLocation id, TagKey<Fluid> input0Tag, int input0Amount, @Nullable TagKey<Fluid> input1Tag, int input1Amount, FluidStack output0, @Nullable FluidStack output1, int energy, int time) {
         super(ICTagOutput.EMPTY, RecipeTypes.HEAT_EXCHANGER, time, energy);
@@ -46,8 +37,6 @@ public class HeatExchangerRecipe extends ICMultiblockRecipe {
         this.input1Amount = input1Amount;
         this.output0 = output0;
         this.output1 = output1;
-        this.baseProcessTime = time;
-        this.baseProcessEnergy = energy;
     }
 
     public HeatExchangerRecipe(TagKey<Fluid> input0Tag, int input0Amount, @Nullable TagKey<Fluid> input1Tag, int input1Amount, FluidStack output0, @Nullable FluidStack output1, int energy, int time) {
@@ -75,27 +64,8 @@ public class HeatExchangerRecipe extends ICMultiblockRecipe {
 
     public static RecipeHolder<HeatExchangerRecipe> findRecipe(Level level, FluidStack input0, FluidStack input1, @Nullable RecipeHolder<HeatExchangerRecipe> hint) {
         if ((input0 == null || input0.isEmpty()) && (input1 == null || input1.isEmpty())) return null;
-        if (hint != null && hint.value().matchesInput0(input0) && hint.value().matchesInput1(input1)) return hint;
-        for (RecipeHolder<HeatExchangerRecipe> holder : RECIPES.getRecipes(level)) {
-            HeatExchangerRecipe recipe = holder.value();
-            if (recipe.matchesInput0(input0) && recipe.matchesInput1(input1)) return holder;
-        }
-        return null;
+        return RECIPES.findHolder(level, recipe -> recipe.matchesInput0(input0) && recipe.matchesInput1(input1), hint);
     }
-
-    @Override
-    public int getTotalProcessTime() {
-        return (int) (baseProcessTime * timeModifier);
-    }
-
-    @Override
-    public int getTotalProcessEnergy() {
-        return (int) (baseProcessEnergy * energyModifier);
-    }
-
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

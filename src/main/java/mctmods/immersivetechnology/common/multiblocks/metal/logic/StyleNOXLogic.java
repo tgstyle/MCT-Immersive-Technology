@@ -109,20 +109,14 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         }
         pumpOutputs(ctx);
         int newComparatorValue = state.tanks.steam().getCapacity() > 0 ? (15 * state.tanks.steam().getFluidAmount()) / state.tanks.steam().getCapacity() : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
         int newRodMask = state.computeRodMask();
         boolean newFuelDown = state.hasLoad();
         boolean rodsChanged = newRodMask != state.rodMask || newFuelDown != state.fuelDown;
         state.rodMask = newRodMask;
         state.fuelDown = newFuelDown;
-        if (comparatorChanged) {
-            ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue);
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || wasReactorState != state.reactorState || prevEnergy != state.energy.getEnergyStored() || (!prevTanksDirty && state.tanksDirty) || (!prevInventoryDirty && state.inventoryDirty) || comparatorChanged || rodsChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || wasReactorState != state.reactorState || prevEnergy != state.energy.getEnergyStored() || (!prevTanksDirty && state.tanksDirty) || (!prevInventoryDirty && state.inventoryDirty) || comparatorChanged || rodsChanged) { ctx.markDirtyAndSync(); }
     }
 
     private void tickIdle(State state, Level level, boolean rsEnabled) {
@@ -366,7 +360,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             if (!loadedFuel.isEmpty()) { nbt.put("loadedFuel", loadedFuel.save(provider)); }
             nbt.put("tanks", tanks.toNBT(provider));
             nbt.put("inventory", inventory.serializeNBT(provider));
-            nbt.putInt("energy", energy.getEnergyStored());
+            energy.saveStored(nbt, "energy");
         }
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -383,7 +377,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             loadedFuel = nbt.contains("loadedFuel", Tag.TAG_COMPOUND) ? ItemStack.parseOptional(provider, nbt.getCompound("loadedFuel")) : ItemStack.EMPTY;
             tanks.readNBT(nbt.getCompound("tanks"), provider);
             readInventoryNBT(nbt.getCompound("inventory"), provider);
-            energy.setStoredEnergy(nbt.getInt("energy"));
+            energy.load(nbt, "energy");
             tanksDirty = false;
             inventoryDirty = false;
         }
@@ -423,7 +417,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             nbt.putBoolean("fuelDown", fuelDown);
             nbt.putBoolean("controlRodDown", controlRodDown);
             nbt.put("tanks", tanks.toNBT(provider));
-            nbt.putInt("energy", energy.getEnergyStored());
+            energy.saveStored(nbt, "energy");
         }
 
         @Override public void readDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
@@ -437,7 +431,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
             fuelDown = nbt.getBoolean("fuelDown");
             controlRodDown = nbt.getBoolean("controlRodDown");
             tanks.readNBT(nbt.getCompound("tanks"), provider);
-            energy.setStoredEnergy(nbt.getInt("energy"));
+            energy.load(nbt, "energy");
             tanksDirty = false;
         }
 

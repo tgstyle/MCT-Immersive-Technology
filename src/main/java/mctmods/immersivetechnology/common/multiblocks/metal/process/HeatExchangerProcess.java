@@ -7,7 +7,6 @@ import mctmods.immersivetechnology.core.util.ProcessUtils;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachine;
 import com.immersiveconvergence.api.multiblock.process.ProcessContext;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -19,8 +18,6 @@ public class HeatExchangerProcess extends MultiblockProcessInMachine<HeatExchang
     public HeatExchangerProcess(RecipeHolder<HeatExchangerRecipe> recipeHolder) { super(recipeHolder, 0); }
 
     public HeatExchangerProcess(BiFunction<Level, ResourceLocation, HeatExchangerRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); }
-
-    public HeatExchangerProcess(BiFunction<Level, ResourceLocation, HeatExchangerRecipe> getRecipe, CompoundTag data, HolderLookup.Provider ignoredProvider) { this(getRecipe, data); }
 
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<HeatExchangerRecipe> context, IMultiblockLevel level) {
         HeatExchangerRecipe recipe = getLevelData(level.getRawLevel()).recipe();

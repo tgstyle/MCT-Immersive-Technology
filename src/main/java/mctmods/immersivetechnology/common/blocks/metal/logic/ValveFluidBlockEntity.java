@@ -59,7 +59,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         updateRedstoneState();
     }
 
-    @Override public boolean canOutputPressurized(boolean consumePower) { return true; }
+    @Override public boolean canOutputPressurized() { return true; }
 
     @SuppressWarnings("unused")
     public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ModProperties.FACING_ALL).getOpposite(); }
@@ -169,12 +169,6 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveFluidMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
 
     @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
-
-    @Override public void receiveMessageFromServer(CompoundTag nbt) {
-        packetLimit = nbt.getInt("packetLimit");
-        timeLimit = nbt.getInt("timeLimit");
-        keepSize = nbt.getInt("keepSize");
-    }
 
     @Override public void receiveMessageFromClient(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");

@@ -36,7 +36,7 @@ public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRec
                 inputTagCodec.forGetter(SolarTowerRecipe::inputTag),
                 inputAmountCodec.forGetter(SolarTowerRecipe::inputAmount),
                 fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
-                timeCodec.forGetter(SolarTowerRecipe::getTotalProcessTime),
+                timeCodec.forGetter(SolarTowerRecipe::getBaseTime),
                 requiredTempCodec.forGetter(r -> r.requiredTemp)
         ).apply(instance, (tag, amount, output, time, temp) -> {
             FluidStack out = output.isEmpty() ? null : output;
@@ -61,7 +61,7 @@ public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRec
                 buf.writeVarInt(recipe.inputAmount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, out);
-                buf.writeVarInt(recipe.getTotalProcessTime());
+                buf.writeVarInt(recipe.getBaseTime());
                 buf.writeDouble(recipe.requiredTemp);
             }
         };

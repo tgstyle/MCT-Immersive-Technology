@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ISolarRecipe;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
-import mctmods.immersivetechnology.core.util.RecipeIds;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistryData;
 
@@ -44,6 +43,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -148,15 +148,9 @@ public abstract class SolarCollectorLogic<R extends ICMultiblockRecipe & ISolarR
         pumpOutputs(ctx);
         double workingLevel = state.activeRecipe != null ? state.activeRecipe.requiredTemp() : state.workingHeat();
         int newComparatorValue = workingLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / workingLevel) : 0;
-        if (newComparatorValue != state.lastComparatorValue) {
-            ctx.setComparatorOutputFor(redstonePoi(), newComparatorValue);
-            state.lastComparatorValue = newComparatorValue;
-            update = true;
-        }
-        if (update) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        if (ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(redstonePoi()))) { update = true; }
+        state.lastComparatorValue = newComparatorValue;
+        if (update) { ctx.markDirtyAndSync(); }
     }
 
     private static boolean emptyInputContainer(CollectorState<?> state) {
@@ -267,7 +261,8 @@ public abstract class SolarCollectorLogic<R extends ICMultiblockRecipe & ISolarR
         if (state.activeRecipe == null && state.activeRecipeId != null) { state.activeRecipe = state.recipeList.getById(level, state.activeRecipeId); }
         if (state.activeRecipe == null || !state.activeRecipe.matches(fs)) {
             state.activeRecipe = state.recipeGetter.apply(level, fs);
-            state.activeRecipeId = RecipeIds.holderId(state.recipeList, level, state.activeRecipe);
+            RecipeHolder<R> holder = state.recipeList.findHolder(level, r -> r == state.activeRecipe, null);
+            state.activeRecipeId = holder != null ? holder.id() : null;
             state.processProgress = 0;
             state.totalProcessTime = 0;
             if (state.activeRecipe == null) { return false; }

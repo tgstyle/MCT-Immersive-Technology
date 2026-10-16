@@ -106,15 +106,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         int currentEnergy = state.energy.getEnergyStored();
         int maxEnergy = state.energy.getMaxEnergyStored();
         int newComparatorValue = maxEnergy > 0 ? (15 * currentEnergy) / maxEnergy : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || prevSpeed != state.speed || prevTorque != state.torqueMultiplier || prevEnergy != currentEnergy || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || prevSpeed != state.speed || prevTorque != state.torqueMultiplier || prevEnergy != currentEnergy || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static void generateAndPushEnergy(State state, IMultiblockContext<State> ctx, Level level) {
@@ -203,7 +197,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         @Override public void onDataReload(IInitialMultiblockContext<?> context) { lastComparatorValue = -1; }
 
         @Override public void writeSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            nbt.put("energy", energy.serializeNBT(provider));
+            energy.save(nbt, "energy");
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
@@ -211,7 +205,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         }
 
         @Override public void readSaveNBT(CompoundTag nbt, HolderLookup.Provider provider) {
-            energy.deserializeNBT(provider, Objects.requireNonNull(nbt.get("energy")));
+            energy.load(nbt, "energy");
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
@@ -222,7 +216,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             nbt.putBoolean("active", active);
             nbt.putInt("speed", speed);
             nbt.putFloat("torqueMultiplier", torqueMultiplier);
-            nbt.put("energy", energy.serializeNBT(provider));
+            energy.save(nbt, "energy");
             nbt.putInt("effectiveMaxSpeed", effectiveMaxSpeed);
         }
 
@@ -230,7 +224,7 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
             active = nbt.getBoolean("active");
             speed = nbt.getInt("speed");
             torqueMultiplier = nbt.getFloat("torqueMultiplier");
-            energy.deserializeNBT(provider, Objects.requireNonNull(nbt.get("energy")));
+            energy.load(nbt, "energy");
             effectiveMaxSpeed = nbt.getInt("effectiveMaxSpeed");
         }
 

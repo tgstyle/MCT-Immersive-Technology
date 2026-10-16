@@ -58,16 +58,10 @@ public class StyleNOXRecipe extends ICMultiblockRecipe {
 
     public static RecipeHolder<StyleNOXRecipe> findRecipe(Level level, ItemStack input, @Nullable RecipeHolder<StyleNOXRecipe> hint) {
         if (input.isEmpty()) { return null; }
-        if (hint != null && hint.value().matches(input)) { return hint; }
-        for (RecipeHolder<StyleNOXRecipe> holder : RECIPES.getRecipes(level)) {
-            if (holder.value().matches(input)) { return holder; }
-        }
-        return null;
+        return RECIPES.findHolder(level, recipe -> recipe.matches(input), hint);
     }
 
     @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider access) { return this.output.get(); }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

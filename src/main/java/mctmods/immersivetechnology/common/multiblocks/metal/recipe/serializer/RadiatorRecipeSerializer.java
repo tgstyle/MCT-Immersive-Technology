@@ -37,7 +37,7 @@ public class RadiatorRecipeSerializer extends ICRecipeSerializer<RadiatorRecipe>
                 fluidTagCodec.forGetter(RadiatorRecipe::fluidTag),
                 amountCodec.forGetter(RadiatorRecipe::amount),
                 fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
-                timeCodec.forGetter(RadiatorRecipe::getTotalProcessTime)
+                timeCodec.forGetter(RadiatorRecipe::getBaseTime)
         ).apply(instance, (tag, amt, output, t) -> {
             FluidStack out = output.isEmpty() ? null : output;
             return new RadiatorRecipe(tag, amt, out, t);
@@ -60,7 +60,7 @@ public class RadiatorRecipeSerializer extends ICRecipeSerializer<RadiatorRecipe>
                 buf.writeVarInt(recipe.amount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, out);
-                buf.writeVarInt(recipe.getTotalProcessTime());
+                buf.writeVarInt(recipe.getBaseTime());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

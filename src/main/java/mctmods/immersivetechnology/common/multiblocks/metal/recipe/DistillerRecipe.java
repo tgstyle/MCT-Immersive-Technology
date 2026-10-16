@@ -7,7 +7,6 @@ import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -17,7 +16,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DistillerRecipe extends ICMultiblockRecipe {
@@ -29,8 +27,6 @@ public class DistillerRecipe extends ICMultiblockRecipe {
     @Nullable public final FluidStack fluidOutput;
     public final ItemStack itemOutput;
     public final float chance;
-    private final int time;
-    private final int energy;
 
     public DistillerRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, ItemStack itemOutput, float chance, int time, int energy) {
         super(ICTagOutput.EMPTY, RecipeTypes.DISTILLER, time, energy);
@@ -39,8 +35,6 @@ public class DistillerRecipe extends ICMultiblockRecipe {
         this.fluidOutput = fluidOutput;
         this.itemOutput = itemOutput;
         this.chance = chance;
-        this.time = time;
-        this.energy = energy;
     }
 
     public TagKey<Fluid> fluidTag() { return fluidTag; }
@@ -48,8 +42,6 @@ public class DistillerRecipe extends ICMultiblockRecipe {
     public FluidStack fluidOutput() { return fluidOutput; }
     public ItemStack itemOutput() { return itemOutput; }
     public float chance() { return chance; }
-    public int time() { return time; }
-    public int energy() { return energy; }
 
     public boolean matches(FluidStack stack) { return stack.is(this.fluidTag); }
 
@@ -59,20 +51,8 @@ public class DistillerRecipe extends ICMultiblockRecipe {
 
     public static RecipeHolder<DistillerRecipe> findRecipe(Level level, FluidStack inputFluid, @Nullable RecipeHolder<DistillerRecipe> hint) {
         if (inputFluid.isEmpty() || inputFluid.getAmount() <= 0) { return null; }
-        if (hint != null && hint.value().matches(inputFluid)) { return hint; }
-        for (RecipeHolder<DistillerRecipe> holder : RECIPES.getRecipes(level)) {
-            if (holder.value().matches(inputFluid)) { return holder; }
-        }
-        return null;
+        return RECIPES.findHolder(level, recipe -> recipe.matches(inputFluid), hint);
     }
 
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return time; }
-
-    @Override public int getTotalProcessEnergy() { return energy; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

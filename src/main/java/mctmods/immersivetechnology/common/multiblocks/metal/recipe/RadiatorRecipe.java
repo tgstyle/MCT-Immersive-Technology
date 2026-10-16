@@ -7,17 +7,14 @@ import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class RadiatorRecipe extends ICMultiblockRecipe {
@@ -28,7 +25,6 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
     public final TagKey<Fluid> fluidTag;
     private final int amount;
     @Nullable public final FluidStack fluidOutput;
-    private final int time;
 
     public RadiatorRecipe(ResourceLocation id, TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time) {
         super(ICTagOutput.EMPTY, RecipeTypes.RADIATOR, time, 0);
@@ -36,7 +32,6 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput = fluidOutput;
-        this.time = time;
     }
 
     public RadiatorRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time) {
@@ -57,21 +52,8 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
 
     @Nullable public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput, @Nullable RadiatorRecipe hint) {
         if (fluidInput == null || fluidInput.isEmpty()) return null;
-        if (hint != null && hint.matches(fluidInput) && fluidInput.getAmount() >= hint.getInputAmount()) return hint;
-        for (var holder : RECIPES.getRecipes(level)) {
-            RadiatorRecipe recipe = holder.value();
-            if (recipe.matches(fluidInput) && fluidInput.getAmount() >= recipe.getInputAmount()) return recipe;
-        }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.matches(fluidInput) && fluidInput.getAmount() >= recipe.getInputAmount(), hint);
     }
 
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return time; }
-
-    @Override public int getTotalProcessEnergy() { return 0; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

@@ -42,8 +42,8 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSeriali
                 fluidOutput1Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput1(), FluidStack.EMPTY)),
                 fluidOutput2Codec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput2(), FluidStack.EMPTY)),
                 itemOutputCodec.forGetter(ElectrolyticCrucibleBatteryRecipe::itemOutput),
-                Codec.INT.fieldOf("energy").forGetter(ElectrolyticCrucibleBatteryRecipe::energy),
-                Codec.INT.fieldOf("time").forGetter(ElectrolyticCrucibleBatteryRecipe::time)
+                Codec.INT.fieldOf("energy").forGetter(ElectrolyticCrucibleBatteryRecipe::getBaseEnergy),
+                Codec.INT.fieldOf("time").forGetter(ElectrolyticCrucibleBatteryRecipe::getBaseTime)
         ).apply(instance, ElectrolyticCrucibleBatteryRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> streamCodec = new StreamCodec<>() {
@@ -68,8 +68,8 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSeriali
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput1(), FluidStack.EMPTY));
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput2(), FluidStack.EMPTY));
                 ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, recipe.itemOutput());
-                buf.writeVarInt(recipe.energy());
-                buf.writeVarInt(recipe.time());
+                buf.writeVarInt(recipe.getBaseEnergy());
+                buf.writeVarInt(recipe.getBaseTime());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

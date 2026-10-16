@@ -76,8 +76,7 @@ public class StyleNOXMenu extends BaseContainerMenu {
         StyleNOXLogic.State state = mbContext.getState();
         state.rodLevel = id;
         if (id == 0) { state.shutdown(); }
-        mbContext.markMasterDirty();
-        mbContext.requestMasterBESync();
+        mbContext.markDirtyAndSync();
         return true;
     }
 }

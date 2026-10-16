@@ -38,7 +38,7 @@ public class DistillerMenu extends BaseContainerMenu {
                         () -> {}
                 ),
                 new TankPair(v -> {}, DistillerLogic.inputTankCapacity(), DistillerLogic.outputTankCapacity()),
-                new ICEnergyStorage(32000)
+                new ICEnergyStorage(DistillerLogic.energyCapacity())
         );
     }
 
