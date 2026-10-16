@@ -150,8 +150,8 @@ public class Recipes extends RecipeProvider {
     }
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
-        ICMixerRecipeBuilder.builder(ModFluids.SALT_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(ModTags.saltForge, 4).setEnergy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
-        ICMixerRecipeBuilder.builder(ModFluids.GRAVEL_SLURRY.getStill(), 1000).addFluidTag(FluidTags.WATER, 1000).addInput(Tags.Items.GRAVEL, 4).setEnergy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.SALT_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(ModTags.saltForge, 4).energy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.GRAVEL_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(Tags.Items.GRAVEL, 4).energy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
     }
 
     private void recipesRadiator(@Nonnull Consumer<FinishedRecipe> out) {

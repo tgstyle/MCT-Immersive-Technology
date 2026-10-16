@@ -214,8 +214,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         if (state.loadTicks > 10 && !state.initialized && !level.isClientSide) {
             state.initialized = true;
             SolarRegistry.registerReflector(level, state.poiPos);
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
+            ctx.markDirtyAndSync();
         }
         if (state.loadTicks > 20 && state.reAttachOnLoad && !level.isClientSide) {
             state.reAttachOnLoad = false;
@@ -250,10 +249,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             state.globalAnimationPhase = -4;
         }
         boolean changed = state.danceStartTick != oldDanceStartTick || state.pendingTick != oldPendingTick || state.globalAnimationPhase != oldGlobalAnimationPhase;
-        if (changed || update) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        if (changed || update) { ctx.markDirtyAndSync(); }
         if (!state.isMirrorTaken) { SolarRegistry.updateDance(level); }
     }
 

@@ -7,16 +7,11 @@ import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.common.collect.Lists;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class RadiatorRecipe extends ICMultiblockRecipe {
@@ -25,17 +20,13 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
 
     public final FluidStack fluidOutput;
     public final ICFluidTagInput input;
-    public final int totalProcessTime;
-    private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
 
     public RadiatorRecipe(ResourceLocation id, FluidStack fluidOutput, ICFluidTagInput input, int time) {
-        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.RADIATOR, id);
+        super(RecipeTypes.RADIATOR, id, time, 0);
         this.fluidOutput = fluidOutput;
         this.input = input;
-        this.totalProcessTime = time;
         this.fluidInputList = Lists.newArrayList(input);
         this.fluidOutputList = Lists.newArrayList(fluidOutput);
-        this.outputList = Lazy.of(NonNullList::create);
     }
 
     public boolean matches(FluidStack fluidInput) { return input.test(fluidInput) && fluidInput.getAmount() >= input.getAmount(); }
@@ -44,18 +35,8 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
 
     public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput, @Nullable RadiatorRecipe hint) {
         if (fluidInput.isEmpty()) return null;
-        if (hint != null && hint.matches(fluidInput)) return hint;
-        for (RadiatorRecipe r : RECIPES.getRecipes(level)) { if (r.matches(fluidInput)) return r; }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.matches(fluidInput), hint);
     }
 
-    @Override public @Nonnull ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return totalProcessTime; }
-
-    @Override public int getTotalProcessEnergy() { return totalProcessEnergy.get(); }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

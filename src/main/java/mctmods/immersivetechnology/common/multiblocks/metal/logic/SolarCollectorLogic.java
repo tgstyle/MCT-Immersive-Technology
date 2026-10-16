@@ -148,15 +148,9 @@ public abstract class SolarCollectorLogic<R extends ICMultiblockRecipe & ISolarR
         pumpOutputs(ctx);
         double workingLevel = state.activeRecipe != null ? state.activeRecipe.requiredTemp() : state.workingHeat();
         int newComparatorValue = workingLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / workingLevel) : 0;
-        if (newComparatorValue != state.lastComparatorValue) {
-            ctx.setComparatorOutputFor(redstonePoi(), newComparatorValue);
-            state.lastComparatorValue = newComparatorValue;
-            update = true;
-        }
-        if (update) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        if (ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(redstonePoi()))) { update = true; }
+        state.lastComparatorValue = newComparatorValue;
+        if (update) { ctx.markDirtyAndSync(); }
     }
 
     private static boolean emptyInputContainer(CollectorState<?> state) {

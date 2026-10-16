@@ -17,7 +17,5 @@ public class SolarTowerRecipeBuilder extends ICFinishedRecipe<SolarTowerRecipeBu
 
     public SolarTowerRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
-    public SolarTowerRecipeBuilder setTime(int time) { return super.setTime(time); }
-
     public SolarTowerRecipeBuilder setRequiredTemp(double temp) { return addWriter(json -> json.addProperty("requiredTemp", temp)); }
 }

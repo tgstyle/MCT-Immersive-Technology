@@ -141,11 +141,11 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         boolean queueSizeChanged = newQueueSize != state.queueSize;
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
         int newComparatorValue = (int) Math.min(15, (15 * state.heatLevel) / workingHeatLevel());
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) { ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue); state.lastComparatorValue = newComparatorValue; }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
+        state.lastComparatorValue = newComparatorValue;
         boolean update = activeChanged || energyChanged || tanksChanged || queueSizeChanged || comparatorChanged;
 
-        if (update) { ctx.markMasterDirty(); ctx.requestMasterBESync(); }
+        if (update) { ctx.markDirtyAndSync(); }
     }
 
     private void heatLogic(IMultiblockContext<State> ctx, boolean heating, State state) {
@@ -247,7 +247,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             rsState.writeSaveNBT(nbt);
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("tanks", this.tanks.toNBT());
             nbt.put("processor", processor.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
@@ -258,7 +258,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
 
         @Override public void readSaveNBT(CompoundTag nbt) {
             rsState.readSaveNBT(nbt);
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             this.tanks.readNBT(nbt.getCompound("tanks"));
             this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), MeltingCrucibleProcess::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
@@ -277,7 +277,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putDouble("heatLevel", heatLevel);
             if (activeRecipe != null) { nbt.putString("activeRecipe", activeRecipe.getId().toString()); }
@@ -287,7 +287,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             heatLevel = nbt.getDouble("heatLevel");
             if (nbt.contains("activeRecipe")) { activeRecipeId = ResourceLocation.tryParse(nbt.getString("activeRecipe")); }

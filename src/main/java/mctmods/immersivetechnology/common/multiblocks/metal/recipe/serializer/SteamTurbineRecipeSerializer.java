@@ -21,8 +21,7 @@ public class SteamTurbineRecipeSerializer extends ICRecipeSerializer<SteamTurbin
 
     @Override public SteamTurbineRecipe readFromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext iContext) {
         ICFluidTagInput input = ICFluidTagInput.deserialize(json.getAsJsonObject("input"));
-        FluidStack fluidOutput = null;
-        if (json.has("output")) fluidOutput = ICUtils.jsonDeserializeFluidStack(json.getAsJsonObject("output"));
+        FluidStack fluidOutput = ICUtils.optionalFluidStack(json, "output");
         int time = GsonHelper.getAsInt(json, "time");
         float torque = json.has("torque") ? GsonHelper.getAsFloat(json, "torque") : 1.0f;
         return new SteamTurbineRecipe(recipeId, input, fluidOutput, time, torque);
@@ -42,7 +41,7 @@ public class SteamTurbineRecipeSerializer extends ICRecipeSerializer<SteamTurbin
         boolean hasOutput = recipe.fluidOutput != null;
         buffer.writeBoolean(hasOutput);
         if (hasOutput) buffer.writeFluidStack(recipe.fluidOutput);
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseTime());
         buffer.writeFloat(recipe.torque);
     }
 }

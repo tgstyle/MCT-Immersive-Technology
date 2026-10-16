@@ -200,12 +200,6 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
 
     @Override public @Nonnull Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LIMITER.location); }
 
-    @Override public void receiveMessageFromServer(CompoundTag nbt) {
-        packetLimit = nbt.getInt("packetLimit");
-        timeLimit = nbt.getInt("timeLimit");
-        keepSize = nbt.getInt("keepSize");
-    }
-
     @Override public void receiveMessageFromClient(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");
         timeLimit = nbt.getInt("timeLimit");

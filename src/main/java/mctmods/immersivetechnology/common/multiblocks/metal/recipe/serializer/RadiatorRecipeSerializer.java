@@ -20,7 +20,7 @@ public class RadiatorRecipeSerializer extends ICRecipeSerializer<RadiatorRecipe>
 
     @Override public RadiatorRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack output = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
+        FluidStack output = ICUtils.fluidStack(json, "output");
         int time = GsonHelper.getAsInt(json, "time");
         return new RadiatorRecipe(recipeID, output, input, time);
     }
@@ -35,6 +35,6 @@ public class RadiatorRecipeSerializer extends ICRecipeSerializer<RadiatorRecipe>
     @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull RadiatorRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseTime());
     }
 }

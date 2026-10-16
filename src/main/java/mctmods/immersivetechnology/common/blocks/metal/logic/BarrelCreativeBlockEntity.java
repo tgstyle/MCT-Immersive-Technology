@@ -86,10 +86,8 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = worldPosition.relative(dir);
             BlockEntity neighbor = level.getBlockEntity(neighborPos);
-            boolean isPipe = IICFluidPipe.isPipe(neighbor);
-
             FluidStack fsToOffer = baseFs.copy();
-            if (isPipe) { IICFluidPipe.markPressurized(fsToOffer); }
+            IICFluidPipe.markIfPipe(fsToOffer, neighbor);
 
             LazyOptional<IFluidHandler> cap = FluidUtil.getFluidHandler(level, neighborPos, dir.getOpposite());
             if (!cap.isPresent()) { continue; }

@@ -15,12 +15,12 @@ import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.client.split.ISubmodelOffsetProvider;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +28,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import java.util.function.BooleanSupplier;
 import javax.annotation.Nonnull;
@@ -42,7 +41,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
     private static float fanAccel() { return (float) ClientConfig.advancedCokeOvenBaseheaterFanAccel; }
     private static float fanDecel() { return (float) ClientConfig.advancedCokeOvenBaseheaterFanDecel; }
 
-    private final EnergyStorage energyStorage = new EnergyStorage(maxEnergy());
+    private final ICEnergyStorageAveraging energyStorage = new ICEnergyStorageAveraging(maxEnergy());
     private final LazyOptional<IEnergyStorage> energyHandler = LazyOptional.of(() -> this);
     private final LazyOptional<IEnergyStorage> dummyEnergyHandler = LazyOptional.of(ForwardingEnergyStorage::new);
 
@@ -89,7 +88,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
     @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         dummy = nbt.getBoolean("dummy");
         facing = Direction.from3DDataValue(nbt.getInt("facing"));
-        energyStorage.receiveEnergy(nbt.getInt("energy"), false);
+        energyStorage.load(nbt, "energy");
         active = nbt.getBoolean("active");
         if (nbt.contains("masterPos")) masterPos = NbtUtils.readBlockPos(nbt.getCompound("masterPos"));
         cachedMaster = null;
@@ -99,7 +98,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
     @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
         nbt.putBoolean("dummy", dummy);
         nbt.putInt("facing", facing.get3DDataValue());
-        nbt.putInt("energy", energyStorage.getEnergyStored());
+        energyStorage.saveStored(nbt, "energy");
         nbt.putBoolean("active", active);
         if (masterPos != null) nbt.put("masterPos", NbtUtils.writeBlockPos(masterPos));
     }
@@ -211,8 +210,6 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
 
     @Override public void placeDummies(BlockPlaceContext context, BlockState state) {}
 
-    @Override public boolean isDummy() { return dummy; }
-
     @Override public Direction getFacing() { return facing; }
 
     @Override public void setFacing(Direction f) { this.facing = f; }
@@ -221,7 +218,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
 
     @Override public Direction getFacingForPlacement(BlockPlaceContext ctx) { return ctx.getHorizontalDirection().getOpposite(); }
 
-    @Override public boolean canHammerRotate(Direction side, Vec3 hit, LivingEntity entity) { return false; }
+    @Override public boolean canHammerRotate() { return false; }
 
     @Override public BlockPos getModelOffset(BlockState state, @Nullable Vec3i size) {
         if (!dummy) return BlockPos.ZERO;

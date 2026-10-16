@@ -153,8 +153,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
         boolean isActive = shouldPumpOutputs(ctx);
         if (state.active != isActive) {
             state.active = isActive;
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
+            ctx.markDirtyAndSync();
         }
         pumpOutputs(ctx);
     }
@@ -179,8 +178,7 @@ public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmeta
 
     @Override public InteractionResult click(IMultiblockContext<State> ctx, BlockPos posInMultiblock, Player player, InteractionHand hand, BlockHitResult absoluteHit, boolean isClient) {
         if (!ICFluidUtils.interactWithFluidHandler(player, hand, ctx.getState().tank)) { return InteractionResult.PASS; }
-        ctx.markMasterDirty();
-        ctx.requestMasterBESync();
+        ctx.markDirtyAndSync();
         return InteractionResult.SUCCESS;
     }
 

@@ -36,7 +36,7 @@ public class SolarScreen extends BaseContainerScreen<SolarMenu> {
 
     @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() { return ImmutableList.of(new GuiFluidArea(menu.inputTank, new Rect2i(leftPos + 102, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE), new GuiFluidArea(menu.outputTank, new Rect2i(leftPos + 126, topPos + 21, 16, 47), 177, 31, 20, 51, TEXTURE)); }
 
-    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics) {
         double heatLevel = menu.state.get(0);
         double max = getMaxHeat();
         int heatBarSize = (int) Math.round(42 * Math.min(1, heatLevel / max));
@@ -104,7 +104,7 @@ public class SolarScreen extends BaseContainerScreen<SolarMenu> {
         }
     }
 
-    @Override protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {
+    @Override protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine) {
         if (mouseX >= leftPos + 16 && mouseX < leftPos + 58 && mouseY >= topPos + 9 && mouseY < topPos + 17) {
             double heat = menu.state.get(0);
             double maxHeat = getMaxHeat();

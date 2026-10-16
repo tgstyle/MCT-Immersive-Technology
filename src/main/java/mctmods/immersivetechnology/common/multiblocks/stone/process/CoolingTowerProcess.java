@@ -50,7 +50,7 @@ public class CoolingTowerProcess {
     }
 
     public void tick(CoolingTowerLogic.State state, double speedMult) {
-        int total = recipe.totalProcessTime;
+        int total = recipe.getTotalProcessTime();
         if (ticksProcessed >= total) { return; }
         if (!inputDrained) {
             inputDrained = true;
@@ -71,7 +71,7 @@ public class CoolingTowerProcess {
         }
     }
 
-    public boolean isComplete() { return ticksProcessed >= recipe.totalProcessTime; }
+    public boolean isComplete() { return ticksProcessed >= recipe.getTotalProcessTime(); }
 
     public int getTicksProcessed() { return ticksProcessed; }
 

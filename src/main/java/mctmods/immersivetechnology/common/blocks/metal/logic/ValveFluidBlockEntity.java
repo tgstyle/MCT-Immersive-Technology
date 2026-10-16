@@ -61,7 +61,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         updateRedstoneState();
     }
 
-    @Override public boolean canOutputPressurized(boolean consumePower) { return true; }
+    @Override public boolean canOutputPressurized() { return true; }
 
     @SuppressWarnings("unused")
     public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ModProperties.FACING_ALL).getOpposite(); }
@@ -151,11 +151,9 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
         if (canAccept == 0) return 0;
         BlockEntity dst = level.getBlockEntity(worldPosition.relative(blockFacing.getOpposite()));
-        boolean isPipe = IICFluidPipe.isPipe(dst);
         FluidStack fillStack = fluidStack.copy();
         fillStack.setAmount(canAccept);
-        boolean hadTag = fillStack.hasTag() && fillStack.getTag().contains(IICFluidPipe.NBT_PRESSURIZED);
-        if (isPipe && !hadTag) { IICFluidPipe.markPressurized(fillStack); }
+        IICFluidPipe.markIfPipe(fillStack, dst);
         busy = true;
         int toReturn = destination.fill(fillStack, doFill);
         busy = false;
@@ -192,12 +190,6 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveFluidMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
 
     @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
-
-    @Override public void receiveMessageFromServer(CompoundTag nbt) {
-        packetLimit = nbt.getInt("packetLimit");
-        timeLimit = nbt.getInt("timeLimit");
-        keepSize = nbt.getInt("keepSize");
-    }
 
     @Override public void receiveMessageFromClient(CompoundTag nbt) {
         packetLimit = nbt.getInt("packetLimit");

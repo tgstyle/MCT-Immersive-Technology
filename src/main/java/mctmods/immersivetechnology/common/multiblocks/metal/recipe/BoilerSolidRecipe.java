@@ -8,14 +8,11 @@ import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerSolidRecipe extends ICMultiblockRecipe {
@@ -27,7 +24,7 @@ public class BoilerSolidRecipe extends ICMultiblockRecipe {
     private final double targetHeat;
 
     public BoilerSolidRecipe(ResourceLocation id, ICIngredientWithSize input, double heatPerTick, double targetHeat) {
-        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.BOILER_SOLID, id);
+        super(RecipeTypes.BOILER_SOLID, id, 0, 0);
         this.input = input;
         this.heatPerTick = heatPerTick;
         this.targetHeat = Math.min(targetHeat, HeatCapabilities.maxHeat());
@@ -38,21 +35,9 @@ public class BoilerSolidRecipe extends ICMultiblockRecipe {
 
     public static BoilerSolidRecipe findRecipe(Level level, ItemStack input) { return findRecipe(level, input, null); }
 
-    public static BoilerSolidRecipe findRecipe(Level level, ItemStack input, @Nullable BoilerSolidRecipe hint) {
-        if (hint != null && hint.matches(input)) return hint;
-        for (BoilerSolidRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(input)) return recipe; }
-        return null;
-    }
-
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
+    public static BoilerSolidRecipe findRecipe(Level level, ItemStack input, @Nullable BoilerSolidRecipe hint) { return RECIPES.find(level, recipe -> recipe.matches(input), hint); }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return 0; }
-
-    @Override public int getTotalProcessEnergy() { return 0; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 
     public double getHeatPerTick() { return heatPerTick; }
 

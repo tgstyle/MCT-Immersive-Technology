@@ -21,9 +21,9 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
     @Override public CoolingTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         ICFluidTagInput input0 = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
         ICFluidTagInput input1 = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1"));
-        FluidStack output0 = json.has("output0") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0")) : null;
-        FluidStack output1 = json.has("output1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output1")) : null;
-        FluidStack output2 = json.has("output2") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output2")) : null;
+        FluidStack output0 = ICUtils.optionalFluidStack(json, "output0");
+        FluidStack output1 = ICUtils.optionalFluidStack(json, "output1");
+        FluidStack output2 = ICUtils.optionalFluidStack(json, "output2");
         int time = GsonHelper.getAsInt(json, "time");
         return new CoolingTowerRecipe(recipeID, output0, output1, output2, input0, input1, time);
     }
@@ -47,6 +47,6 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
         if (recipe.fluidOutput1 != null) buffer.writeFluidStack(recipe.fluidOutput1);
         buffer.writeBoolean(recipe.fluidOutput2 != null);
         if (recipe.fluidOutput2 != null) buffer.writeFluidStack(recipe.fluidOutput2);
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseTime());
     }
 }

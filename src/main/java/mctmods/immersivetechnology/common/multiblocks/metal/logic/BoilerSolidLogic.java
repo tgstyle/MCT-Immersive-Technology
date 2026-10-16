@@ -122,15 +122,9 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
         }
         if (previousHeatLevel != state.heatLevel || prevPilotLit != state.pilotLit) { update = true; }
         int newComparatorValue = state.workingHeatLevel > 0 ? (int) Math.min(15, (15 * state.heatLevel) / state.workingHeatLevel) : 0;
-        if (newComparatorValue != state.lastComparatorValue) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-            update = true;
-        }
-        if (update) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        if (ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS)) { update = true; }
+        state.lastComparatorValue = newComparatorValue;
+        if (update) { ctx.markDirtyAndSync(); }
     }
 
     private static boolean refuel(State state, Level level) {

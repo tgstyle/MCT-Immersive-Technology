@@ -36,7 +36,7 @@ public class BoilerLiquidRecipeSerializer extends ICRecipeSerializer<BoilerLiqui
 
     @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, BoilerLiquidRecipe recipe) {
         recipe.input.write(buffer);
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseTime());
         buffer.writeDouble(recipe.getHeatPerTick());
         buffer.writeDouble(recipe.getTargetHeat());
     }

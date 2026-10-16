@@ -42,7 +42,7 @@ public class AdvancedCokeOvenRecipeSerializer extends ICRecipeSerializer<Advance
     public void toNetwork(@Nonnull FriendlyByteBuf buffer, AdvancedCokeOvenRecipe recipe) {
         recipe.input.write(buffer);
         writeLazyStack(buffer, recipe.itemOutput);
-        buffer.writeInt(recipe.time);
+        buffer.writeInt(recipe.getBaseTime());
         buffer.writeInt(recipe.creosoteOutput);
     }
 }

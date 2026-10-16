@@ -23,9 +23,9 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSeriali
 
     @Override public ElectrolyticCrucibleBatteryRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext context) {
         ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack fluidOutput0 = json.has("result0") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result0")) : null;
-        FluidStack fluidOutput1 = json.has("result1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result1")) : null;
-        FluidStack fluidOutput2 = json.has("result2") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result2")) : null;
+        FluidStack fluidOutput0 = ICUtils.optionalFluidStack(json, "result0");
+        FluidStack fluidOutput1 = ICUtils.optionalFluidStack(json, "result1");
+        FluidStack fluidOutput2 = ICUtils.optionalFluidStack(json, "result2");
         ItemStack itemOutput = json.has("item_output") ? ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "item_output")) : ItemStack.EMPTY;
         int energy = GsonHelper.getAsInt(json, "energy");
         int time = GsonHelper.getAsInt(json, "time");
@@ -58,7 +58,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSeriali
         boolean hasItem = !recipe.itemOutput.isEmpty();
         buffer.writeBoolean(hasItem);
         if (hasItem) buffer.writeItem(recipe.itemOutput);
-        buffer.writeInt(recipe.getTotalProcessEnergy());
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseEnergy());
+        buffer.writeInt(recipe.getBaseTime());
     }
 }

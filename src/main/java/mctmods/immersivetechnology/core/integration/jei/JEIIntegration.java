@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.core.integration.jei;
 
-import com.immersiveconvergence.api.integration.jei.ICCokeOvenJEI;
 import mctmods.immersivetechnology.client.gui.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
@@ -31,7 +30,6 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -70,7 +68,6 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override public void registerRecipes(@Nonnull IRecipeRegistration registration) {
-        addAdvancedCokeOvenRecipes(registration);
         registration.addRecipes(JEIRecipeTypes.ADVANCED_COKE_OVEN_CUSTOM, getAdvancedCokeOvenCustomRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_LIQUID, getBoilerLiquidRecipes());
         registration.addRecipes(JEIRecipeTypes.BOILER_SOLID, getBoilerSolidRecipes());
@@ -396,12 +393,6 @@ public class JEIIntegration implements IModPlugin {
 
     @Override public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) { ingredientManager = jeiRuntime.getIngredientManager(); }
 
-    private void addAdvancedCokeOvenRecipes(IRecipeRegistration registration) {
-        assert Minecraft.getInstance().level != null;
-        Level level = Minecraft.getInstance().level;
-        AdvancedCokeOvenRecipe.copyIECokeOvenRecipes(level);
-        ICCokeOvenJEI.addRecipes(registration, level, r -> AdvancedCokeOvenRecipe.usesIERecipe(level, r));
-    }
     private List<AdvancedCokeOvenRecipe> getAdvancedCokeOvenCustomRecipes() {
         assert Minecraft.getInstance().level != null;
         return new ArrayList<>(AdvancedCokeOvenRecipe.RECIPES.getRecipes(Minecraft.getInstance().level));

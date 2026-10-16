@@ -4,7 +4,7 @@ import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.energy.ICConnectionPoint;
 import com.immersiveconvergence.api.energy.ICConnectorRedstoneBlockEntity;
 import com.immersiveconvergence.api.energy.ICWireType;
-import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
 import com.immersiveconvergence.core.lib.ICLib;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import com.immersiveconvergence.api.block.BlockInterfaces;
@@ -227,9 +227,9 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         if (nbt.contains("output")) { outputClient = nbt.getInt("output"); }
     }
 
-    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICConnectionPoint other, @Nonnull ICWireType cable) {
+    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICWireType cable) {
         Direction wireSide = getInputSide();
-        double conRadius = cable.getRenderDiameter() / 2;
+        double conRadius = cable.getRenderRadius();
         boolean onGround = getFacing().getAxis().isVertical();
         double offset = onGround ? (0.025 - conRadius) : (0.4 - conRadius);
         double yBase = onGround ? 0.95 : 0.5;
@@ -296,7 +296,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
     @Nonnull public Direction getFacing() { return getBlockState().getValue(ModProperties.FACING_ALL); }
 
     @Override public void redstoneChanged() {
-        if (level != null && !level.isClientSide && ICUtils.isChunkSafe(level, worldPosition)) {
+        if (level != null && !level.isClientSide && !SafeChunkUtils.isChunkUnsafe(level, worldPosition)) {
             setChanged();
             markContainingBlockForUpdate(getBlockState());
             BlockPos offsetPos = worldPosition.relative(getRSOutputFace());

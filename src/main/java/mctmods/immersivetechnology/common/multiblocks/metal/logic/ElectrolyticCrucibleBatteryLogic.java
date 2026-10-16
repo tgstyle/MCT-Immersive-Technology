@@ -111,15 +111,9 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         boolean percentsChanged = updateProcessPercents(state, ctx.getLevel().getRawLevel());
         int outputCapacity = state.tanks.output0.getCapacity();
         int newComparatorValue = outputCapacity > 0 ? (15 * state.tanks.output0.getFluidAmount()) / outputCapacity : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || percentsChanged || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || percentsChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static boolean updateProcessPercents(State state, Level level) {
@@ -226,7 +220,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         public ElectrolyticCrucibleBatteryTanks getTanks() { return tanks; }
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("tanks", this.tanks.toNBT());
             nbt.put("processor", processor.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
@@ -234,7 +228,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         }
 
         @Override public void readSaveNBT(CompoundTag nbt) {
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             this.tanks.readNBT(nbt.getCompound("tanks"));
             this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), ElectrolyticCrucibleBatteryProcess::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
@@ -256,7 +250,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putIntArray("processPercents", processPercents);
         }
@@ -264,7 +258,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             int[] percents = nbt.getIntArray("processPercents");
             processPercents = percents.length == 3 ? percents : new int[]{-1, -1, -1};

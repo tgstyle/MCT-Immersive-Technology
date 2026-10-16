@@ -10,7 +10,6 @@ import com.immersiveconvergence.api.network.MessageTileSync;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 
 import com.immersiveconvergence.api.block.Enums.IOSideConfig;
-import com.immersiveconvergence.api.util.ICTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -92,13 +91,13 @@ public class ConnectorTimerScreen extends AbstractContainerScreen<ConnectorTimer
         ArrayList<Component> tooltip = new ArrayList<>();
         if (this.buttonInOut != null && this.buttonInOut.isHoveredOrFocused()) {
             tooltip.add(Component.translatable("gui.immersivetechnology.config.redstone_iomode"));
-            tooltip.add(ICTextUtils.applyFormat(this.buttonInOut.getState().getTextComponent(), ChatFormatting.GRAY));
+            tooltip.add(this.buttonInOut.getState().getTextComponent().copy().withStyle(ChatFormatting.GRAY));
         }
         if (this.colorButtons != null) {
             for (int i = 0; i < this.colorButtons.length; ++i) {
                 if (this.colorButtons[i].isHoveredOrFocused()) {
                     tooltip.add(Component.translatable("gui.immersivetechnology.config.redstone_color"));
-                    tooltip.add(ICTextUtils.applyFormat(Component.translatable("color.minecraft." + DyeColor.byId(i).getName()), ChatFormatting.GRAY));
+                    tooltip.add(Component.translatable("color.minecraft." + DyeColor.byId(i).getName()).withStyle(ChatFormatting.GRAY));
                 }
             }
         }

@@ -15,8 +15,6 @@ public class BoilerLiquidRecipeBuilder extends ICFinishedRecipe<BoilerLiquidReci
 
     public BoilerLiquidRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) { return addFluidTag("input", fluidTag, amount); }
 
-    public BoilerLiquidRecipeBuilder setTime(int time) { return this.addWriter((jsonObject) -> jsonObject.addProperty("time", time)); }
-
     public BoilerLiquidRecipeBuilder setHeatPerTick(double heatPerTick) { return this.addWriter((jsonObject) -> jsonObject.addProperty("heatPerTick", heatPerTick)); }
 
     public BoilerLiquidRecipeBuilder setTargetHeat(double targetHeat) { return this.addWriter((jsonObject) -> jsonObject.addProperty("targetHeat", targetHeat)); }

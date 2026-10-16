@@ -118,15 +118,9 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
         int maxEnergy = state.energy.getMaxEnergyStored();
         int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || !prevTanksNBT.equals(state.tanks.toNBT()) || progressChanged || queueSizeChanged || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || !prevTanksNBT.equals(state.tanks.toNBT()) || progressChanged || queueSizeChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static void tryEnqueueProcess(State state, Level level, HeatExchangerRecipe recipe) {
@@ -201,7 +195,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("processor", processor.toNBT());
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
@@ -210,7 +204,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         @Override public void readSaveNBT(CompoundTag nbt) {
             tanks.readNBT(nbt.getCompound("tanks"));
-            energy.deserializeNBT(nbt.getCompound("energy"));
+            energy.load(nbt, "energy");
             processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), HeatExchangerProcess::new);
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
@@ -226,7 +220,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.putInt("processProgress", processProgress);
             nbt.putInt("totalProcessTime", totalProcessTime);
             nbt.putInt("queueSize", queueSize);
@@ -235,7 +229,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             processProgress = nbt.getInt("processProgress");
             totalProcessTime = nbt.getInt("totalProcessTime");
             queueSize = nbt.getInt("queueSize");

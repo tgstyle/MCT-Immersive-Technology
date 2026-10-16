@@ -21,7 +21,7 @@ public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOven
 
     public AdvancedCokeOvenScreen(AdvancedCokeOvenMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
-    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics) {
         int processMax = menu.getMaxProcessTime();
         int process = menu.getRemainingProcessTime();
         if (processMax > 0 && process > 0) {

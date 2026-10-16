@@ -8,15 +8,11 @@ import com.immersiveconvergence.api.crafting.ICCachedRecipeList;
 import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BoilerTankRecipe extends ICMultiblockRecipe {
@@ -26,36 +22,21 @@ public class BoilerTankRecipe extends ICMultiblockRecipe {
     public final ICFluidTagInput input;
     public final FluidStack output;
     public final double requiredHeat;
-    Lazy<Integer> totalProcessTime;
 
     public BoilerTankRecipe(ResourceLocation id, ICFluidTagInput input, FluidStack output, int time, double requiredHeat) {
-        super(LAZY_EMPTY, RecipeTypes.BOILER_TANK, id);
+        super(RecipeTypes.BOILER_TANK, id, time, 0);
         this.input = input;
         this.output = output;
         this.requiredHeat = Math.min(requiredHeat, HeatCapabilities.maxHeat());
-        totalProcessTime = Lazy.of(() -> time);
-
         this.fluidInputList = Lists.newArrayList(this.input);
         this.fluidOutputList = Lists.newArrayList(this.output);
     }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
-
     public boolean matches(FluidStack fluid) { return input.test(fluid); }
 
     public static BoilerTankRecipe findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
 
-    public static BoilerTankRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerTankRecipe hint) {
-        if (hint != null && hint.matches(input)) return hint;
-        for (BoilerTankRecipe recipe : RECIPES.getRecipes(level)) { if (recipe.matches(input)) return recipe; }
-        return null;
-    }
-
-    @Override public int getTotalProcessTime() { return totalProcessTime.get(); }
-
-    @Override public int getTotalProcessEnergy() { return 0; }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
+    public static BoilerTankRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerTankRecipe hint) { return RECIPES.find(level, recipe -> recipe.matches(input), hint); }
 }

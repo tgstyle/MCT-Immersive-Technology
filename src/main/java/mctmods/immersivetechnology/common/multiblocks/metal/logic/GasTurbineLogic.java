@@ -252,15 +252,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
             else { slowDown(state); }
         }
         int newComparatorValue = state.effectiveMaxSpeed > 0 ? (15 * state.speed) / state.effectiveMaxSpeed : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : COMPARATOR_POSITIONS) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0 || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, COMPARATOR_POSITIONS);
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0 || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static boolean consumeFuel(State state, Level level) {

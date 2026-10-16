@@ -5,22 +5,31 @@ import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticC
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.ProcessUtils;
 
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessInMachine;
 import com.immersiveconvergence.api.multiblock.process.ProcessContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public class ElectrolyticCrucibleBatteryProcess extends MultiblockProcessInMachine<ElectrolyticCrucibleBatteryRecipe> {
-    public ElectrolyticCrucibleBatteryProcess(ElectrolyticCrucibleBatteryRecipe recipe) { super(recipe); }
+    public ElectrolyticCrucibleBatteryProcess(ElectrolyticCrucibleBatteryRecipe recipe) {
+        super(recipe);
+        setInputTanks(0);
+    }
 
     public ElectrolyticCrucibleBatteryProcess(BiFunction<Level, ResourceLocation, ElectrolyticCrucibleBatteryRecipe> getRecipe, CompoundTag data) { super(getRecipe, data); }
 
+    @Override protected List<ICFluidTagInput> getRecipeFluidInputs(Level level) {
+        ElectrolyticCrucibleBatteryRecipe recipe = getLevelData(level).recipe();
+        return recipe == null ? List.of() : List.of(recipe.fluidInput0);
+    }
+
     @Override public void doProcessTick(ProcessContext.ProcessContextInMachine<ElectrolyticCrucibleBatteryRecipe> context, IMultiblockLevel level) {
-        ElectrolyticCrucibleBatteryRecipe recipe = getLevelData(level.getRawLevel()).recipe();
-        if (recipe == null || (this.processTick == 0 && ProcessUtils.drainFails(context.getInternalTanks()[0], recipe.fluidInput0.getAmount(), recipe.fluidInput0::testIgnoringAmount))) {
+        if (getLevelData(level.getRawLevel()).recipe() == null) {
             this.clearProcess = true;
             return;
         }

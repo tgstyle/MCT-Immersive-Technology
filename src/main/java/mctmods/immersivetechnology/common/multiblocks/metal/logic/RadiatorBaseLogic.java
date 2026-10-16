@@ -116,7 +116,7 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
         if (!state.processQueue.isEmpty()) {
             RadiatorProcess current = state.processQueue.get(0);
             int newProg = current.getTicksProcessed();
-            int newTotal = current.getRecipe().totalProcessTime;
+            int newTotal = current.getRecipe().getTotalProcessTime();
             if (newProg != state.processProgress || newTotal != state.totalProcessTime) {
                 state.processProgress = newProg;
                 state.totalProcessTime = newTotal;
@@ -132,15 +132,9 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
         boolean queueSizeChanged = newQueueSize != state.queueSize;
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
         int newComparatorValue = state.totalProcessTime > 0 ? (15 * state.processProgress) / state.totalProcessTime : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            for (BlockPos pos : comparatorPositions()) { ctx.setComparatorOutputFor(pos, newComparatorValue); }
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || progressChanged || queueSizeChanged || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, comparatorPositions());
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || progressChanged || queueSizeChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {

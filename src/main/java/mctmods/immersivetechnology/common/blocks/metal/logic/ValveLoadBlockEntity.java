@@ -227,10 +227,10 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         return 0;
     }
 
-    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICConnectionPoint other, @Nonnull ICWireType cable) { return getConnectionOffset(cable, here.index() == RIGHT_INDEX); }
+    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICWireType cable) { return getConnectionOffset(cable, here.index() == RIGHT_INDEX); }
 
     protected Vec3 getConnectionOffset(ICWireType type, boolean right) {
-        double conRadius = type.getRenderDiameter() / 2;
+        double conRadius = type.getRenderRadius();
         Direction facing = getFacing();
         boolean isVertical = facing.getAxis().isVertical();
         Direction hFacing = isVertical ? Direction.from2DDataValue(rotation) : facing;
@@ -269,8 +269,8 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         if (!offset.equals(Vec3i.ZERO)) return null;
         ICConnectionPoint leftCP = new ICConnectionPoint(worldPosition, LEFT_INDEX);
         ICConnectionPoint rightCP = new ICConnectionPoint(worldPosition, RIGHT_INDEX);
-        boolean leftEmpty = !hasExternalConnections(leftCP);
-        boolean rightEmpty = !hasExternalConnections(rightCP);
+        boolean leftEmpty = hasNoExternalConnections(leftCP);
+        boolean rightEmpty = hasNoExternalConnections(rightCP);
         if (leftEmpty && !rightEmpty) return leftCP;
         else if (!leftEmpty && rightEmpty) return rightCP;
         Direction facing = getFacing();

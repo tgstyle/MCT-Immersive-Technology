@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.client.gui;
 
-import com.immersiveconvergence.api.util.ICTextUtils;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiInfoArea;
@@ -23,7 +22,7 @@ public class BoilerSolidScreen extends BaseContainerScreen<BoilerSolidMenu> {
 
     public BoilerSolidScreen(BoilerSolidMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
-    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics) {
         float heatLevel = menu.getHeatLevel();
         double workingHeatLevel = menu.getWorkingHeatLevel();
         int barWidth = Mth.clamp(Math.round(41 * heatLevel / (float)workingHeatLevel), 0, 41);
@@ -44,7 +43,7 @@ public class BoilerSolidScreen extends BaseContainerScreen<BoilerSolidMenu> {
                         tooltip.add(Component.translatable(TranslationKey.GUI_TEMPERATURE.getLocation()));
                         float heatLevel = menu.getHeatLevel();
                         double maxHeat = menu.getWorkingHeatLevel();
-                        tooltip.add(ICTextUtils.applyFormat(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), (int)heatLevel, (int)maxHeat), ChatFormatting.RED));
+                        tooltip.add(Component.translatable(TranslationKey.GUI_HEAT_LEVEL_DETAILED.getLocation(), (int)heatLevel, (int)maxHeat).withStyle(ChatFormatting.RED));
                     }
 
                     @Override public void draw(GuiGraphics graphics) {}

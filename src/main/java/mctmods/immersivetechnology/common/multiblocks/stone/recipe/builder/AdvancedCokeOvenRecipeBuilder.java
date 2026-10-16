@@ -7,6 +7,7 @@ import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeO
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.conditions.NotCondition;
 import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
 
@@ -17,7 +18,7 @@ public class AdvancedCokeOvenRecipeBuilder extends ICFinishedRecipe<AdvancedCoke
 
     public static AdvancedCokeOvenRecipeBuilder builder(TagKey<Item> input, int count) { return new AdvancedCokeOvenRecipeBuilder().addInput(input, count); }
 
-    public AdvancedCokeOvenRecipeBuilder addInput(Item input) { return addIngredient("input", ICIngredientWithSize.of(new ItemStack(input))); }
+    public AdvancedCokeOvenRecipeBuilder addInput(Item input) { return addIngredient("input", new ICIngredientWithSize(Ingredient.of(input))); }
 
     public AdvancedCokeOvenRecipeBuilder addInput(TagKey<Item> input, int count) { return addIngredient("input", new ICIngredientWithSize(input, count)); }
 

@@ -36,7 +36,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
         this.maxProcessTime = data.getInt("maxProcessTime");
     }
 
-    @Override public void writeExtraDataToNBT(CompoundTag nbt) {
+    @Override protected void writeExtraDataToNBT(CompoundTag nbt) {
         super.writeExtraDataToNBT(nbt);
         nbt.putFloat("tickRemainder", tickRemainder);
         nbt.putInt("maxProcessTime", maxProcessTime);
@@ -47,7 +47,7 @@ public class AdvancedCokeOvenProcess extends MultiblockProcessInMachine<Advanced
             this.clearProcess = true;
             return;
         }
-        @SuppressWarnings("unchecked") BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe> env = (BurnProcessHandler.IFurnaceEnvironment<AdvancedCokeOvenRecipe>) context;
+        BurnProcessHandler.IFurnaceEnvironment env = (BurnProcessHandler.IFurnaceEnvironment) context;
         float total = this.tickRemainder + (float) env.getProcessSpeed(level);
         int wholeTicks = (int) total;
         this.tickRemainder = total - wholeTicks;

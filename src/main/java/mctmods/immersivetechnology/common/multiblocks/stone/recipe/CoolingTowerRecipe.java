@@ -8,16 +8,11 @@ import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.common.collect.Lists;
 import com.immersiveconvergence.api.util.RecipeCache;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CoolingTowerRecipe extends ICMultiblockRecipe {
@@ -29,20 +24,16 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public final FluidStack fluidOutput2;
     public final ICFluidTagInput input0;
     public final ICFluidTagInput input1;
-    public final int totalProcessTime;
-    private static final Lazy<Integer> totalProcessEnergy = Lazy.of(() -> 0);
 
     public CoolingTowerRecipe(ResourceLocation id, FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, ICFluidTagInput input0, ICFluidTagInput input1, int time) {
-        super(Lazy.of(() -> ItemStack.EMPTY), RecipeTypes.COOLING_TOWER, id);
+        super(RecipeTypes.COOLING_TOWER, id, time, 0);
         this.fluidOutput0 = fluidOutput0;
         this.fluidOutput1 = fluidOutput1;
         this.fluidOutput2 = fluidOutput2;
         this.input0 = input0;
         this.input1 = input1;
-        this.totalProcessTime = time;
         this.fluidInputList = Lists.newArrayList(input0, input1);
         this.fluidOutputList = Lists.newArrayList(fluidOutput0, fluidOutput1, fluidOutput2);
-        this.outputList = Lazy.of(NonNullList::create);
     }
 
     public boolean matches(FluidStack fluid0, FluidStack fluid1) { return input0.test(fluid0) && fluid0.getAmount() >= input0.getAmount() && input1.test(fluid1) && fluid1.getAmount() >= input1.getAmount(); }
@@ -51,25 +42,15 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
 
     public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1, @Nullable CoolingTowerRecipe hint) {
         if (fluidInput0.isEmpty() || fluidInput1.isEmpty()) return null;
-        if (hint != null && hint.matches(fluidInput0, fluidInput1)) return hint;
-        for (CoolingTowerRecipe r : RECIPES.getRecipes(level)) { if (r.matches(fluidInput0, fluidInput1)) return r; }
-        return null;
+        return RECIPES.find(level, recipe -> recipe.matches(fluidInput0, fluidInput1), hint);
     }
 
     @Nullable public static CoolingTowerRecipe findOriented(Level level, FluidStack tank0, FluidStack tank1, RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> direct, RecipeCache.TriFunction<Level, FluidStack, FluidStack, CoolingTowerRecipe> reversed) {
         CoolingTowerRecipe recipe = direct.apply(level, tank0, tank1);
         if (recipe != null) { return recipe; }
         recipe = reversed.apply(level, tank1, tank0);
-        return recipe == null ? null : new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.input1, recipe.input0, recipe.totalProcessTime);
+        return recipe == null ? null : new CoolingTowerRecipe(recipe.getId(), recipe.fluidOutput0, recipe.fluidOutput1, recipe.fluidOutput2, recipe.input1, recipe.input0, recipe.getBaseTime());
     }
 
-    @Override public @Nonnull ItemStack getResultItem(@Nonnull RegistryAccess registryAccess) { return ItemStack.EMPTY; }
-
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
-
-    @Override public int getTotalProcessTime() { return totalProcessTime; }
-
-    @Override public int getTotalProcessEnergy() { return totalProcessEnergy.get(); }
-
-    @Override public int getMultipleProcessTicks() { return 0; }
 }

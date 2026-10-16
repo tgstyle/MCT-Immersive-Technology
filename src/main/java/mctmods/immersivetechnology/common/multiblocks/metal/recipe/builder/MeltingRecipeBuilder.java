@@ -17,7 +17,5 @@ public class MeltingRecipeBuilder extends ICFinishedRecipe<MeltingRecipeBuilder>
 
     public MeltingRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
-    public MeltingRecipeBuilder setTime(int time) { return super.setTime(time); }
-
     public MeltingRecipeBuilder setRequiredTemp(double temp) { return addWriter(json -> json.addProperty("requiredTemp", temp)); }
 }

@@ -21,7 +21,7 @@ public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRec
 
     @Override public SolarTowerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack fluidOutput = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output"));
+        FluidStack fluidOutput = ICUtils.fluidStack(json, "output");
         int time = GsonHelper.getAsInt(json, "time");
         double requiredTemp = GsonHelper.getAsDouble(json, "requiredTemp");
         return new SolarTowerRecipe(recipeID, input, fluidOutput, time, requiredTemp);
@@ -38,7 +38,7 @@ public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRec
     @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, SolarTowerRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.fluidOutput);
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseTime());
         buffer.writeDouble(recipe.requiredTemp);
     }
 }

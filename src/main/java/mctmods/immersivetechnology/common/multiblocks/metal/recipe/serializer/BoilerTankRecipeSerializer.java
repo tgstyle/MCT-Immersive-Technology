@@ -26,7 +26,7 @@ public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRec
 
     @Override public BoilerTankRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack output = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
+        FluidStack output = ICUtils.fluidStack(json, "result");
         int time = GsonHelper.getAsInt(json, "time", 1);
         double requiredHeat = GsonHelper.getAsDouble(json, "requiredHeat", BoilerTankLogic.defaultWorkingHeatLevel());
         return new BoilerTankRecipe(recipeID, input, output, time, requiredHeat);
@@ -43,7 +43,7 @@ public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRec
     @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, BoilerTankRecipe recipe) {
         recipe.input.write(buffer);
         buffer.writeFluidStack(recipe.output);
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseTime());
         buffer.writeDouble(recipe.requiredHeat);
     }
 }

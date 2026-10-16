@@ -21,12 +21,11 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
     @Override public HeatExchangerRecipe readFromJson(ResourceLocation id, JsonObject json, ICondition.IContext context) {
         ICFluidTagInput input0 = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input0"));
         ICFluidTagInput input1 = json.has("input1") ? ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input1")) : null;
-        FluidStack output0 = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output0"));
-        FluidStack output1 = json.has("output1") ? ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "output1")) : null;
+        FluidStack output0 = ICUtils.fluidStack(json, "output0");
+        FluidStack output1 = ICUtils.optionalFluidStack(json, "output1");
         int energy = GsonHelper.getAsInt(json, "energy");
         int time = GsonHelper.getAsInt(json, "time");
-        return new HeatExchangerRecipe(id, input0, input1, output0, output1, energy, time)
-                .modifyTimeAndEnergy(t -> t * HeatExchangerRecipe.timeModifier, e -> e * HeatExchangerRecipe.energyModifier);
+        return new HeatExchangerRecipe(id, input0, input1, output0, output1, energy, time);
     }
 
     @Override public HeatExchangerRecipe fromNetwork(@Nonnull ResourceLocation id, @Nonnull FriendlyByteBuf buffer) {
@@ -48,7 +47,7 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
         buffer.writeFluidStack(recipe.output0);
         buffer.writeBoolean(recipe.output1 != null);
         if (recipe.output1 != null) buffer.writeFluidStack(recipe.output1);
-        buffer.writeInt(recipe.getTotalProcessEnergy());
-        buffer.writeInt(recipe.getTotalProcessTime());
+        buffer.writeInt(recipe.getBaseEnergy());
+        buffer.writeInt(recipe.getBaseTime());
     }
 }

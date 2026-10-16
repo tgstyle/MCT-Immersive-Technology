@@ -17,8 +17,4 @@ public class HeatExchangerRecipeBuilder extends ICFinishedRecipe<HeatExchangerRe
         if (output1 != null) builder.addFluid("output1", output1);
         return builder;
     }
-
-    public HeatExchangerRecipeBuilder setEnergy(int energy) { return this.addWriter(jsonObject -> jsonObject.addProperty("energy", energy)); }
-
-    public HeatExchangerRecipeBuilder setTime(int time) { return this.addWriter(jsonObject -> jsonObject.addProperty("time", time)); }
 }

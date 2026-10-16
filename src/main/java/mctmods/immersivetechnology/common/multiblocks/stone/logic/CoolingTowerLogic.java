@@ -128,7 +128,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
             int newPercent = -1;
             if (i < state.processQueue.size()) {
                 CoolingTowerProcess process = state.processQueue.get(i);
-                int total = process.getRecipe().totalProcessTime;
+                int total = process.getRecipe().getTotalProcessTime();
                 newPercent = total > 0 ? process.getTicksProcessed() * 100 / total : 0;
             }
             if (newPercent != state.processPercents[i]) {
@@ -138,15 +138,9 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         }
         boolean tanksChanged = prevTanksDirty != state.tanksDirty;
         int newComparatorValue = (15 * state.processQueue.size()) / getProcessQueueMaxLength();
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            ctx.setComparatorOutputFor(COMPARATOR_POI, newComparatorValue);
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (activeChanged || percentsChanged || tanksChanged || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(COMPARATOR_POI));
+        state.lastComparatorValue = newComparatorValue;
+        if (activeChanged || percentsChanged || tanksChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static int getProcessQueueMaxLength() { return 3; }

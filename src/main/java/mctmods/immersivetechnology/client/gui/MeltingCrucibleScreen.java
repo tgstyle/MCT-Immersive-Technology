@@ -44,14 +44,14 @@ public class MeltingCrucibleScreen extends BaseContainerScreen<MeltingCrucibleMe
         return recipe.requiredTemp;
     }
 
-    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics, float f, int mx, int my) {
+    @Override protected void drawContainerBackgroundPre(@Nonnull GuiGraphics graphics) {
         int heat = menu.state.get(3);
         double max = getMaxHeat();
         int heatBarSize = (int)(51 * Math.min(1.0, heat / max));
         graphics.blit(TEXTURE, leftPos + 30, topPos + 9, 176, 0, heatBarSize, 9);
     }
 
-    @Override protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine, Consumer<Component> addGray) {
+    @Override protected void gatherAdditionalTooltips(int mouseX, int mouseY, Consumer<Component> addLine) {
         if (mouseX >= leftPos + 30 && mouseX < leftPos + 81 && mouseY >= topPos + 9 && mouseY < topPos + 18) {
             int internalHeat = menu.state.get(3);
             double maxHeat = getMaxHeat();

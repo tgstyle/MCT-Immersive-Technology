@@ -11,9 +11,8 @@ public class SyncEnergyStorage extends ICEnergyStorageAveraging {
     }
 
     public SyncEnergyStorage(int capacity, int maxIO, Runnable onChanged) {
-        this(capacity, onChanged);
-        this.maxReceive = maxIO;
-        this.maxExtract = maxIO;
+        super(capacity, maxIO);
+        this.onChanged = onChanged;
     }
 
     @Override public int receiveEnergy(int maxReceive, boolean simulate) {

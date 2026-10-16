@@ -122,15 +122,9 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         if (queueSizeChanged) { state.queueSize = newQueueSize; }
         int maxEnergy = state.energy.getMaxEnergyStored();
         int newComparatorValue = maxEnergy > 0 ? (15 * state.energy.getEnergyStored()) / maxEnergy : 0;
-        boolean comparatorChanged = newComparatorValue != state.lastComparatorValue;
-        if (comparatorChanged) {
-            ctx.setComparatorOutputFor(REDSTONE_POI, newComparatorValue);
-            state.lastComparatorValue = newComparatorValue;
-        }
-        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || queueSizeChanged || comparatorChanged) {
-            ctx.markMasterDirty();
-            ctx.requestMasterBESync();
-        }
+        boolean comparatorChanged = ctx.updateComparatorOutputs(state.lastComparatorValue, newComparatorValue, List.of(REDSTONE_POI));
+        state.lastComparatorValue = newComparatorValue;
+        if (wasActive != state.active || prevEnergy != state.energy.getEnergyStored() || prevTanksDirty != state.tanksDirty || prevInventoryDirty != state.inventoryDirty || queueSizeChanged || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
     private static void tryEnqueueProcess(State state, Level level, DistillerRecipe recipe) {
@@ -217,7 +211,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         @Override public void writeSaveNBT(CompoundTag nbt) {
             rsState.writeSaveNBT(nbt);
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("tanks", this.tanks.toNBT());
             nbt.put("processor", processor.toNBT());
             nbt.put("inventory", inventory.serializeNBT());
@@ -226,7 +220,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
 
         @Override public void readSaveNBT(CompoundTag nbt) {
             rsState.readSaveNBT(nbt);
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             this.tanks.readNBT(nbt.getCompound("tanks"));
             this.processor.fromNBT(nbt.getList("processor", Tag.TAG_COMPOUND), DistillerProcess::new);
             this.inventory.deserializeNBT(nbt.getCompound("inventory"));
@@ -248,7 +242,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         @Override public void writeDisplaySyncNBT(CompoundTag nbt) {
             nbt.putBoolean("active", active);
             nbt.put("tanks", tanks.toNBT());
-            nbt.put("energy", energy.serializeNBT());
+            energy.save(nbt, "energy");
             nbt.put("inventory", inventory.serializeNBT());
             nbt.putInt("queueSize", queueSize);
         }
@@ -256,7 +250,7 @@ public class DistillerLogic implements IMultiblockLogic<DistillerLogic.State>, I
         @Override public void readDisplaySyncNBT(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             tanks.readNBT(nbt.getCompound("tanks"));
-            energy.deserializeNBT(nbt.get("energy"));
+            energy.load(nbt, "energy");
             inventory.deserializeNBT(nbt.getCompound("inventory"));
             queueSize = nbt.getInt("queueSize");
             tanksDirty = false;

@@ -22,7 +22,7 @@ public class DistillerRecipeSerializer extends ICRecipeSerializer<DistillerRecip
 
     @Override public DistillerRecipe readFromJson(ResourceLocation recipeID, JsonObject json, ICondition.IContext iContext) {
         ICFluidTagInput input = ICFluidTagInput.deserialize(GsonHelper.getAsJsonObject(json, "input"));
-        FluidStack fluidOutput = ICUtils.jsonDeserializeFluidStack(GsonHelper.getAsJsonObject(json, "result"));
+        FluidStack fluidOutput = ICUtils.fluidStack(json, "result");
         ItemStack itemOutput = ItemStack.EMPTY;
         float chance = 0.0f;
         if (json.has("item_output")) {
@@ -55,7 +55,7 @@ public class DistillerRecipeSerializer extends ICRecipeSerializer<DistillerRecip
             buffer.writeItem(recipe.itemOutput);
             buffer.writeFloat(recipe.chance);
         }
-        buffer.writeInt(recipe.getTotalProcessTime());
-        buffer.writeInt(recipe.getTotalProcessEnergy());
+        buffer.writeInt(recipe.getBaseTime());
+        buffer.writeInt(recipe.getBaseEnergy());
     }
 }
