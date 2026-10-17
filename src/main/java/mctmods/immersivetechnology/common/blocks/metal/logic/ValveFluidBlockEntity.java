@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.fluid.IICFluidPipe;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
@@ -17,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -64,7 +64,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     @Override public boolean canOutputPressurized() { return true; }
 
     @SuppressWarnings("unused")
-    public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(ModProperties.FACING_ALL).getOpposite(); }
+    public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(BlockStateProperties.FACING).getOpposite(); }
 
     private LazyOptional<IFluidHandler> myCapability = null;
     private LazyOptional<IFluidHandler> dummyCapability = null;
@@ -72,7 +72,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     @Override public <T> @Nonnull LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         if (capability == ForgeCapabilities.FLUID_HANDLER && facing.getAxis() == blockFacing.getAxis()) {
             if (facing == blockFacing) {
                 if (myCapability == null || !myCapability.isPresent()) myCapability = LazyOptional.of(() -> this);
@@ -99,15 +99,15 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
             return;
         }
         BlockState state = getBlockState();
-        if (state.hasProperty(ModProperties.FACING_ALL)) {
+        if (state.hasProperty(BlockStateProperties.FACING)) {
             int newRot = rotation;
-            Direction currentFacing = state.getValue(ModProperties.FACING_ALL);
+            Direction currentFacing = state.getValue(BlockStateProperties.FACING);
             if (facing.getAxis() == Direction.Axis.Y) {
                 if (currentFacing.getAxis() != Direction.Axis.Y) newRot = currentFacing.get2DDataValue();
             } else {
                 newRot = facing.get2DDataValue();
             }
-            state = state.setValue(ModProperties.FACING_ALL, facing).setValue(ROTATION, newRot);
+            state = state.setValue(BlockStateProperties.FACING, facing).setValue(ROTATION, newRot);
             level.setBlock(worldPosition, state, 3);
             rotation = newRot;
         }
@@ -141,7 +141,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         if (level == null || level.isClientSide || busy || fluidStack.isEmpty()) return 0;
         BlockState state = getBlockState();
         if (!state.getValue(OPEN)) return 0;
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         IFluidHandler destination = getDestination();
         if (destination == null) return 0;
         int canAccept = fluidStack.getAmount();
@@ -177,7 +177,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     public IFluidHandler getDestination() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         BlockEntity dst = level.getBlockEntity(dstPos);
         if (dst != null) {

@@ -12,6 +12,7 @@ import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.core.Direction;
@@ -120,7 +121,7 @@ public class MultiblockStateGenerator {
         Preconditions.checkArgument((defaultMirrored == null) == (mirroredState == null));
         Preconditions.checkArgument((activeMaster == null) == (activeState == null));
         VariantBlockStateBuilder builder = main.getVariantBuilder(b.get());
-        EnumProperty<Direction> facing = ModProperties.FACING_HORIZONTAL;
+        EnumProperty<Direction> facing = BlockStateProperties.HORIZONTAL_FACING;
         builder.forAllStates(state -> {
             Direction dir = state.getValue(facing);
             int angleY = getAngle(dir);

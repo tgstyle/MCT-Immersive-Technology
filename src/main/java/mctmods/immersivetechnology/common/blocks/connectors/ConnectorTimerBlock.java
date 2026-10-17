@@ -3,7 +3,6 @@ package mctmods.immersivetechnology.common.blocks.connectors;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.energy.ICWires;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
@@ -22,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -42,16 +42,16 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
 
     public ConnectorTimerBlock(BiFunction<BlockPos, BlockState, ConnectorTimerBlockEntity> makeEntity, Properties p) {
         super(makeEntity, p);
-        registerDefaultState(stateDefinition.any().setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ROTATION, 0));
+        registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.FACING, Direction.NORTH).setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ModProperties.FACING_ALL, ROTATION);
+        builder.add(BlockStateProperties.FACING, ROTATION);
     }
 
     @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        return switch (state.getValue(ModProperties.FACING_ALL)) {
+        return switch (state.getValue(BlockStateProperties.FACING)) {
             case UP, DOWN -> SHAPE_VERTICAL;
             case NORTH, SOUTH -> SHAPE_NORTH_SOUTH;
             case EAST, WEST -> SHAPE_EAST_WEST;
@@ -69,7 +69,7 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
         Direction facing = context.getClickedFace();
         float yRot = context.getPlayer() != null ? context.getPlayer().getYRot() : 0f;
         int rotation = Direction.fromYRot(yRot).get2DDataValue();
-        return defaultBlockState().setValue(ModProperties.FACING_ALL, facing).setValue(ROTATION, rotation);
+        return defaultBlockState().setValue(BlockStateProperties.FACING, facing).setValue(ROTATION, rotation);
     }
 
     @Override public void setPlacedBy(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable net.minecraft.world.entity.LivingEntity placer, @Nonnull net.minecraft.world.item.ItemStack stack) {

@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -17,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -90,7 +90,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     @Override public <T> @Nonnull LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
         if (facing == null) return super.getCapability(capability, null);
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         if (capability == ForgeCapabilities.ITEM_HANDLER && facing.getAxis() == blockFacing.getAxis()) {
             if (facing == blockFacing) {
                 if (myCapability == null || !myCapability.isPresent()) myCapability = LazyOptional.of(() -> this);
@@ -173,7 +173,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getDestination() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         BlockEntity dst = level.getBlockEntity(dstPos);
         if (dst != null) {
@@ -186,7 +186,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getSource() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         BlockPos srcPos = worldPosition.relative(blockFacing);
         BlockEntity src = level.getBlockEntity(srcPos);
         if (src != null) {

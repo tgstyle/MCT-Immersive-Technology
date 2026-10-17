@@ -41,7 +41,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
     public AdvancedCokeOvenBaseHeaterBlock(BiFunction<BlockPos, BlockState, AdvancedCokeOvenBaseHeaterBlockEntity> makeEntity, Properties blockProps) {
         super(makeEntity, blockProps);
         registerDefaultState(defaultBlockState()
-                .setValue(ModProperties.FACING_HORIZONTAL, Direction.NORTH)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
                 .setValue(ModProperties.MULTIBLOCKSLAVE, false)
                 .setValue(ModProperties.ACTIVE, false)
                 .setValue(BlockStateProperties.WATERLOGGED, false));
@@ -49,7 +49,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ModProperties.FACING_HORIZONTAL, ModProperties.MULTIBLOCKSLAVE, ModProperties.ACTIVE, BlockStateProperties.WATERLOGGED);
+        builder.add(BlockStateProperties.HORIZONTAL_FACING, ModProperties.MULTIBLOCKSLAVE, ModProperties.ACTIVE, BlockStateProperties.WATERLOGGED);
     }
 
     @Override @Nullable public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -62,7 +62,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
         if (!context.getLevel().getBlockState(pos.relative(side1)).canBeReplaced(context) || !context.getLevel().getBlockState(pos.relative(side2)).canBeReplaced(context)) { return null; }
 
         return defaultBlockState()
-                .setValue(ModProperties.FACING_HORIZONTAL, facing)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, facing)
                 .setValue(ModProperties.MULTIBLOCKSLAVE, false)
                 .setValue(ModProperties.ACTIVE, false)
                 .setValue(BlockStateProperties.WATERLOGGED, context.getLevel().getFluidState(pos).getType() == net.minecraft.world.level.material.Fluids.WATER);
@@ -75,10 +75,10 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
         }
 
         BlockPos pos = context.getClickedPos();
-        Direction facing = state.getValue(ModProperties.FACING_HORIZONTAL);
+        Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
 
         BlockState finalMaster = defaultBlockState()
-                .setValue(ModProperties.FACING_HORIZONTAL, facing)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, facing)
                 .setValue(ModProperties.MULTIBLOCKSLAVE, false)
                 .setValue(ModProperties.ACTIVE, false)
                 .setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED));
@@ -92,7 +92,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
         }
 
         BlockState dummyBase = defaultBlockState()
-                .setValue(ModProperties.FACING_HORIZONTAL, facing)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, facing)
                 .setValue(ModProperties.MULTIBLOCKSLAVE, true)
                 .setValue(ModProperties.ACTIVE, false)
                 .setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED));
@@ -113,7 +113,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
 
     @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter world, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         if (state.getValue(ModProperties.MULTIBLOCKSLAVE)) return EMPTY_SHAPE;
-        Direction facing = state.getValue(ModProperties.FACING_HORIZONTAL);
+        Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         return (facing.getAxis() == Direction.Axis.X) ? SHAPE_Z : SHAPE_X;
     }
 

@@ -152,7 +152,7 @@ public class BasicStateGenerator {
         VariantBlockStateBuilder builder = main.getVariantBuilder(block);
         boolean hasMirrored = block.getStateDefinition().getProperties().contains(ModProperties.MIRRORED);
         builder.forAllStates(state -> {
-            Direction facing = state.getValue(ModProperties.FACING_ALL);
+            Direction facing = state.getValue(BlockStateProperties.FACING);
             boolean open = openProperty != null && state.getValue(openProperty);
             Property<Integer> rotationProp = openProperty != null ? (openProperty == ValveFluidBlock.OPEN ? ValveFluidBlock.ROTATION : ValveLoadBlock.ROTATION) : ConnectorTimerBlock.ROTATION;
             int rotationVal = state.getValue(rotationProp);
@@ -170,7 +170,7 @@ public class BasicStateGenerator {
 
         VariantBlockStateBuilder heaterBuilder = main.getVariantBuilder(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get());
         heaterBuilder.forAllStatesExcept(state -> {
-            Direction facing = state.getValue(ModProperties.FACING_HORIZONTAL);
+            Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
             boolean active = state.getValue(ModProperties.ACTIVE);
             ModelFile modelFile = active ? baseHeaterActiveSplit : baseHeaterNormalSplit;
             int yRot = (int) facing.toYRot();
@@ -259,7 +259,7 @@ public class BasicStateGenerator {
         VariantBlockStateBuilder stateBuilder = main.getVariantBuilder(block.get());
         forEachState(stateBuilder.partialState(), additionalProps, state -> {
             ModelFile modelLoc = model.apply(state);
-            EnumProperty<Direction> facing = ModProperties.FACING_HORIZONTAL;
+            EnumProperty<Direction> facing = BlockStateProperties.HORIZONTAL_FACING;
             for (Direction d : facing.getPossibleValues()) {
                 int x = 0;
                 int y = getAngle(d);

@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -33,14 +34,14 @@ public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(OPEN, true)
-                .setValue(ModProperties.FACING_ALL, Direction.NORTH)
+                .setValue(BlockStateProperties.FACING, Direction.NORTH)
                 .setValue(ModProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION);
+        builder.add(BlockStateProperties.FACING, ModProperties.MIRRORED, OPEN, ROTATION);
     }
 
     @Override public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, Direction side) { return true; }
@@ -75,7 +76,7 @@ public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
         return defaultBlockState()
-                .setValue(ModProperties.FACING_ALL, facing)
+                .setValue(BlockStateProperties.FACING, facing)
                 .setValue(ModProperties.MIRRORED, false)
                 .setValue(OPEN, true)
                 .setValue(ROTATION, rotation);

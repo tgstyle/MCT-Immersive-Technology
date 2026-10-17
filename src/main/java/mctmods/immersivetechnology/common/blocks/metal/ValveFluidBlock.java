@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -34,15 +35,15 @@ public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
     public static final IntegerProperty ROTATION = IntegerProperty.create("rotation", 0, 3);
 
-    public ValveFluidBlock(BiFunction<BlockPos, BlockState, ValveFluidBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(ModProperties.FACING_ALL, Direction.NORTH).setValue(ModProperties.MIRRORED, false).setValue(ROTATION, 0)); }
+    public ValveFluidBlock(BiFunction<BlockPos, BlockState, ValveFluidBlockEntity> makeEntity, Properties p) { super(makeEntity, p); registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(BlockStateProperties.FACING, Direction.NORTH).setValue(ModProperties.MIRRORED, false).setValue(ROTATION, 0)); }
 
     @Override
-    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, OPEN, ROTATION); }
+    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder); builder.add(BlockStateProperties.FACING, ModProperties.MIRRORED, OPEN, ROTATION); }
 
     @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
-        Direction facing = state.getValue(ModProperties.FACING_ALL);
+        Direction facing = state.getValue(BlockStateProperties.FACING);
         Direction.Axis axis = facing.getAxis();
         double minX = axis == Direction.Axis.X ? 0 : 2 / 16D;
         double maxX = axis == Direction.Axis.X ? 1 : 14 / 16D;
@@ -88,6 +89,6 @@ public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
             float yRot = context.getPlayer().getYRot();
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
-        return defaultBlockState().setValue(ModProperties.FACING_ALL, facing).setValue(ModProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
+        return defaultBlockState().setValue(BlockStateProperties.FACING, facing).setValue(ModProperties.MIRRORED, false).setValue(OPEN, true).setValue(ROTATION, rotation);
     }
 }

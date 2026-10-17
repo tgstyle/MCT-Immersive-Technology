@@ -8,7 +8,6 @@ import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
 import com.immersiveconvergence.core.lib.ICLib;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
 import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
@@ -30,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -280,7 +280,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         return ICWireType.REDSTONE_CATEGORY.equals(cable.getCategory());
     }
 
-    @Nonnull public Direction getFacing() { return getBlockState().getValue(ModProperties.FACING_ALL); }
+    @Nonnull public Direction getFacing() { return getBlockState().getValue(BlockStateProperties.FACING); }
 
     @Override public void redstoneChanged() {
         if (level != null && !level.isClientSide && !SafeChunkUtils.isChunkUnsafe(level, worldPosition)) {

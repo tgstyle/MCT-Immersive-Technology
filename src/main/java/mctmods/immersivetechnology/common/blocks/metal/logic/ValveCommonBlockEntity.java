@@ -16,12 +16,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.OPEN;
 import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.FacingLimitation;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
@@ -101,7 +101,7 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
 
     @Override public void onLoad() {
         super.onLoad();
-        facing = getBlockState().getValue(ModProperties.FACING_ALL);
+        facing = getBlockState().getValue(BlockStateProperties.FACING);
     }
 
     @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult mop, boolean hammer) {
@@ -175,7 +175,7 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
         invalidateCaps();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
-            if (state.hasProperty(ModProperties.FACING_ALL)) level.setBlock(worldPosition, state.setValue(ModProperties.FACING_ALL, facing), 3);
+            if (state.hasProperty(BlockStateProperties.FACING)) level.setBlock(worldPosition, state.setValue(BlockStateProperties.FACING, facing), 3);
             markContainingBlockForUpdate(null);
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
         }
