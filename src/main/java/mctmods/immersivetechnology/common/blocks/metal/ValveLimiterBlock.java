@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -28,14 +29,14 @@ public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(ValveCommonBlockEntity.OPEN, true)
-                .setValue(ModProperties.FACING_ALL, Direction.NORTH)
+                .setValue(BlockStateProperties.FACING, Direction.NORTH)
                 .setValue(ModProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
+        builder.add(BlockStateProperties.FACING, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
     }
 
     @Override public boolean canConnectRedstone(@Nonnull BlockState state, BlockGetter world, @Nonnull BlockPos pos, Direction side) { return true; }
@@ -68,7 +69,7 @@ public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
         return defaultBlockState()
-                .setValue(ModProperties.FACING_ALL, facing)
+                .setValue(BlockStateProperties.FACING, facing)
                 .setValue(ModProperties.MIRRORED, false)
                 .setValue(ValveCommonBlockEntity.OPEN, true)
                 .setValue(ROTATION, rotation);

@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class SolarMelter extends MachineTemplateMultiblock {
     public static final SolarMelter INSTANCE = new SolarMelter();
@@ -28,7 +29,7 @@ public class SolarMelter extends MachineTemplateMultiblock {
         boolean formed = super.createStructure(world, pos, side, player);
         if (formed) {
             BlockState placed = world.getBlockState(pos);
-            Direction front = placed.hasProperty(ModProperties.FACING_HORIZONTAL) ? placed.getValue(ModProperties.FACING_HORIZONTAL) : side.getOpposite();
+            Direction front = placed.hasProperty(BlockStateProperties.HORIZONTAL_FACING) ? placed.getValue(BlockStateProperties.HORIZONTAL_FACING) : side.getOpposite();
             boolean mirrored = placed.hasProperty(ModProperties.MIRRORED) && placed.getValue(ModProperties.MIRRORED);
             MultiblockOrientation orientation = new MultiblockOrientation(front, mirrored);
             BlockPos origin = pos.subtract(orientation.getAbsoluteOffset(getTriggerOffset()));

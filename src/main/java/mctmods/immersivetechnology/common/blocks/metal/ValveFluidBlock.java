@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,20 +34,20 @@ public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
         super(makeEntity, p);
         registerDefaultState(stateDefinition.any()
                 .setValue(ValveCommonBlockEntity.OPEN, true)
-                .setValue(ModProperties.FACING_ALL, Direction.NORTH)
+                .setValue(BlockStateProperties.FACING, Direction.NORTH)
                 .setValue(ModProperties.MIRRORED, false)
                 .setValue(ROTATION, 0));
     }
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ModProperties.FACING_ALL, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
+        builder.add(BlockStateProperties.FACING, ModProperties.MIRRORED, ValveCommonBlockEntity.OPEN, ROTATION);
     }
 
     @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
     private VoxelShape getValveShape(BlockState state) {
-        Direction facing = state.getValue(ModProperties.FACING_ALL);
+        Direction facing = state.getValue(BlockStateProperties.FACING);
         Direction.Axis axis = facing.getAxis();
         double minX = axis == Direction.Axis.X ? 0 : 2 / 16D;
         double maxX = axis == Direction.Axis.X ? 1 : 14 / 16D;
@@ -89,7 +90,7 @@ public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
             rotation = Direction.fromYRot(yRot).get2DDataValue();
         }
         return defaultBlockState()
-                .setValue(ModProperties.FACING_ALL, facing)
+                .setValue(BlockStateProperties.FACING, facing)
                 .setValue(ModProperties.MIRRORED, false)
                 .setValue(ValveCommonBlockEntity.OPEN, true)
                 .setValue(ROTATION, rotation);

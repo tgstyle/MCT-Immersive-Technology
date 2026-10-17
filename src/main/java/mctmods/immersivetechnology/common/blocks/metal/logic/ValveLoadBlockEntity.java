@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -49,7 +50,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override public void onLoad() {
         super.onLoad();
-        facing = getBlockState().getValue(ModProperties.FACING_ALL);
+        facing = getBlockState().getValue(BlockStateProperties.FACING);
         rotation = getBlockState().getValue(ROTATION);
         if (level != null && !level.isClientSide) {
             efficientSetChanged();

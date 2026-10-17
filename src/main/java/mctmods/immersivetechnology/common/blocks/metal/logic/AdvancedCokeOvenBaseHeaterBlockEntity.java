@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import java.util.function.BooleanSupplier;
@@ -61,7 +62,7 @@ public class AdvancedCokeOvenBaseHeaterBlockEntity extends BaseBlockEntity imple
     public AdvancedCokeOvenBaseHeaterBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntities.ADVANCED_COKE_OVEN_BASEHEATER.get(), pos, state);
         this.dummy = state.getValue(ModProperties.MULTIBLOCKSLAVE);
-        this.facing = state.getValue(ModProperties.FACING_HORIZONTAL);
+        this.facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         this.active = state.getValue(ModProperties.ACTIVE);
         this.masterPos = null;
         this.cachedMaster = null;

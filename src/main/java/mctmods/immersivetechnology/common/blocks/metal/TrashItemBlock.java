@@ -1,7 +1,6 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashItemBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.shapes.TrashCanShape;
 import net.minecraft.core.BlockPos;
@@ -23,6 +22,6 @@ public class TrashItemBlock extends ModEntityBlock<TrashItemBlockEntity> {
 
     @Override protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(ModProperties.FACING_HORIZONTAL, BlockStateProperties.WATERLOGGED);
+        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.WATERLOGGED);
     }
 }

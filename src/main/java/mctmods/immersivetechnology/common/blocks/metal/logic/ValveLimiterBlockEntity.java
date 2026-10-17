@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLimiterMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -85,7 +85,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getItemHandler(@Nullable Direction side) {
         if (side == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         if (side.getAxis() == blockFacing.getAxis()) {
             if (side == blockFacing) {
                 return this;
@@ -160,7 +160,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getDestination() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         return level.getCapability(Capabilities.ItemHandler.BLOCK, dstPos, blockFacing);
     }
@@ -168,7 +168,7 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
     public IItemHandler getSource() {
         if (level == null) return null;
         BlockState state = getBlockState();
-        Direction blockFacing = state.getValue(ModProperties.FACING_ALL);
+        Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         BlockPos srcPos = worldPosition.relative(blockFacing);
         return level.getCapability(Capabilities.ItemHandler.BLOCK, srcPos, blockFacing.getOpposite());
     }

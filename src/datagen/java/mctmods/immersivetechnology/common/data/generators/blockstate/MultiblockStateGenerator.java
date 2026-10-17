@@ -15,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
@@ -117,7 +118,7 @@ public class MultiblockStateGenerator {
         VariantBlockStateBuilder builder = main.getVariantBuilder(b.get());
         Reference.IT_LOGGER.info("Registered blockstate for multiblock: {}", BuiltInRegistries.BLOCK.getKey(b.get()));
         StateDefinition<?, ?> def = b.get().getStateDefinition();
-        EnumProperty<Direction> facing = def.getProperties().contains(ModProperties.FACING_HORIZONTAL) ? ModProperties.FACING_HORIZONTAL : null;
+        EnumProperty<Direction> facing = def.getProperties().contains(BlockStateProperties.HORIZONTAL_FACING) ? BlockStateProperties.HORIZONTAL_FACING : null;
         try {
             builder.forAllStates(state -> {
                 int angleY = 0;
