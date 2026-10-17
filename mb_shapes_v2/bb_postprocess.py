@@ -5,7 +5,6 @@ from scipy import ndimage
 def fill_gaps_along_axis(occupied_np, axis, threshold, is_excluded=None, max_intrude=-1, ex_threshold=None):
     if threshold < 0:
         return occupied_np
-    shape = occupied_np.shape
     if ex_threshold is None:
         ex_threshold = threshold
     perm = {0: (0, 1, 2), 1: (1, 0, 2), 2: (2, 0, 1)}[axis]
@@ -275,7 +274,6 @@ def apply_postprocessing(block_occupied, gap_passes, axis_order, thresholds, reg
                     continue
                 arr = block_occupied[b]
                 if region is None:
-                    r0 = (0, 0, 0)
                     sub = arr
                 else:
                     minx, miny, minz, maxx, maxy, maxz = region
