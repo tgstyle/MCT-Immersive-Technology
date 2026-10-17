@@ -45,10 +45,6 @@ public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
 
     @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
 
-    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return getValveShape(state); }
-
-    @Override @Nonnull public VoxelShape getOcclusionShape(@Nonnull BlockState state, @Nonnull BlockGetter level, @Nonnull BlockPos pos) { return getValveShape(state); }
-
     private VoxelShape getValveShape(BlockState state) {
         Direction facing = state.getValue(ModProperties.FACING_ALL);
         Direction.Axis axis = facing.getAxis();
