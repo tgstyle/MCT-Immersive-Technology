@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.metal.shapes.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
@@ -13,7 +12,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TrashFluidBlockEntity extends OSDCommonBlockEntity implements IFluidHandler, ITrashCanShape {
+public class TrashFluidBlockEntity extends OSDCommonBlockEntity implements IFluidHandler {
     public TrashFluidBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_FLUID.get(), pos, state); }
 
     @SuppressWarnings("unused")

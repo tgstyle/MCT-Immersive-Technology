@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.common.blocks.metal.shapes.ITrashCanShape;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
@@ -11,7 +10,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
 
-public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage, ITrashCanShape {
+public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage {
     public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ENERGY.get(), pos, state); }
 
     @SuppressWarnings("unused")
