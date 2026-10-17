@@ -5,4 +5,4 @@ Brille !
 
 
 
-Placez-le au-dessus de la fondation en ciment de la tour, ni plus haut ni plus bas. Limité à 24 réflecteurs par tour. Placez-le à une distance minimale de 12 blocs et maximale de 22 blocs d'une Tour solaire ou de fusion.
+Placez-le au-dessus de la fondation en ciment de la tour, ni plus haut ni plus bas. Limité à 24 réflecteurs par tour. Placez-le à une distance minimale de 12 blocs et maximale de 22 blocs d'une Tour solaire ou de fusion. Pour produire du Flux sans tour, le <link;solar_collector;§n§oCapteur solaire§r> utilise le même support de suivi.

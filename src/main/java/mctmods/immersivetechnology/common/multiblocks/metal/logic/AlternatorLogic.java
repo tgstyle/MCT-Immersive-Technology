@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.Sounds;
+import mctmods.immersivetechnology.core.util.EnergyPush;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
@@ -26,7 +27,6 @@ import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -39,9 +39,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -116,35 +114,9 @@ public class AlternatorLogic implements IMultiblockLogic<AlternatorLogic.State>,
         double powerFactor = Math.max(0.0D, ServerConfig.alternatorPowerFactor);
         int generatedThisTick = (int) Math.round(ratio * state.torqueMultiplier * ServerConfig.alternatorMaxOutput * powerFactor);
         List<IEnergyStorage> connected = new ArrayList<>();
-        addConnectedHandlers(connected, ctx, level, ENERGY_LEFT_POIS, ENERGY_LEFT_FACING);
-        addConnectedHandlers(connected, ctx, level, ENERGY_RIGHT_POIS, ENERGY_RIGHT_FACING);
-        state.energy.receiveEnergy(connected.isEmpty() ? generatedThisTick : generatedThisTick - distributeFluxProper(connected, generatedThisTick), false);
-    }
-
-    private static int distributeFluxProper(List<IEnergyStorage> storages, int amount) {
-        List<Pair<IEnergyStorage, Integer>> pairs = storages.stream()
-                .filter(Objects::nonNull)
-                .map(storage -> Pair.of(storage, storage.receiveEnergy(amount, true)))
-                .sorted(Comparator.comparingInt(Pair::getSecond))
-                .toList();
-        int remaining = amount;
-        int remainingOutputs = pairs.size();
-        for (Pair<IEnergyStorage, Integer> pair : pairs) {
-            if (remaining <= 0) { break; }
-            int possibleOutput = (int) Math.ceil((double) remaining / remainingOutputs);
-            remaining -= pair.getFirst().receiveEnergy(possibleOutput, false);
-            remainingOutputs--;
-        }
-        return amount - remaining;
-    }
-
-    private static void addConnectedHandlers(List<IEnergyStorage> connected, IMultiblockContext<State> ctx, Level level, List<BlockPos> pois, RelativeBlockFace facing) {
-        for (BlockPos pos : pois) {
-            Direction side = ctx.getLevel().toAbsolute(facing);
-            if (side == null) { continue; }
-            IEnergyStorage handler = level.getCapability(Capabilities.EnergyStorage.BLOCK, ctx.getLevel().toAbsolute(pos).relative(side), side.getOpposite());
-            if (handler != null) { connected.add(handler); }
-        }
+        EnergyPush.addConnectedHandlers(connected, ctx, level, ENERGY_LEFT_POIS, ENERGY_LEFT_FACING);
+        EnergyPush.addConnectedHandlers(connected, ctx, level, ENERGY_RIGHT_POIS, ENERGY_RIGHT_FACING);
+        state.energy.receiveEnergy(connected.isEmpty() ? generatedThisTick : generatedThisTick - EnergyPush.distributeFluxProper(connected, generatedThisTick), false);
     }
 
     @Override public void dropExtraItems(State state, Consumer<ItemStack> drop) { }

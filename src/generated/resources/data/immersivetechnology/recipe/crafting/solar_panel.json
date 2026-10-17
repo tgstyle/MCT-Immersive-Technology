@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "immersiveconvergence:ie_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "D": {
+      "tag": "c:dusts/coal_coke"
+    },
+    "G": {
+      "tag": "c:glass_panes/colorless"
+    },
+    "T": {
+      "item": "immersivetechnology:technology_engineering"
+    }
+  },
+  "pattern": [
+    "GTG",
+    "DTD",
+    "GTG"
+  ],
+  "result": {
+    "count": 4,
+    "id": "immersivetechnology:solar_panel"
+  }
+}

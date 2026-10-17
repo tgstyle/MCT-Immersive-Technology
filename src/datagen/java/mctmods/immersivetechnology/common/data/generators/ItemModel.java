@@ -108,6 +108,7 @@ public class ItemModel extends ItemModelProvider {
         generateBlockItem("graphite_moderator", "metal/graphite_moderator");
         generateBlockItem("nuclear_engineering", "metal/nuclear_engineering");
         generateBlockItem("reactor_cladding", "metal/reactor_cladding");
+        generateBlockItem("solar_panel", "metal/solar_panel");
         generateBlockItem("storage_stainless_steel", "metal/storage_stainless_steel");
         generateBlockItem("storage_chromium", "metal/storage_chromium");
         generateBlockItem("storage_magnesium", "metal/storage_magnesium");

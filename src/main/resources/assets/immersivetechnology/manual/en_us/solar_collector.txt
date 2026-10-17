@@ -1,0 +1,8 @@
+Solar Collector
+Free Power!
+<&multiblock>The Solar Collector turns sunlight straight into Flux, with a panel that follows the sun across the sky.
+
+
+
+
+It produces <config;i;solar_collector.energy_per_section> Flux/t for each step of sun height, up to <config;i;solar_collector.energy_max> Flux/t when the sun is high. It produces nothing at night, in rain, or when a block shades the panel from the sun. Flux is output at the middle of the rear face of the base. Unlike a <link;solar_reflector;§n§oReflector§r>, it needs no tower and works on its own.

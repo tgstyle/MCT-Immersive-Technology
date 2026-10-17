@@ -53,6 +53,7 @@ public class MultiblockStateGenerator {
         generateMultiblockConfig("melting_crucible", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("radiator", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("radiator_horizontal", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("solar_collector", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("solar_melter", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("solar_reflector", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("solar_tower", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);

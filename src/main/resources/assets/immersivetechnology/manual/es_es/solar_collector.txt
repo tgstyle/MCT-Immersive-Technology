@@ -1,0 +1,8 @@
+Colector solar
+¡Energía gratis!
+<&multiblock>El Colector solar convierte la luz solar directamente en Flux, con un panel que sigue al sol por el cielo.
+
+
+
+
+Produce <config;i;solar_collector.energy_per_section> Flux/t por cada nivel de altura del sol, hasta <config;i;solar_collector.energy_max> Flux/t con el sol alto. No produce nada de noche, con lluvia o cuando un bloque hace sombra sobre el panel. El Flux sale por el centro de la cara trasera de la base. A diferencia de un <link;solar_reflector;§n§oReflector§r>, no necesita torre y funciona por sí solo.

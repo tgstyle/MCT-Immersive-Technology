@@ -85,6 +85,7 @@ public class BasicStateGenerator {
         createSimpleBlock(ModBlocks.getBlock.apply("graphite_moderator"), main.models().cubeColumn("block/metal/graphite_moderator", main.modLoc("block/metal/graphite_moderator_side"), main.modLoc("block/metal/graphite_moderator_top")));
         createSimpleBlock(ModBlocks.getBlock.apply("nuclear_engineering"), main.models().cubeAll("block/metal/nuclear_engineering", main.modLoc("block/metal/nuclear_engineering")));
         createSimpleBlock(ModBlocks.getBlock.apply("reactor_cladding"), main.models().cubeAll("block/metal/reactor_cladding", main.modLoc("block/metal/reactor_cladding")));
+        createSimpleBlock(ModBlocks.getBlock.apply("solar_panel"), main.models().cubeAll("block/metal/solar_panel", main.modLoc("block/metal/solar_panel")));
         createCubeAllBlock("storage_stainless_steel", "stainless_steel");
         createCubeAllBlock("storage_chromium", "chromium");
         createCubeAllBlock("storage_magnesium", "magnesium");

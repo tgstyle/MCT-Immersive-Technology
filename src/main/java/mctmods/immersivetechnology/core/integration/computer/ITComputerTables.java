@@ -6,7 +6,7 @@ import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogi
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.DistillerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.GasTurbineLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.HeatExchangerLogic;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarCollectorLogic;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReceiverLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteamTurbineLogic;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -58,8 +58,8 @@ public final class ITComputerTables {
             .add("getReflectors", state -> state.reflectorStrength)
             .add("getInputTankInfo", state -> ComputerValues.tankInfo(state.tanks.input()))
             .add("getOutputTankInfo", state -> ComputerValues.tankInfo(state.tanks.output()))
-            .add("getFullCanisters", state -> canisters(state.inventory, SolarCollectorLogic.SLOT_INPUT_FILLED, SolarCollectorLogic.SLOT_OUTPUT_FILLED))
-            .add("getEmptyCanisters", state -> canisters(state.inventory, SolarCollectorLogic.SLOT_INPUT_EMPTY, SolarCollectorLogic.SLOT_OUTPUT_EMPTY));
+            .add("getFullCanisters", state -> canisters(state.inventory, SolarReceiverLogic.SLOT_INPUT_FILLED, SolarReceiverLogic.SLOT_OUTPUT_FILLED))
+            .add("getEmptyCanisters", state -> canisters(state.inventory, SolarReceiverLogic.SLOT_INPUT_EMPTY, SolarReceiverLogic.SLOT_OUTPUT_EMPTY));
     public static final ICComputerTable<SteamTurbineLogic.State> STEAM_TURBINE = ICComputerControl.multiblock("it_steam_turbine", MultiblockRegistry.STEAM_TURBINE, ICComputerControl.at(() -> SteamTurbineLogic.REDSTONE_POI))
             .add("getSpeed", state -> state.speed)
             .add("getTankInfo", state -> ComputerValues.tankInfo(state.tanks.input()))

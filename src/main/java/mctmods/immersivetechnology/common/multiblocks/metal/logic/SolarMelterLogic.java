@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SolarMelterLogic extends SolarCollectorLogic<MeltingRecipe, SolarMelterLogic.State> {
+public class SolarMelterLogic extends SolarReceiverLogic<MeltingRecipe, SolarMelterLogic.State> {
     public static BlockPos REDSTONE_POI;
     public static BlockPos RUNNING_SOUND_POI;
     public static BlockPos LINK_POI;
@@ -98,7 +98,7 @@ public class SolarMelterLogic extends SolarCollectorLogic<MeltingRecipe, SolarMe
         }
     }
 
-    public static class State extends CollectorState<MeltingRecipe> {
+    public static class State extends ReceiverState<MeltingRecipe> {
         public State(IInitialMultiblockContext<State> ctx) { super(ctx, ServerConfig.solarMelterInputTankCapacity, ServerConfig.solarMelterOutputTankCapacity, MeltingRecipe::findRecipe, MeltingRecipe.RECIPES, LINK_POI, REFLECTOR_POI, SUN_POI); }
 
         @Override protected double workingHeat() { return workingHeatLevel(); }

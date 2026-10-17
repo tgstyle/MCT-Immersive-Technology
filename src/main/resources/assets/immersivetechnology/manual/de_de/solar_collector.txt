@@ -1,0 +1,8 @@
+Solarkollektor
+Gratis Strom!
+<&multiblock>Der Solarkollektor wandelt Sonnenlicht direkt in Flux um. Sein Modul folgt der Sonne über den Himmel.
+
+
+
+
+Er erzeugt <config;i;solar_collector.energy_per_section> Flux/t für jede Stufe des Sonnenstands, bis zu <config;i;solar_collector.energy_max> Flux/t bei hochstehender Sonne. Nachts, bei Regen oder wenn ein Block das Modul von der Sonne abschattet, erzeugt er nichts. Flux wird in der Mitte der Rückseite des Sockels ausgegeben. Anders als ein <link;solar_reflector;§n§oSolarreflektor§r> braucht er keinen Turm und arbeitet eigenständig.

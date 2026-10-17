@@ -1,0 +1,8 @@
+Capteur solaire
+De l'énergie gratuite !
+<&multiblock>Le Capteur solaire convertit directement la lumière du soleil en Flux, grâce à un panneau qui suit le soleil dans le ciel.
+
+
+
+
+Il produit <config;i;solar_collector.energy_per_section> Flux/t par palier de hauteur du soleil, jusqu'à <config;i;solar_collector.energy_max> Flux/t quand le soleil est haut. Il ne produit rien la nuit, sous la pluie ou quand un bloc fait de l'ombre au panneau. Le Flux sort au milieu de la face arrière du socle. Contrairement à un <link;solar_reflector;§n§oRéflecteur§r>, il n'a besoin d'aucune tour et fonctionne seul.

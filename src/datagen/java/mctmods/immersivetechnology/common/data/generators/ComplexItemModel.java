@@ -16,10 +16,19 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
+    private static final Map<String, List<Part>> COMPOSITES = Map.of(
+            "solar_collector", List.of(new Part("base", "solar_collector", 0), new Part("support", "solar_collector_support", 0), new Part("panel", "solar_collector_panel", 0)),
+            "solar_reflector", List.of(new Part("reflector", "solar_reflector", 0), new Part("support", "solar_reflector_support", 1.6f), new Part("mirror", "solar_reflector_mirror", 1.6f))
+    );
+
+    private record Part(String name, String obj, float offset) {}
+
     public ComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) { super(output, Reference.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper); }
 
     @Override @Nonnull public String getName() { return getClass().getSimpleName(); }
@@ -38,6 +47,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         generateMultiblockModel("melting_crucible", "metal", MultiblockRegistry.MELTING_CRUCIBLE.block(), new Vector3f(0.0f, -1.5f, -2.0f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("radiator", "metal", MultiblockRegistry.RADIATOR.block(), new Vector3f(-4.0f, 1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
         generateMultiblockModel("radiator_horizontal", "metal", MultiblockRegistry.RADIATOR_HORIZONTAL.block(), new Vector3f(0.0f, -1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
+        generateMultiblockModel("solar_collector", "metal", MultiblockRegistry.SOLAR_COLLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("solar_melter", "metal", MultiblockRegistry.SOLAR_MELTER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
         generateMultiblockModel("solar_reflector", "metal", MultiblockRegistry.SOLAR_REFLECTOR.block(), new Vector3f(4.5f, -1.8f, -1.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("solar_tower", "metal", MultiblockRegistry.SOLAR_TOWER.block(), new Vector3f(1.8f, -7.0f, -1.5f), 0.06f, 0.03f, 0.03f);
@@ -70,22 +80,15 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         TRSRModelBuilder model;
         String objPath = "multiblock/" + type + "/" + id + "/" + id + ".obj";
 
-        if ("solar_reflector".equals(id)) {
-            String base = "multiblock/metal/";
-            String reflectorFile = base + "solar_reflector/solar_reflector.obj";
-            String supportFile = base + "solar_reflector/solar_reflector_support.obj";
-            String mirrorFile = base + "solar_reflector/solar_reflector_mirror.obj";
-            String reflectorJson = "solar_reflector_reflector";
-            String supportJson = "solar_reflector_support";
-            String mirrorJson = "solar_reflector_mirror";
-            TRSRModelBuilder reflectorModel = createObjModel(reflectorFile, reflectorJson);
-            TRSRModelBuilder supportModel = (TRSRModelBuilder) createObjModel(supportFile, supportJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
-            TRSRModelBuilder mirrorModel = (TRSRModelBuilder) createObjModel(mirrorFile, mirrorJson).rootTransforms().translation(1.6f, 0.0f, 1.6f).end();
-            model = getBuilder(name(block.get())).customLoader(CompositeModelBuilder::begin)
-                    .child("reflector", reflectorModel)
-                    .child("support", supportModel)
-                    .child("mirror", mirrorModel)
-                    .end();
+        List<Part> parts = COMPOSITES.get(id);
+        if (parts != null) {
+            CompositeModelBuilder<TRSRModelBuilder> composite = getBuilder(name(block.get())).customLoader(CompositeModelBuilder::begin);
+            for (Part part : parts) {
+                TRSRModelBuilder child = createObjModel("multiblock/" + type + "/" + id + "/" + part.obj() + ".obj", id + "_" + part.name());
+                if (part.offset() != 0) { child = (TRSRModelBuilder) child.rootTransforms().translation(part.offset(), 0.0f, part.offset()).end(); }
+                composite.child(part.name(), child);
+            }
+            model = composite.end();
         }
         else if ("boiler_solid".equals(id)) {
             model = getBuilder(name(block.get())).customLoader(ObjModelBuilder::begin)

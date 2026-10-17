@@ -1,0 +1,8 @@
+太陽能集電器
+免費電力！
+<&multiblock>太陽能集電器將陽光直接轉化為Flux，其面板會跟隨太陽在天空中移動。
+
+
+
+
+太陽每升高一個階段，它就產生<config;i;solar_collector.energy_per_section> Flux/t，太陽高掛時最多產生<config;i;solar_collector.energy_max> Flux/t。夜間、下雨或有方塊遮擋面板時不產生任何能量。Flux從底座背面中央輸出。與<link;solar_reflector;§n§o反射鏡§r>不同，它不需要太陽能塔，可以獨立運作。

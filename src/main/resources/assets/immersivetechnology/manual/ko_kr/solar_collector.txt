@@ -1,0 +1,8 @@
+태양광 집열기
+공짜 전력!
+<&multiblock>태양광 집열기는 햇빛을 곧바로 Flux로 바꿉니다. 패널은 하늘을 가로지르는 태양을 따라 움직입니다.
+
+
+
+
+태양 높이 한 단계마다 <config;i;solar_collector.energy_per_section> Flux/t를 생산하며, 태양이 높이 떠 있으면 최대 <config;i;solar_collector.energy_max> Flux/t를 생산합니다. 밤이나 비가 올 때, 또는 블록이 패널에 그림자를 드리우면 아무것도 생산하지 않습니다. Flux는 받침대 후면 중앙에서 출력됩니다. <link;solar_reflector;§n§o태양 반사판§r>과 달리 타워가 필요 없이 혼자서 작동합니다.

@@ -1,0 +1,8 @@
+太陽光発電機
+無料の電力！
+<&multiblock>太陽光発電機は太陽光を直接Fluxに変換します。パネルは空を移る太陽を追いかけます。
+
+
+
+
+太陽の高さ1段階ごとに<config;i;solar_collector.energy_per_section> Flux/tを生成し、太陽が高いときは最大<config;i;solar_collector.energy_max> Flux/tになります。夜間、雨天、またはブロックがパネルに影を落としているときは何も生成しません。Fluxは土台の背面中央から出力されます。<link;solar_reflector;§n§o太陽反射板§r>とは違い、塔を必要とせず単独で動作します。

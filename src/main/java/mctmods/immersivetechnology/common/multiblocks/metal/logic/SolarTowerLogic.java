@@ -19,7 +19,7 @@ import net.minecraft.sounds.SoundEvent;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class SolarTowerLogic extends SolarCollectorLogic<SolarTowerRecipe, SolarTowerLogic.State> {
+public class SolarTowerLogic extends SolarReceiverLogic<SolarTowerRecipe, SolarTowerLogic.State> {
     public static BlockPos REDSTONE_POI;
     public static BlockPos RUNNING_SOUND_POI;
     public static BlockPos LINK_POI;
@@ -59,7 +59,7 @@ public class SolarTowerLogic extends SolarCollectorLogic<SolarTowerRecipe, Solar
 
     @Override public State createInitialState(IInitialMultiblockContext<State> ctx) { return new State(ctx); }
 
-    public static class State extends CollectorState<SolarTowerRecipe> {
+    public static class State extends ReceiverState<SolarTowerRecipe> {
         public final RedstoneControl.RSState rsState = RedstoneControl.RSState.enabledByDefault();
 
         public State(IInitialMultiblockContext<State> ctx) { super(ctx, ServerConfig.solarTowerInputTankCapacity, ServerConfig.solarTowerOutputTankCapacity, SolarTowerRecipe::findRecipe, SolarTowerRecipe.RECIPES, LINK_POI, REFLECTOR_POI, SUN_POI); }

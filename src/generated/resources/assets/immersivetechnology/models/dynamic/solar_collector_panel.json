@@ -1,0 +1,6 @@
+{
+  "automatic_culling": false,
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "immersivetechnology:models/multiblock/metal/solar_collector/solar_collector_panel.obj"
+}

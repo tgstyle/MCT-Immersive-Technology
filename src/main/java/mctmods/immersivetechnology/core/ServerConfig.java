@@ -87,6 +87,7 @@ public class ServerConfig {
     public static final ModConfigSpec.DoubleValue RADIATOR_BIOME_HUMIDITY_FACTOR;
     public static final ModConfigSpec.DoubleValue RADIATOR_REFLECTOR_FACTOR;
 
+    public static final ModConfigSpec.IntValue SOLAR_COLLECTOR_ENERGY_PER_SECTION;
     public static final ModConfigSpec.DoubleValue SOLAR_MELTER_DAY_MIN_HEAT_LOSS;
     public static final ModConfigSpec.DoubleValue SOLAR_MELTER_LOSS_PER_SECTION_DROP;
     public static final ModConfigSpec.DoubleValue SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR;
@@ -200,6 +201,7 @@ public class ServerConfig {
     public static double radiatorBiomeHumidityFactor = 3.0D;
     public static double radiatorReflectorFactor = 1.0D;
 
+    public static int solarCollectorEnergyPerSection = 32;
     public static double solarMelterDayMinHeatLoss = 0.0D;
     public static double solarMelterLossPerSectionDrop = 0.035D;
     public static double solarMelterTempDependentLossFactor = 0.00036D;
@@ -346,6 +348,10 @@ public class ServerConfig {
                 .defineInRange("reflector_factor", 1.0D, 0.0D, 2.0D);
         BUILDER.pop();
 
+        BUILDER.push("solar_collector");
+        SOLAR_COLLECTOR_ENERGY_PER_SECTION = BUILDER.defineInRange("solar_collector_energy_per_section", 32, 0, Integer.MAX_VALUE / 80);
+        BUILDER.pop();
+
         BUILDER.push("solar_melter");
         SOLAR_MELTER_DAY_MIN_HEAT_LOSS = BUILDER.defineInRange("day_min_heat_loss", 0.0D, 0.0D, Double.MAX_VALUE);
         SOLAR_MELTER_LOSS_PER_SECTION_DROP = BUILDER.defineInRange("loss_per_section_drop", 0.035D, 0.0D, Double.MAX_VALUE);
@@ -484,6 +490,7 @@ public class ServerConfig {
             radiatorBiomeHumidityFactor = RADIATOR_BIOME_HUMIDITY_FACTOR.get();
             radiatorReflectorFactor = RADIATOR_REFLECTOR_FACTOR.get();
 
+            solarCollectorEnergyPerSection = SOLAR_COLLECTOR_ENERGY_PER_SECTION.get();
             solarMelterDayMinHeatLoss = SOLAR_MELTER_DAY_MIN_HEAT_LOSS.get();
             solarMelterLossPerSectionDrop = SOLAR_MELTER_LOSS_PER_SECTION_DROP.get();
             solarMelterTempDependentLossFactor = SOLAR_MELTER_TEMP_DEPENDENT_LOSS_FACTOR.get();

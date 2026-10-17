@@ -35,6 +35,7 @@ public class BlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.Metal.GRAPHITE_MODERATOR.get());
         dropSelf(ModBlocks.Metal.NUCLEAR_ENGINEERING.get());
         dropSelf(ModBlocks.Metal.REACTOR_CLADDING.get());
+        dropSelf(ModBlocks.Metal.SOLAR_PANEL.get());
         dropSelf(ModBlocks.Metal.STORAGE_STAINLESS_STEEL.get());
         dropSelf(ModBlocks.Metal.STORAGE_CHROMIUM.get());
         dropSelf(ModBlocks.Metal.STORAGE_MAGNESIUM.get());
@@ -68,6 +69,7 @@ public class BlockLoot extends BlockLootSubProvider {
         add(MultiblockRegistry.MELTING_CRUCIBLE.block().get(), noDrop());
         add(MultiblockRegistry.RADIATOR.block().get(), noDrop());
         add(MultiblockRegistry.RADIATOR_HORIZONTAL.block().get(), noDrop());
+        add(MultiblockRegistry.SOLAR_COLLECTOR.block().get(), noDrop());
         add(MultiblockRegistry.SOLAR_MELTER.block().get(), noDrop());
         add(MultiblockRegistry.SOLAR_REFLECTOR.block().get(), noDrop());
         add(MultiblockRegistry.SOLAR_TOWER.block().get(), noDrop());

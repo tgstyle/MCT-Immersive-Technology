@@ -44,6 +44,16 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
                 .end()
                 .texture("particle", modLoc("multiblock/metal/rotor"))
                 .renderType("cutout");
+        getBuilder("dynamic/solar_collector_panel")
+                .customLoader(ObjModelBuilder::begin)
+                .modelLocation(modLoc("models/multiblock/metal/solar_collector/solar_collector_panel.obj"))
+                .flipV(true)
+                .automaticCulling(false);
+        getBuilder("dynamic/solar_collector_support")
+                .customLoader(ObjModelBuilder::begin)
+                .modelLocation(modLoc("models/multiblock/metal/solar_collector/solar_collector_support.obj"))
+                .flipV(true)
+                .automaticCulling(false);
         getBuilder("dynamic/solar_reflector_mirror")
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(modLoc("models/multiblock/metal/solar_reflector/solar_reflector_mirror.obj"))

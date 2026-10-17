@@ -51,6 +51,7 @@ public class ModBlocks {
         public static BlockEntry<Block> GRAPHITE_MODERATOR;
         public static BlockEntry<Block> NUCLEAR_ENGINEERING;
         public static BlockEntry<Block> REACTOR_CLADDING;
+        public static BlockEntry<Block> SOLAR_PANEL;
         public static BlockEntry<Block> STORAGE_STAINLESS_STEEL;
         public static BlockEntry<Block> STORAGE_CHROMIUM;
         public static BlockEntry<Block> STORAGE_MAGNESIUM;
@@ -117,6 +118,12 @@ public class ModBlocks {
 
             REACTOR_CLADDING = new BlockEntry<>(
                     "reactor_cladding",
+                    DEFAULT_METAL_PROPERTIES,
+                    Block::new
+            );
+
+            SOLAR_PANEL = new BlockEntry<>(
+                    "solar_panel",
                     DEFAULT_METAL_PROPERTIES,
                     Block::new
             );

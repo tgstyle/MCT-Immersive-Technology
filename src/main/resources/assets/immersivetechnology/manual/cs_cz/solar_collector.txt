@@ -1,0 +1,8 @@
+Solární kolektor
+Energie zdarma!
+<&multiblock>Solární kolektor mění sluneční světlo přímo na Flux. Jeho panel sleduje slunce po obloze.
+
+
+
+
+Vyrábí <config;i;solar_collector.energy_per_section> Flux/t za každý stupeň výšky slunce, až <config;i;solar_collector.energy_max> Flux/t, když je slunce vysoko. V noci, za deště nebo když panel zastíní blok, nevyrábí nic. Flux vystupuje uprostřed zadní strany podstavce. Na rozdíl od <link;solar_reflector;§n§oreflektoru§r> nepotřebuje věž a pracuje samostatně.

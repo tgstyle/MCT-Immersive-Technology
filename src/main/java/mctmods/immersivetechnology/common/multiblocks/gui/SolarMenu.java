@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.gui;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.ISolarMultiblockState;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarCollectorLogic;
+import mctmods.immersivetechnology.core.util.SunTracking;
 
 import com.immersiveconvergence.api.gui.BaseContainerMenu;
 import com.immersiveconvergence.api.gui.MenuSyncData;
@@ -59,7 +59,7 @@ public class SolarMenu extends BaseContainerMenu {
         if (mbStateSupplier != null) {
             ISolarMultiblockState s = mbStateSupplier.get();
             state.set(0, (int) s.getHeatLevel());
-            if (!this.usingPlayers.isEmpty()) { state.set(1, SolarCollectorLogic.getSolarIncidenceAngleSection(this.usingPlayers.getFirst().level())); }
+            if (!this.usingPlayers.isEmpty()) { state.set(1, SunTracking.incidenceSection(this.usingPlayers.getFirst().level())); }
             state.set(2, s.getDirCounts()[0]);
             state.set(3, s.getDirCounts()[1]);
             state.set(4, s.getDirCounts()[2]);

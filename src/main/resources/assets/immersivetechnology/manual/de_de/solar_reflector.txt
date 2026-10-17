@@ -5,4 +5,4 @@ Glänzen!
 
 
 
-Direkt über dem Betonfundament des Turms platzieren, nicht höher oder niedriger. Auf 24 Reflektoren pro Turm begrenzt. Innerhalb eines Radius von mindestens 12 bis maximal 22 Blöcken um einen Solarturm oder -schmelzturm platzieren.
+Direkt über dem Betonfundament des Turms platzieren, nicht höher oder niedriger. Auf 24 Reflektoren pro Turm begrenzt. Innerhalb eines Radius von mindestens 12 bis maximal 22 Blöcken um einen Solarturm oder -schmelzturm platzieren. Für Flux ohne Turm nutzt der <link;solar_collector;§n§oSolarkollektor§r> dieselbe Nachführung.

@@ -178,6 +178,11 @@ public class MultiblockRegistry {
                     .withComparator()
                     .build();
 
+    public static final MultiblockRegistration<SolarCollectorLogic.State> SOLAR_COLLECTOR =
+            metalNoMirror(new SolarCollectorLogic(), "solar_collector")
+                    .structure(() -> SolarCollector.INSTANCE)
+                    .build();
+
     public static final MultiblockRegistration<SolarMelterLogic.State> SOLAR_MELTER =
             metal(new SolarMelterLogic(), "solar_melter")
                     .structure(() -> SolarMelter.INSTANCE)
@@ -240,6 +245,7 @@ public class MultiblockRegistry {
                 MELTING_CRUCIBLE.block().get().getClass(),
                 RADIATOR.block().get().getClass(),
                 RADIATOR_HORIZONTAL.block().get().getClass(),
+                SOLAR_COLLECTOR.block().get().getClass(),
                 SOLAR_MELTER.block().get().getClass(),
                 SOLAR_REFLECTOR.block().get().getClass(),
                 SOLAR_TOWER.block().get().getClass(),
@@ -266,6 +272,7 @@ public class MultiblockRegistry {
         registerMB("melting_crucible", MeltingCrucible.INSTANCE, MELTING_CRUCIBLE);
         registerMB("radiator", Radiator.INSTANCE, RADIATOR);
         registerMB("radiator_horizontal", RadiatorHorizontal.INSTANCE, RADIATOR_HORIZONTAL);
+        registerMB("solar_collector", SolarCollector.INSTANCE, SOLAR_COLLECTOR);
         registerMB("solar_melter", SolarMelter.INSTANCE, SOLAR_MELTER);
         registerMB("solar_reflector", SolarReflector.INSTANCE, SOLAR_REFLECTOR);
         registerMB("solar_tower", SolarTower.INSTANCE, SOLAR_TOWER);

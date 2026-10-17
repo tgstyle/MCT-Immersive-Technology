@@ -1,0 +1,8 @@
+太阳能集电器
+免费电力！
+<&multiblock>太阳能集电器将阳光直接转化为Flux，其面板会跟随太阳在天空中移动。
+
+
+
+
+太阳每升高一个阶段，它就产生<config;i;solar_collector.energy_per_section> Flux/t，太阳高悬时最多产生<config;i;solar_collector.energy_max> Flux/t。夜间、下雨或有方块遮挡面板时不产生任何能量。Flux从底座背面中央输出。与<link;solar_reflector;§n§o反射镜§r>不同，它无需太阳能塔，可以独立工作。
