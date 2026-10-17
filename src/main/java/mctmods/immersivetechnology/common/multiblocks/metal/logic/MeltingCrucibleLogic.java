@@ -49,6 +49,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -299,6 +300,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             tanksDirty = false;
         }
 
+        @Override public List<IEnergyStorage> getEnergies() { return List.of(); }
         @Override public ICEnergyStorageAveraging getEnergyStorage() { return energy; }
         @Override public IFluidTank[] getInternalTanks() { return tankArray; }
         @Override public int[] getOutputTanks() { return new int[]{1}; }
@@ -330,8 +332,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
             FluidStack input = tanks.input().getFluid();
             MeltingRecipe recipe = input.isEmpty() ? null : MeltingRecipe.findRecipe(level, input);
             lines.temperature(heatLevel, recipe != null ? recipe.requiredTemp : workingHeatLevel());
-            if (processPercent >= 0) { lines.percent(processPercent); }
-            if (input.isEmpty()) { lines.fuelEmpty(); }
+            lines.percent(Math.max(processPercent, 0));
+            if (inventory.getStackInSlot(0).isEmpty()) { lines.fuelEmpty(); }
         }
     }
 

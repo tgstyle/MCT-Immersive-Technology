@@ -220,7 +220,7 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
 
         @Override public IFluidTank[] getInternalTanks() { return new IFluidTank[]{tanks.input0, tanks.input1, tanks.output0, tanks.output1}; }
 
-        @Override public List<IEnergyStorage> getEnergies() { return List.of(energy); }
+        @Override public List<IEnergyStorage> getEnergies() { return List.of(); }
 
         @Override public void writeDisplaySyncNBT(CompoundTag nbt, HolderLookup.Provider provider) {
             nbt.putBoolean("active", active);
@@ -251,7 +251,6 @@ public class HeatExchangerLogic implements IMultiblockLogic<HeatExchangerLogic.S
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
             if (queueSize > 0) {
                 lines.percent(totalProcessTime > 0 ? processProgress * 100 / totalProcessTime : 0);
-                if (queueSize > 1) { lines.text((queueSize - 1) + " queued"); }
             }
         }
     }
