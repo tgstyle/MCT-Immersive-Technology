@@ -71,7 +71,7 @@ public class ModBlocks {
 
             BARREL_STEEL = new BlockEntry<>(
                     "barrel_steel",
-                    METAL_PROPERTIES_NO_OCCLUSION,
+                    () -> METAL_PROPERTIES_NO_OCCLUSION.get().strength(3.0F, 20.0F),
                     p -> new BarrelSteelBlock(BarrelSteelBlockEntity::new, p)
             );
 
