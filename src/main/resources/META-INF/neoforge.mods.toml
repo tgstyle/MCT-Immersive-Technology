@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[1,)"
-license="LGPL-3.0"
+license="GPL-3.0"
 
 [[mods]]
 modId = "immersivetechnology"
