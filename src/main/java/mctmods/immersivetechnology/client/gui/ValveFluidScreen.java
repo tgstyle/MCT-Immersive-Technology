@@ -13,7 +13,6 @@ import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEnt
 import com.immersiveconvergence.api.network.MessageTileSync;
 import mctmods.immersivetechnology.core.network.PacketHandler;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nonnull;
@@ -94,7 +93,7 @@ public class ValveFluidScreen extends AbstractContainerScreen<ValveFluidMenu> {
         message.putInt("timeLimit", tl);
         message.putInt("keepSize", ks);
         PacketHandler.sendToServer(new MessageTileSync(tile.getBlockPos(), message));
-        Minecraft.getInstance().setScreen(null);
+        onClose();
     }
 
     @Override public void containerTick() {
