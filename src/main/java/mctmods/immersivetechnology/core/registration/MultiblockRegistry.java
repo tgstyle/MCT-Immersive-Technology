@@ -143,7 +143,7 @@ public class MultiblockRegistry {
             metal(new GasTurbineLogic(), "gas_turbine")
                     .structure(() -> GasTurbine.INSTANCE)
                     .redstone(s -> s.rsState, () -> GasTurbineLogic.REDSTONE_POI)
-                    .component(new ClearTank<>(() -> GasTurbineLogic.INPUT_FLUID_POIS, s -> s.tanks.input().drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
+                    .component(new ClearTank<>(() -> GasTurbineLogic.INPUT_FLUID_POIS, s -> s.tank.drain(Integer.MAX_VALUE, FluidAction.EXECUTE), Component.translatable(ClearTankRegistry.KEY_TANK_CLEARED)))
                     .withComparator()
                     .build();
 

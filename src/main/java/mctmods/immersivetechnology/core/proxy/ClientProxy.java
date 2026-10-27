@@ -169,6 +169,7 @@ public class ClientProxy extends CommonProxy {
         ev.register(Reference.rl("mirror"), MirrorModelLoader.INSTANCE);
         RotorModels.ROTOR = new StandaloneModel(Reference.rl("dynamic/rotor"));
         RotorModels.ROTOR_EAST_WEST = new StandaloneModel(Reference.rl("dynamic/rotor_east_west"));
+        RotorModels.GAS_TURBINE_FAN = new StandaloneModel(Reference.rl("dynamic/gas_turbine_fan"));
         SolarCollectorModels.SUPPORT = new StandaloneModel(Reference.rl("dynamic/solar_collector_support"));
         SolarCollectorModels.PANEL = new StandaloneModel(Reference.rl("dynamic/solar_collector_panel"));
         SolarReflectorModels.SUPPORT = new StandaloneModel(Reference.rl("dynamic/solar_reflector_support"));

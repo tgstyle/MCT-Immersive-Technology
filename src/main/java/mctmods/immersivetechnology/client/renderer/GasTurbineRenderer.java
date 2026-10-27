@@ -30,6 +30,9 @@ import javax.annotation.Nonnull;
 
 public class GasTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<GasTurbineLogic.State>> {
     private static final Quaternionf ROTATION = new Quaternionf();
+    private static final Quaternionf FAN_YAW = new Quaternionf();
+    private static final double FAN_HEIGHT = 0.6875;
+    private static final double FAN_DEPTH = 0.0930728;
     private static final BlockPos ROTOR_CELL = GasTurbineLogic.MECHANICAL_OUTPUT_POIS.getFirst();
 
     public GasTurbineRenderer() {}
@@ -54,6 +57,14 @@ public class GasTurbineRenderer extends BaseBlockEntityRenderer<MultiblockBlockE
         poseStack.translate(rotorStart.x + 0.5, rotorStart.y + 0.5, rotorStart.z + 0.5);
         poseStack.mulPose(ROTATION);
         renderDynamicModel(selectedModel, poseStack, buffer, level, pos, packedLight);
+        poseStack.popPose();
+        Vec3 back = context.getLevel().toAbsolute(new Vec3(0, 0, 1)).subtract(context.getLevel().toAbsolute(Vec3.ZERO));
+        FAN_YAW.rotationY((float) Math.atan2(back.x, back.z));
+        poseStack.pushPose();
+        poseStack.translate(0.5 + back.x * FAN_DEPTH, 0.5 + FAN_HEIGHT, 0.5 + back.z * FAN_DEPTH);
+        poseStack.mulPose(ROTATION);
+        poseStack.mulPose(FAN_YAW);
+        renderDynamicModel(RotorModels.GAS_TURBINE_FAN, poseStack, buffer, level, pos, packedLight);
         poseStack.popPose();
     }
 

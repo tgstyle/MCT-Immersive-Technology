@@ -47,8 +47,7 @@ public final class ITComputerTables {
             .add("getEmptyCanisters", state -> canisters(state.inventory, DistillerLogic.SLOT_INPUT_EMPTY, DistillerLogic.SLOT_OUTPUT_EMPTY));
     public static final ICComputerTable<GasTurbineLogic.State> GAS_TURBINE = ICComputerControl.multiblock("it_gas_turbine", MultiblockRegistry.GAS_TURBINE, ICComputerControl.at(() -> GasTurbineLogic.REDSTONE_POI))
             .add("getSpeed", state -> state.speed)
-            .add("getInputTankInfo", state -> ComputerValues.tankInfo(state.tanks.input()))
-            .add("getOutputTankInfo", state -> ComputerValues.tankInfo(state.tanks.output()));
+            .add("getInputTankInfo", state -> ComputerValues.tankInfo(state.tank));
     public static final ICComputerTable<HeatExchangerLogic.State> HEAT_EXCHANGER = ICComputerControl.multiblock("it_heat_exchanger", MultiblockRegistry.HEAT_EXCHANGER, ICComputerControl.at(() -> HeatExchangerLogic.REDSTONE_POI))
             .add("getFirstInputTankInfo", state -> ComputerValues.tankInfo(state.tanks.input0()))
             .add("getSecondInputTankInfo", state -> ComputerValues.tankInfo(state.tanks.input1()))

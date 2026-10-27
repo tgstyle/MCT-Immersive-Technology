@@ -58,7 +58,6 @@ public class ServerConfig {
     public static final ModConfigSpec.IntValue FLUID_PIPE_AMOUNT_UNPRESSURIZED;
 
     public static final ModConfigSpec.IntValue GAS_TURBINE_INPUT_TANK_CAPACITY;
-    public static final ModConfigSpec.IntValue GAS_TURBINE_OUTPUT_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue GAS_TURBINE_ENERGY_CAPACITY_HV;
     public static final ModConfigSpec.IntValue GAS_TURBINE_ENERGY_CAPACITY_MV;
     public static final ModConfigSpec.IntValue GAS_TURBINE_STARTER_CONSUMPTION;
@@ -172,7 +171,6 @@ public class ServerConfig {
     public static int fluidPipeAmountUnpressurized = 100;
 
     public static int gasTurbineInputTankCapacity = 12000;
-    public static int gasTurbineOutputTankCapacity = 12000;
     public static int gasTurbineEnergyCapacityHV = 8192;
     public static int gasTurbineEnergyCapacityMV = 2048;
     public static int gasTurbineStarterConsumption = 4096;
@@ -306,7 +304,6 @@ public class ServerConfig {
 
         BUILDER.push("gas_turbine");
         GAS_TURBINE_INPUT_TANK_CAPACITY = BUILDER.defineInRange("input_tank_capacity", 12000, 1000, Integer.MAX_VALUE);
-        GAS_TURBINE_OUTPUT_TANK_CAPACITY = BUILDER.defineInRange("output_tank_capacity", 12000, 1000, Integer.MAX_VALUE);
         GAS_TURBINE_ENERGY_CAPACITY_HV = BUILDER.defineInRange("energy_capacity_hv", 8192, 1000, Integer.MAX_VALUE);
         GAS_TURBINE_ENERGY_CAPACITY_MV = BUILDER.defineInRange("energy_capacity_mv", 2048, 100, Integer.MAX_VALUE);
         GAS_TURBINE_STARTER_CONSUMPTION = BUILDER.defineInRange("starter_consumption", 4096, 0, Integer.MAX_VALUE);
@@ -461,7 +458,6 @@ public class ServerConfig {
             ICPipes.setTransferableAmounts(fluidPipeAmountUnpressurized, fluidPipeAmountPressurized);
 
             gasTurbineInputTankCapacity = GAS_TURBINE_INPUT_TANK_CAPACITY.get();
-            gasTurbineOutputTankCapacity = GAS_TURBINE_OUTPUT_TANK_CAPACITY.get();
             gasTurbineEnergyCapacityHV = GAS_TURBINE_ENERGY_CAPACITY_HV.get();
             gasTurbineEnergyCapacityMV = GAS_TURBINE_ENERGY_CAPACITY_MV.get();
             gasTurbineStarterConsumption = GAS_TURBINE_STARTER_CONSUMPTION.get();

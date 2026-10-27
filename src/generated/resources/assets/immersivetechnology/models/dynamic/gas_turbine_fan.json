@@ -1,0 +1,12 @@
+{
+  "automatic_culling": false,
+  "emissive_ambient": true,
+  "flip_v": true,
+  "loader": "neoforge:obj",
+  "model": "immersivetechnology:models/multiblock/metal/gas_turbine/gas_turbine_fan.obj",
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "textures": {
+    "particle": "immersivetechnology:multiblock/metal/gas_turbine"
+  }
+}

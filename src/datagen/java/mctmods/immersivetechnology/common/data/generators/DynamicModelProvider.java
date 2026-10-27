@@ -44,6 +44,16 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
                 .end()
                 .texture("particle", modLoc("multiblock/metal/rotor"))
                 .renderType("cutout");
+        getBuilder("dynamic/gas_turbine_fan")
+                .customLoader(ObjModelBuilder::begin)
+                .modelLocation(modLoc("models/multiblock/metal/gas_turbine/gas_turbine_fan.obj"))
+                .flipV(true)
+                .automaticCulling(false)
+                .shadeQuads(true)
+                .emissiveAmbient(true)
+                .end()
+                .texture("particle", modLoc("multiblock/metal/gas_turbine"))
+                .renderType("cutout");
         getBuilder("dynamic/solar_collector_panel")
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(modLoc("models/multiblock/metal/solar_collector/solar_collector_panel.obj"))

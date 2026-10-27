@@ -36,9 +36,10 @@ public class ClientUtils {
         return (float) Math.max(1 - Math.sqrt(player.distanceToSqr(pos)) / range, 0);
     }
 
-    public static void exhaust(Level level, BlockPos pos, Direction facing, float normSpeed, FluidStack fluid) {
-        Vec3 smokePos = Vec3.atCenterOf(pos);
-        double dirVelHoriz = 0.125 * normSpeed;
+    public static void exhaust(Level level, BlockPos pos, Direction facing, float normSpeed, FluidStack fluid) { exhaust(level, Vec3.atCenterOf(pos), facing, normSpeed, fluid, 1.0, 1.0F); }
+
+    public static void exhaust(Level level, Vec3 smokePos, Direction facing, float normSpeed, FluidStack fluid, double speedScale, float sizeScale) {
+        double dirVelHoriz = 0.125 * normSpeed * speedScale;
         double velX = facing.getStepX() * dirVelHoriz + smokeDrift();
         double velY = facing.getStepY() * (0.1 * normSpeed) + (0.0625 + 0.1 * (1 - normSpeed));
         double velZ = facing.getStepZ() * dirVelHoriz + smokeDrift();
@@ -49,7 +50,7 @@ public class ClientUtils {
             g = ((tint >> 8) & 0xFF) / 255f;
             b = (tint & 0xFF) / 255f;
         }
-        if (particlesVisible(smokePos)) { level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ); }
+        if (particlesVisible(smokePos)) { level.addAlwaysVisibleParticle(new ColoredSmoke(r, g, b, false, false, sizeScale), smokePos.x, smokePos.y, smokePos.z, velX, velY, velZ); }
     }
 
     public static void boilerExhaust(Level level, BlockPos exhaust, boolean smoking) {
