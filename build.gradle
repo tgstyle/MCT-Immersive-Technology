@@ -194,6 +194,7 @@ legacyForge {
         client {
             client()
             sourceSet = sourceSets.main
+            environment 'LD_LIBRARY_PATH', '/usr/lib64'
             systemProperty 'forge.logging.markers', ''
             systemProperty 'forge.enabledGameTestNamespaces', mod_id.toString()
             jvmArgument '-XX:StartFlightRecording=maxsize=512M,dumponexit=true,filename=logs/profile.jfr,settings=profile'
