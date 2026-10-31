@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.client;
 
 import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.common.event.ICTickingRegistry;
+import com.immersiveconvergence.api.multiblock.ICTickingRegistry;
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.ICIntegration;
 import com.immersiveconvergence.api.client.ICModels;
@@ -105,6 +105,7 @@ public class ClientProxy extends CommonProxy {
     public static final String CAT_PROCESSING = "it_processing";
 
     @Override public void preInit() {
+        ICIntegration.addRenderCacheClearer(ModelConfigurableSides.modelCache::clear);
         ICClientUtils.mc().getFramebuffer().enableStencil();
         ParticleSettings.particleCollide = () -> ITConfig.Client.particles.collide;
         ICModels.registerOBJLoader();
@@ -302,7 +303,7 @@ public class ClientProxy extends CommonProxy {
                     ICManual.text("radiator2"),
                     ICManual.multiblock("radiator3", TileEntityITMultiblockPartRadiatorHorizontal.instance));
         }
-        if (ICMods.immersiveEngineering()) {
+        if (ICMods.ieContent()) {
         ICManual.addEntry("controlBlocks", CAT_IT,
                 ICManual.crafting("controlBlocks0", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.STACK_LIMITER.getMeta())),
                 ICManual.text("controlBlocks0a"),
@@ -310,6 +311,8 @@ public class ClientProxy extends CommonProxy {
                 ICManual.text("controlBlocks1a"),
                 ICManual.crafting("controlBlocks2", new ItemStack(ITContent.blockValve, 1, BlockType_Valve.FLUID_VALVE.getMeta())),
                 ICManual.text("controlBlocks2a"));
+        }
+        if (ICMods.immersiveEngineering()) {
         ICManual.addEntry("redstone", CAT_IT,
                 ICManual.crafting("redstone0", new ItemStack(ITContent.blockConnectors, 1, BlockType_Connectors.CONNECTORS_TIMER.getMeta())),
                 ICManual.text("redstone1"));
@@ -369,10 +372,6 @@ public class ClientProxy extends CommonProxy {
         @Nonnull @Override protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) { return location; }
 
         @Nonnull @Override public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) { return location; }
-    }
-
-    static {
-        ICIntegration.addRenderCacheClearer(ModelConfigurableSides.modelCache::clear);
     }
 
     @Override public void clearRenderCaches() {

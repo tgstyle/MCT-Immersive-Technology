@@ -151,7 +151,7 @@ public class ITContent {
         /*METAL*/
         blockMetalTrash = new BlockMetalTrash();
         blockMetalBarrel = new BlockMetalBarrel();
-        if (ICMods.immersiveEngineering()) { blockValve = new BlockValve(); }
+        if (ICMods.ieContent()) { blockValve = new BlockValve(); }
         if (ITConfig.Multiblocks.enable.enable_advancedCokeOven) { blockMetalDevice = new BlockMetalDevice(); }
 
         blockMetalDecoration = new BlockMetalDecoration();
@@ -207,8 +207,8 @@ public class ITContent {
         registerTile(TileEntityBarrelOpen.class);
         registerTile(TileEntityBarrelSteel.class);
         registerTile(TileEntityCrate.class);
-        if (ICMods.immersiveEngineering()) {
-            registerTile(TileEntityTimer.class);
+        if (ICMods.immersiveEngineering()) { registerTile(TileEntityTimer.class); }
+        if (ICMods.ieContent()) {
             registerTile(TileEntityFluidValve.class);
             registerTile(TileEntityLoadController.class);
             registerTile(TileEntityStackLimiter.class);

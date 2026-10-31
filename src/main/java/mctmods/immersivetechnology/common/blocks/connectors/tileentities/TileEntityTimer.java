@@ -2,13 +2,13 @@ package mctmods.immersivetechnology.common.blocks.connectors.tileentities;
 
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.block.ICProperties;
-import com.immersiveconvergence.api.energy.ICTileEntityConnectorRedstone;
-import com.immersiveconvergence.api.energy.ICWireType;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IAttachedIntegerProperties;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IHammerInteraction;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectorRedstone;
 
 import mctmods.immersivetechnology.client.ITGUI;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;

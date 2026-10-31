@@ -53,7 +53,10 @@ if (ifJar == null) { logger.warn('No Immersive Fixes devSync pin: set devsync_if
 def esJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('EngineeredSchematics-Legacy', versionProps['devsync_es']), 'build/devsync-pins/EngineeredSchematics-Legacy.jar')
 if (esJar == null) { logger.warn('No Engineered Schematics devSync pin: set devsync_es in version.properties to a snapshot in the devsync cache') }
 
-def stampInputs = files(sourceSets.main.java.srcDirs, sourceSets.main.resources.srcDirs, file('build.gradle'), file('gradle.properties'), configFile, icJar == null ? [] : icJar, ifJar == null ? [] : ifJar, esJar == null ? [] : esJar).asFileTree
+def ifabJar = devSyncScript == null ? null : devSyncStaged(devSyncPin('MCT-Immersive-Fabrication-Legacy', versionProps['devsync_ifab']), 'build/devsync-pins/MCT-Immersive-Fabrication-Legacy.jar')
+if (ifabJar == null) { logger.warn('No Immersive Fabrication devSync pin: set devsync_ifab in version.properties to a snapshot in the devsync cache') }
+
+def stampInputs = files(sourceSets.main.java.srcDirs, sourceSets.main.resources.srcDirs, file('build.gradle'), file('gradle.properties'), configFile, icJar == null ? [] : icJar, ifJar == null ? [] : ifJar, esJar == null ? [] : esJar, ifabJar == null ? [] : ifabJar).asFileTree
 def stampProps = file('version.properties')
 def stampRoot = rootDir
 def stampFile = layout.buildDirectory.file('jar-inputs.sha256')
@@ -147,6 +150,9 @@ dependencies {
     }
     if (esJar != null) {
         implementation files(esJar)
+    }
+    if (ifabJar != null) {
+        runtimeOnly files(ifabJar)
     }
     implementation(rfg.deobf("${common.mjei_version}") as String)
     implementation(rfg.deobf("curse.maven:${common.imme_version}") as String)

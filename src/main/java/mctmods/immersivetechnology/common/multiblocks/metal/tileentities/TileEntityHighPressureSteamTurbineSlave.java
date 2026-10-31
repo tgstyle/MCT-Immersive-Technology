@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
-import com.immersiveconvergence.common.event.ICTickingRegistry;
+import com.immersiveconvergence.api.multiblock.ICTickingRegistry;
 import com.immersiveconvergence.api.client.MechanicalEnergyAnimation;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 

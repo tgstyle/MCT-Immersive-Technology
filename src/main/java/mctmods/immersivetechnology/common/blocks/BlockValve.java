@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.blocks;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.client.IICOBJModelCallback;
 
@@ -11,8 +12,8 @@ import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonVa
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -29,6 +30,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> {
@@ -77,16 +79,8 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		BlockStateContainer base = super.createBlockState();
 		IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState)base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
 		unlisted = ICProperties.appendConnections(unlisted);
+		if (!ICMods.immersiveEngineering()) { unlisted = Arrays.copyOf(unlisted, unlisted.length + 1); unlisted[unlisted.length - 1] = Properties.AnimationProperty; }
 		return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
-	}
-
-	@Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-		state = super.getExtendedState(state, world, pos);
-		if (state instanceof IExtendedBlockState) {
-			TileEntity te = world.getTileEntity(pos);
-			if (te instanceof TileEntityCommonValve) { state = ((IExtendedBlockState)state).withProperty(ICProperties.CONNECTIONS, ((TileEntityCommonValve)te).wireConnections()); }
-		}
-		return state;
 	}
 
 	@Override public boolean useCustomStateMapper() { return true; }

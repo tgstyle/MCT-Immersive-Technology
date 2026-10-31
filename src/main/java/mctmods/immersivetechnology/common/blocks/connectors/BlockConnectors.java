@@ -3,8 +3,7 @@ package mctmods.immersivetechnology.common.blocks.connectors;
 
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.client.IICOBJModelCallback;
-import com.immersiveconvergence.api.energy.ICTileEntityConnectable;
-import com.immersiveconvergence.api.energy.ICTileEntityConnectorRedstone;
+import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectorRedstone;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
@@ -27,7 +26,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import javax.annotation.Nonnull;
@@ -51,17 +49,6 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState) base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
         unlisted = ICProperties.appendConnections(unlisted);
         return new ExtendedBlockState(this, base.getProperties().toArray(new IProperty[0]), unlisted);
-    }
-
-    @Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
-        state = super.getExtendedState(state, world, pos);
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState ext = (IExtendedBlockState) state;
-            TileEntity te = world.getTileEntity(pos);
-            if (!(te instanceof ICTileEntityConnectable)) return state;
-            state = ext.withProperty(ICProperties.CONNECTIONS, ((ICTileEntityConnectable)te).wireConnections());
-        }
-        return state;
     }
 
     @Override public void neighborChanged(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull net.minecraft.block.Block blockIn, @Nonnull BlockPos fromPos) {

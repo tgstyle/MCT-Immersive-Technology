@@ -41,6 +41,8 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	@Override public boolean hasOutputConnection(EnumFacing side) { return side == facing; }
 
+	@Override protected String objBaseGroup() { return "Pipe"; }
+
 	@SideOnly(Side.CLIENT)
 	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this)); }
 

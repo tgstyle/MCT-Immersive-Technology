@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
-import com.immersiveconvergence.common.event.ICTickingRegistry;
+import com.immersiveconvergence.api.multiblock.ICTickingRegistry;
 import com.immersiveconvergence.api.multiblock.GenericShape;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;

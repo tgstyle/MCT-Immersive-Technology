@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.tileentities;
 
 import com.immersiveconvergence.api.block.ICSideConfig;
-import com.immersiveconvergence.common.event.ICTickingRegistry;
+import com.immersiveconvergence.api.multiblock.ICTickingRegistry;
 import com.immersiveconvergence.api.energy.ICFluxWrapper;
 import com.immersiveconvergence.api.energy.IICInternalFluxHandler;
 import com.immersiveconvergence.api.multiblock.GenericShape;

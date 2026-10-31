@@ -4,14 +4,15 @@ import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.ICIntegration;
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.client.IICOBJModelCallback;
-import com.immersiveconvergence.api.energy.ICTileEntityConnectable;
-import com.immersiveconvergence.api.energy.ICWireType;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
 import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.wires.ICConnectionPoint;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectable;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -32,7 +33,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -44,9 +44,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 
-public abstract class TileEntityCommonValve extends ICTileEntityConnectable implements ICBlockInterfaces.IDirectionalTile, ITickable, ICBlockInterfaces.IBlockOverlayText, ICBlockInterfaces.IPlayerInteraction, ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IActiveState, ICBlockInterfaces.IAttachedIntegerProperties, IICOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
+public abstract class TileEntityCommonValve extends ICTileEntityConnectable implements ICBlockInterfaces.IDirectionalTile, ITickable, ICBlockInterfaces.IBlockOverlayText, ICBlockInterfaces.IPlayerInteraction, ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IActiveState, ICBlockInterfaces.IAttachedIntegerProperties, ICBlockInterfaces.IHasObjProperty, IICOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
 
 	final TranslationKey overlayNormal;
 	final TranslationKey overlaySneakingFirstLine;
@@ -89,7 +91,7 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 
 	@Override public boolean getIsActive() { return open; }
 
-	@Override @Nonnull public Vec3d connectionOffset(@Nonnull ICWireType cable, @Nullable BlockPos otherEnd) {
+	@Override @Nonnull public Vec3d offset(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) {
 		double radius = cable.getRenderDiameter() / 2;
 		return new Vec3d(.5 + (.5 - radius) * facing.getXOffset(), .5 + (.5 - radius) * facing.getYOffset(), .5 + (.5 - radius) * facing.getZOffset());
 	}
@@ -302,6 +304,10 @@ public abstract class TileEntityCommonValve extends ICTileEntityConnectable impl
 	@Override public boolean cannotRotate(@Nonnull EnumFacing axis) { return false; }
 
 	@Override @Nonnull public String getCacheKey(@Nonnull IBlockState object) { return rotation + ";" + facing.getIndex() + ";" + open; }
+
+	@Override public ArrayList<String> compileDisplayList() { return new ArrayList<>(Arrays.asList(objBaseGroup(), open ? "Handle_Open" : "Handle_Closed")); }
+
+	protected String objBaseGroup() { return "Base"; }
 
 	@SideOnly(Side.CLIENT)
 	@Override public boolean shouldRenderGroup(@Nonnull IBlockState object, @Nonnull String group) {
