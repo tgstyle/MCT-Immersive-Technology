@@ -8,7 +8,7 @@
   "category": "misc",
   "key": {
     "H": {
-      "item": "immersiveengineering:furnace_heater"
+      "tag": "immersivetechnology:furnace_heater"
     },
     "R": {
       "item": "minecraft:redstone"

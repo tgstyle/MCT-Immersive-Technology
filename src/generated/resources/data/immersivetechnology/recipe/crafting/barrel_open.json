@@ -8,10 +8,10 @@
   "category": "misc",
   "key": {
     "B": {
-      "item": "immersiveengineering:sheetmetal_iron"
+      "tag": "immersivetechnology:sheetmetal_iron"
     },
     "S": {
-      "item": "immersiveengineering:slab_sheetmetal_iron"
+      "tag": "immersivetechnology:slab_sheetmetal_iron"
     }
   },
   "pattern": [

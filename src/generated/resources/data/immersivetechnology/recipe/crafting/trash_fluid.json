@@ -8,7 +8,7 @@
   "category": "misc",
   "key": {
     "B": {
-      "item": "immersiveengineering:fluid_pump"
+      "tag": "immersivetechnology:fluid_pump"
     },
     "P": {
       "tag": "c:plates/iron"

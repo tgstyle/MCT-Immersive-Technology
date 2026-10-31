@@ -34,6 +34,12 @@ ordering="AFTER"
 side="BOTH"
 
 [[dependencies.immersivetechnology]]
+modId="immersivefabrication"
+type="optional"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.immersivetechnology]]
 modId="immersiveconvergence"
 mandatory=true
 versionRange="${version_ic}"

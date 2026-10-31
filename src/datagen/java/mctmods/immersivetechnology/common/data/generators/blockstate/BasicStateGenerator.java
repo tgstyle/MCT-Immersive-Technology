@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.registration.BlockEntry;
 import com.google.common.collect.ImmutableMap;
 import com.immersiveconvergence.api.client.ConfigurableSidesModel;
@@ -185,7 +186,7 @@ public class BasicStateGenerator {
             }
         }
 
-        createValveVariants();
+        if (ICMods.ieContent()) { createValveVariants(); }
         createBaseHeaterVariants();
     }
 

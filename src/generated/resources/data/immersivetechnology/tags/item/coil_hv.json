@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "immersiveengineering:coil_hv",
+      "required": false
+    },
+    {
+      "id": "immersivefabrication:coil_hv",
+      "required": false
+    }
+  ]
+}

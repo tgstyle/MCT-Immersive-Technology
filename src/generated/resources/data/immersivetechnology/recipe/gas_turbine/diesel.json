@@ -7,7 +7,7 @@
   ],
   "type": "immersivetechnology:gas_turbine",
   "inputAmount": 114,
-  "inputTag": "forge:diesel",
+  "inputTag": "c:diesel",
   "output": {
     "amount": 1000,
     "id": "immersivetechnology:flue_gas"

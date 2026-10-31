@@ -3,6 +3,10 @@
     {
       "id": "immersiveengineering:screwdriver",
       "required": false
+    },
+    {
+      "id": "immersivefabrication:screwdriver",
+      "required": false
     }
   ]
 }

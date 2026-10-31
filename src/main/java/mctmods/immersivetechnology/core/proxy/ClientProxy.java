@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.core.proxy;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import mctmods.immersivetechnology.client.gui.*;
-import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.manual.ICManual;
 import com.immersiveconvergence.api.manual.ICManualCategory;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
@@ -121,7 +121,7 @@ public class ClientProxy extends CommonProxy {
         event.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
         event.register(MenuTypes.STYLENOX_MENU.getType(), StyleNOXScreen::new);
         event.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
-        if (ICMods.immersiveEngineering()) {
+        if (ICMods.ieContent()) {
             event.register(MenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
             event.register(MenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
             event.register(MenuTypes.VALVE_LOAD.getType(), ValveLoadScreen::new);

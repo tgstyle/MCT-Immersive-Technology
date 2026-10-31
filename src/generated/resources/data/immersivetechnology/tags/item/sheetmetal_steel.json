@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "immersiveengineering:sheetmetal_steel",
+      "required": false
+    },
+    {
+      "id": "immersivefabrication:steel_sheetmetal",
+      "required": false
+    }
+  ]
+}

@@ -2,7 +2,7 @@ package mctmods.immersivetechnology.common.blocks.metal;
 
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.block.ModProperties;
-import com.immersiveconvergence.api.energy.ICWires;
+import com.immersiveconvergence.api.wires.ICWires;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.core.registration.ModTags;

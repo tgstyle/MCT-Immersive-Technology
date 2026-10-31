@@ -8,7 +8,7 @@
   "category": "misc",
   "key": {
     "i": {
-      "item": "immersiveengineering:ingot_hop_graphite"
+      "tag": "c:ingots/hop_graphite"
     },
     "s": {
       "tag": "c:ingots/hop_graphite"

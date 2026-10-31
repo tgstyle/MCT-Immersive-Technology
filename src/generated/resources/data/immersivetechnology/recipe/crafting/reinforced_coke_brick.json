@@ -8,7 +8,7 @@
   "category": "building",
   "key": {
     "C": {
-      "item": "immersiveengineering:cokebrick"
+      "tag": "immersivetechnology:coke_brick"
     },
     "P": {
       "tag": "c:plates/steel"

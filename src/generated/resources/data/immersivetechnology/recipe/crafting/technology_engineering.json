@@ -14,7 +14,7 @@
       "tag": "c:ingots/electrum"
     },
     "S": {
-      "item": "immersiveengineering:component_steel"
+      "tag": "immersivetechnology:component_steel"
     }
   },
   "pattern": [

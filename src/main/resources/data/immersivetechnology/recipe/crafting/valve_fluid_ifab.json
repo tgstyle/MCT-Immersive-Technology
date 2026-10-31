@@ -1,0 +1,43 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "immersivefabrication"
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "immersiveengineering"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "immersivefabrication:circuit_board"
+    },
+    "I": {
+      "item": "immersivefabrication:component_iron"
+    },
+    "L": {
+      "tag": "c:plates/iron"
+    },
+    "P": {
+      "item": "immersivefabrication:fluid_pipe"
+    },
+    "R": {
+      "item": "minecraft:repeater"
+    }
+  },
+  "pattern": [
+    "LRL",
+    "PIP",
+    "LCL"
+  ],
+  "result": {
+    "count": 2,
+    "id": "immersivetechnology:valve_fluid"
+  }
+}

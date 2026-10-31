@@ -249,7 +249,7 @@ public class ModBlocks {
 
     public static void initBlocks() {
         Metal.init();
-        if (ICMods.immersiveEngineering()) { Metal.initValves(); }
+        if (ICMods.ieContent()) { Metal.initValves(); }
         Stone.init();
         Wooden.init();
         TO_SLAB.put(Stone.REINFORCED_COKE_BRICK.getId(), Stone.SLAB_REINFORCED_COKE_BRICK);

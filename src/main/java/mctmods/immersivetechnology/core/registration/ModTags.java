@@ -35,6 +35,15 @@ public class ModTags {
     public static final TagKey<Item> igniters_consume = ItemTags.create(modLoc("igniters_consume"));
     public static final TagKey<Item> formationTools = ItemTags.create(modLoc("formation_tools"));
     public static final TagKey<Item> screwdrivers = ItemTags.create(modLoc("screwdrivers"));
+    public static final TagKey<Item> sheetmetalIron = ItemTags.create(modLoc("sheetmetal_iron"));
+    public static final TagKey<Item> slabSheetmetalIron = ItemTags.create(modLoc("slab_sheetmetal_iron"));
+    public static final TagKey<Item> sheetmetalSteel = ItemTags.create(modLoc("sheetmetal_steel"));
+    public static final TagKey<Item> slabSheetmetalSteel = ItemTags.create(modLoc("slab_sheetmetal_steel"));
+    public static final TagKey<Item> coilHv = ItemTags.create(modLoc("coil_hv"));
+    public static final TagKey<Item> componentSteel = ItemTags.create(modLoc("component_steel"));
+    public static final TagKey<Item> cokeBrick = ItemTags.create(modLoc("coke_brick"));
+    public static final TagKey<Item> furnaceHeater = ItemTags.create(modLoc("furnace_heater"));
+    public static final TagKey<Item> fluidPump = ItemTags.create(modLoc("fluid_pump"));
 
     private static ResourceLocation cLoc(String path) { return ResourceLocation.fromNamespaceAndPath("c", path); }
     private static ResourceLocation modLoc(String path) { return Reference.rl(path); }
