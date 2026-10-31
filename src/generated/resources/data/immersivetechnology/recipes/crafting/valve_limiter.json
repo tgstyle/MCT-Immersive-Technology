@@ -3,7 +3,8 @@
   "category": "misc",
   "conditions": [
     {
-      "type": "immersiveconvergence:ie_enabled"
+      "modid": "immersiveengineering",
+      "type": "forge:mod_loaded"
     }
   ],
   "key": {

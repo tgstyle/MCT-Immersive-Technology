@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.loot.BlockEntityDropLootEntry;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
@@ -31,6 +32,11 @@ public class BlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.Metal.TRASH_FLUID.get());
         dropSelf(ModBlocks.Metal.TRASH_ITEM.get());
         dropSelf(ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get());
+        if (ICMods.ieContent()) {
+            dropSelf(ModBlocks.Metal.VALVE_FLUID.get());
+            dropSelf(ModBlocks.Metal.VALVE_LIMITER.get());
+            dropSelf(ModBlocks.Metal.VALVE_LOAD.get());
+        }
         dropSelf(ModBlocks.Stone.REINFORCED_COKE_BRICK.get());
         dropSelf(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get());
         ModBlocks.NEEDS_IE.forEach(entry -> add(entry.get(), LootTable.lootTable().withPool(createPoolBuilder().add(TagEntry.tagContents(ModItemTags.drops(entry))))));

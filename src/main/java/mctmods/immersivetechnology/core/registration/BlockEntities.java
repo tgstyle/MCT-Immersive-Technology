@@ -16,6 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class BlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MODID);
     private static final DeferredRegister<BlockEntityType<?>> REGISTER_IE = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MODID);
+    private static final DeferredRegister<BlockEntityType<?>> REGISTER_CONTENT = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Reference.MODID);
 
 
     public static final RegistryObject<BlockEntityType<AdvancedCokeOvenBaseHeaterBlockEntity>> ADVANCED_COKE_OVEN_BASEHEATER = REGISTER.register(
@@ -60,17 +61,17 @@ public class BlockEntities {
             () -> BlockEntityType.Builder.of(TrashItemBlockEntity::new, ModBlocks.Metal.TRASH_ITEM.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER_IE.register(
+    public static final RegistryObject<BlockEntityType<ValveFluidBlockEntity>> VALVE_FLUID = REGISTER_CONTENT.register(
             "valve_fluid",
             () -> BlockEntityType.Builder.of(ValveFluidBlockEntity::new, ModBlocks.Metal.VALVE_FLUID.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER_IE.register(
+    public static final RegistryObject<BlockEntityType<ValveLoadBlockEntity>> VALVE_LOAD = REGISTER_CONTENT.register(
             "valve_load",
             () -> BlockEntityType.Builder.of(ValveLoadBlockEntity::new, ModBlocks.Metal.VALVE_LOAD.get()).build(null)
     );
 
-    public static final RegistryObject<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER_IE.register(
+    public static final RegistryObject<BlockEntityType<ValveLimiterBlockEntity>> VALVE_LIMITER = REGISTER_CONTENT.register(
             "valve_limiter",
             () -> BlockEntityType.Builder.of(ValveLimiterBlockEntity::new, ModBlocks.Metal.VALVE_LIMITER.get()).build(null)
     );
@@ -82,6 +83,7 @@ public class BlockEntities {
 
     public static void init(IEventBus event) {
         REGISTER.register(event);
+        if (ICMods.ieContent()) { REGISTER_CONTENT.register(event); }
         if (ICMods.immersiveEngineering()) { REGISTER_IE.register(event); }
     }
 }

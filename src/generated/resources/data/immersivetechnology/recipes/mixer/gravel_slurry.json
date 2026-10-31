@@ -2,7 +2,8 @@
   "type": "immersiveengineering:mixer",
   "conditions": [
     {
-      "type": "immersiveconvergence:ie_enabled"
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
     }
   ],
   "energy": 3200,

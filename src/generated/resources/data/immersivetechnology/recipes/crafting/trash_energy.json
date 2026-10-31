@@ -8,7 +8,7 @@
   ],
   "key": {
     "C": {
-      "item": "immersiveengineering:coil_hv"
+      "tag": "immersivetechnology:coil_hv"
     },
     "P": {
       "tag": "forge:plates/iron"

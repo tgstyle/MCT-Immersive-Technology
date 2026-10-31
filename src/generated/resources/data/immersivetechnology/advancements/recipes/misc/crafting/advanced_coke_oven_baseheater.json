@@ -10,9 +10,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "immersiveengineering:furnace_heater"
-            ]
+            "tag": "immersivetechnology:furnace_heater"
           }
         ]
       },

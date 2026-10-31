@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.google.gson.JsonObject;
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.crafting.builders.ICIEConditional;
 import com.immersiveconvergence.api.crafting.builders.ICIEContent;
@@ -24,16 +26,18 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -64,31 +68,31 @@ public class Recipes extends RecipeProvider {
 
     private void itemRecipes(@Nonnull Consumer<FinishedRecipe> consumer) {
         Consumer<FinishedRecipe> ie = ICIEConditional.wrap(consumer);
+        Consumer<FinishedRecipe> ieLoaded = recipe -> consumer.accept(new ModLoadedRecipe(recipe, "immersiveengineering"));
         Item componentIron = ICIEContent.item(ICIEContent.COMPONENT_IRON);
         Item circuitBoard = ICIEContent.item(ICIEContent.CIRCUIT_BOARD);
         Item connectorRedstone = ICIEContent.item(ICIEContent.CONNECTOR_REDSTONE);
-        Item slabSheetmetalIron = ICIEContent.item(ICIEContent.SLAB_SHEETMETAL_IRON);
-        Item slabSheetmetalSteel = ICIEContent.item(ICIEContent.SLAB_SHEETMETAL_STEEL);
-        Item furnaceHeater = ICIEContent.item(ICIEContent.FURNACE_HEATER);
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('P', forgeTag("plates/steel")).define('C', ICIEContent.item(ICIEContent.COKEBRICK)).pattern("P").pattern("C").unlockedBy("has_steel_plate", has(forgeTag("plates/steel"))).save(ie, toResourceLocation("reinforced_coke_brick"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('P', forgeTag("plates/steel")).define('C', ModItemTags.itTag("cokebrick")).pattern("P").pattern("C").unlockedBy("has_steel_plate", has(forgeTag("plates/steel"))).save(ie, toResourceLocation("reinforced_coke_brick"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.REINFORCED_COKE_BRICK.get().asItem(), 1).define('S', ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get()).pattern("S").pattern("S").unlockedBy("has_slab_reinforced_coke_brick", has(ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get())).save(consumer, toResourceLocation("reinforced_coke_brick_slab_back"));
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Stone.SLAB_REINFORCED_COKE_BRICK.get().asItem(), 6).define('B', ModBlocks.Stone.REINFORCED_COKE_BRICK.get()).pattern("BBB").unlockedBy("has_reinforced_coke_brick", has(ModBlocks.Stone.REINFORCED_COKE_BRICK.get())).save(consumer, toResourceLocation("reinforced_coke_brick_slab"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get().asItem(), 4).define('C', forgeTag("sheetmetals/copper")).define('S', Ingredient.of(ICIEContent.item(ICIEContent.COMPONENT_STEEL))).define('E', forgeTag("ingots/electrum")).pattern("CSC").pattern("SES").pattern("CSC").unlockedBy("has_copper_sheetmetal", has(forgeTag("sheetmetals/copper"))).save(ie, toResourceLocation("technology_engineering"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.Metal.TECHNOLOGY_ENGINEERING.get().asItem(), 4).define('C', forgeTag("sheetmetals/copper")).define('S', ModItemTags.itTag("component_steel")).define('E', forgeTag("ingots/electrum")).pattern("CSC").pattern("SES").pattern("CSC").unlockedBy("has_copper_sheetmetal", has(forgeTag("sheetmetals/copper"))).save(ie, toResourceLocation("technology_engineering"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_OPEN.get().asItem(), 1).define('S', Ingredient.of(slabSheetmetalIron)).define('B', Ingredient.of(ICIEContent.item(ICIEContent.SHEETMETAL_IRON))).pattern("S S").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_iron", has(slabSheetmetalIron)).save(ie, toResourceLocation("barrel_open"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_STEEL.get().asItem(), 1).define('S', Ingredient.of(slabSheetmetalSteel)).define('B', Ingredient.of(ICIEContent.item(ICIEContent.SHEETMETAL_STEEL))).pattern("SSS").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_steel", has(slabSheetmetalSteel)).save(ie, toResourceLocation("barrel_steel"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_OPEN.get().asItem(), 1).define('S', ModItemTags.itTag("slab/sheetmetal_iron")).define('B', ModItemTags.itTag("sheetmetal/iron")).pattern("S S").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_iron", has(ModItemTags.itTag("slab/sheetmetal_iron"))).save(ie, toResourceLocation("barrel_open"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.Metal.BARREL_STEEL.get().asItem(), 1).define('S', ModItemTags.itTag("slab/sheetmetal_steel")).define('B', ModItemTags.itTag("sheetmetal/steel")).pattern("SSS").pattern("B B").pattern("BBB").unlockedBy("has_slab_sheetmetal_steel", has(ModItemTags.itTag("slab/sheetmetal_steel"))).save(ie, toResourceLocation("barrel_steel"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ITEM.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('C', Tags.Items.CHESTS_WOODEN).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(consumer, toResourceLocation("trash_item"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_FLUID.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('B', ICIEContent.item(ICIEContent.FLUID_PUMP)).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PBP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("trash_fluid"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ENERGY.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('C', ICIEContent.item(ICIEContent.COIL_HV)).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("trash_energy"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_FLUID.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('B', ModItemTags.itTag("fluid_pump")).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PBP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("trash_fluid"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.TRASH_ENERGY.get().asItem(), 1).define('P', forgeTag("plates/iron")).define('C', ModItemTags.itTag("coil_hv")).define('S', forgeTag("sheetmetals/iron")).pattern("PPP").pattern("PCP").pattern(" S ").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("trash_energy"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Connector.CONNECTOR_TIMER.get().asItem(), 1).define('G', Tags.Items.GLASS_PANES).define('C', connectorRedstone).define('P', ICIEContent.item(ICIEContent.LOGIC_CIRCUIT)).define('Q', Items.QUARTZ).pattern("GCG").pattern("PPP").pattern("GQG").unlockedBy("has_redstone_connector", has(connectorRedstone)).save(ie, toResourceLocation("connector_timer"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Connector.CONNECTOR_TIMER.get().asItem(), 1).define('G', Tags.Items.GLASS_PANES).define('C', connectorRedstone).define('P', ICIEContent.item(ICIEContent.LOGIC_CIRCUIT)).define('Q', Items.QUARTZ).pattern("GCG").pattern("PPP").pattern("GQG").unlockedBy("has_redstone_connector", has(connectorRedstone)).save(ieLoaded, toResourceLocation("connector_timer"));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_FLUID.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.FLUID_PIPE)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("valve_fluid"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LIMITER.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.CONVEYOR_BASIC)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("valve_limiter"));
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LOAD.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.CONNECTOR_HV)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ie, toResourceLocation("valve_load"));
+        if (ICMods.ieContent()) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_FLUID.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.FLUID_PIPE)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ieLoaded, toResourceLocation("valve_fluid"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LIMITER.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICMods.ie("conveyor_basic"))).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ieLoaded, toResourceLocation("valve_limiter"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.VALVE_LOAD.get().asItem(), 2).define('L', forgeTag("plates/iron")).define('R', connectorRedstone).define('P', ICIEContent.item(ICIEContent.CONNECTOR_HV)).define('I', componentIron).define('C', circuitBoard).pattern("LRL").pattern("PIP").pattern("LCL").unlockedBy("has_iron_plate", has(forgeTag("plates/iron"))).save(ieLoaded, toResourceLocation("valve_load"));
+        }
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), 1).define('S', forgeTag("sheetmetals/iron")).define('H', furnaceHeater).define('R', Items.REDSTONE).pattern("SSS").pattern("HRH").pattern("SSS").unlockedBy("has_furnace_heater", has(furnaceHeater)).save(ie, toResourceLocation("advanced_coke_oven_baseheater"));
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), 1).define('S', forgeTag("sheetmetals/iron")).define('H', ModItemTags.itTag("furnace_heater")).define('R', Items.REDSTONE).pattern("SSS").pattern("HRH").pattern("SSS").unlockedBy("has_furnace_heater", has(ModItemTags.itTag("furnace_heater"))).save(ie, toResourceLocation("advanced_coke_oven_baseheater"));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.FORMATION_TOOL.get(), 1).define('I', forgeTag("ingots/iron")).define('E', forgeTag("ingots/electrum")).pattern(" I ").pattern(" EI").pattern("I  ").unlockedBy("has_iron_ingot", has(forgeTag("ingots/iron"))).save(consumer, toResourceLocation("formation_tool"));
     }
@@ -150,8 +154,9 @@ public class Recipes extends RecipeProvider {
     }
 
     private void recipesMixer(@Nonnull Consumer<FinishedRecipe> out) {
-        ICMixerRecipeBuilder.builder().output(ModFluids.SALT_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(ModTags.saltForge, 4).energy(3200).build(out, toResourceLocation("mixer/salt_slurry"));
-        ICMixerRecipeBuilder.builder().output(ModFluids.GRAVEL_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(Tags.Items.GRAVEL, 4).energy(3200).build(out, toResourceLocation("mixer/gravel_slurry"));
+        Consumer<FinishedRecipe> ieLoaded = recipe -> out.accept(new ModLoadedRecipe(recipe, "immersiveengineering"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.SALT_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(ModTags.saltForge, 4).energy(3200).build(ieLoaded, toResourceLocation("mixer/salt_slurry"));
+        ICMixerRecipeBuilder.builder().output(ModFluids.GRAVEL_SLURRY.getStill(), 1000).fluidInput(FluidTags.WATER, 1000).input(Tags.Items.GRAVEL, 4).energy(3200).build(ieLoaded, toResourceLocation("mixer/gravel_slurry"));
     }
 
     private void recipesRadiator(@Nonnull Consumer<FinishedRecipe> out) {
@@ -202,4 +207,26 @@ public class Recipes extends RecipeProvider {
 
     @SuppressWarnings("SameParameterValue")
     private static ICondition modLoaded(String modId) { return new ModLoadedCondition(modId); }
+
+    private record ModLoadedRecipe(FinishedRecipe recipe, String modId) implements FinishedRecipe {
+        @Override public void serializeRecipeData(@Nonnull JsonObject json) { recipe.serializeRecipeData(json); }
+
+        @Override public @Nonnull JsonObject serializeRecipe() {
+            JsonObject json = recipe.serializeRecipe();
+            json.add("conditions", CraftingHelper.serialize(new ICondition[] {modLoaded(modId)}));
+            return json;
+        }
+
+        @Override public @Nonnull ResourceLocation getId() { return recipe.getId(); }
+
+        @Override public @Nonnull RecipeSerializer<?> getType() { return recipe.getType(); }
+
+        @Override public @Nullable JsonObject serializeAdvancement() {
+            JsonObject json = recipe.serializeAdvancement();
+            if (json != null) { json.add("conditions", CraftingHelper.serialize(new ICondition[] {modLoaded(modId)})); }
+            return json;
+        }
+
+        @Override public @Nullable ResourceLocation getAdvancementId() { return recipe.getAdvancementId(); }
+    }
 }

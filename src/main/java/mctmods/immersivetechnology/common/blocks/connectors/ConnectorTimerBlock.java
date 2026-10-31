@@ -3,7 +3,7 @@ package mctmods.immersivetechnology.common.blocks.connectors;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.energy.ICWires;
+import com.immersiveconvergence.api.wires.ICWires;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
 import net.minecraft.core.BlockPos;

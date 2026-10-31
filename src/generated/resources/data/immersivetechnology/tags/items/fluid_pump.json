@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "immersiveengineering:fluid_pump",
+      "required": false
+    },
+    {
+      "id": "immersivefabrication:fluid_pump",
+      "required": false
+    }
+  ]
+}

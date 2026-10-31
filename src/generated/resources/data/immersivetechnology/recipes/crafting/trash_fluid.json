@@ -8,7 +8,7 @@
   ],
   "key": {
     "B": {
-      "item": "immersiveengineering:fluid_pump"
+      "tag": "immersivetechnology:fluid_pump"
     },
     "P": {
       "tag": "forge:plates/iron"

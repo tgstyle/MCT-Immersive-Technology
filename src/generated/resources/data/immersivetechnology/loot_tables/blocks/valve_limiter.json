@@ -10,9 +10,8 @@
       ],
       "entries": [
         {
-          "type": "minecraft:tag",
-          "expand": false,
-          "name": "immersivetechnology:drops/valve_limiter"
+          "type": "minecraft:item",
+          "name": "immersivetechnology:valve_limiter"
         }
       ],
       "rolls": 1.0

@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import com.immersiveconvergence.api.ICMods;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
@@ -49,6 +50,10 @@ public class ModBlockTags extends BlockTagsProvider {
         registerMineable(tagIronTool);
 
         registerMineable(tagAxe, ModBlocks.Wooden.CRATE_CREATIVE);
+        if (ICMods.ieContent()) {
+            registerMineable(tagPickAxe, ModBlocks.Metal.VALVE_FLUID, ModBlocks.Metal.VALVE_LIMITER, ModBlocks.Metal.VALVE_LOAD);
+            registerMineable(tagIronTool, ModBlocks.Metal.VALVE_FLUID, ModBlocks.Metal.VALVE_LIMITER, ModBlocks.Metal.VALVE_LOAD);
+        }
         registerMineable(tagPickAxe,
                 ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER,
                 ModBlocks.Metal.BARREL_CREATIVE,
@@ -58,9 +63,6 @@ public class ModBlockTags extends BlockTagsProvider {
                 ModBlocks.Metal.TRASH_ENERGY,
                 ModBlocks.Metal.TRASH_FLUID,
                 ModBlocks.Metal.TRASH_ITEM,
-                ModBlocks.Metal.VALVE_FLUID,
-                ModBlocks.Metal.VALVE_LIMITER,
-                ModBlocks.Metal.VALVE_LOAD,
                 ModBlocks.Metal.TECHNOLOGY_ENGINEERING,
                 ModBlocks.Stone.REINFORCED_COKE_BRICK
         );
@@ -74,9 +76,6 @@ public class ModBlockTags extends BlockTagsProvider {
                 ModBlocks.Metal.TRASH_ENERGY,
                 ModBlocks.Metal.TRASH_FLUID,
                 ModBlocks.Metal.TRASH_ITEM,
-                ModBlocks.Metal.VALVE_FLUID,
-                ModBlocks.Metal.VALVE_LIMITER,
-                ModBlocks.Metal.VALVE_LOAD,
                 ModBlocks.Metal.TECHNOLOGY_ENGINEERING,
                 ModBlocks.Stone.REINFORCED_COKE_BRICK
         );

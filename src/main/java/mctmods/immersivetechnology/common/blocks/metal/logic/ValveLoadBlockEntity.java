@@ -3,10 +3,16 @@ package mctmods.immersivetechnology.common.blocks.metal.logic;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.IServerTickableBE;
-import com.immersiveconvergence.api.energy.ICConnectionPoint;
-import com.immersiveconvergence.api.energy.ICTargetingInfo;
-import com.immersiveconvergence.api.energy.ICWireType;
-import com.immersiveconvergence.api.energy.IICEnergyConnector;
+import com.immersiveconvergence.api.wires.ICConnectionPoint;
+import com.immersiveconvergence.api.wires.ICTargetingInfo;
+import com.immersiveconvergence.api.wires.ICWire;
+import com.immersiveconvergence.api.wires.ICWireCategory;
+import com.immersiveconvergence.api.wires.ICWireCause;
+import com.immersiveconvergence.api.wires.ICWireRole;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.ICWires;
+import com.immersiveconvergence.api.wires.IICEnergyConnector;
+import com.immersiveconvergence.api.wires.IICEnergySource;
 import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
@@ -37,7 +43,7 @@ import static net.minecraftforge.common.capabilities.ForgeCapabilities.ENERGY;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IICEnergyConnector, BlockInterfaces.IMirrorAble {
+public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IICEnergyConnector, IICEnergySource, BlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
     protected static final int LEFT_INDEX = 1;
     protected ICWireType leftType;
@@ -70,7 +76,25 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         if (level == null) return;
         long time = level.getGameTime();
         if (time % 12 == ((worldPosition.getX() ^ worldPosition.getZ()) & 11)) updateRedstoneState();
-        if (!level.isClientSide && getBlockState().getValue(OPEN)) handleDirectTransfers();
+        if (!level.isClientSide && getBlockState().getValue(OPEN)) {
+            handleDirectTransfers();
+            offerBuffer();
+        }
+    }
+
+    private void offerBuffer() {
+        if (bufferedEnergy <= 0 || !isSideWired(false)) { return; }
+        ICConnectionPoint output = new ICConnectionPoint(worldPosition, getOutputWireIndex());
+        ICConnectionPoint hop = firstHop(output);
+        if (hop == null) { return; }
+        ICWires.energy(getLevelNonnull()).offer(output, hop, () -> longToInt(bufferedEnergy), this::extracted);
+    }
+
+    @Nullable private ICConnectionPoint firstHop(ICConnectionPoint output) {
+        for (ICWire wire : ICWires.network(getLevelNonnull()).wiresAt(output)) {
+            if (wire.getType().getRole() == ICWireRole.ENERGY) { return wire.other(output); }
+        }
+        return null;
     }
 
     private void handleDirectTransfers() {
@@ -88,17 +112,15 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
             extracted = Math.min(canAccept, (int) Math.min(bufferedEnergy, Integer.MAX_VALUE));
             int inserted = outputStorage.receiveEnergy(extracted, false);
             bufferedEnergy -= inserted;
-            acceptedAmount += inserted;
-            packets++;
+            if (inserted > 0) { acceptedAmount += inserted; packets++; }
         } else if (outputWired) {
-            extracted = inputStorage.extractEnergy(canAccept, false);
+            extracted = inputStorage.extractEnergy(Math.min(canAccept, bufferRoom(null)), false);
             bufferedEnergy += extracted;
         } else {
             extracted = inputStorage.extractEnergy(canAccept, true);
             int inserted = outputStorage.receiveEnergy(extracted, false);
             inputStorage.extractEnergy(inserted, false);
-            acceptedAmount += inserted;
-            packets++;
+            if (inserted > 0) { acceptedAmount += inserted; packets++; }
         }
         efficientSetChanged();
     }
@@ -107,7 +129,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         int canAccept = Integer.MAX_VALUE;
         canAccept = timeLimit > 0 ? Math.min(Math.max(timeLimit - longToInt(acceptedAmount), 0), canAccept) : canAccept;
         if (outputWired) {
-            canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - (int) bufferedEnergy, 0), canAccept) : canAccept;
+            canAccept = keepSize > 0 ? Math.min(Math.max(keepSize - longToInt(bufferedEnergy), 0), canAccept) : canAccept;
             canAccept = Math.min(canAccept, getWireRate(false));
         } else {
             if (outputStorage == null) { canAccept = 0; }
@@ -190,25 +212,21 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override public boolean canConnect() { return true; }
 
-    @Override public boolean acceptsCable(@Nonnull ICWireType cable, @Nonnull ICConnectionPoint target, @Nonnull Vec3i offset) {
-        if (!offset.equals(Vec3i.ZERO)) return false;
-        ICWireType atConn = target.index() == LEFT_INDEX ? leftType : rightType;
-        return canAttach(cable, atConn);
+    @Override public boolean accepts(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) { return cable.getRole() == ICWireRole.ENERGY && (point.index() == LEFT_INDEX ? leftType : rightType) == null; }
+
+    @Override public void onWireAdded(@Nonnull ICConnectionPoint point, @Nonnull ICWire wire) {
+        if (point.index() == LEFT_INDEX) leftType = wire.getType(); else rightType = wire.getType();
+        updateMirrorState();
+        wiresChanged();
     }
 
-    protected boolean canAttach(ICWireType toAttach, @Nullable ICWireType atConn) { return atConn == null || toAttach.equals(atConn); }
-
-    @Override public void cableConnected(@Nonnull ICWireType cable, @Nonnull ICConnectionPoint target) {
-        if (target.index() == LEFT_INDEX) leftType = cable; else rightType = cable;
+    @Override public void onWireRemoved(@Nonnull ICConnectionPoint point, @Nonnull ICWire wire, @Nonnull ICWireCause cause) {
+        if (hasNoExternalConnections(point)) {
+            if (point.index() == LEFT_INDEX) { leftType = null; }
+            else { rightType = null; }
+        }
         updateMirrorState();
-        markContainingBlockForUpdate(null);
-    }
-
-    @Override public void cableRemoved(@Nullable ICWireType type, @Nonnull ICConnectionPoint attachedPoint) {
-        if (type == null) { leftType = rightType = null; }
-        else { if (attachedPoint.index() == LEFT_INDEX) leftType = null; else rightType = null; }
-        updateMirrorState();
-        this.markContainingBlockForUpdate(null);
+        wiresChanged();
     }
 
     protected void updateMirrorState() {
@@ -221,14 +239,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         }
     }
 
-    private int getLevel(String cat) {
-        if (ICWireType.LV_CATEGORY.equals(cat)) return 1;
-        if (ICWireType.MV_CATEGORY.equals(cat)) return 2;
-        if (ICWireType.HV_CATEGORY.equals(cat)) return 3;
+    private int getLevel(ICWireCategory cat) {
+        if (cat == ICWireCategory.LV) return 1;
+        if (cat == ICWireCategory.MV) return 2;
+        if (cat == ICWireCategory.HV) return 3;
         return 0;
     }
 
-    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICWireType cable) { return getConnectionOffset(cable, here.index() == RIGHT_INDEX); }
+    @Override @Nonnull public Vec3 offset(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) { return getConnectionOffset(cable, point.index() == RIGHT_INDEX); }
 
     protected Vec3 getConnectionOffset(ICWireType type, boolean right) {
         double conRadius = type.getRenderRadius();
@@ -264,9 +282,9 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         return new Vec3(xOff, yOff, zOff);
     }
 
-    @Override @Nonnull public Collection<ICConnectionPoint> connectionPoints() { return List.of(new ICConnectionPoint(worldPosition, LEFT_INDEX), new ICConnectionPoint(worldPosition, RIGHT_INDEX)); }
+    @Override @Nonnull public Collection<ICConnectionPoint> points() { return List.of(new ICConnectionPoint(worldPosition, LEFT_INDEX), new ICConnectionPoint(worldPosition, RIGHT_INDEX)); }
 
-    @Override @Nullable public ICConnectionPoint targetedPoint(@Nonnull ICTargetingInfo target, @Nonnull Vec3i offset) {
+    @Override @Nullable public ICConnectionPoint pointAt(@Nonnull ICTargetingInfo target, @Nonnull Vec3i offset) {
         if (!offset.equals(Vec3i.ZERO)) return null;
         ICConnectionPoint leftCP = new ICConnectionPoint(worldPosition, LEFT_INDEX);
         ICConnectionPoint rightCP = new ICConnectionPoint(worldPosition, RIGHT_INDEX);
@@ -331,23 +349,15 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         return true;
     }
 
-    @Override public boolean isEnergySource(ICConnectionPoint cp) {
+    @Override public boolean isSource(@Nonnull ICConnectionPoint point) {
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
         int outputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
         if (flip) outputIndex = 1 - outputIndex;
-        return cp.index() == outputIndex;
+        return point.index() == outputIndex;
     }
 
-    @Override public boolean isEnergySink(ICConnectionPoint cp) {
-        boolean mirrored = getIsMirrored();
-        boolean flip = !facing.getAxis().isVertical();
-        int inputIndex = mirrored ? LEFT_INDEX : RIGHT_INDEX;
-        if (flip) inputIndex = 1 - inputIndex;
-        return cp.index() == inputIndex;
-    }
-
-    @Override public int energyAvailable() {
+    @Override public int available() {
         if (!getBlockState().getValue(OPEN)) return 0;
         long avail = bufferedEnergy;
         boolean outputWired = isSideWired(false);
@@ -355,7 +365,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         return (int) Math.min(avail, Integer.MAX_VALUE);
     }
 
-    @Override public void energyExtracted(int amount) {
+    @Override public void extracted(int amount) {
         if (amount > 0) {
             long drain = Math.min(amount, bufferedEnergy);
             bufferedEnergy -= drain;
@@ -365,25 +375,29 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         efficientSetChanged();
     }
 
-    @Override public int energyRequested() {
-        if (!getBlockState().getValue(OPEN)) return 0;
+    @Override public int demand(@Nonnull ICConnectionPoint point) {
+        if (isSource(point) || !getBlockState().getValue(OPEN)) return 0;
         boolean outputWired = isSideWired(false);
         IEnergyStorage outputStorage = outputWired ? null : getOutputEnergy();
         int req = getTransferLimit(outputWired, outputStorage);
         boolean inputWired = isSideWired(true);
         if (inputWired) req = Math.min(req, getWireRate(true));
-        return req;
+        return Math.min(req, bufferRoom(outputStorage));
     }
 
-    @Override public void energyInserted(int amount) {
-        int max = timeLimit > 0 ? Math.max(timeLimit - longToInt(acceptedAmount), 0) : amount;
-        amount = Math.min(amount, max);
-        bufferedEnergy += amount;
-        efficientSetChanged();
+    @Override public int accept(@Nonnull ICConnectionPoint point, int amount, boolean simulate) {
+        int accepted = Math.min(amount, demand(point));
+        if (!simulate && accepted > 0) {
+            bufferedEnergy += accepted;
+            efficientSetChanged();
+        }
+        return accepted;
     }
 
-    @Override public void energyPassedThrough(double amount) {
-        acceptedAmount += (long)amount;
-        packets++;
+    private int bufferRoom(@Nullable IEnergyStorage destination) {
+        long ceiling = isSideWired(false) ? getWireRate(false) : (destination != null ? Integer.MAX_VALUE : 0);
+        return longToInt(Math.max(0, ceiling - bufferedEnergy));
     }
+
+    @Override public void onPassthrough(@Nonnull ICConnectionPoint point, int amount) {}
 }

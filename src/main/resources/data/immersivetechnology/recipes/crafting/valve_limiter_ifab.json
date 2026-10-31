@@ -1,0 +1,44 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "immersivefabrication"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "immersiveengineering"
+      }
+    }
+  ],
+  "key": {
+    "C": {
+      "item": "immersivefabrication:circuit_board"
+    },
+    "I": {
+      "item": "immersivefabrication:component_iron"
+    },
+    "L": {
+      "tag": "forge:plates/iron"
+    },
+    "P": {
+      "item": "minecraft:hopper"
+    },
+    "R": {
+      "item": "minecraft:repeater"
+    }
+  },
+  "pattern": [
+    "LRL",
+    "PIP",
+    "LCL"
+  ],
+  "result": {
+    "count": 2,
+    "item": "immersivetechnology:valve_limiter"
+  },
+  "show_notification": true
+}

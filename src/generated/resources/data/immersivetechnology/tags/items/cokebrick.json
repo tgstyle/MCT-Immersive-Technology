@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "immersiveengineering:cokebrick",
+      "required": false
+    },
+    {
+      "id": "immersivefabrication:coke_brick",
+      "required": false
+    }
+  ]
+}

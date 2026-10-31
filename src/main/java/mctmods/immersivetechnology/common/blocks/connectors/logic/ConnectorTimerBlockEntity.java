@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.connectors.logic;
 
 import com.immersiveconvergence.api.block.BlockToolGates;
-import com.immersiveconvergence.api.energy.ICConnectionPoint;
-import com.immersiveconvergence.api.energy.ICConnectorRedstoneBlockEntity;
-import com.immersiveconvergence.api.energy.ICWireType;
+import com.immersiveconvergence.api.wires.ICConnectionPoint;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.connectors.ICConnectorRedstoneBlockEntity;
 import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
 import com.immersiveconvergence.core.lib.ICLib;
 import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
@@ -15,7 +15,6 @@ import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -206,6 +205,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
     }
 
     @Override public void writeCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
+        super.writeCustomNBT(nbt, descPacket);
         nbt.putInt("target", target);
         nbt.putInt("rotation", rotation);
         nbt.putInt("lastOutput", lastOutput);
@@ -215,6 +215,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
     }
 
     @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
+        super.readCustomNBT(nbt, descPacket);
         target = nbt.getInt("target");
         if (nbt.contains("rotation")) { rotation = nbt.getInt("rotation"); }
         lastOutput = nbt.getInt("lastOutput");
@@ -223,7 +224,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         if (nbt.contains("output")) { outputClient = nbt.getInt("output"); }
     }
 
-    @Override @Nonnull public Vec3 connectionOffset(@Nonnull ICConnectionPoint here, @Nonnull ICWireType cable) {
+    @Override @Nonnull public Vec3 offset(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) {
         Direction wireSide = getInputSide();
         double conRadius = cable.getRenderRadius();
         boolean onGround = getFacing().getAxis().isVertical();
@@ -276,8 +277,8 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         return result;
     }
 
-    @Override public boolean acceptsCable(@Nonnull ICWireType cable, @Nonnull ICConnectionPoint target, @Nonnull Vec3i offset) {
-        return ICWireType.REDSTONE_CATEGORY.equals(cable.getCategory());
+    @Override public boolean accepts(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) {
+        return cable.getCategory() != null && "REDSTONE".equals(cable.getCategory().getName()) && (limitType == null || limitType == cable);
     }
 
     @Nonnull public Direction getFacing() { return getBlockState().getValue(BlockStateProperties.FACING); }

@@ -1,5 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.registration.BlockEntry;
 import com.google.common.collect.ImmutableMap;
 import com.immersiveconvergence.api.client.ConfigurableSidesModel;
@@ -127,20 +128,22 @@ public class BasicStateGenerator {
     }
 
     private void createValveVariants() {
-        ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
-        ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
-        createValveState(ModBlocks.Metal.VALVE_FLUID.get(), valveClosed, valveOpen, VALVE_CONFIGS.get("fluid"), ValveFluidBlock.OPEN);
-        setRenderType(RenderType.cutout(), (BlockModelBuilder) valveClosed, (BlockModelBuilder) valveOpen);
+        if (ICMods.ieContent()) {
+            ModelFile valveClosed = createValveObjModel("valve_fluid", "valve_fluid", false, "Pipe");
+            ModelFile valveOpen = createValveObjModel("valve_fluid", "valve_fluid", true, "Pipe");
+            createValveState(ModBlocks.Metal.VALVE_FLUID.get(), valveClosed, valveOpen, VALVE_CONFIGS.get("fluid"), ValveFluidBlock.OPEN);
+            setRenderType(RenderType.cutout(), (BlockModelBuilder) valveClosed, (BlockModelBuilder) valveOpen);
 
-        BlockModelBuilder valveLimiterBuilder = main.models().cubeBottomTop("block/metal/valve_limiter", main.modLoc("block/metal/valve_limiter_side"), main.modLoc("block/metal/valve_limiter_bottom"), main.modLoc("block/metal/valve_limiter_top"));
-        valveLimiterBuilder.texture("particle", main.modLoc("block/metal/valve_limiter_side"));
-        createValveState(ModBlocks.Metal.VALVE_LIMITER.get(), valveLimiterBuilder, valveLimiterBuilder, VALVE_CONFIGS.get("limiter"), null);
-        setRenderType(RenderType.cutout(), valveLimiterBuilder);
+            BlockModelBuilder valveLimiterBuilder = main.models().cubeBottomTop("block/metal/valve_limiter", main.modLoc("block/metal/valve_limiter_side"), main.modLoc("block/metal/valve_limiter_bottom"), main.modLoc("block/metal/valve_limiter_top"));
+            valveLimiterBuilder.texture("particle", main.modLoc("block/metal/valve_limiter_side"));
+            createValveState(ModBlocks.Metal.VALVE_LIMITER.get(), valveLimiterBuilder, valveLimiterBuilder, VALVE_CONFIGS.get("limiter"), null);
+            setRenderType(RenderType.cutout(), valveLimiterBuilder);
 
-        ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
-        ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
-        createValveState(ModBlocks.Metal.VALVE_LOAD.get(), valveLoadClosed, valveLoadOpen, VALVE_CONFIGS.get("load"), ValveLoadBlock.OPEN);
-        setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
+            ModelFile valveLoadClosed = createValveObjModel("valve_load", "valve_load", false, "Base");
+            ModelFile valveLoadOpen = createValveObjModel("valve_load", "valve_load", true, "Base");
+            createValveState(ModBlocks.Metal.VALVE_LOAD.get(), valveLoadClosed, valveLoadOpen, VALVE_CONFIGS.get("load"), ValveLoadBlock.OPEN);
+            setRenderType(RenderType.cutout(), (BlockModelBuilder) valveLoadClosed, (BlockModelBuilder) valveLoadOpen);
+        }
 
         ModelFile timerModel = createTimerObjModel("connector_timer", "connector_timer", "Base");
         createValveState(ModBlocks.Connector.CONNECTOR_TIMER.get(), timerModel, timerModel, VALVE_CONFIGS.get("timer"), null);

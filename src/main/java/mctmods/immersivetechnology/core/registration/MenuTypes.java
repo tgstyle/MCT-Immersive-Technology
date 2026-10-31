@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 public class MenuTypes {
     public static final DeferredRegister<MenuType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "immersivetechnology");
     private static final DeferredRegister<MenuType<?>> REGISTER_IE = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "immersivetechnology");
+    private static final DeferredRegister<MenuType<?>> REGISTER_CONTENT = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "immersivetechnology");
 
     public static final MultiblockContainer<AdvancedCokeOvenLogic.State, AdvancedCokeOvenMenu> ADVANCED_COKE_OVEN_MENU = registerMultiblock("gui_advanced_coke_oven", AdvancedCokeOvenMenu::makeServer, (type, id, inv, buffer) -> AdvancedCokeOvenMenu.makeClient(type, id, inv));
     public static final MultiblockContainer<BoilerLiquidLogic.State, BoilerLiquidMenu> BOILER_LIQUID_MENU = registerMultiblock("gui_boiler", BoilerLiquidMenu::makeServer, (type, id, inv, buffer) -> BoilerLiquidMenu.makeClient(type, id, inv));
@@ -44,14 +45,15 @@ public class MenuTypes {
     public static final ArgContainer<CrateCreativeBlockEntity, CrateCreativeMenu> CRATE_CREATIVE = registerArg("crate_creative", CrateCreativeMenu::makeServer, (type, id, inv, buffer) -> CrateCreativeMenu.makeClient(type, id, inv));
     public static final ArgContainer<TrashItemBlockEntity, TrashItemMenu> TRASH_ITEM = registerArg("trash_item", TrashItemMenu::makeServer, (type, id, inv, buffer) -> TrashItemMenu.makeClient(type, id, inv));
 
-    public static final ArgContainer<ValveFluidBlockEntity, ValveFluidMenu> VALVE_FLUID = ArgContainer.register(REGISTER_IE, "valve_fluid", ValveFluidMenu::makeServer, ValveFluidMenu::makeClient);
-    public static final ArgContainer<ValveLoadBlockEntity, ValveLoadMenu> VALVE_LOAD = ArgContainer.register(REGISTER_IE, "valve_load", ValveLoadMenu::makeServer, ValveLoadMenu::makeClient);
-    public static final ArgContainer<ValveLimiterBlockEntity, ValveLimiterMenu> VALVE_LIMITER = ArgContainer.register(REGISTER_IE, "valve_limiter", ValveLimiterMenu::makeServer, ValveLimiterMenu::makeClient);
+    public static final ArgContainer<ValveFluidBlockEntity, ValveFluidMenu> VALVE_FLUID = ArgContainer.register(REGISTER_CONTENT, "valve_fluid", ValveFluidMenu::makeServer, ValveFluidMenu::makeClient);
+    public static final ArgContainer<ValveLoadBlockEntity, ValveLoadMenu> VALVE_LOAD = ArgContainer.register(REGISTER_CONTENT, "valve_load", ValveLoadMenu::makeServer, ValveLoadMenu::makeClient);
+    public static final ArgContainer<ValveLimiterBlockEntity, ValveLimiterMenu> VALVE_LIMITER = ArgContainer.register(REGISTER_CONTENT, "valve_limiter", ValveLimiterMenu::makeServer, ValveLimiterMenu::makeClient);
 
     public static final ArgContainer<ConnectorTimerBlockEntity, ConnectorTimerMenu> CONNECTOR_TIMER = ArgContainer.register(REGISTER_IE, "connector_timer", ConnectorTimerMenu::makeServer, ConnectorTimerMenu::makeClient);
 
     public static void init(IEventBus event) {
         REGISTER.register(event);
+        if (ICMods.ieContent()) { REGISTER_CONTENT.register(event); }
         if (ICMods.immersiveEngineering()) { REGISTER_IE.register(event); }
     }
 

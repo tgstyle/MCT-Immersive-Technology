@@ -126,7 +126,6 @@ public class ModBlocks {
                     METAL_PROPERTIES_NO_OCCLUSION,
                     p -> new ValveLimiterBlock(ValveLimiterBlockEntity::new, p)
             );
-            NEEDS_IE.addAll(List.of(VALVE_FLUID, VALVE_LIMITER, VALVE_LOAD));
         }
     }
 
@@ -175,8 +174,8 @@ public class ModBlocks {
 
     public static void initBlocks() {
         Metal.init();
+        if (ICMods.ieContent()) { Metal.initValves(); }
         if (ICMods.immersiveEngineering()) {
-            Metal.initValves();
             Connector.init();
         }
         Stone.init();

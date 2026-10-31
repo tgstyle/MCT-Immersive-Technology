@@ -87,10 +87,12 @@ public class ClientProxy extends CommonProxy {
             MenuScreens.register(MenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(MenuTypes.SOLAR_TOWER_MENU.getType(), SolarScreen::new);
             MenuScreens.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
-            if (ICMods.immersiveEngineering()) {
+            if (ICMods.ieContent()) {
                 MenuScreens.register(MenuTypes.VALVE_FLUID.getType(), (ValveFluidMenu menu, Inventory inv, Component title) -> new ValveFluidScreen(menu, inv));
                 MenuScreens.register(MenuTypes.VALVE_LIMITER.getType(), (ValveLimiterMenu menu, Inventory inv, Component title) -> new ValveLimiterScreen(menu, inv));
                 MenuScreens.register(MenuTypes.VALVE_LOAD.getType(), (ValveLoadMenu menu, Inventory inv, Component title) -> new ValveLoadScreen(menu, inv));
+            }
+            if (ICMods.immersiveEngineering()) {
                 MenuScreens.register(MenuTypes.CONNECTOR_TIMER.getType(), ConnectorTimerScreen::new);
             }
 

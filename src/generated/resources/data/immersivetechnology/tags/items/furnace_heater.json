@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "immersiveengineering:furnace_heater",
+      "required": false
+    },
+    {
+      "id": "immersivefabrication:furnace_heater",
+      "required": false
+    }
+  ]
+}

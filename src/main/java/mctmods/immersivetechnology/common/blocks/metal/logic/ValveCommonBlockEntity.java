@@ -25,7 +25,9 @@ import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.FacingLimitation;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
-import com.immersiveconvergence.api.energy.ICConnectableBlockEntity;
+import com.immersiveconvergence.api.wires.ICConnectionPoint;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.connectors.ICConnectableBlockEntity;
 
 import javax.annotation.Nonnull;
 
@@ -169,6 +171,11 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
     }
 
     @Override @Nonnull public Direction getFacing() { return this.facing; }
+
+    @Override @Nonnull public Vec3 offset(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) {
+        double radius = cable.getRenderRadius();
+        return new Vec3(.5 + (.5 - radius) * facing.getStepX(), .5 + (.5 - radius) * facing.getStepY(), .5 + (.5 - radius) * facing.getStepZ());
+    }
 
     @Override public void setFacing(@Nonnull Direction facing) {
         this.facing = facing;

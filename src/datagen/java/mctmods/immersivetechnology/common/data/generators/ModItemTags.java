@@ -30,10 +30,25 @@ public class ModItemTags extends ItemTagsProvider {
         tag(ModTags.igniters).add(Items.TORCH, Items.FLINT_AND_STEEL);
         tag(ModTags.igniters_consume).add(Items.TORCH);
         tag(ModTags.formationTools).add(ModItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
-        tag(ModTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver"));
+        tag(ModTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "screwdriver"));
+        ingredientTag("sheetmetal/iron", "sheetmetal_iron", "iron_sheetmetal");
+        ingredientTag("slab/sheetmetal_iron", "slab_sheetmetal_iron", "iron_sheetmetal_slab");
+        ingredientTag("sheetmetal/steel", "sheetmetal_steel", "steel_sheetmetal");
+        ingredientTag("slab/sheetmetal_steel", "slab_sheetmetal_steel", "steel_sheetmetal_slab");
+        ingredientTag("cokebrick", "cokebrick", "coke_brick");
+        ingredientTag("fluid_pump", "fluid_pump", "fluid_pump");
+        ingredientTag("coil_hv", "coil_hv", "coil_hv");
+        ingredientTag("furnace_heater", "furnace_heater", "furnace_heater");
+        ingredientTag("component_steel", "component_steel", "component_steel");
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "tools/hammers"))).add(ModItems.FORMATION_TOOL.get());
         ModBlocks.NEEDS_IE.forEach(entry -> tag(drops(entry)).addOptional(entry.getId()));
     }
 
     static TagKey<Item> drops(BlockEntry<?> entry) { return ItemTags.create(Reference.rl("drops/" + entry.getId().getPath())); }
+
+    static TagKey<Item> itTag(String path) { return ItemTags.create(Reference.rl(path)); }
+
+    private void ingredientTag(String path, String ieId, String ifabId) {
+        tag(itTag(path)).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", ieId)).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", ifabId));
+    }
 }

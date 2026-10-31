@@ -10,9 +10,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "immersiveengineering:slab_sheetmetal_steel"
-            ]
+            "tag": "immersivetechnology:slab/sheetmetal_steel"
           }
         ]
       },
