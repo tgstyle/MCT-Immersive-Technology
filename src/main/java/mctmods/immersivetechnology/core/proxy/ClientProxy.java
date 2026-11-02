@@ -1,71 +1,80 @@
 package mctmods.immersivetechnology.core.proxy;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import mctmods.immersivetechnology.client.gui.*;
-import com.immersiveconvergence.api.manual.ICManual;
-import com.immersiveconvergence.api.manual.ICManualCategory;
-import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import mctmods.immersivetechnology.client.gui.CrateScreen;
+import mctmods.immersivetechnology.client.gui.FluidValveScreen;
+import mctmods.immersivetechnology.client.gui.LoadControllerScreen;
+import mctmods.immersivetechnology.client.gui.StackLimiterScreen;
 import mctmods.immersivetechnology.client.models.multiblock.RotorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarCollectorModels;
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
 import mctmods.immersivetechnology.client.models.multiblock.StyleNOXModels;
-import com.immersiveconvergence.api.client.StandaloneModel;
-import com.immersiveconvergence.api.client.mirror.MirrorModelLoader;
-import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
-import com.immersiveconvergence.api.client.ConfigurableSidesModel;
-import com.immersiveconvergence.api.fluid.FluidEntry;
-import com.immersiveconvergence.api.client.split.SplitModelHandler;
-import com.immersiveconvergence.api.particles.CampfireSmokeProvider;
-import com.immersiveconvergence.api.particles.ColoredSmokeProvider;
-import com.immersiveconvergence.api.particles.SmokeCustomProvider;
 import mctmods.immersivetechnology.client.renderer.*;
-import com.immersiveconvergence.api.block.IFlagItem;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
+import mctmods.immersivetechnology.client.renderer.AdvancedCokeOvenBaseheaterRenderer;
+import mctmods.immersivetechnology.client.renderer.BarrelOpenRenderer;
+import mctmods.immersivetechnology.client.util.ClientUtils;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarCollectorLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic;
+import mctmods.immersivetechnology.core.config.CommonConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.ServerConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.ModItems;
-import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import mctmods.immersivetechnology.core.registration.Particles;
+import mctmods.immersivetechnology.core.config.ClientConfig;
+
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.block.IFlagItem;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
+import com.immersiveconvergence.api.client.StandaloneModel;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.mirror.MirrorModelLoader;
+import com.immersiveconvergence.api.client.split.SplitModelHandler;
+import com.immersiveconvergence.api.fluid.FluidEntry;
+import com.immersiveconvergence.api.manual.ICManual;
+import com.immersiveconvergence.api.manual.ICManualCategory;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
+import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
+import com.immersiveconvergence.api.particles.CampfireSmokeProvider;
+import com.immersiveconvergence.api.particles.ColoredSmokeProvider;
+import com.immersiveconvergence.api.particles.SmokeCustomProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.api.distmarker.Dist;
-
+import net.neoforged.neoforge.fluids.FluidStack;
+import com.immersiveconvergence.api.particles.ColoredSmoke;
+import com.immersiveconvergence.api.particles.ParticleSettings;
 import java.util.List;
 import java.util.function.Supplier;
-import com.immersiveconvergence.api.particles.ParticleSettings;
-import com.immersiveconvergence.api.particles.ColoredSmoke;
-import mctmods.immersivetechnology.core.ClientConfig;
 
-@EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT)
-public class ClientProxy extends CommonProxy {
+@EventBusSubscriber(modid = Reference.MODID, value = Dist.CLIENT) public class ClientProxy extends CommonProxy {
     private static final List<Vec3i> BASEHEATER_PARTS = List.of(new BlockPos(-1, 0, 0), BlockPos.ZERO, new BlockPos(1, 0, 0));
 
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    @SubscribeEvent public static void onClientSetup(FMLClientSetupEvent event) {
         BaseBlockEntityRenderer.viewDistanceModifier = () -> ClientConfig.multiblockSpecialRenderDistanceModifier;
         ParticleSettings.particleCollide = () -> ClientConfig.particleCollide;
         ParticleSettings.coloredSmokeHeight = () -> ClientConfig.coloredSmokeHeight;
@@ -108,13 +117,12 @@ public class ClientProxy extends CommonProxy {
         for (String name : names) { ICManual.addEntry(category, Reference.rl(name)); }
     }
 
-    @SubscribeEvent
-    public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+    @SubscribeEvent public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(MenuTypes.ADVANCED_COKE_OVEN_MENU.getType(), AdvancedCokeOvenScreen::new);
         event.register(MenuTypes.BOILER_LIQUID_MENU.getType(), BoilerLiquidScreen::new);
         event.register(MenuTypes.BOILER_SOLID_MENU.getType(), BoilerSolidScreen::new);
         event.register(MenuTypes.BOILER_TANK_MENU.getType(), BoilerTankScreen::new);
-        event.register(MenuTypes.CRATE_CREATIVE.getType(), CrateCreativeScreen::new);
+        event.register(MenuTypes.CRATE_CREATIVE.getType(), CrateScreen::new);
         event.register(MenuTypes.DISTILLER_MENU.getType(), DistillerScreen::new);
         event.register(MenuTypes.MELTING_CRUCIBLE_MENU.getType(), MeltingCrucibleScreen::new);
         event.register(MenuTypes.SOLAR_MELTER_MENU.getType(), SolarScreen::new);
@@ -122,21 +130,19 @@ public class ClientProxy extends CommonProxy {
         event.register(MenuTypes.STYLENOX_MENU.getType(), StyleNOXScreen::new);
         event.register(MenuTypes.TRASH_ITEM.getType(), TrashItemScreen::new);
         if (ICMods.ieContent()) {
-            event.register(MenuTypes.VALVE_FLUID.getType(), ValveFluidScreen::new);
-            event.register(MenuTypes.VALVE_LIMITER.getType(), ValveLimiterScreen::new);
-            event.register(MenuTypes.VALVE_LOAD.getType(), ValveLoadScreen::new);
+            event.register(MenuTypes.VALVE_FLUID.getType(), FluidValveScreen::new);
+            event.register(MenuTypes.VALVE_LIMITER.getType(), StackLimiterScreen::new);
+            event.register(MenuTypes.VALVE_LOAD.getType(), LoadControllerScreen::new);
         }
     }
 
-    @SubscribeEvent
-    public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+    @SubscribeEvent public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(Particles.COLORED_SMOKE.get(), ColoredSmokeProvider::new);
         event.registerSpriteSet(Particles.SMOKE_CUSTOM.get(), SmokeCustomProvider::new);
         event.registerSpriteSet(Particles.CAMPFIRE_SMOKE.get(), CampfireSmokeProvider::new);
     }
 
-    @SubscribeEvent
-    public static void onItemColor(RegisterColorHandlersEvent.Item event) {
+    @SubscribeEvent public static void onItemColor(RegisterColorHandlersEvent.Item event) {
         for (Supplier<? extends Item> holder : ModItems.getItemRegistryMap().values()) {
             Item i = holder.get();
             if (i instanceof IFlagItem) {
@@ -149,22 +155,34 @@ public class ClientProxy extends CommonProxy {
         FluidEntry.registerItemColors(event, ModFluids.ALL_ENTRIES);
     }
 
-    @SubscribeEvent
-    public static void onBlockColor(RegisterColorHandlersEvent.Block event) {
-        FluidEntry.registerBlockColors(event, ModFluids.ALL_ENTRIES);
-    }
+    @SubscribeEvent public static void onBlockColor(RegisterColorHandlersEvent.Block event) { FluidEntry.registerBlockColors(event, ModFluids.ALL_ENTRIES); }
 
-    @Override
-    public void reinitializeGUI() {
+    @Override public void reinitializeGUI() {
         Screen currentScreen = Minecraft.getInstance().screen;
         if (currentScreen instanceof BaseContainerScreen) { currentScreen.init(Minecraft.getInstance(), currentScreen.width, currentScreen.height); }
     }
 
-    @Override
-    public Level getClientWorld() { return Minecraft.getInstance().level; }
+    @Override public Level getClientWorld() { return Minecraft.getInstance().level; }
 
-    @SubscribeEvent
-    public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
+    @Override public Player getClientPlayer() { return Minecraft.getInstance().player; }
+
+    @Override public boolean isShiftDown() { return Screen.hasShiftDown(); }
+
+    @Override public void addChatMessage(Component message) { Minecraft.getInstance().gui.getChat().addMessage(message); }
+
+    @Override public boolean particlesVisible(Vec3 pos) { return ClientUtils.particlesVisible(pos); }
+
+    @Override public float attenuated(Vec3 pos, double falloff, float volume) { return ClientUtils.attenuated(pos, falloff, volume); }
+
+    @Override public float linearFalloff(Vec3 pos, double range) { return ClientUtils.linearFalloff(pos, range); }
+
+    @Override public void exhaust(Level level, BlockPos pos, Direction facing, float normSpeed, FluidStack fluid) { ClientUtils.exhaust(level, pos, facing, normSpeed, fluid); }
+
+    @Override public void exhaust(Level level, Vec3 smokePos, Direction facing, float normSpeed, FluidStack fluid, double speedScale, float sizeScale) { ClientUtils.exhaust(level, smokePos, facing, normSpeed, fluid, speedScale, sizeScale); }
+
+    @Override public void boilerExhaust(Level level, BlockPos exhaust, boolean smoking) { ClientUtils.boilerExhaust(level, exhaust, smoking); }
+
+    @SubscribeEvent public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders ev) {
         ev.register(Reference.rl("conf_sides"), ConfigurableSidesModel.Loader.INSTANCE);
         ev.register(Reference.rl("mirror"), MirrorModelLoader.INSTANCE);
         RotorModels.ROTOR = new StandaloneModel(Reference.rl("dynamic/rotor"));
@@ -174,7 +192,7 @@ public class ClientProxy extends CommonProxy {
         SolarCollectorModels.PANEL = new StandaloneModel(Reference.rl("dynamic/solar_collector_panel"));
         SolarReflectorModels.SUPPORT = new StandaloneModel(Reference.rl("dynamic/solar_reflector_support"));
         SolarReflectorModels.MIRROR = new StandaloneModel(Reference.rl("dynamic/solar_reflector_mirror"));
-        AdvancedCokeOvenBaseHeaterRenderer.FAN_MODEL = new StandaloneModel(Reference.rl("dynamic/advanced_coke_oven_baseheater_fan"));
+        AdvancedCokeOvenBaseheaterRenderer.FAN_MODEL = new StandaloneModel(Reference.rl("dynamic/advanced_coke_oven_baseheater_fan"));
         StyleNOXModels.RODS = new StandaloneModel(Reference.rl("dynamic/stylenox_rods"));
         registerSplitModels();
     }
@@ -186,14 +204,13 @@ public class ClientProxy extends CommonProxy {
         SplitModelHandler.register(ModBlocks.Metal.ADVANCED_COKE_OVEN_BASEHEATER.get(), BASEHEATER_PARTS, Direction.SOUTH);
     }
 
-    @SubscribeEvent
-    public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
+    @SubscribeEvent public static void registerRenders(EntityRenderersEvent.RegisterRenderers event) { registerBERenders(event); }
 
     private static <T extends BlockEntity> void registerBERender(EntityRenderersEvent.RegisterRenderers event, Supplier<BlockEntityType<? extends T>> type, BlockEntityRendererProvider<T> provider) { event.registerBlockEntityRenderer(type.get(), provider); }
 
     public static void registerBERenders(EntityRenderersEvent.RegisterRenderers event) {
-        registerBERender(event, BlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseHeaterRenderer());
-        registerBERender(event, BlockEntities.BARREL_OPEN::get, ctx3 -> new OpenBarrelRenderer());
+        registerBERender(event, BlockEntities.ADVANCED_COKE_OVEN_BASEHEATER::get, ctx -> new AdvancedCokeOvenBaseheaterRenderer());
+        registerBERender(event, BlockEntities.BARREL_OPEN::get, ctx3 -> new BarrelOpenRenderer());
         registerBERender(event, MultiblockRegistry.STEAM_TURBINE.masterBE(), ctx2 -> new SteamTurbineRenderer());
         registerBERender(event, MultiblockRegistry.GAS_TURBINE.masterBE(), ctx -> new GasTurbineRenderer());
         registerBERender(event, MultiblockRegistry.SOLAR_COLLECTOR.masterBE(), ctx -> new SolarCollectorRenderer());

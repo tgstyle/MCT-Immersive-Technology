@@ -36,14 +36,14 @@ public class SolarRegistryData extends SavedData {
                 ListTag list = nbt.getList(key, Tag.TAG_COMPOUND);
                 Set<BlockPos> set = new HashSet<>();
                 for (Tag tag : list) { set.add(BlockPos.of(((CompoundTag)tag).getLong("pos"))); }
-                if (!set.isEmpty()) data.towerBasesByY.put(y, set);
+                if (!set.isEmpty()) { data.towerBasesByY.put(y, set); }
             }
             else if (key.startsWith("reflectors_")) {
                 int y = Integer.parseInt(key.substring(11));
                 ListTag list = nbt.getList(key, Tag.TAG_COMPOUND);
                 Set<BlockPos> set = new HashSet<>();
                 for (Tag tag : list) { set.add(BlockPos.of(((CompoundTag)tag).getLong("pos"))); }
-                if (!set.isEmpty()) data.reflectorPOIsByY.put(y, set);
+                if (!set.isEmpty()) { data.reflectorPOIsByY.put(y, set); }
             }
         }
         if (nbt.contains("untaken")) {
@@ -67,10 +67,9 @@ public class SolarRegistryData extends SavedData {
         return data;
     }
 
-    @Override
-    public @Nonnull CompoundTag save(@Nonnull CompoundTag nbt, @Nonnull HolderLookup.Provider provider) {
+    @Override public @Nonnull CompoundTag save(@Nonnull CompoundTag nbt, @Nonnull HolderLookup.Provider provider) {
         for (Map.Entry<Integer, Set<BlockPos>> entry : towerBasesByY.entrySet()) {
-            if (entry.getValue().isEmpty()) continue;
+            if (entry.getValue().isEmpty()) { continue; }
             ListTag list = new ListTag();
             for (BlockPos pos : entry.getValue()) {
                 CompoundTag tag = new CompoundTag();
@@ -80,7 +79,7 @@ public class SolarRegistryData extends SavedData {
             nbt.put("towers_" + entry.getKey(), list);
         }
         for (Map.Entry<Integer, Set<BlockPos>> entry : reflectorPOIsByY.entrySet()) {
-            if (entry.getValue().isEmpty()) continue;
+            if (entry.getValue().isEmpty()) { continue; }
             ListTag list = new ListTag();
             for (BlockPos pos : entry.getValue()) {
                 CompoundTag tag = new CompoundTag();
@@ -94,9 +93,7 @@ public class SolarRegistryData extends SavedData {
             for (BlockPos pos : untakenReflectors) { untakenList.add(LongTag.valueOf(pos.asLong())); }
             nbt.put("untaken", untakenList);
         }
-        if (!groupData.isEmpty()) {
-            nbt.put("groups", createGroupsTag());
-        }
+        if (!groupData.isEmpty()) { nbt.put("groups", createGroupsTag()); }
         return nbt;
     }
 

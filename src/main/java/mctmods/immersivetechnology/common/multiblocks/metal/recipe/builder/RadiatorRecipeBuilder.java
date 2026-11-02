@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -13,28 +15,21 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@SuppressWarnings("unused")
-public class RadiatorRecipeBuilder implements RecipeBuilder {
+@SuppressWarnings("unused") public class RadiatorRecipeBuilder implements RecipeBuilder {
     private TagKey<Fluid> fluidTag;
     private int amount;
     private FluidStack fluidOutput;
     private int time;
-
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private RadiatorRecipeBuilder() {}
 
-    public static RadiatorRecipeBuilder builder() {
-        return new RadiatorRecipeBuilder();
-    }
+    public static RadiatorRecipeBuilder builder() { return new RadiatorRecipeBuilder(); }
 
     public RadiatorRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
         this.fluidTag = fluidTag;
@@ -47,33 +42,23 @@ public class RadiatorRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    public RadiatorRecipeBuilder addOutput(Fluid fluid, int amount) {
-        return addOutput(new FluidStack(fluid, amount));
-    }
+    public RadiatorRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
     public RadiatorRecipeBuilder setTime(int time) {
         this.time = time;
         return this;
     }
 
-    @Override
-    public @Nonnull RadiatorRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
+    @Override public @Nonnull RadiatorRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
     }
 
-    @Override
-    public @Nonnull RadiatorRecipeBuilder group(@Nullable String group) {
-        return this;
-    }
+    @Override public @Nonnull RadiatorRecipeBuilder group(@Nullable String group) { return this; }
 
-    @Override
-    public @Nonnull Item getResult() {
-        return Items.AIR;
-    }
+    @Override public @Nonnull Item getResult() { return Items.AIR; }
 
-    @Override
-    public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
+    @Override public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
         Advancement.Builder advancement = output.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id))

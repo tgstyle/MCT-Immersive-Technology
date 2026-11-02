@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.gui.helper;
 
+import mctmods.immersivetechnology.core.registration.MenuTypes;
+
 import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
-import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;

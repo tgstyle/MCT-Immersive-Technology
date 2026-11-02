@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import com.immersiveconvergence.api.fluid.FluidEntry;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModFluids;
+
+import com.immersiveconvergence.api.fluid.FluidEntry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -13,7 +14,6 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import java.util.Objects;
 
 public class ItemModel extends ItemModelProvider {

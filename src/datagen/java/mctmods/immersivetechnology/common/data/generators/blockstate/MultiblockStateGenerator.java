@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
-import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.data.util.GeneratorUtils;
 import mctmods.immersivetechnology.common.data.builders.MirroredModelBuilder;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import mctmods.immersivetechnology.common.data.generators.ModBlockState;
 
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Direction;
@@ -26,7 +26,6 @@ import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import java.util.Map;
 import java.util.function.Supplier;
-
 import javax.annotation.Nullable;
 
 public class MultiblockStateGenerator {
@@ -141,7 +140,5 @@ public class MultiblockStateGenerator {
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
 
-    protected ResourceLocation addModelsPrefix(ResourceLocation in) {
-        return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath());
-    }
+    protected ResourceLocation addModelsPrefix(ResourceLocation in) { return ResourceLocation.fromNamespaceAndPath(in.getNamespace(), "models/" + in.getPath()); }
 }

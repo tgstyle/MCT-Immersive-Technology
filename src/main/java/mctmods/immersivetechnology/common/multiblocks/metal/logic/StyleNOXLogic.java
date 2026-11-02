@@ -1,16 +1,23 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.StyleNOXRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
@@ -21,18 +28,19 @@ import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
 import com.immersiveconvergence.api.multiblock.blocks.util.CapabilityPosition;
 import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -48,14 +56,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
 
 public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, IServerTickableComponent<StyleNOXLogic.State>, IClientTickableComponent<StyleNOXLogic.State>, IFluidOutputPump<StyleNOXLogic.State> {
     public static final int FUEL_SLOTS = 8;
@@ -244,9 +244,7 @@ public class StyleNOXLogic implements IMultiblockLogic<StyleNOXLogic.State>, ISe
         state.animation_fuelPrev = state.animation_fuelPosition;
         state.animation_fuelPosition = approach(state.animation_fuelPosition, state.fuelDown ? 1f : 0f, 0.00625f);
         Vec3 soundPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(SOUND_POI));
-        if (state.reactorState == ReactorState.CRITICAL && ClientUtils.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(() -> state.reactorState == ReactorState.CRITICAL, ctx.isValid(), soundPos, Sounds.stylenox, () -> ClientUtils.attenuated(soundPos, 32, 1), () -> 1f);
-        }
+        if (state.reactorState == ReactorState.CRITICAL && ImmersiveTechnology.proxy.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.reactorState == ReactorState.CRITICAL, ctx.isValid(), soundPos, Sounds.stylenox, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 32, 1), () -> 1f); }
     }
 
     private static float approach(float current, float target, float down) { return current < target ? Math.min(target, current + 0.00625f) : Math.max(target, current - down); }

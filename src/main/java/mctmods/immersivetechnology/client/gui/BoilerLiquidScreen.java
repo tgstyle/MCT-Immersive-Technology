@@ -1,12 +1,15 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.gui.BoilerLiquidMenu;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
-import mctmods.immersivetechnology.common.multiblocks.gui.BoilerLiquidMenu;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.lib.Reference;
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -14,9 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import com.google.common.collect.ImmutableList;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 public class BoilerLiquidScreen extends BaseContainerScreen<BoilerLiquidMenu> {

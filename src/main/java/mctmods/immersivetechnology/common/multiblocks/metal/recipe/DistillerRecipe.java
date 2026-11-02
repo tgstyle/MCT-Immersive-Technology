@@ -15,13 +15,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class DistillerRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, DistillerRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<DistillerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.DISTILLER);
-
     public final TagKey<Fluid> fluidTag;
     private final int amount;
     @Nullable public final FluidStack fluidOutput;

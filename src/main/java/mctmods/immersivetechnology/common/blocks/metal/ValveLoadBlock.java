@@ -1,11 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.block.ModProperties;
-import com.immersiveconvergence.api.wires.ICWires;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.core.registration.ModTags;
+import static mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity.OPEN;
+
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.wires.ICWires;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -24,11 +26,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
 import java.util.function.BiFunction;
-
-import static mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity.OPEN;
-
 import javax.annotation.Nonnull;
 
 public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
@@ -58,7 +56,8 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
                 if (alongX) {
                     connector1 = Shapes.box(0, baseThickness, centerMin, connectorSize, baseThickness + connectorLength, centerMax);
                     connector2 = Shapes.box(1 - connectorSize, baseThickness, centerMin, 1, baseThickness + connectorLength, centerMax);
-                } else {
+                }
+                else {
                     connector1 = Shapes.box(centerMin, baseThickness, 0, centerMax, baseThickness + connectorLength, connectorSize);
                     connector2 = Shapes.box(centerMin, baseThickness, 1 - connectorSize, centerMax, baseThickness + connectorLength, 1);
                 }
@@ -70,7 +69,8 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
                 if (alongX) {
                     connector1 = Shapes.box(0, 1 - baseThickness - connectorLength, centerMin, connectorSize, 1 - baseThickness, centerMax);
                     connector2 = Shapes.box(1 - connectorSize, 1 - baseThickness - connectorLength, centerMin, 1, 1 - baseThickness, centerMax);
-                } else {
+                }
+                else {
                     connector1 = Shapes.box(centerMin, 1 - baseThickness - connectorLength, 0, centerMax, 1 - baseThickness, connectorSize);
                     connector2 = Shapes.box(centerMin, 1 - baseThickness - connectorLength, 1 - connectorSize, centerMax, 1 - baseThickness, 1);
                 }
@@ -120,7 +120,8 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
-            if (player.isCrouching()) { valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1); valve.updateRedstoneState(); valve.efficientSetChanged(); }else {
+            if (player.isCrouching()) { valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1); valve.updateRedstoneState(); valve.efficientSetChanged(); }
+            else {
                 if (ICWires.isWireCoil(heldItem)) { return InteractionResult.PASS; }
                 player.openMenu(valve, buf -> buf.writeBlockPos(pos));
             }

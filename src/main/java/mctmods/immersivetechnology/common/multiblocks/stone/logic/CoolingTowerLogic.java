@@ -1,16 +1,23 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.CoolingTowerProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.Climate;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ProcessQueue;
 
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
@@ -19,16 +26,14 @@ import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
 import com.immersiveconvergence.api.multiblock.blocks.util.*;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -42,11 +47,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import javax.annotation.Nonnull;
 
 public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.State>, IServerTickableComponent<CoolingTowerLogic.State>, IClientTickableComponent<CoolingTowerLogic.State>, IFluidOutputPump<CoolingTowerLogic.State> {
     public static List<CapabilityPosition> INPUT_POIS;
@@ -82,7 +82,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         if (!state.active) { return; }
         RandomSource rand = RandomSource.create();
         Vec3 particleVec = ctx.getLevel().toAbsolute(Vec3.atCenterOf(PARTICLE_POI));
-        if (!ClientUtils.particlesVisible(particleVec)) { return; }
+        if (!ImmersiveTechnology.proxy.particlesVisible(particleVec)) { return; }
         for (int i = 0; i < 3; i++) {
             double px = particleVec.x + (rand.nextFloat() * 4f - 2f);
             double py = particleVec.y + rand.nextFloat() * 2f;
@@ -94,7 +94,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
     private static void handleSounds(IMultiblockContext<CoolingTowerLogic.State> ctx, CoolingTowerLogic.State state) {
         if (state.isSoundPlaying.getAsBoolean()) { return; }
         Vec3 soundVec = ctx.getLevel().toAbsolute(Vec3.atCenterOf(SOUND_POI));
-        state.isSoundPlaying = MachineSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, Sounds.coolingTower, () -> ClientUtils.linearFalloff(soundVec, 16), () -> 1f);
+        state.isSoundPlaying = MachineSound.startSound(() -> state.soundCooldown > 0, ctx.isValid(), soundVec, Sounds.coolingTower, () -> ImmersiveTechnology.proxy.linearFalloff(soundVec, 16), () -> 1f);
     }
 
     @Override public void tickServer(IMultiblockContext<CoolingTowerLogic.State> ctx) {
@@ -261,9 +261,7 @@ public class CoolingTowerLogic implements IMultiblockLogic<CoolingTowerLogic.Sta
         }
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            for (int percent : processPercents) {
-                lines.percent(Math.max(percent, 0));
-            }
+            for (int percent : processPercents) { lines.percent(Math.max(percent, 0)); }
         }
     }
 

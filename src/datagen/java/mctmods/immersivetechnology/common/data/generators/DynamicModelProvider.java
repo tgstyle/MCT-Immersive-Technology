@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nonnull;
 
 public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.SimpleModelBuilder> {

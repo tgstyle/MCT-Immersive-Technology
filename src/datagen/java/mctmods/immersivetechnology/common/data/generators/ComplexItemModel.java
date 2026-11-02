@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.data.generators;
 import mctmods.immersivetechnology.common.data.models.TRSRModelBuilder;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -13,7 +14,6 @@ import net.neoforged.neoforge.client.model.generators.loaders.CompositeModelBuil
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.joml.Vector3f;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
@@ -56,9 +56,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         generateMultiblockModel("stylenox", "metal", MultiblockRegistry.STYLENOX.block(), new Vector3f(0.0f, -3.0f, 0.0f), 0.075f, 0.0375f, 0.0375f);
     }
 
-    private TRSRModelBuilder createObjModel(String modelPath, String jsonName) {
-        return getBuilder(jsonName).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + modelPath)).flipV(true).end();
-    }
+    private TRSRModelBuilder createObjModel(String modelPath, String jsonName) { return getBuilder(jsonName).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + modelPath)).flipV(true).end(); }
 
     private void doTransform(ModelBuilder<?>.TransformsBuilder transform, ItemDisplayContext type, @Nullable Vector3f translation, @Nullable Vector3f rotationAngle, float scale) {
         ModelBuilder<?>.TransformsBuilder.TransformVecBuilder trans = transform.transform(type);
@@ -70,9 +68,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
 
     private TRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) { return obj(item.get(), model); }
 
-    private TRSRModelBuilder obj(ItemLike item, String model) {
-        return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end();
-    }
+    private TRSRModelBuilder obj(ItemLike item, String model) { return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end(); }
 
     private String name(ItemLike item) { return Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item.asItem())).getPath(); }
 
@@ -90,13 +86,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
             }
             model = composite.end();
         }
-        else if ("boiler_solid".equals(id)) {
-            model = getBuilder(name(block.get())).customLoader(ObjModelBuilder::begin)
-                    .modelLocation(modLoc("models/" + objPath))
-                    .flipV(true)
-                    .end()
-                    .texture("cube_front", modLoc("multiblock/metal/boiler_solid"));
-        }
+        else if ("boiler_solid".equals(id)) { model = getBuilder(name(block.get())).customLoader(ObjModelBuilder::begin) .modelLocation(modLoc("models/" + objPath)) .flipV(true) .end() .texture("cube_front", modLoc("multiblock/metal/boiler_solid")); }
         else { model = obj(block, objPath); }
 
         ModelBuilder<?>.TransformsBuilder trans = model.transforms();

@@ -1,16 +1,17 @@
 package mctmods.immersivetechnology.core.registration;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.block.StairsBlock;
-import com.immersiveconvergence.api.block.ModWallBlock;
 import mctmods.immersivetechnology.common.blocks.metal.*;
 import mctmods.immersivetechnology.common.blocks.metal.logic.*;
-import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrick;
+import mctmods.immersivetechnology.common.blocks.stone.ReinforcedCokeBrickBlock;
 import mctmods.immersivetechnology.common.blocks.stone.slab.SlabReinforcedCokeBrick;
 import mctmods.immersivetechnology.common.blocks.wooden.CrateCreativeBlock;
 import mctmods.immersivetechnology.common.blocks.wooden.logic.CrateCreativeBlockEntity;
-import com.immersiveconvergence.api.block.ModBlockItem;
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.block.ModBlockItem;
+import com.immersiveconvergence.api.block.ModWallBlock;
+import com.immersiveconvergence.api.block.StairsBlock;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -31,18 +31,14 @@ public class ModBlocks {
     public static final Map<ResourceLocation, ModBlocks.BlockEntry<? extends SlabBlock>> TO_SLAB = new HashMap<>();
     public static final Map<ResourceLocation, ModBlocks.BlockEntry<? extends StairsBlock>> TO_STAIRS = new HashMap<>();
     public static final Map<ResourceLocation, ModBlocks.BlockEntry<? extends ModWallBlock>> TO_WALL = new HashMap<>();
-
     public static final Collection<BlockEntry<?>> NEEDS_IE = new ArrayList<>();
     private static final HashMap<String, Supplier<? extends Block>> BLOCK_REGISTRY_MAP = new HashMap<>();
     public static Function<String, Block> getBlock = (key) -> BLOCK_REGISTRY_MAP.get(key).get();
-
     private static final Supplier<BlockBehaviour.Properties> DEFAULT_METAL_PROPERTIES = () -> BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3.0F, 15.0F).requiresCorrectToolForDrops();
     private static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OVERLAY = () -> DEFAULT_METAL_PROPERTIES.get().isViewBlocking((state, blockReader, pos) -> false);
     public static final Supplier<BlockBehaviour.Properties> METAL_PROPERTIES_NO_OCCLUSION = () -> METAL_PROPERTIES_NO_OVERLAY.get().noOcclusion().forceSolidOn().dynamicShape();
-
     private static final Supplier<BlockBehaviour.Properties> STONE_ORE_PROPERTIES = () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE);
     private static final Supplier<BlockBehaviour.Properties> DEEPSLATE_ORE_PROPERTIES = () -> BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE);
-
     private static final Supplier<BlockBehaviour.Properties> DEFAULT_STONE_PROPERTIES = () -> BlockBehaviour.Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(2, 20);
     public static final Supplier<BlockBehaviour.Properties> STONE_PROPERTIES_NO_OCCLUSION = () -> DEFAULT_STONE_PROPERTIES.get().noOcclusion();
 
@@ -218,14 +214,14 @@ public class ModBlocks {
     }
 
     public static final class Stone {
-        public static BlockEntry<ReinforcedCokeBrick> REINFORCED_COKE_BRICK;
+        public static BlockEntry<ReinforcedCokeBrickBlock> REINFORCED_COKE_BRICK;
         public static BlockEntry<SlabReinforcedCokeBrick> SLAB_REINFORCED_COKE_BRICK;
 
         private static void init() {
             REINFORCED_COKE_BRICK = new BlockEntry<>(
                     "reinforced_coke_brick",
                     () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE),
-                    ReinforcedCokeBrick::new
+                    ReinforcedCokeBrickBlock::new
             );
             SLAB_REINFORCED_COKE_BRICK = new BlockEntry<>(
                     "slab_reinforced_coke_brick",

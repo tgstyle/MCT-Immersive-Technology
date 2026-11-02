@@ -1,14 +1,14 @@
 package mctmods.immersivetechnology.core.registration;
 
-import com.immersiveconvergence.api.registration.ItemEntry;
-import com.immersiveconvergence.api.block.BaseItem;
 import mctmods.immersivetechnology.common.items.FormationTool;
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.registration.ItemEntry;
+import com.immersiveconvergence.api.block.BaseItem;
 import net.minecraft.Util;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 public class ModItems {
     public static final DeferredRegister.Items REGISTER = DeferredRegister.createItems(Reference.MODID);
-
     private static final HashMap<String, Supplier<? extends Item>> ITEM_REGISTRY_MAP = new HashMap<>();
 
     public static HashMap<String, Supplier<? extends Item>> getItemRegistryMap() { return ITEM_REGISTRY_MAP; }

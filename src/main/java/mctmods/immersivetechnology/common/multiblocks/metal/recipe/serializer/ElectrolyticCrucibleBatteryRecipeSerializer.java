@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,14 +16,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 
 public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSerializer<ElectrolyticCrucibleBatteryRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.iconStack(); }
 
-    @Override
-    protected DualMapCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> codecs() {
+    @Override protected DualMapCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> codecs() {
         MapCodec<TagKey<Fluid>> fluidTagCodec = ResourceLocation.CODEC
                 .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
                 .fieldOf("inputTag");
@@ -47,8 +46,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSeriali
         ).apply(instance, ElectrolyticCrucibleBatteryRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, ElectrolyticCrucibleBatteryRecipe> streamCodec = new StreamCodec<>() {
-            @Override
-            public @Nonnull ElectrolyticCrucibleBatteryRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
+            @Override public @Nonnull ElectrolyticCrucibleBatteryRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amount = buf.readVarInt();
                 FluidStack out0 = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -60,8 +58,7 @@ public class ElectrolyticCrucibleBatteryRecipeSerializer extends ICRecipeSeriali
                 return new ElectrolyticCrucibleBatteryRecipe(fluidTag, amount, out0.isEmpty() ? null : out0, out1.isEmpty() ? null : out1, out2.isEmpty() ? null : out2, itemOut, energy, time);
             }
 
-            @Override
-            public void encode(@Nonnull RegistryFriendlyByteBuf buf, ElectrolyticCrucibleBatteryRecipe recipe) {
+            @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, ElectrolyticCrucibleBatteryRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput0(), FluidStack.EMPTY));

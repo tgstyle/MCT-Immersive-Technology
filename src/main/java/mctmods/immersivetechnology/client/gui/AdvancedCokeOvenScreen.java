@@ -1,20 +1,20 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.gui.AdvancedCokeOvenMenu;
+import mctmods.immersivetechnology.core.lib.Reference;
+
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import com.immersiveconvergence.api.client.gui.GuiInfoArea;
-import mctmods.immersivetechnology.common.multiblocks.gui.AdvancedCokeOvenMenu;
-import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-
-import javax.annotation.Nonnull;
 import java.util.List;
+import javax.annotation.Nonnull;
 
 public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOvenMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("advanced_coke_oven");
@@ -30,7 +30,5 @@ public class AdvancedCokeOvenScreen extends BaseContainerScreen<AdvancedCokeOven
         }
     }
 
-    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
-        return ImmutableList.of(new GuiFluidArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE));
-    }
+    @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() { return ImmutableList.of(new GuiFluidArea(menu.tanks.output(), new Rect2i(leftPos + 129, topPos + 20, 16, 47), 176, 31, 20, 51, TEXTURE)); }
 }

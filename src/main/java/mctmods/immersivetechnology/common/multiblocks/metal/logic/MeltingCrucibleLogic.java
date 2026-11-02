@@ -1,16 +1,24 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.MeltingCrucibleProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.FluidContainers;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
@@ -21,14 +29,6 @@ import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
 import com.immersiveconvergence.api.multiblock.blocks.util.*;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcess;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessor;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.multiblock.IProcessContext;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
@@ -36,7 +36,11 @@ import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.TankPair;
-import net.minecraft.client.Minecraft;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -54,11 +58,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLogic.State>, IServerTickableComponent<MeltingCrucibleLogic.State>, IClientTickableComponent<MeltingCrucibleLogic.State>, IFluidOutputPump<MeltingCrucibleLogic.State> {
     public static final int SLOT_INPUT_FILLED = 0;
@@ -78,7 +77,6 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
     private static int energyPerTickToMaintain() { return ServerConfig.meltingCrucibleEnergyPerTickToMaintain; }
 
     private static List<PoIJSONSchema> RAW_POIS;
-
     public static BlockPos REDSTONE_POI;
     public static List<BlockPos> INPUT_FLUID_POIS;
     public static List<BlockPos> OUTPUT_FLUID_POIS;
@@ -102,10 +100,8 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         if (soundPosList.isEmpty()) { return; }
         BlockPos soundBlockPos = soundPosList.getFirst();
         Vec3 soundPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(soundBlockPos));
-        if (Minecraft.getInstance().player == null) { return; }
-        if (state.active && ClientUtils.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.meltingCrucible, () -> ClientUtils.attenuated(soundPos, 32, 1), () -> 1f);
-        }
+        if (ImmersiveTechnology.proxy.getClientPlayer() == null) { return; }
+        if (state.active && ImmersiveTechnology.proxy.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.meltingCrucible, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 32, 1), () -> 1f); }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
@@ -141,9 +137,7 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         boolean canProcess = shouldRun && state.activeRecipe != null && state.heatLevel >= state.activeRecipe.requiredTemp;
         state.active = state.processor.tickServer(state, ctx.getLevel(), canProcess);
 
-        if (state.activeRecipe != null && recipe != null) {
-            tryEnqueueProcess(state, level, fs);
-        }
+        if (state.activeRecipe != null && recipe != null) { tryEnqueueProcess(state, level, fs); }
 
         FluidContainers.emptyBucket(state.tanks.input(), state.inventory, SLOT_INPUT_FILLED, SLOT_INPUT_EMPTY);
         ICFluidUtils.fillFluidContainer(state.tanks.output(), SLOT_OUTPUT_EMPTY, SLOT_OUTPUT_FILLED, state.inventory);
@@ -204,20 +198,14 @@ public class MeltingCrucibleLogic implements IMultiblockLogic<MeltingCrucibleLog
         register.register(Capabilities.EnergyStorage.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
-            if (localPos.equals(ENERGY_INPUT_POI.posInMultiblock()) && (side == null || side == ENERGY_INPUT_POI.side())) {
-                return state.energy;
-            }
+            if (localPos.equals(ENERGY_INPUT_POI.posInMultiblock()) && (side == null || side == ENERGY_INPUT_POI.side())) { return state.energy; }
             return null;
         });
         register.register(Capabilities.FluidHandler.BLOCK, (state, position) -> {
             BlockPos localPos = position.posInMultiblock();
             RelativeBlockFace side = position.side();
-            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) {
-                return state.inputCap;
-            }
-            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_FACING)) {
-                return state.outputCap;
-            }
+            if (INPUT_FLUID_POIS.contains(localPos) && (side == null || side == INPUT_FLUID_FACING)) { return state.inputCap; }
+            if (OUTPUT_FLUID_POIS.contains(localPos) && (side == null || side == OUTPUT_FLUID_FACING)) { return state.outputCap; }
             return null;
         });
         register.register(Capabilities.ItemHandler.BLOCK, (state, position) -> state.invCap);

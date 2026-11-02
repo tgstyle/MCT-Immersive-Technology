@@ -1,18 +1,20 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
-import com.immersiveconvergence.api.client.RenderUtils;
 import mctmods.immersivetechnology.client.models.multiblock.StyleNOXModels;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
-import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.config.ClientConfig;
 
-import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
+import com.immersiveconvergence.api.client.RenderUtils;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockBEHelperMaster;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -23,9 +25,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 public class StyleNOXRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<StyleNOXLogic.State>> {

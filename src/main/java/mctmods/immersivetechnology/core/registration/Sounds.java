@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -9,7 +10,6 @@ import net.neoforged.bus.api.IEventBus;
 
 public class Sounds {
     private static final DeferredRegister<SoundEvent> REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, Reference.MODID);
-
     public static final DeferredHolder<SoundEvent, SoundEvent> advancedCokeOvenFan = registerSound("advanced_coke_oven_fan");
     public static final DeferredHolder<SoundEvent, SoundEvent> advancedCokeOven = registerSound("advanced_coke_oven");
     public static final DeferredHolder<SoundEvent, SoundEvent> alternator = registerSound("alternator");
@@ -35,7 +35,5 @@ public class Sounds {
 
     public static void init(IEventBus event) { REGISTER.register(event); }
 
-    private static DeferredHolder<SoundEvent, SoundEvent> registerSound(String name) {
-        return REGISTER.register(name, () -> SoundEvent.createVariableRangeEvent(Reference.rl(name)));
-    }
+    private static DeferredHolder<SoundEvent, SoundEvent> registerSound(String name) { return REGISTER.register(name, () -> SoundEvent.createVariableRangeEvent(Reference.rl(name))); }
 }

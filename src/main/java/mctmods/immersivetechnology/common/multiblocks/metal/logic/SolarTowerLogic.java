@@ -2,22 +2,22 @@ package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
-import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.CommonConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
 import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import java.util.List;
-import java.util.function.Supplier;
 
 public class SolarTowerLogic extends SolarReceiverLogic<SolarTowerRecipe, SolarTowerLogic.State> {
     public static BlockPos REDSTONE_POI;

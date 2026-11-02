@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,15 +16,13 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchangerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.HEAT_EXCHANGER.iconStack(); }
 
-    @Override
-    protected DualMapCodec<RegistryFriendlyByteBuf, HeatExchangerRecipe> codecs() {
+    @Override protected DualMapCodec<RegistryFriendlyByteBuf, HeatExchangerRecipe> codecs() {
         MapCodec<TagKey<Fluid>> input0TagCodec = ResourceLocation.CODEC
                 .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
                 .fieldOf("input0Tag");
@@ -60,8 +59,7 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
         }));
 
         StreamCodec<RegistryFriendlyByteBuf, HeatExchangerRecipe> streamCodec = new StreamCodec<>() {
-            @Override
-            public @Nonnull HeatExchangerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
+            @Override public @Nonnull HeatExchangerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> input0Tag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int input0Amount = buf.readVarInt();
                 boolean hasInput1 = buf.readBoolean();
@@ -75,8 +73,7 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
                 return new HeatExchangerRecipe(input0Tag, input0Amount, input1Tag, input1Amount, output0, output1, energy, time);
             }
 
-            @Override
-            public void encode(@Nonnull RegistryFriendlyByteBuf buf, HeatExchangerRecipe recipe) {
+            @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, HeatExchangerRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.input0Tag());
                 buf.writeVarInt(recipe.input0Amount());
                 boolean hasInput1 = recipe.input1Tag() != null;

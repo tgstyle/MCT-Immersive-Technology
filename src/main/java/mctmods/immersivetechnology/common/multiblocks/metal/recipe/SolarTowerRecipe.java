@@ -14,13 +14,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe {
     public static DeferredHolder<RecipeSerializer<?>, SolarTowerRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<SolarTowerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.SOLAR_TOWER);
-
     private final ResourceLocation id;
     public final TagKey<Fluid> inputTag;
     private final int inputAmount;
@@ -36,9 +34,7 @@ public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe
         this.requiredTemp = requiredTemp;
     }
 
-    public SolarTowerRecipe(TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time, double requiredTemp) {
-        this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), inputTag, inputAmount, fluidOutput, time, requiredTemp);
-    }
+    public SolarTowerRecipe(TagKey<Fluid> inputTag, int inputAmount, @Nullable FluidStack fluidOutput, int time, double requiredTemp) { this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), inputTag, inputAmount, fluidOutput, time, requiredTemp); }
 
     public ResourceLocation getId() { return id; }
     public TagKey<Fluid> inputTag() { return inputTag; }
@@ -47,14 +43,12 @@ public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe
     public FluidStack fluidOutput() { return fluidOutput; }
     @Override public double requiredTemp() { return requiredTemp; }
 
-    public boolean matches(FluidStack stack) {
-        return stack != null && stack.is(this.inputTag);
-    }
+    public boolean matches(FluidStack stack) { return stack != null && stack.is(this.inputTag); }
 
     @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) { return findRecipe(level, fluid, null); }
 
     @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid, @Nullable SolarTowerRecipe hint) {
-        if (fluid == null || fluid.isEmpty()) return null;
+        if (fluid == null || fluid.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluid) && fluid.getAmount() >= recipe.getInputAmount(), hint);
     }
 

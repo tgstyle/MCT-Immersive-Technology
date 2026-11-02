@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -13,9 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
@@ -30,20 +29,18 @@ public class CoolingTowerRecipeBuilder implements RecipeBuilder {
     private FluidStack fluidOutput1;
     private FluidStack fluidOutput2;
     private int time;
-
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private CoolingTowerRecipeBuilder() {}
 
-    public static CoolingTowerRecipeBuilder builder() {
-        return new CoolingTowerRecipeBuilder();
-    }
+    public static CoolingTowerRecipeBuilder builder() { return new CoolingTowerRecipeBuilder(); }
 
     public CoolingTowerRecipeBuilder addInput(TagKey<Fluid> fluidTag, int amount) {
         if (this.inputTag0 == null) {
             this.inputTag0 = fluidTag;
             this.amount0 = amount;
-        } else {
+        }
+        else {
             this.inputTag1 = fluidTag;
             this.amount1 = amount;
         }
@@ -51,43 +48,31 @@ public class CoolingTowerRecipeBuilder implements RecipeBuilder {
     }
 
     public CoolingTowerRecipeBuilder addOutput(FluidStack fluidStack) {
-        if (this.fluidOutput0 == null) {
-            this.fluidOutput0 = fluidStack;
-        } else if (this.fluidOutput1 == null) {
-            this.fluidOutput1 = fluidStack;
-        } else {
+        if (this.fluidOutput0 == null) { this.fluidOutput0 = fluidStack; }
+        else if (this.fluidOutput1 == null) { this.fluidOutput1 = fluidStack; }
+        else {
             this.fluidOutput2 = fluidStack;
         }
         return this;
     }
 
-    public CoolingTowerRecipeBuilder addOutput(Fluid fluid, int amount) {
-        return addOutput(new FluidStack(fluid, amount));
-    }
+    public CoolingTowerRecipeBuilder addOutput(Fluid fluid, int amount) { return addOutput(new FluidStack(fluid, amount)); }
 
     public CoolingTowerRecipeBuilder setTime(int time) {
         this.time = time;
         return this;
     }
 
-    @Override
-    public @Nonnull CoolingTowerRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
+    @Override public @Nonnull CoolingTowerRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
     }
 
-    @Override
-    public @Nonnull CoolingTowerRecipeBuilder group(@Nullable String group) {
-        return this;
-    }
+    @Override public @Nonnull CoolingTowerRecipeBuilder group(@Nullable String group) { return this; }
 
-    @Override
-    public @Nonnull Item getResult() {
-        return Items.AIR;
-    }
+    @Override public @Nonnull Item getResult() { return Items.AIR; }
 
-    @Override
-    public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
+    @Override public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
         Advancement.Builder advancement = output.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id))

@@ -17,14 +17,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class StyleNOXRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, StyleNOXRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<StyleNOXRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.STYLENOX);
-
     public final ICIngredientWithSize input;
     public final ICTagOutput output;
     public final TagKey<Fluid> waterTag;

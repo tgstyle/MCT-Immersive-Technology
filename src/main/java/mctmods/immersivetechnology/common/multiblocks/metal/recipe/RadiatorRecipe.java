@@ -14,13 +14,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class RadiatorRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, RadiatorRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<RadiatorRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.RADIATOR);
-
     private final ResourceLocation id;
     public final TagKey<Fluid> fluidTag;
     private final int amount;
@@ -34,9 +32,7 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
         this.fluidOutput = fluidOutput;
     }
 
-    public RadiatorRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time) {
-        this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), fluidTag, amount, fluidOutput, time);
-    }
+    public RadiatorRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time) { this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), fluidTag, amount, fluidOutput, time); }
 
     public ResourceLocation getId() { return id; }
     public TagKey<Fluid> fluidTag() { return fluidTag; }
@@ -44,14 +40,12 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
     public int getInputAmount() { return amount; }
     public FluidStack fluidOutput() { return fluidOutput; }
 
-    public boolean matches(FluidStack stack) {
-        return stack != null && stack.is(this.fluidTag);
-    }
+    public boolean matches(FluidStack stack) { return stack != null && stack.is(this.fluidTag); }
 
     @Nullable public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput) { return findRecipe(level, fluidInput, null); }
 
     @Nullable public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput, @Nullable RadiatorRecipe hint) {
-        if (fluidInput == null || fluidInput.isEmpty()) return null;
+        if (fluidInput == null || fluidInput.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluidInput) && fluidInput.getAmount() >= recipe.getInputAmount(), hint);
     }
 

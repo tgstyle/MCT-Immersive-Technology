@@ -1,19 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import com.immersiveconvergence.api.capability.HeatCapabilities;
-import com.immersiveconvergence.api.multiblock.FormationCandidate;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerTankLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
+import com.immersiveconvergence.api.capability.HeatCapabilities;
+import com.immersiveconvergence.api.multiblock.FormationCandidate;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Rotation;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 public class BoilerTank extends MachineTemplateMultiblock {
@@ -28,7 +27,5 @@ public class BoilerTank extends MachineTemplateMultiblock {
         return points;
     }
 
-    @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates) {
-        return FormationCandidate.preferFacing(world, candidates, BoilerTankLogic.HEAT_INPUT_POIS, BoilerTankLogic.HEAT_INPUT_FACING, HeatCapabilities.HEAT_PROVIDER);
-    }
+    @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates) { return FormationCandidate.preferFacing(world, candidates, BoilerTankLogic.HEAT_INPUT_POIS, BoilerTankLogic.HEAT_INPUT_FACING, HeatCapabilities.HEAT_PROVIDER); }
 }

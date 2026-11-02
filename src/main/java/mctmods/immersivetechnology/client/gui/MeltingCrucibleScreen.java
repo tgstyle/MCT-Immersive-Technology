@@ -1,30 +1,28 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.gui.MeltingCrucibleMenu;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
+import mctmods.immersivetechnology.core.lib.Reference;
+
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiEnergyArea;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import com.immersiveconvergence.api.client.gui.GuiInfoArea;
-import mctmods.immersivetechnology.common.multiblocks.gui.MeltingCrucibleMenu;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.MeltingCrucibleLogic;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
-import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.fluids.FluidStack;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 public class MeltingCrucibleScreen extends BaseContainerScreen<MeltingCrucibleMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("melting_crucible");
 
-    public MeltingCrucibleScreen(MeltingCrucibleMenu container, Inventory inventoryPlayer, Component title) {
-        super(container, inventoryPlayer, title, TEXTURE);
-    }
+    public MeltingCrucibleScreen(MeltingCrucibleMenu container, Inventory inventoryPlayer, Component title) { super(container, inventoryPlayer, title, TEXTURE); }
 
     @Override @Nonnull protected List<GuiInfoArea> makeInfoAreas() {
         return List.of(

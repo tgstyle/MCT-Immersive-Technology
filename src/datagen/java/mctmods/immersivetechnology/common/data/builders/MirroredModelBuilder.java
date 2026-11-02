@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.data.builders;
 
-import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.google.gson.JsonObject;
 import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nonnull;
 
 public class MirroredModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
@@ -13,9 +13,7 @@ public class MirroredModelBuilder<T extends ModelBuilder<T>> extends CustomLoade
 
     private ModelBuilder<?> inner;
 
-    protected MirroredModelBuilder(T parent, ExistingFileHelper existingFileHelper) {
-        super(Reference.rl("mirror"), parent, existingFileHelper, false);
-    }
+    protected MirroredModelBuilder(T parent, ExistingFileHelper existingFileHelper) { super(Reference.rl("mirror"), parent, existingFileHelper, false); }
 
     public MirroredModelBuilder<T> inner(ModelBuilder<?> inner) {
         this.inner = inner;

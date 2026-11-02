@@ -1,14 +1,14 @@
 package mctmods.immersivetechnology.client.gui;
 
-import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
-import com.immersiveconvergence.api.client.gui.GuiEnergyArea;
-import com.immersiveconvergence.api.client.gui.GuiFluidArea;
-import com.immersiveconvergence.api.client.gui.GuiInfoArea;
-import mctmods.immersivetechnology.common.multiblocks.gui.StyleNOXMenu;
+import mctmods.immersivetechnology.common.gui.StyleNOXMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.StyleNOXLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiEnergyArea;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,10 +21,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 public class StyleNOXScreen extends BaseContainerScreen<StyleNOXMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("stylenox");

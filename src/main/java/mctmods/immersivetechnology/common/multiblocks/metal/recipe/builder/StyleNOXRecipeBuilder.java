@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
@@ -34,7 +33,6 @@ public class StyleNOXRecipeBuilder implements RecipeBuilder {
     private FluidStack steamOutput;
     private int time;
     private int energy;
-
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private StyleNOXRecipeBuilder() {}

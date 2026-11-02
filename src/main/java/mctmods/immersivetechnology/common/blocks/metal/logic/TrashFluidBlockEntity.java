@@ -1,24 +1,21 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.config.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TrashFluidBlockEntity extends OSDCommonBlockEntity implements IFluidHandler {
     public TrashFluidBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_FLUID.get(), pos, state); }
 
-    @SuppressWarnings("unused")
-    public IFluidHandler getFluidHandler(@Nullable Direction side) {
-        return this;
-    }
+    @SuppressWarnings("unused") public IFluidHandler getFluidHandler(@Nullable Direction side) { return this; }
 
     @Override public int getTanks() { return 1; }
 

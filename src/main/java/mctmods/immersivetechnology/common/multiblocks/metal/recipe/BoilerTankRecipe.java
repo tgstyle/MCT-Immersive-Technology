@@ -14,13 +14,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class BoilerTankRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, BoilerTankRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<BoilerTankRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_TANK);
-
     public final TagKey<Fluid> fluidTag;
     private final int amount;
     public final FluidStack output;
@@ -39,18 +37,14 @@ public class BoilerTankRecipe extends ICMultiblockRecipe {
     public FluidStack output() { return output; }
     public double requiredHeat() { return requiredHeat; }
 
-    public boolean matches(FluidStack stack) {
-        return stack.is(this.fluidTag);
-    }
+    public boolean matches(FluidStack stack) { return stack.is(this.fluidTag); }
 
-    public int getInputAmount() {
-        return amount;
-    }
+    public int getInputAmount() { return amount; }
 
     public static BoilerTankRecipe findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
 
     public static BoilerTankRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerTankRecipe hint) {
-        if (input.isEmpty() || input.getAmount() <= 0) return null;
+        if (input.isEmpty() || input.getAmount() <= 0) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(input), hint);
     }
 

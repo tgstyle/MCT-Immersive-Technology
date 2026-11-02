@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.util.EnergyPush;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MirrorAnimation;
@@ -20,6 +20,10 @@ import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
 import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -31,10 +35,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class SolarCollectorLogic implements IMultiblockLogic<SolarCollectorLogic.State>, IServerTickableComponent<SolarCollectorLogic.State>, IClientTickableComponent<SolarCollectorLogic.State> {
     private static final Vec3 PANEL_PIVOT = new Vec3(1.5, 2.57, 1.5);

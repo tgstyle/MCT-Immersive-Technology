@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.util;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.network.chat.Component;
 
 public enum TranslationKey {

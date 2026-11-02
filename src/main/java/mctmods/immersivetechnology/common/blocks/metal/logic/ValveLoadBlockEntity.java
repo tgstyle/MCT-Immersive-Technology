@@ -1,8 +1,14 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.block.ModProperties;
+import mctmods.immersivetechnology.common.gui.LoadControllerMenu;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
+
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICTargetingInfo;
 import com.immersiveconvergence.api.wires.ICWire;
@@ -13,10 +19,6 @@ import com.immersiveconvergence.api.wires.ICWireType;
 import com.immersiveconvergence.api.wires.ICWires;
 import com.immersiveconvergence.api.wires.IICEnergyConnector;
 import com.immersiveconvergence.api.wires.IICEnergySource;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveLoadMenu;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.BlockEntities;
-import mctmods.immersivetechnology.core.registration.MenuTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -31,12 +33,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-
 import java.util.Collection;
 import java.util.List;
-
-import static mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock.ROTATION;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -52,7 +50,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override @Nonnull public BlockState getState() { return getBlockState(); }
 
-    @Override public void setState(@Nonnull BlockState state) { if (level != null) level.setBlock(worldPosition, state, 3); }
+    @Override public void setState(@Nonnull BlockState state) { if (level != null) { level.setBlock(worldPosition, state, 3); } }
 
     @Override public void onLoad() {
         super.onLoad();
@@ -70,9 +68,9 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override public void tickServer() {
         super.tickServer();
-        if (level == null) return;
+        if (level == null) { return; }
         long time = level.getGameTime();
-        if (time % 12 == ((worldPosition.getX() ^ worldPosition.getZ()) & 11)) updateRedstoneState();
+        if (time % 12 == ((worldPosition.getX() ^ worldPosition.getZ()) & 11)) { updateRedstoneState(); }
         if (!level.isClientSide && getBlockState().getValue(OPEN)) {
             handleDirectTransfers();
             offerBuffer();
@@ -97,23 +95,25 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
     private void handleDirectTransfers() {
         boolean inputWired = isSideWired(true);
         boolean outputWired = isSideWired(false);
-        if (inputWired && outputWired) return;
+        if (inputWired && outputWired) { return; }
         IEnergyStorage inputStorage = getInputEnergy();
         IEnergyStorage outputStorage = getOutputEnergy();
-        if (!inputWired && inputStorage == null) return;
-        if (!outputWired && outputStorage == null) return;
+        if (!inputWired && inputStorage == null) { return; }
+        if (!outputWired && outputStorage == null) { return; }
         int canAccept = getTransferLimit(outputWired, outputStorage);
-        if (canAccept <= 0) return;
+        if (canAccept <= 0) { return; }
         int extracted;
         if (inputWired) {
             extracted = Math.min(canAccept, (int) Math.min(bufferedEnergy, Integer.MAX_VALUE));
             int inserted = outputStorage.receiveEnergy(extracted, false);
             bufferedEnergy -= inserted;
             if (inserted > 0) { acceptedAmount += inserted; packets++; }
-        } else if (outputWired) {
+        }
+        else if (outputWired) {
             extracted = inputStorage.extractEnergy(Math.min(canAccept, bufferRoom(null)), false);
             bufferedEnergy += extracted;
-        } else {
+        }
+        else {
             extracted = inputStorage.extractEnergy(canAccept, true);
             int inserted = outputStorage.receiveEnergy(extracted, false);
             inputStorage.extractEnergy(inserted, false);
@@ -128,14 +128,15 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         if (outputWired) {
             canAccept = keepSize > 0 ? Math.clamp(keepSize - longToInt(bufferedEnergy), 0, canAccept) : canAccept;
             canAccept = Math.min(canAccept, getWireRate(false));
-        } else {
+        }
+        else {
             if (outputStorage == null) { canAccept = 0; }
             else { canAccept = keepSize > 0 ? Math.clamp(keepSize - outputStorage.getEnergyStored(), 0, canAccept) : canAccept; }
         }
         canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
-        if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
+        if (redstoneMode > 0) { canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0)); }
         boolean inputWired = isSideWired(true);
-        if (inputWired) canAccept = Math.min(canAccept, getWireRate(true));
+        if (inputWired) { canAccept = Math.min(canAccept, getWireRate(true)); }
         return canAccept;
     }
 
@@ -149,7 +150,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
         int index = mirrored ? LEFT_INDEX : RIGHT_INDEX;
-        if (flip) index = 1 - index;
+        if (flip) { index = 1 - index; }
         return index;
     }
 
@@ -157,7 +158,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
         int index = mirrored ? RIGHT_INDEX : LEFT_INDEX;
-        if (flip) index = 1 - index;
+        if (flip) { index = 1 - index; }
         return index;
     }
 
@@ -165,7 +166,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
         int index = isInput ? (mirrored ? LEFT_INDEX : RIGHT_INDEX) : (mirrored ? RIGHT_INDEX : LEFT_INDEX);
-        if (flip) index = 1 - index;
+        if (flip) { index = 1 - index; }
         return index == LEFT_INDEX ? leftType != null : rightType != null;
     }
 
@@ -184,14 +185,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
     private Direction getOutputDir() { return getInputDir().getOpposite(); }
 
     public IEnergyStorage getInputEnergy() {
-        if (level == null) return null;
+        if (level == null) { return null; }
         Direction inputDir = getInputDir();
         BlockPos srcPos = worldPosition.relative(inputDir);
         return level.getCapability(Capabilities.EnergyStorage.BLOCK, srcPos, inputDir.getOpposite());
     }
 
     public IEnergyStorage getOutputEnergy() {
-        if (level == null) return null;
+        if (level == null) { return null; }
         Direction outputDir = getOutputDir();
         BlockPos dstPos = worldPosition.relative(outputDir);
         return level.getCapability(Capabilities.EnergyStorage.BLOCK, dstPos, outputDir.getOpposite());
@@ -202,7 +203,8 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
     @Override public boolean accepts(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) { return cable.getRole() == ICWireRole.ENERGY && (point.index() == LEFT_INDEX ? leftType : rightType) == null; }
 
     @Override public void onWireAdded(@Nonnull ICConnectionPoint point, @Nonnull ICWire wire) {
-        if (point.index() == LEFT_INDEX) leftType = wire.getType(); else rightType = wire.getType();
+        if (point.index() == LEFT_INDEX) { leftType = wire.getType(); }
+        else rightType = wire.getType();
         updateMirrorState();
         wiresChanged();
     }
@@ -220,16 +222,14 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         if (leftType != null && rightType != null) {
             int leftL = getLevel(leftType.getCategory());
             int rightL = getLevel(rightType.getCategory());
-            if (leftL != rightL) {
-                setMirrored(rightL > leftL);
-            }
+            if (leftL != rightL) { setMirrored(rightL > leftL); }
         }
     }
 
     private int getLevel(ICWireCategory cat) {
-        if (cat == ICWireCategory.LV) return 1;
-        if (cat == ICWireCategory.MV) return 2;
-        if (cat == ICWireCategory.HV) return 3;
+        if (cat == ICWireCategory.LV) { return 1; }
+        if (cat == ICWireCategory.MV) { return 2; }
+        if (cat == ICWireCategory.HV) { return 3; }
         return 0;
     }
 
@@ -241,13 +241,13 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         boolean isVertical = facing.getAxis().isVertical();
         Direction hFacing = isVertical ? Direction.from2DDataValue(rotation) : facing;
         boolean mirrored = getIsMirrored();
-        if (mirrored) right = !right;
+        if (mirrored) { right = !right; }
         Direction perpDir = isVertical ? hFacing : facing.getClockWise();
         boolean perpPositive = perpDir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
         double high = 0.8125;
         double low = 0.1875;
         double perpOff = right ? low : high;
-        if (perpPositive) perpOff = 1 - perpOff;
+        if (perpPositive) { perpOff = 1 - perpOff; }
         Direction.Axis perpAxis = perpDir.getAxis();
         boolean alongPositive = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE;
         double alongOff = alongPositive ? 1 - conRadius : conRadius;
@@ -265,26 +265,26 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
             case Y: yOff = perpOff; break;
             case Z: zOff = perpOff; break;
         }
-        if (!isVertical) yOff = 0.5;
+        if (!isVertical) { yOff = 0.5; }
         return new Vec3(xOff, yOff, zOff);
     }
 
     @Override @Nonnull public Collection<ICConnectionPoint> points() { return List.of(new ICConnectionPoint(worldPosition, LEFT_INDEX), new ICConnectionPoint(worldPosition, RIGHT_INDEX)); }
 
     @Override @Nullable public ICConnectionPoint pointAt(@Nonnull ICTargetingInfo target, @Nonnull Vec3i offset) {
-        if (!offset.equals(Vec3i.ZERO)) return null;
+        if (!offset.equals(Vec3i.ZERO)) { return null; }
         ICConnectionPoint leftCP = new ICConnectionPoint(worldPosition, LEFT_INDEX);
         ICConnectionPoint rightCP = new ICConnectionPoint(worldPosition, RIGHT_INDEX);
         boolean leftEmpty = hasNoExternalConnections(leftCP);
         boolean rightEmpty = hasNoExternalConnections(rightCP);
-        if (leftEmpty && !rightEmpty) return leftCP;
-        else if (!leftEmpty && rightEmpty) return rightCP;
+        if (leftEmpty && !rightEmpty) { return leftCP; }
+        else if (!leftEmpty && rightEmpty) { return rightCP; }
         Direction facing = getFacing();
         boolean isVertical = facing.getAxis().isVertical();
         Direction hFacing = isVertical ? Direction.from2DDataValue(rotation) : facing;
         Direction perpDir = isVertical ? hFacing : facing.getClockWise();
         double hitPos = getHitPos(target, perpDir);
-        if (hitPos < .5) return leftCP;
+        if (hitPos < .5) { return leftCP; }
         else return rightCP;
     }
 
@@ -292,14 +292,16 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         Direction.Axis perpAxis = perpDir.getAxis();
         double hitPos = perpAxis == Direction.Axis.X ? target.hitX() : perpAxis == Direction.Axis.Y ? target.hitY() : target.hitZ();
         boolean positive = perpDir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
-        if (!positive) hitPos = 1 - hitPos;
+        if (!positive) { hitPos = 1 - hitPos; }
         return hitPos;
     }
 
     @Override public void readCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
-        if (nbt.contains("leftType")) leftType = ICWireType.byName(nbt.getString("leftType")); else leftType = null;
-        if (nbt.contains("rightType")) rightType = ICWireType.byName(nbt.getString("rightType")); else rightType = null;
+        if (nbt.contains("leftType")) { leftType = ICWireType.byName(nbt.getString("leftType")); }
+        else leftType = null;
+        if (nbt.contains("rightType")) { rightType = ICWireType.byName(nbt.getString("rightType")); }
+        else rightType = null;
         rotation = nbt.getInt("rotation");
         bufferedEnergy = nbt.getLong("bufferedEnergy");
         updateMirrorState();
@@ -307,28 +309,26 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override public void writeCustomNBT(CompoundTag nbt, boolean descPacket) {
         super.writeCustomNBT(nbt, descPacket);
-        if (leftType != null) nbt.putString("leftType", leftType.getUniqueName());
-        if (rightType != null) nbt.putString("rightType", rightType.getUniqueName());
+        if (leftType != null) { nbt.putString("leftType", leftType.getUniqueName()); }
+        if (rightType != null) { nbt.putString("rightType", rightType.getUniqueName()); }
         nbt.putInt("rotation", rotation);
         nbt.putLong("bufferedEnergy", bufferedEnergy);
     }
 
     @Override public void setMirrored(boolean mirrored) {
         BlockState state = getBlockState();
-        if (state.getValue(ModProperties.MIRRORED) != mirrored) {
-            if (level != null) level.setBlock(worldPosition, state.setValue(ModProperties.MIRRORED, mirrored), 3);
-        }
+        if (state.getValue(ModProperties.MIRRORED) != mirrored) { if (level != null) { level.setBlock(worldPosition, state.setValue(ModProperties.MIRRORED, mirrored), 3); } }
     }
 
     @Override public boolean getIsMirrored() { return getBlockState().getValue(ModProperties.MIRRORED); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveLoadMenu.makeServer(MenuTypes.VALVE_LOAD.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return LoadControllerMenu.makeServer(MenuTypes.VALVE_LOAD.getType(), id, inv, this); }
 
     @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
 
     @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
-        if (level == null || level.isClientSide) return false;
-        if (leftType != null || rightType != null) return false;
+        if (level == null || level.isClientSide) { return false; }
+        if (leftType != null || rightType != null) { return false; }
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;
         Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
@@ -340,15 +340,15 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
         boolean mirrored = getIsMirrored();
         boolean flip = !facing.getAxis().isVertical();
         int outputIndex = mirrored ? RIGHT_INDEX : LEFT_INDEX;
-        if (flip) outputIndex = 1 - outputIndex;
+        if (flip) { outputIndex = 1 - outputIndex; }
         return point.index() == outputIndex;
     }
 
     @Override public int available() {
-        if (!getBlockState().getValue(OPEN)) return 0;
+        if (!getBlockState().getValue(OPEN)) { return 0; }
         long avail = bufferedEnergy;
         boolean outputWired = isSideWired(false);
-        if (outputWired) avail = Math.min(avail, getWireRate(false));
+        if (outputWired) { avail = Math.min(avail, getWireRate(false)); }
         return (int) Math.min(avail, Integer.MAX_VALUE);
     }
 
@@ -363,12 +363,12 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
     }
 
     @Override public int demand(@Nonnull ICConnectionPoint point) {
-        if (isSource(point) || !getBlockState().getValue(OPEN)) return 0;
+        if (isSource(point) || !getBlockState().getValue(OPEN)) { return 0; }
         boolean outputWired = isSideWired(false);
         IEnergyStorage outputStorage = outputWired ? null : getOutputEnergy();
         int req = getTransferLimit(outputWired, outputStorage);
         boolean inputWired = isSideWired(true);
-        if (inputWired) req = Math.min(req, getWireRate(true));
+        if (inputWired) { req = Math.min(req, getWireRate(true)); }
         return Math.min(req, bufferRoom(outputStorage));
     }
 

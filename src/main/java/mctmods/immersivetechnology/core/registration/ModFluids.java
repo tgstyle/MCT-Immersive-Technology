@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+import static mctmods.immersivetechnology.core.lib.Reference.rl;
 
 import com.immersiveconvergence.api.fluid.FluidEntry;
 import com.immersiveconvergence.api.fluid.FluidRegisters;
@@ -14,7 +15,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +24,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import static mctmods.immersivetechnology.core.lib.Reference.rl;
 
 public class ModFluids {
     public static final DeferredRegister<Fluid> REGISTER = DeferredRegister.create(BuiltInRegistries.FLUID, Reference.MODID);

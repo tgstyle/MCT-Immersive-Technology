@@ -11,13 +11,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-@SuppressWarnings("ConstantConditions")
-public class BlockEntities {
+@SuppressWarnings("ConstantConditions") public class BlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> REGISTER = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Reference.MODID);
     private static final DeferredRegister<BlockEntityType<?>> REGISTER_CONTENT = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Reference.MODID);
 
@@ -108,10 +106,10 @@ public class BlockEntities {
         for (Supplier<?> sup : FLUID_BES) {
             BlockEntityType<?> type = (BlockEntityType<?>) sup.get();
             event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, (be, side) -> {
-                if (be instanceof BarrelCommonBlockEntity b) return b.getFluidHandler(side);
-                if (be instanceof BarrelCreativeBlockEntity b) return b.getFluidHandler(side);
-                if (be instanceof TrashFluidBlockEntity b) return b.getFluidHandler(side);
-                if (be instanceof ValveFluidBlockEntity b) return b.getFluidHandler(side);
+                if (be instanceof BarrelCommonBlockEntity b) { return b.getFluidHandler(side); }
+                if (be instanceof BarrelCreativeBlockEntity b) { return b.getFluidHandler(side); }
+                if (be instanceof TrashFluidBlockEntity b) { return b.getFluidHandler(side); }
+                if (be instanceof ValveFluidBlockEntity b) { return b.getFluidHandler(side); }
                 return null;
             });
         }
@@ -119,8 +117,8 @@ public class BlockEntities {
         for (Supplier<?> sup : ENERGY_BES) {
             BlockEntityType<?> type = (BlockEntityType<?>) sup.get();
             event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, type, (be, side) -> {
-                if (be instanceof TrashEnergyBlockEntity b) return b.getEnergyHandler(side);
-                if (be instanceof AdvancedCokeOvenBaseHeaterBlockEntity b) return b.getEnergyHandler(side);
+                if (be instanceof TrashEnergyBlockEntity b) { return b.getEnergyHandler(side); }
+                if (be instanceof AdvancedCokeOvenBaseHeaterBlockEntity b) { return b.getEnergyHandler(side); }
                 return null;
             });
         }
@@ -128,9 +126,9 @@ public class BlockEntities {
         for (Supplier<?> sup : ITEM_BES) {
             BlockEntityType<?> type = (BlockEntityType<?>) sup.get();
             event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type, (be, side) -> {
-                if (be instanceof CrateCreativeBlockEntity b) return b;
-                if (be instanceof TrashItemBlockEntity b) return b.getItemHandler(side);
-                if (be instanceof ValveLimiterBlockEntity b) return b.getItemHandler(side);
+                if (be instanceof CrateCreativeBlockEntity b) { return b; }
+                if (be instanceof TrashItemBlockEntity b) { return b.getItemHandler(side); }
+                if (be instanceof ValveLimiterBlockEntity b) { return b.getItemHandler(side); }
                 return null;
             });
         }

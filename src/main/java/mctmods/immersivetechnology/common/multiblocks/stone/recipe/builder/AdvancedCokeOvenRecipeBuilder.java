@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
+
 import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.immersiveconvergence.api.crafting.ICTagOutput;
 import net.minecraft.advancements.Advancement;
@@ -18,9 +20,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.NotCondition;
 import net.neoforged.neoforge.common.conditions.TagEmptyCondition;
-
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
@@ -32,18 +31,13 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
     private TagKey<Item> outputTag;
     private int time;
     private int creosoteOutput;
-
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private AdvancedCokeOvenRecipeBuilder() {}
 
-    public static AdvancedCokeOvenRecipeBuilder builder(Item input) {
-        return new AdvancedCokeOvenRecipeBuilder().addInput(input);
-    }
+    public static AdvancedCokeOvenRecipeBuilder builder(Item input) { return new AdvancedCokeOvenRecipeBuilder().addInput(input); }
 
-    public static AdvancedCokeOvenRecipeBuilder builder(TagKey<Item> input, int count) {
-        return new AdvancedCokeOvenRecipeBuilder().addInput(input, count);
-    }
+    public static AdvancedCokeOvenRecipeBuilder builder(TagKey<Item> input, int count) { return new AdvancedCokeOvenRecipeBuilder().addInput(input, count); }
 
     public AdvancedCokeOvenRecipeBuilder addInput(Item input) {
         this.input = new ICIngredientWithSize(Ingredient.of(input));
@@ -60,8 +54,7 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    @SuppressWarnings("unused")
-    public AdvancedCokeOvenRecipeBuilder addOutput(ItemStack output) {
+    @SuppressWarnings("unused") public AdvancedCokeOvenRecipeBuilder addOutput(ItemStack output) {
         this.itemOutput = new ICTagOutput(output);
         return this;
     }
@@ -82,24 +75,16 @@ public class AdvancedCokeOvenRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    @Override
-    public @Nonnull AdvancedCokeOvenRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
+    @Override public @Nonnull AdvancedCokeOvenRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
     }
 
-    @Override
-    public @Nonnull AdvancedCokeOvenRecipeBuilder group(@Nullable String group) {
-        return this;
-    }
+    @Override public @Nonnull AdvancedCokeOvenRecipeBuilder group(@Nullable String group) { return this; }
 
-    @Override
-    public @Nonnull Item getResult() {
-        return Items.AIR;
-    }
+    @Override public @Nonnull Item getResult() { return Items.AIR; }
 
-    @Override
-    public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
+    @Override public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
         Advancement.Builder advancement = output.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id))

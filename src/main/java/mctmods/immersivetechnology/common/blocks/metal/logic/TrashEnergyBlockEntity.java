@@ -1,22 +1,19 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.config.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
-
 import javax.annotation.Nullable;
 
 public class TrashEnergyBlockEntity extends OSDCommonBlockEntity implements IEnergyStorage {
     public TrashEnergyBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ENERGY.get(), pos, state); }
 
-    @SuppressWarnings("unused")
-    public IEnergyStorage getEnergyHandler(@Nullable Direction side) {
-        return this;
-    }
+    @SuppressWarnings("unused") public IEnergyStorage getEnergyHandler(@Nullable Direction side) { return this; }
 
     @Override public int receiveEnergy(int maxReceive, boolean simulate) {
         if (!simulate) { acceptedAmount += maxReceive; }

@@ -1,11 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.block.IServerTickableBE;
-import com.immersiveconvergence.api.fluid.IICFluidPipe;
-import mctmods.immersivetechnology.common.blocks.metal.gui.ValveFluidMenu;
-import mctmods.immersivetechnology.core.util.TranslationKey;
+import mctmods.immersivetechnology.common.gui.FluidValveMenu;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.ROTATION;
+
+import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.fluid.IICFluidPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -21,9 +23,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-
-import static mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock.ROTATION;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -46,7 +45,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
 
     @Override public void onLoad() {
         super.onLoad();
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) { return; }
         efficientSetChanged();
         for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
         markContainingBlockForUpdate(null);
@@ -61,20 +60,15 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
 
     @Override public boolean canOutputPressurized() { return true; }
 
-    @SuppressWarnings("unused")
-    public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(BlockStateProperties.FACING).getOpposite(); }
+    @SuppressWarnings("unused") public boolean hasOutputConnection(Direction side) { return side == getBlockState().getValue(BlockStateProperties.FACING).getOpposite(); }
 
-    @SuppressWarnings("unused")
-    public IFluidHandler getFluidHandler(@Nullable Direction side) {
-        if (side == null) return null;
+    @SuppressWarnings("unused") public IFluidHandler getFluidHandler(@Nullable Direction side) {
+        if (side == null) { return null; }
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         if (side.getAxis() == blockFacing.getAxis()) {
-            if (side == blockFacing) {
-                return this;
-            } else if (side == blockFacing.getOpposite()) {
-                return new DummyTank();
-            }
+            if (side == blockFacing) { return this; }
+            else if (side == blockFacing.getOpposite()) { return new DummyTank(); }
         }
         return null;
     }
@@ -89,9 +83,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         if (state.hasProperty(BlockStateProperties.FACING)) {
             int newRot = rotation;
             Direction currentFacing = state.getValue(BlockStateProperties.FACING);
-            if (facing.getAxis() == Direction.Axis.Y) {
-                if (currentFacing.getAxis() != Direction.Axis.Y) newRot = currentFacing.get2DDataValue();
-            } else {
+            if (facing.getAxis() == Direction.Axis.Y) { if (currentFacing.getAxis() != Direction.Axis.Y) { newRot = currentFacing.get2DDataValue(); } }
+            else {
                 newRot = facing.get2DDataValue();
             }
             state = state.setValue(BlockStateProperties.FACING, facing).setValue(ROTATION, newRot);
@@ -103,9 +96,8 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         for (Direction d : Direction.values()) {
             BlockPos adjPos = worldPosition.relative(d);
             BlockEntity adj = level.getBlockEntity(adjPos);
-            if (IICFluidPipe.isPipe(adj)) {
-                IICFluidPipe.refreshConnection(adj, d.getOpposite());
-            } else if (adj != null) {
+            if (IICFluidPipe.isPipe(adj)) { IICFluidPipe.refreshConnection(adj, d.getOpposite()); }
+            else if (adj != null) {
                 adj.invalidateCapabilities();
                 adj.setChanged();
             }
@@ -125,17 +117,17 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     boolean busy = false;
 
     @Override public int fill(@Nonnull FluidStack fluidStack, @Nonnull FluidAction doFill) {
-        if (level == null || level.isClientSide || busy || fluidStack.isEmpty()) return 0;
+        if (level == null || level.isClientSide || busy || fluidStack.isEmpty()) { return 0; }
         BlockState state = getBlockState();
-        if (!state.getValue(ValveCommonBlockEntity.OPEN)) return 0;
+        if (!state.getValue(ValveCommonBlockEntity.OPEN)) { return 0; }
         IFluidHandler destination = getDestination();
-        if (destination == null) return 0;
+        if (destination == null) { return 0; }
         int canAccept = fluidStack.getAmount();
         canAccept = timeLimit > 0 ? Math.clamp(timeLimit - ValveCommonBlockEntity.longToInt(acceptedAmount), 0, canAccept) : canAccept;
         canAccept = keepSize > 0 ? Math.clamp(keepSize - getTankFill(destination, fluidStack), 0, canAccept) : canAccept;
         canAccept = packetLimit > 0 ? Math.min(canAccept, packetLimit) : canAccept;
-        if (redstoneMode > 0) canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0));
-        if (canAccept == 0) return 0;
+        if (redstoneMode > 0) { canAccept = (int) (canAccept * ((redstoneMode == 1 ? 15 - getRSPower() : getRSPower()) / 15.0)); }
+        if (canAccept == 0) { return 0; }
         FluidStack fillStack = fluidStack.copy();
         fillStack.setAmount(canAccept);
         busy = true;
@@ -149,7 +141,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         int toReturn = 0;
         for (int i = 0; i < handler.getTanks(); i++) {
             FluidStack stored = handler.getFluidInTank(i);
-            if (!stored.isEmpty() && FluidStack.isSameFluidSameComponents(stored, toFill)) toReturn += stored.getAmount();
+            if (!stored.isEmpty() && FluidStack.isSameFluidSameComponents(stored, toFill)) { toReturn += stored.getAmount(); }
         }
         return toReturn;
     }
@@ -159,14 +151,14 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     @Override @Nonnull public FluidStack drain(int i, @Nonnull FluidAction b) { return FluidStack.EMPTY; }
 
     public IFluidHandler getDestination() {
-        if (level == null) return null;
+        if (level == null) { return null; }
         BlockState state = getBlockState();
         Direction blockFacing = state.getValue(BlockStateProperties.FACING);
         BlockPos dstPos = worldPosition.relative(blockFacing.getOpposite());
         return level.getCapability(Capabilities.FluidHandler.BLOCK, dstPos, blockFacing);
     }
 
-    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return ValveFluidMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return FluidValveMenu.makeServer(MenuTypes.VALVE_FLUID.getType(), id, inv, this); }
 
     @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_FLUID.location); }
 
@@ -178,10 +170,10 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
     }
 
     @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
-        if (level == null || level.isClientSide) return false;
+        if (level == null || level.isClientSide) { return false; }
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction newFacing = counter ? facing.getCounterClockWise(side.getAxis()) : facing.getClockWise(side.getAxis());
-        if (newFacing.getAxis() == Direction.Axis.Y) return false;
+        if (newFacing.getAxis() == Direction.Axis.Y) { return false; }
         setFacing(newFacing);
         return true;
     }

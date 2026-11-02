@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
+import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelBlockEntity;
+
 import java.util.Map;
 import java.util.EnumMap;
 import net.minecraft.core.Direction;
 import com.immersiveconvergence.api.block.IStateSideConfig;
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.block.Enums.IOSideConfig;
-import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelSteelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import java.util.function.BiFunction;
-
 import javax.annotation.Nonnull;
 
 public class BarrelSteelBlock extends ModEntityBlock<BarrelSteelBlockEntity> implements IStateSideConfig {

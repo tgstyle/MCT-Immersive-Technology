@@ -17,7 +17,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
@@ -26,7 +25,6 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, AdvancedCokeOvenRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.ADVANCED_COKE_OVEN);
     private static final String LEGACY_COPIED_PREFIX = "advanced_coke_oven/copied/";
-
     public final ICIngredientWithSize input;
     public final ICTagOutput itemOutput;
     public final int creosoteOutput;
@@ -40,17 +38,11 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
         this.fluidOutputList = List.of(new FluidStack(ICCokeOvenRecipe.creosote(), creosoteOutput));
     }
 
-    public boolean matches(ItemStack stack) {
-        return this.input.testIgnoringSize(stack);
-    }
+    public boolean matches(ItemStack stack) { return this.input.testIgnoringSize(stack); }
 
-    @Override protected ICRecipeSerializer<?> getICSerializer() {
-        return SERIALIZER.get();
-    }
+    @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
-    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider access) {
-        return this.itemOutput.get();
-    }
+    @Override @Nonnull public ItemStack getResultItem(@Nonnull HolderLookup.Provider access) { return this.itemOutput.get(); }
 
     public ICIngredientWithSize input() { return input; }
     public ICTagOutput itemOutput() { return itemOutput; }

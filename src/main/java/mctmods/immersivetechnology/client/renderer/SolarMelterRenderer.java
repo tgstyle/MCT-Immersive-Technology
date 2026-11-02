@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.client.renderer;
 
-import com.immersiveconvergence.api.particles.ColoredBeam;
-import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 
+import com.immersiveconvergence.api.particles.ColoredBeam;
+import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
 import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
@@ -15,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 
 public class SolarMelterRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarMelterLogic.State>> {

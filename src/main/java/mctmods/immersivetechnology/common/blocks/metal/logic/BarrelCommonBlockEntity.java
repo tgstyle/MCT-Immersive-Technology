@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
 import net.neoforged.neoforge.fluids.IFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.block.BaseBlockEntity;
@@ -8,8 +10,6 @@ import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +36,6 @@ import java.util.EnumMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import com.immersiveconvergence.api.util.ICFluidUtils;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -65,19 +64,19 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         if (sideCfgArray.length >= 2) {
             sideConfig.put(Direction.DOWN, IOSideConfig.VALUES[sideCfgArray[0]]);
             sideConfig.put(Direction.UP, IOSideConfig.VALUES[sideCfgArray[1]]);
-        } else {
+        }
+        else {
             sideConfig.put(Direction.DOWN, IOSideConfig.OUTPUT);
             sideConfig.put(Direction.UP, IOSideConfig.INPUT);
         }
-        if (level != null) {
-            tank.readFromNBT(level.registryAccess(), nbt.getCompound("tank"));
-        } else {
+        if (level != null) { tank.readFromNBT(level.registryAccess(), nbt.getCompound("tank")); }
+        else {
             tank.readFromNBT(HolderLookup.Provider.create(Stream.empty()), nbt.getCompound("tank"));
         }
         postRead(descPacket);
     }
 
-    protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
+    protected void postRead(boolean descPacket) { if (!descPacket) { updateState(); } }
 
     @Override public void writeCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         int[] sideCfgArray = new int[2];
@@ -85,25 +84,23 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         sideCfgArray[1] = sideConfig.getOrDefault(Direction.UP, IOSideConfig.INPUT).ordinal();
         nbt.putIntArray("sideConfig", sideCfgArray);
         CompoundTag tankTag = new CompoundTag();
-        if (level != null) {
-            tank.writeToNBT(level.registryAccess(), tankTag);
-        } else {
+        if (level != null) { tank.writeToNBT(level.registryAccess(), tankTag); }
+        else {
             tank.writeToNBT(HolderLookup.Provider.create(Stream.empty()), tankTag);
         }
         nbt.put("tank", tankTag);
     }
 
-    @SuppressWarnings("unused")
-    public IFluidHandler getFluidHandler(@Nullable Direction facing) {
-        if (facing == null) return new SidedFluidHandler(this, null);
-        if (facing.getAxis() != Direction.Axis.Y) return null;
+    @SuppressWarnings("unused") public IFluidHandler getFluidHandler(@Nullable Direction facing) {
+        if (facing == null) { return new SidedFluidHandler(this, null); }
+        if (facing.getAxis() != Direction.Axis.Y) { return null; }
         return (facing == Direction.UP ? new SidedFluidHandler(this, Direction.UP) : new SidedFluidHandler(this, Direction.DOWN));
     }
 
     @Override public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
         if (!contained.isEmpty() && !isFluidValid(contained)) {
-            if (level != null && !level.isClientSide) player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false);
+            if (level != null && !level.isClientSide) { player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false); }
             return true;
         }
         if (FluidUtil.interactWithFluidHandler(player, hand, tank)) { setChanged(); markContainingBlockForUpdate(null); return true; }
@@ -111,7 +108,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     }
 
     @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult rtr, boolean hammer) {
-        if (rtr.getType() == HitResult.Type.MISS) return null;
+        if (rtr.getType() == HitResult.Type.MISS) { return null; }
         if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty()) return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())};
@@ -126,9 +123,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
         CompoundTag tag = new CompoundTag();
         writeTank(tag, true);
-        if (!tag.isEmpty()) {
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        }
+        if (!tag.isEmpty()) { stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag)); }
         drop.accept(stack);
     }
 
@@ -138,7 +133,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
             CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
             if (customData != null) {
                 CompoundTag tag = customData.copyTag();
-                if (tag.contains("tank")) readTank(tag);
+                if (tag.contains("tank")) { readTank(tag); }
             }
         }
     }
@@ -146,19 +141,17 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     public void writeTank(CompoundTag nbt, boolean toItem) {
         boolean write = tank.getFluidAmount() > 0;
         CompoundTag tankTag = new CompoundTag();
-        if (level != null) {
-            tank.writeToNBT(level.registryAccess(), tankTag);
-        } else {
+        if (level != null) { tank.writeToNBT(level.registryAccess(), tankTag); }
+        else {
             tank.writeToNBT(HolderLookup.Provider.create(Stream.empty()), tankTag);
         }
-        if (!toItem || write) nbt.put("tank", tankTag);
+        if (!toItem || write) { nbt.put("tank", tankTag); }
     }
 
     public void readTank(CompoundTag nbt) {
         CompoundTag tankTag = nbt.getCompound("tank");
-        if (level != null) {
-            tank.readFromNBT(level.registryAccess(), tankTag);
-        } else {
+        if (level != null) { tank.readFromNBT(level.registryAccess(), tankTag); }
+        else {
             tank.readFromNBT(HolderLookup.Provider.create(Stream.empty()), tankTag);
         }
     }
@@ -168,8 +161,8 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     @Override @Nonnull public IOSideConfig getSideConfig(@Nonnull Direction side) { return sideConfig.getOrDefault(side, IOSideConfig.NONE); }
 
     @Override public boolean toggleSide(Direction side, @Nonnull Player p) {
-        if (side.getAxis() != Direction.Axis.Y) return false;
-        if (!canConfigureSide(side)) return false;
+        if (side.getAxis() != Direction.Axis.Y) { return false; }
+        if (!canConfigureSide(side)) { return false; }
         IOSideConfig next = IOSideConfig.next(sideConfig.getOrDefault(side, IOSideConfig.NONE));
         sideConfig.put(side, next);
         setChanged();
@@ -214,7 +207,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return barrel.isFluidValid(stack); }
 
         @Override public int fill(FluidStack resource, @Nonnull FluidAction action) {
-            if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.INPUT)) return 0;
+            if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.INPUT)) { return 0; }
             int filled = barrel.tank.fill(resource, action);
             if (filled > 0 && action.execute()) {
                 barrel.setChanged();
@@ -224,7 +217,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         }
 
         @Override @Nonnull public FluidStack drain(FluidStack resource, @Nonnull FluidAction action) {
-            if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT)) return FluidStack.EMPTY;
+            if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT)) { return FluidStack.EMPTY; }
             FluidStack drained = barrel.tank.drain(resource, action);
             if (!drained.isEmpty() && action.execute()) {
                 barrel.setChanged();
@@ -234,7 +227,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         }
 
         @Override @Nonnull public FluidStack drain(int maxDrain, @Nonnull FluidAction action) {
-            if (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT) return FluidStack.EMPTY;
+            if (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT) { return FluidStack.EMPTY; }
             FluidStack drained = barrel.tank.drain(maxDrain, action);
             if (!drained.isEmpty() && action.execute()) {
                 barrel.setChanged();

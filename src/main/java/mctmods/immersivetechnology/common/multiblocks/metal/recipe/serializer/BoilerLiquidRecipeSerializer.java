@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,8 +19,7 @@ import net.minecraft.world.level.material.Fluid;
 public class BoilerLiquidRecipeSerializer extends ICRecipeSerializer<BoilerLiquidRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_LIQUID.iconStack(); }
 
-    @Override
-    protected DualMapCodec<RegistryFriendlyByteBuf, BoilerLiquidRecipe> codecs() {
+    @Override protected DualMapCodec<RegistryFriendlyByteBuf, BoilerLiquidRecipe> codecs() {
         MapCodec<TagKey<Fluid>> fluidTagCodec = ResourceLocation.CODEC
                 .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
                 .fieldOf("inputTag");

@@ -1,11 +1,5 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.registration.BlockEntry;
-import com.google.common.collect.ImmutableMap;
-import com.immersiveconvergence.api.client.ConfigurableSidesModel;
-import com.immersiveconvergence.api.block.Enums.IOSideConfig;
-import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLimiterBlock;
@@ -17,6 +11,13 @@ import mctmods.immersivetechnology.common.data.builders.SideConfigBuilder;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.common.data.generators.ModBlockState;
+
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.registration.BlockEntry;
+import com.google.common.collect.ImmutableMap;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.ModProperties;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -35,12 +36,10 @@ import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.neoforged.neoforge.client.model.generators.loaders.ObjModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import javax.annotation.Nullable;
 
 public class BasicStateGenerator {
@@ -57,14 +56,13 @@ public class BasicStateGenerator {
         if (facing.getAxis().isHorizontal()) {
             yRot = ((facing.get2DDataValue() + yRotOffset) % 4) * 90;
             xRot = config.horizontalXRot;
-        } else {
+        }
+        else {
             Direction hFacing = Direction.from2DDataValue(rotationVal);
             yRot = ((hFacing.get2DDataValue() + yRotOffset) % 4) * 90;
             xRot = (facing == Direction.DOWN) ? config.verticalDownXRot : config.verticalUpXRot;
         }
-        if (mirrored) {
-            yRot = (yRot + 180) % 360;
-        }
+        if (mirrored) { yRot = (yRot + 180) % 360; }
         return new int[]{xRot, yRot};
     }
 
@@ -119,11 +117,8 @@ public class BasicStateGenerator {
             String suffix = suffixes.get(config);
             String upTex = "block/metal/barrel_open_none";
             String downTex = "block/metal/barrel_open_none";
-            if (config == IOSideConfig.INPUT) {
-                downTex = "block/metal/barrel_open_in";
-            } else if (config == IOSideConfig.OUTPUT) {
-                downTex = "block/metal/barrel_open_out";
-            }
+            if (config == IOSideConfig.INPUT) { downTex = "block/metal/barrel_open_in"; }
+            else if (config == IOSideConfig.OUTPUT) { downTex = "block/metal/barrel_open_out"; }
             BlockModelBuilder openModel = main.models().getBuilder("block/metal/barrel_open" + suffix)
                     .texture("up", main.modLoc(upTex))
                     .texture("down", main.modLoc(downTex))
@@ -177,13 +172,7 @@ public class BasicStateGenerator {
         for (BlockEntry<?> fluidEntry : ModFluids.ALL_FLUID_BLOCKS) {
             Block fluidBlock = fluidEntry.get();
             VariantBlockStateBuilder builder = main.getVariantBuilder(fluidBlock);
-            for (int level = 0; level < 16; level++) {
-                builder.partialState()
-                        .with(LiquidBlock.LEVEL, level)
-                        .modelForState()
-                        .modelFile(emptyModel)
-                        .addModel();
-            }
+            for (int level = 0; level < 16; level++) { builder.partialState() .with(LiquidBlock.LEVEL, level) .modelForState() .modelFile(emptyModel) .addModel(); }
         }
 
         if (ICMods.ieContent()) { createValveVariants(); }
@@ -214,11 +203,9 @@ public class BasicStateGenerator {
             Direction facing = state.getValue(BlockStateProperties.FACING);
             boolean open = openProperty != null && state.getValue(openProperty);
             Property<Integer> rotationProp;
-            if (block == ModBlocks.Metal.VALVE_FLUID.get()) {
-                rotationProp = ValveFluidBlock.ROTATION;
-            } else if (block == ModBlocks.Metal.VALVE_LOAD.get()) {
-                rotationProp = ValveLoadBlock.ROTATION;
-            } else {
+            if (block == ModBlocks.Metal.VALVE_FLUID.get()) { rotationProp = ValveFluidBlock.ROTATION; }
+            else if (block == ModBlocks.Metal.VALVE_LOAD.get()) { rotationProp = ValveLoadBlock.ROTATION; }
+            else {
                 rotationProp = ValveLimiterBlock.ROTATION;
             }
             int rotationVal = state.getValue(rotationProp);
@@ -252,9 +239,7 @@ public class BasicStateGenerator {
                 .shadeQuads(true)
                 .flipV(true)
                 .emissiveAmbient(true);
-        if (visibilityOverrides != null) {
-            visibilityOverrides.forEach(loader::visibility);
-        }
+        if (visibilityOverrides != null) { visibilityOverrides.forEach(loader::visibility); }
         ModelFile model = loader.end();
         String particlePath = objLoc.getPath().replaceFirst("^models/", "");
         ResourceLocation particleObjLoc = ResourceLocation.fromNamespaceAndPath(objLoc.getNamespace(), particlePath);
@@ -336,13 +321,9 @@ public class BasicStateGenerator {
         }, SlabBlock.WATERLOGGED);
     }
 
-    private void createCubeAllBlock(String name, String texture) {
-        createSimpleBlock(ModBlocks.getBlock.apply(name), main.models().cubeAll("block/metal/" + name, main.modLoc("block/metal/" + texture)));
-    }
+    private void createCubeAllBlock(String name, String texture) { createSimpleBlock(ModBlocks.getBlock.apply(name), main.models().cubeAll("block/metal/" + name, main.modLoc("block/metal/" + texture))); }
 
-    private void createSimpleBlock(Block block, ModelFile model) {
-        main.getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model));
-    }
+    private void createSimpleBlock(Block block, ModelFile model) { main.getVariantBuilder(block).partialState().setModels(new ConfiguredModel(model)); }
 
 
     protected int getAngle(Direction dir) { return (int) ((dir.toYRot() + 180) % 360); }
@@ -361,9 +342,7 @@ public class BasicStateGenerator {
     }
 
     public static <T extends Comparable<T>> void forEach(PartialBlockstate base, Property<T> prop, List<Property<?>> remaining, java.util.function.Consumer<PartialBlockstate> out) {
-        for (T value : prop.getPossibleValues()) {
-            forEachState(base.with(prop, value), remaining, out);
-        }
+        for (T value : prop.getPossibleValues()) { forEachState(base.with(prop, value), remaining, out); }
     }
 
     public static void forEachState(PartialBlockstate base, List<Property<?>> props, java.util.function.Consumer<PartialBlockstate> out) {
@@ -371,7 +350,8 @@ public class BasicStateGenerator {
             List<Property<?>> remaining = props.subList(1, props.size());
             Property<?> mainProp = props.getFirst();
             forEach(base, mainProp, remaining, out);
-        } else {
+        }
+        else {
             out.accept(base);
         }
     }
@@ -379,9 +359,7 @@ public class BasicStateGenerator {
     protected void setRenderType(@Nullable RenderType type, ModelBuilder<?>... builders) {
         if (type != null) {
             final String typeName = ModelProviderUtils.getName(type);
-            for (final ModelBuilder<?> model : builders) {
-                model.renderType(typeName);
-            }
+            for (final ModelBuilder<?> model : builders) { model.renderType(typeName); }
         }
     }
 }

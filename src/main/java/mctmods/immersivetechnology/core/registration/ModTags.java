@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;

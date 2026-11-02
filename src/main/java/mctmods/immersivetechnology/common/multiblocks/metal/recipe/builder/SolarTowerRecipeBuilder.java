@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -13,9 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
@@ -27,14 +26,11 @@ public class SolarTowerRecipeBuilder implements RecipeBuilder {
     private FluidStack fluidOutput;
     private int time;
     private double requiredTemp;
-
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private SolarTowerRecipeBuilder() {}
 
-    public static SolarTowerRecipeBuilder builder() {
-        return new SolarTowerRecipeBuilder();
-    }
+    public static SolarTowerRecipeBuilder builder() { return new SolarTowerRecipeBuilder(); }
 
     public SolarTowerRecipeBuilder addInput(TagKey<Fluid> tag, int amount) {
         this.inputTag = tag;
@@ -57,24 +53,16 @@ public class SolarTowerRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
-    @Override
-    public @Nonnull SolarTowerRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
+    @Override public @Nonnull SolarTowerRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
     }
 
-    @Override
-    public @Nonnull SolarTowerRecipeBuilder group(@Nullable String group) {
-        return this;
-    }
+    @Override public @Nonnull SolarTowerRecipeBuilder group(@Nullable String group) { return this; }
 
-    @Override
-    public @Nonnull Item getResult() {
-        return Items.AIR;
-    }
+    @Override public @Nonnull Item getResult() { return Items.AIR; }
 
-    @Override
-    public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
+    @Override public void save(RecipeOutput output, @Nonnull ResourceLocation id) {
         Advancement.Builder advancement = output.advancement()
                 .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id))

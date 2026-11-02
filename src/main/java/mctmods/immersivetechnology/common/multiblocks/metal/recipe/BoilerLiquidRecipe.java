@@ -14,13 +14,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class BoilerLiquidRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, BoilerLiquidRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<BoilerLiquidRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
-
     public final TagKey<Fluid> fluidTag;
     private final int amount;
     private final double heatPerTick;
@@ -34,22 +32,16 @@ public class BoilerLiquidRecipe extends ICMultiblockRecipe {
         this.targetHeat = Math.min(targetHeat, HeatCapabilities.maxHeat());
     }
 
-    public boolean matches(FluidStack stack) {
-        return stack.is(this.fluidTag);
-    }
+    public boolean matches(FluidStack stack) { return stack.is(this.fluidTag); }
 
-    public int getInputAmount() {
-        return amount;
-    }
+    public int getInputAmount() { return amount; }
 
     public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input, @Nullable BoilerLiquidRecipe hint) {
-        if (input.isEmpty() || input.getAmount() <= 0) return null;
+        if (input.isEmpty() || input.getAmount() <= 0) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(input), hint);
     }
 
-    public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input) {
-        return findRecipe(level, input, null);
-    }
+    public static BoilerLiquidRecipe findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
 
     public TagKey<Fluid> fluidTag() { return fluidTag; }
     public int amount() { return amount; }

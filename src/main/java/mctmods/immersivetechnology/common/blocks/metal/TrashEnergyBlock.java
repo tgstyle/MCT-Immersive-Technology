@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import com.immersiveconvergence.api.block.ModEntityBlock;
 import mctmods.immersivetechnology.common.blocks.metal.logic.TrashEnergyBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.shapes.TrashCanShape;
+
+import com.immersiveconvergence.api.block.ModEntityBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 

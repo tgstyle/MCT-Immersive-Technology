@@ -1,19 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import com.immersiveconvergence.api.multiblock.BlockMatcher;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.capability.HeatCapabilities;
-import com.immersiveconvergence.api.multiblock.FormationCandidate;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
+import com.immersiveconvergence.api.multiblock.BlockMatcher;
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.capability.HeatCapabilities;
+import com.immersiveconvergence.api.multiblock.FormationCandidate;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 public class BoilerSolid extends MachineTemplateMultiblock {
@@ -26,7 +25,5 @@ public class BoilerSolid extends MachineTemplateMultiblock {
         }), MultiblockRegistry.BOILER_SOLID);
     }
 
-    @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates) {
-        return FormationCandidate.preferFacing(world, candidates, BoilerSolidLogic.HEAT_OUTPUT_POIS, BoilerSolidLogic.HEAT_OUTPUT_FACING, HeatCapabilities.HEAT_CONSUMER);
-    }
+    @Override @Nullable protected FormationCandidate preferredCandidate(Level world, List<FormationCandidate> candidates) { return FormationCandidate.preferFacing(world, candidates, BoilerSolidLogic.HEAT_OUTPUT_POIS, BoilerSolidLogic.HEAT_OUTPUT_FACING, HeatCapabilities.HEAT_CONSUMER); }
 }

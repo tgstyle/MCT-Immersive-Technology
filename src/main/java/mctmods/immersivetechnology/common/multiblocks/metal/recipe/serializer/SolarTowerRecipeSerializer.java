@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,14 +16,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 
 public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.SOLAR_TOWER.iconStack(); }
 
-    @Override
-    protected DualMapCodec<RegistryFriendlyByteBuf, SolarTowerRecipe> codecs() {
+    @Override protected DualMapCodec<RegistryFriendlyByteBuf, SolarTowerRecipe> codecs() {
         MapCodec<TagKey<Fluid>> inputTagCodec = ResourceLocation.CODEC
                 .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
                 .fieldOf("inputTag");
@@ -44,8 +43,7 @@ public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRec
         }));
 
         StreamCodec<RegistryFriendlyByteBuf, SolarTowerRecipe> streamCodec = new StreamCodec<>() {
-            @Override
-            public @Nonnull SolarTowerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
+            @Override public @Nonnull SolarTowerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> inputTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int inputAmount = buf.readVarInt();
                 FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
@@ -55,8 +53,7 @@ public class SolarTowerRecipeSerializer extends ICRecipeSerializer<SolarTowerRec
                 return new SolarTowerRecipe(inputTag, inputAmount, out, time, requiredTemp);
             }
 
-            @Override
-            public void encode(@Nonnull RegistryFriendlyByteBuf buf, SolarTowerRecipe recipe) {
+            @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, SolarTowerRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag());
                 buf.writeVarInt(recipe.inputAmount());
                 FluidStack out = java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY);

@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,14 +16,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 
 public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowerRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.COOLING_TOWER.iconStack(); }
 
-    @Override
-    protected DualMapCodec<RegistryFriendlyByteBuf, CoolingTowerRecipe> codecs() {
+    @Override protected DualMapCodec<RegistryFriendlyByteBuf, CoolingTowerRecipe> codecs() {
         MapCodec<TagKey<Fluid>> inputTag0Codec = ResourceLocation.CODEC
                 .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
                 .fieldOf("inputTag0");
@@ -56,8 +55,7 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
         }));
 
         StreamCodec<RegistryFriendlyByteBuf, CoolingTowerRecipe> streamCodec = new StreamCodec<>() {
-            @Override
-            public @Nonnull CoolingTowerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
+            @Override public @Nonnull CoolingTowerRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> tag0 = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amt0 = buf.readVarInt();
                 TagKey<Fluid> tag1 = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
@@ -72,8 +70,7 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
                 return new CoolingTowerRecipe(o0, o1, o2, tag0, amt0, tag1, amt1, time);
             }
 
-            @Override
-            public void encode(@Nonnull RegistryFriendlyByteBuf buf, CoolingTowerRecipe recipe) {
+            @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, CoolingTowerRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag0());
                 buf.writeVarInt(recipe.amount0());
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.inputTag1());

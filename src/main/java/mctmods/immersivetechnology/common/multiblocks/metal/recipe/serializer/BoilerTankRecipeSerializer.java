@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import malte0811.dualcodecs.DualMapCodec;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,14 +16,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 
 public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRecipe> {
     @Override public ItemStack getIcon() { return MultiblockRegistry.BOILER_TANK.iconStack(); }
 
-    @Override
-    protected DualMapCodec<RegistryFriendlyByteBuf, BoilerTankRecipe> codecs() {
+    @Override protected DualMapCodec<RegistryFriendlyByteBuf, BoilerTankRecipe> codecs() {
         MapCodec<TagKey<Fluid>> fluidTagCodec = ResourceLocation.CODEC
                 .xmap(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location)
                 .fieldOf("inputTag");
@@ -38,8 +37,7 @@ public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRec
         ).apply(instance, BoilerTankRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, BoilerTankRecipe> streamCodec = new StreamCodec<>() {
-            @Override
-            public @Nonnull BoilerTankRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
+            @Override public @Nonnull BoilerTankRecipe decode(@Nonnull RegistryFriendlyByteBuf buf) {
                 TagKey<Fluid> fluidTag = ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).decode(buf);
                 int amount = buf.readVarInt();
                 FluidStack output = FluidStack.STREAM_CODEC.decode(buf);
@@ -48,8 +46,7 @@ public class BoilerTankRecipeSerializer extends ICRecipeSerializer<BoilerTankRec
                 return new BoilerTankRecipe(fluidTag, amount, output, time, requiredHeat);
             }
 
-            @Override
-            public void encode(@Nonnull RegistryFriendlyByteBuf buf, BoilerTankRecipe recipe) {
+            @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, BoilerTankRecipe recipe) {
                 ResourceLocation.STREAM_CODEC.map(rl -> TagKey.create(Registries.FLUID, rl), TagKey::location).encode(buf, recipe.fluidTag());
                 buf.writeVarInt(recipe.amount());
                 FluidStack.STREAM_CODEC.encode(buf, recipe.output());

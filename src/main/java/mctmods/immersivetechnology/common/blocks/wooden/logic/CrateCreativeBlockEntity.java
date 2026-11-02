@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
-import com.immersiveconvergence.api.block.BlockInterfaces;
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
-import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
-import mctmods.immersivetechnology.core.util.Reach;
-import mctmods.immersivetechnology.core.util.TranslationKey;
+import mctmods.immersivetechnology.common.gui.CrateMenu;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.Reach;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import com.immersiveconvergence.api.block.BlockInterfaces;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -24,19 +25,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 
 public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements MenuProvider, IItemHandlerModifiable, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction {
 
     private ItemStack template = ItemStack.EMPTY;
 
-    public CrateCreativeBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntities.CRATE_CREATIVE.get(), pos, state);
-    }
+    public CrateCreativeBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.CRATE_CREATIVE.get(), pos, state); }
 
     private HolderLookup.Provider registries() { return level != null ? level.registryAccess() : HolderLookup.Provider.create(Stream.empty()); }
 
@@ -97,66 +95,41 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
                 CompoundTag templateTag = tag.getCompound("template");
                 if (!templateTag.isEmpty()) {
                     setTemplate(ItemStack.parse(registries(), templateTag).orElse(ItemStack.EMPTY));
-                    if (level != null) {
-                        level.invalidateCapabilities(worldPosition);
-                    }
+                    if (level != null) { level.invalidateCapabilities(worldPosition); }
                 }
             }
         }
     }
 
-    @Override
-    @Nonnull
-    public Component getDisplayName() {
-        return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation());
-    }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation()); }
 
-    @Override
-    public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) {
-        return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this);
-    }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return CrateMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
 
     public boolean stillValid(Player player) { return level != null && !level.isClientSide && Reach.within(this, player); }
 
-    @Override
-    public int getSlots() { return 1; }
+    @Override public int getSlots() { return 1; }
 
-    @Override
-    @Nonnull
-    public ItemStack getStackInSlot(int slot) {
-        return slot == 0 ? template.copy() : ItemStack.EMPTY;
-    }
+    @Override @Nonnull public ItemStack getStackInSlot(int slot) { return slot == 0 ? template.copy() : ItemStack.EMPTY; }
 
-    @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+    @Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (slot != 0 || stack.isEmpty()) { return stack; }
         if (simulate) { return ItemStack.EMPTY; }
         setTemplate(stack);
         return ItemStack.EMPTY;
     }
 
-    @Override
-    @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+    @Override @Nonnull public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (slot != 0 || template.isEmpty() || amount <= 0) { return ItemStack.EMPTY; }
         ItemStack out = template.copy();
         out.setCount(Math.min(amount, template.getMaxStackSize()));
         return out;
     }
 
-    @Override
-    public int getSlotLimit(int slot) {
-        return slot == 0 ? (template.isEmpty() ? 64 : template.getMaxStackSize()) : 0;
-    }
+    @Override public int getSlotLimit(int slot) { return slot == 0 ? (template.isEmpty() ? 64 : template.getMaxStackSize()) : 0; }
 
-    @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        return slot == 0 && !stack.isEmpty();
-    }
+    @Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return slot == 0 && !stack.isEmpty(); }
 
-    @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+    @Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         if (slot == 0) { setTemplate(stack); }
     }
 }

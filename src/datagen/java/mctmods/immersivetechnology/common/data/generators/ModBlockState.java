@@ -1,13 +1,14 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import mctmods.immersivetechnology.common.data.generators.blockstate.BasicStateGenerator;
+import mctmods.immersivetechnology.common.data.generators.blockstate.MultiblockStateGenerator;
+import mctmods.immersivetechnology.core.lib.Reference;
+
 import com.google.common.base.Preconditions;
 import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.data.generators.blockstate.BasicStateGenerator;
-import mctmods.immersivetechnology.common.data.generators.blockstate.MultiblockStateGenerator;
-import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
@@ -22,7 +23,6 @@ import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,30 +33,23 @@ import java.util.concurrent.CompletableFuture;
 
 public class ModBlockState extends BlockStateProvider {
     public static final Map<ResourceLocation, String> generatedParticleTextures = new HashMap<>();
-
     private final MultiblockStateGenerator multiblockGen;
     private final BasicStateGenerator basicGen;
-
     private final PackOutput packOutput;
     private final ClearableBlockModelProvider blockModels;
     private final ClearableItemModelProvider itemModels;
-
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static class ClearableBlockModelProvider extends BlockModelProvider {
-        public ClearableBlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
-            super(output, modid, existingFileHelper);
-        }
+        public ClearableBlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) { super(output, modid, existingFileHelper); }
         @Override protected void registerModels() {}
         public void clearModels() { clear(); }
         public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
     }
 
     private static class ClearableItemModelProvider extends ItemModelProvider {
-        public ClearableItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
-            super(output, modid, existingFileHelper);
-        }
+        public ClearableItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) { super(output, modid, existingFileHelper); }
         @Override protected void registerModels() {}
         public void clearModels() { clear(); }
         public CompletableFuture<?> genAll(CachedOutput cache) { return generateAll(cache); }
@@ -88,9 +81,7 @@ public class ModBlockState extends BlockStateProvider {
         int i = 0;
         futures[i++] = blockModels.genAll(cache);
         futures[i++] = itemModels.genAll(cache);
-        for (Map.Entry<Block, IGeneratedBlockState> entry : registeredBlocks.entrySet()) {
-            futures[i++] = saveBlockState(entry.getKey(), entry.getValue().toJson(), cache);
-        }
+        for (Map.Entry<Block, IGeneratedBlockState> entry : registeredBlocks.entrySet()) { futures[i++] = saveBlockState(entry.getKey(), entry.getValue().toJson(), cache); }
         return CompletableFuture.allOf(futures);
     }
 

@@ -13,13 +13,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class GasTurbineRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, GasTurbineRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<GasTurbineRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.GAS_TURBINE);
-
     public final TagKey<Fluid> fluidTag;
     private final int amount;
     @Nullable public final FluidStack fluidOutput;
@@ -39,9 +37,7 @@ public class GasTurbineRecipe extends ICMultiblockRecipe {
     public FluidStack fluidOutput() { return fluidOutput; }
     public float torque() { return torque; }
 
-    public boolean matches(FluidStack fluid) {
-        return fluid.is(this.fluidTag);
-    }
+    public boolean matches(FluidStack fluid) { return fluid.is(this.fluidTag); }
 
     public static GasTurbineRecipe findRecipe(Level level, FluidStack fluid, @Nullable GasTurbineRecipe hint) { return RECIPES.find(level, recipe -> recipe.matches(fluid), hint); }
 

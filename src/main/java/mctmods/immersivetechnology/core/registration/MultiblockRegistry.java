@@ -1,8 +1,5 @@
 package mctmods.immersivetechnology.core.registration;
 
-import com.immersiveconvergence.api.block.ModBlockItem;
-import com.immersiveconvergence.api.multiblock.ClearTank;
-import com.immersiveconvergence.api.multiblock.ClearTankRegistry;
 import mctmods.immersivetechnology.common.multiblocks.metal.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.BoilerLiquidProcess;
@@ -11,12 +8,17 @@ import mctmods.immersivetechnology.common.multiblocks.stone.AdvancedCokeOven;
 import mctmods.immersivetechnology.common.multiblocks.stone.CoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.AdvancedCokeOvenLogic;
 import mctmods.immersivetechnology.common.multiblocks.stone.logic.CoolingTowerLogic;
+import mctmods.immersivetechnology.common.multiblocks.gui.helper.MultiblockGui;
+import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.block.ModBlockItem;
+import com.immersiveconvergence.api.multiblock.ClearTank;
+import com.immersiveconvergence.api.multiblock.ClearTankRegistry;
 import com.immersiveconvergence.api.multiblock.MultiblockHandler;
 import com.immersiveconvergence.api.multiblock.TemplateMultiblock;
 import com.immersiveconvergence.api.multiblock.blocks.MultiblockRegistration;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -28,8 +30,6 @@ import com.immersiveconvergence.api.multiblock.MultiblockPartBlockNonMirror;
 import com.immersiveconvergence.api.multiblock.MultiblockPartBlockWithMirror;
 import com.immersiveconvergence.api.multiblock.MultiblockPartBlockWithMirrorActive;
 import com.immersiveconvergence.api.multiblock.MultiblockBuilder;
-import mctmods.immersivetechnology.common.multiblocks.gui.helper.MultiblockGui;
-import mctmods.immersivetechnology.core.lib.Reference;
 
 public class MultiblockRegistry {
     public static HashMap<String, MultiblockRegistration<?>> MB_REGISTRY_MAP = new HashMap<>();
@@ -47,33 +47,19 @@ public class MultiblockRegistry {
 
     public static void registerMultiblockTemplate(String registry_name, TemplateMultiblock template) { MB_TEMPLATE_MAP.put(registry_name, registerMultiblock(template)); }
 
-    private static <S extends IMultiblockState> MultiblockBuilder<S> base(IMultiblockLogic<S> logic, String name) {
-        return new MultiblockBuilder<>(logic, Reference.rl(name));
-    }
+    private static <S extends IMultiblockState> MultiblockBuilder<S> base(IMultiblockLogic<S> logic, String name) { return new MultiblockBuilder<>(logic, Reference.rl(name)); }
 
-    private static <S extends IMultiblockState> MultiblockBuilder<S> complete(MultiblockBuilder<S> builder) {
-        return builder.customBEs(BlockEntities.REGISTER);
-    }
+    private static <S extends IMultiblockState> MultiblockBuilder<S> complete(MultiblockBuilder<S> builder) { return builder.customBEs(BlockEntities.REGISTER); }
 
-    public static <S extends IMultiblockState> MultiblockBuilder<S> stone(IMultiblockLogic<S> logic, String name) {
-        return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirror<>(ModBlocks.STONE_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
-    }
+    public static <S extends IMultiblockState> MultiblockBuilder<S> stone(IMultiblockLogic<S> logic, String name) { return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirror<>(ModBlocks.STONE_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new)); }
 
-    public static <S extends IMultiblockState> MultiblockBuilder<S> stoneNoMirror(IMultiblockLogic<S> logic, String name) {
-        return complete(base(logic, name).notMirrored().customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockNonMirror<>(ModBlocks.STONE_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
-    }
+    public static <S extends IMultiblockState> MultiblockBuilder<S> stoneNoMirror(IMultiblockLogic<S> logic, String name) { return complete(base(logic, name).notMirrored().customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockNonMirror<>(ModBlocks.STONE_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new)); }
 
-    public static <S extends IMultiblockState> MultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) {
-        return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirror<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
-    }
+    public static <S extends IMultiblockState> MultiblockBuilder<S> metal(IMultiblockLogic<S> logic, String name) { return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirror<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new)); }
 
-    public static <S extends IMultiblockState> MultiblockBuilder<S> metalNoMirror(IMultiblockLogic<S> logic, String name) {
-        return complete(base(logic, name).notMirrored().customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockNonMirror<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
-    }
+    public static <S extends IMultiblockState> MultiblockBuilder<S> metalNoMirror(IMultiblockLogic<S> logic, String name) { return complete(base(logic, name).notMirrored().customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockNonMirror<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new)); }
 
-    public static <S extends IMultiblockState> MultiblockBuilder<S> metalWithActive(IMultiblockLogic<S> logic, String name) {
-        return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirrorActive<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new));
-    }
+    public static <S extends IMultiblockState> MultiblockBuilder<S> metalWithActive(IMultiblockLogic<S> logic, String name) { return complete(base(logic, name).customBlock(ModBlocks.REGISTER, ModItems.REGISTER, r -> new MultiblockPartBlockWithMirrorActive<>(ModBlocks.METAL_PROPERTIES_NO_OCCLUSION.get(), r), ModBlockItem::new)); }
 
     public static final MultiblockRegistration<AdvancedCokeOvenLogic.State> ADVANCED_COKE_OVEN =
             stoneNoMirror(new AdvancedCokeOvenLogic(), "advanced_coke_oven")
@@ -229,8 +215,7 @@ public class MultiblockRegistry {
                     .withComparator()
                     .build();
 
-    @SuppressWarnings("unused")
-    public static List<Class<? extends Block>> getAllBlockClasses() {
+    @SuppressWarnings("unused") public static List<Class<? extends Block>> getAllBlockClasses() {
         return List.of(
                 ADVANCED_COKE_OVEN.block().get().getClass(),
                 ALTERNATOR.block().get().getClass(),

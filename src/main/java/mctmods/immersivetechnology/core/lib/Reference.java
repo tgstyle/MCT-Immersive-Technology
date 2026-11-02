@@ -4,15 +4,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import org.slf4j.Logger;
 
-@SuppressWarnings("unused")
-public class Reference {
+@SuppressWarnings("unused") public class Reference {
     public static final String MODID = "immersivetechnology";
     public static final String VERSION = "3.0.0";
     public static final String DESC = "desc." + MODID + ".";
     public static final String DESC_INFO = DESC + "info.";
     public static final String DESC_FLAVOUR = DESC + "flavour.";
     public static final Logger IT_LOGGER = LogUtils.getLogger();
-
     public static IEventBus MOD_BUS;
     public static ResourceLocation makeTextureLocation(String name) { return rl("textures/gui/" + name + ".png"); }
     public static ResourceLocation makeTextureLocation(String namespace, String name) { return rl(namespace,"textures/gui/" + name + ".png"); }

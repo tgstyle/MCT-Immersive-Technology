@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.common.data.generators.ComplexItemModel;
 import mctmods.immersivetechnology.common.data.generators.DynamicModelProvider;
 import mctmods.immersivetechnology.common.data.generators.ItemModel;
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
@@ -13,15 +14,12 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-
 import java.util.Collections;
 import java.util.List;
 
-@EventBusSubscriber(modid = Reference.MODID)
-public class DataGenerators {
+@EventBusSubscriber(modid = Reference.MODID) public class DataGenerators {
 
-    @SubscribeEvent
-    public static void generate(GatherDataEvent event) {
+    @SubscribeEvent public static void generate(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
         PackOutput out = generator.getPackOutput();

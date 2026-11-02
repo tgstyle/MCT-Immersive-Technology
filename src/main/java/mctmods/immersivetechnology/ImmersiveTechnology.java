@@ -1,50 +1,36 @@
 package mctmods.immersivetechnology;
 
-
-import mctmods.immersivetechnology.core.ClientConfig;
-import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ClientConfig;
+import mctmods.immersivetechnology.core.config.CommonConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.proxy.ClientProxySupplier;
 import mctmods.immersivetechnology.core.proxy.CommonProxy;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+import mctmods.immersivetechnology.core.util.ModBusHooks;
+import mctmods.immersivetechnology.core.util.ToolGateHooks;
+import static mctmods.immersivetechnology.core.lib.Reference.MODID;
 
+import com.immersiveconvergence.api.fluid.FluidEntry;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
-import static mctmods.immersivetechnology.core.lib.Reference.MODID;
-import com.immersiveconvergence.api.fluid.FluidEntry;
-import com.immersiveconvergence.api.multiblock.ClearTank;
-import mctmods.immersivetechnology.common.items.FormationTool;
-import com.immersiveconvergence.api.multiblock.MultiblockBuilder;
-import com.immersiveconvergence.api.block.BlockToolGates;
-import mctmods.immersivetechnology.core.registration.ModTags;
-
-@SuppressWarnings("unused")
-@Mod(MODID)
-public class ImmersiveTechnology {
-    public static final CommonProxy proxy;
-
-    static {
-        if (FMLLoader.getDist().isClient()) { proxy = ClientProxySupplier.get(); }
-        else { proxy = new CommonProxy(); }
-    }
+@SuppressWarnings("unused") @Mod(MODID) public class ImmersiveTechnology {
+    public static final CommonProxy proxy = ClientProxySupplier.forDist();
 
     public ImmersiveTechnology(ModContainer container, Dist dist, IEventBus modBus) {
         Reference.IT_LOGGER.info("IT Starting");
-        Reference.MOD_BUS = modBus;
-        MultiblockBuilder.modBus = modBus;
+        ModBusHooks.install(modBus);
         modBus.addListener(this::commonSetup);
         modBus.addListener(RegisterCapabilitiesEvent.class, this::registerCapabilities);
         Reference.IT_LOGGER.info("Starting Proxy Mod Construction");
@@ -58,11 +44,7 @@ public class ImmersiveTechnology {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         Reference.IT_LOGGER.info("HELLO FROM COMMON SETUP");
-        ClearTank.additionalTool = stack -> stack.getItem() instanceof FormationTool;
-        BlockToolGates.isFormationTool = stack -> stack.is(ModTags.formationTools);
-        BlockToolGates.isScrewdriver = stack -> stack.is(ModTags.screwdrivers);
-        BlockToolGates.descFlavour = Reference.DESC_FLAVOUR;
-        BlockToolGates.descInfo = Reference.DESC_INFO;
+        ToolGateHooks.install();
         FluidEntry.registerDispenserBehavior(ModFluids.ALL_ENTRIES);
     }
 

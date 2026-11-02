@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import java.text.DecimalFormat;
 import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import java.text.DecimalFormat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -24,28 +25,23 @@ import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICWireType;
 import com.immersiveconvergence.api.wires.connectors.ICConnectableBlockEntity;
-
 import javax.annotation.Nonnull;
 
 public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity implements IServerTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
-
     final TranslationKey overlayNormal;
     final TranslationKey overlaySneakingFirstLine;
     final TranslationKey overlaySneakingSecondLine;
     final int GuiID;
-
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
     public ValveCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, TranslationKey overlayNormal, TranslationKey overlaySneakingFirstLine, TranslationKey overlaySneakingSecondLine, int GuiID) { super(type, pos, state); this.overlayNormal = overlayNormal; this.overlaySneakingFirstLine = overlaySneakingFirstLine; this.overlaySneakingSecondLine = overlaySneakingSecondLine; this.GuiID = GuiID; this.redstoneMode = 1; }
 
     public Direction facing = Direction.NORTH;
-
     public int packetLimit = 0;
     public int timeLimit = 0;
     public int keepSize = 0;
     public byte redstoneMode;
-
     public long acceptedAmount;
     public long lastAcceptedAmount;
     public int secondCounter;
@@ -55,7 +51,6 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
     public int packets;
     public int packetAverage;
     public int lastPacketAverage;
-
     public long[] averages = new long[60];
     public long[] packetTotals = new long[60];
 
@@ -71,9 +66,9 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
     }
 
     protected void updateBase() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) { return; }
         efficientSetChanged();
-        if (++secondCounter < 20) return;
+        if (++secondCounter < 20) { return; }
         if (average == 0 && acceptedAmount > 0) for (int i = 0; i < 60; i++) { averages[i] = acceptedAmount; }
         if (packetAverage == 0 && packets > 0) for (int i = 0; i < 60; i++) { packetTotals[i] = packets; }
         if (averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
@@ -109,7 +104,8 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
             String avgStr = NUMBER_FORMAT.format(avg);
             String paStr = NUMBER_FORMAT.format(pa);
             return new Component[] { Component.translatable(overlaySneakingFirstLine.getLocation(), avgStr), Component.translatable(overlaySneakingSecondLine.getLocation(), paStr) };
-        } else {
+        }
+        else {
             long la = open ? lastAcceptedAmount : 0;
             String laStr = NUMBER_FORMAT.format(la);
             return new Component[] { Component.translatable(overlayNormal.getLocation(), laStr) };
@@ -130,15 +126,18 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
             minuteCounter = nbt.getInt("minuteCounter") % 60;
             if (nbt.contains("averages", 12)) {
                 averages = nbt.getLongArray("averages");
-                if (averages.length != 60) averages = new long[60];
-            } else if (nbt.contains("averages", 4)) {
+                if (averages.length != 60) { averages = new long[60]; }
+            }
+            else if (nbt.contains("averages", 4)) {
                 long avg = nbt.getLong("averages");
-                for (int i = 0; i < 60; i++) averages[i] = avg;
-            } else averages = new long[60];
+                for (int i = 0; i < 60; i++) { averages[i] = avg; }
+            }
+            else averages = new long[60];
             if (nbt.contains("packetTotals", 12)) {
                 packetTotals = nbt.getLongArray("packetTotals");
-                if (packetTotals.length != 60) packetTotals = new long[60];
-            } else packetTotals = new long[60];
+                if (packetTotals.length != 60) { packetTotals = new long[60]; }
+            }
+            else packetTotals = new long[60];
             calculateAverages();
         }
     }
@@ -172,7 +171,7 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
         invalidateCapabilities();
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
-            if (state.hasProperty(BlockStateProperties.FACING)) level.setBlock(worldPosition, state.setValue(BlockStateProperties.FACING, facing), 3);
+            if (state.hasProperty(BlockStateProperties.FACING)) { level.setBlock(worldPosition, state.setValue(BlockStateProperties.FACING, facing), 3); }
             markContainingBlockForUpdate(null);
             for (Direction d : Direction.values()) { level.neighborChanged(worldPosition.relative(d), getBlockState().getBlock(), worldPosition); }
         }
@@ -186,7 +185,7 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
     @Override public boolean canHammerRotate() { return false; }
 
     @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
-        if (level == null || level.isClientSide) return false;
+        if (level == null || level.isClientSide) { return false; }
         boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
         Direction oldFacing = facing;
         Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
@@ -195,17 +194,17 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
     }
 
     public int getRSPower() {
-        if (level == null) return 0;
+        if (level == null) { return 0; }
         return level.getBestNeighborSignal(worldPosition);
     }
 
     public void updateRedstoneState() {
-        if (redstoneMode == 0) return;
+        if (redstoneMode == 0) { return; }
         int rs = getRSPower();
         boolean shouldOpen = (redstoneMode == 1 ? rs == 0 : rs > 0);
         BlockState state = getBlockState();
         if (state.getValue(OPEN) != shouldOpen) {
-            if (level != null) level.setBlock(worldPosition, state.setValue(OPEN, shouldOpen), 3);
+            if (level != null) { level.setBlock(worldPosition, state.setValue(OPEN, shouldOpen), 3); }
             markContainingBlockForUpdate(null);
         }
     }

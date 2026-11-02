@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import com.immersiveconvergence.api.ICMods;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
+import com.immersiveconvergence.api.ICMods;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
@@ -12,7 +13,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Comparator;

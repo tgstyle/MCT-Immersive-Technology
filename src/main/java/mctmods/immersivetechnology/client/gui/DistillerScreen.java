@@ -1,19 +1,19 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.gui.DistillerMenu;
+import mctmods.immersivetechnology.core.lib.Reference;
+
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import com.immersiveconvergence.api.client.gui.GuiEnergyArea;
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import com.immersiveconvergence.api.client.gui.GuiInfoArea;
-import mctmods.immersivetechnology.common.multiblocks.gui.DistillerMenu;
-import mctmods.immersivetechnology.core.lib.Reference;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-
-import javax.annotation.Nonnull;
 import java.util.List;
+import javax.annotation.Nonnull;
 
 public class DistillerScreen extends BaseContainerScreen<DistillerMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("distiller");

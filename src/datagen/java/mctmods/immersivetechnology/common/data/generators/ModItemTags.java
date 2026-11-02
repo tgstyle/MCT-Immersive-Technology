@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import com.immersiveconvergence.api.registration.BlockEntry;
-import com.immersiveconvergence.api.registration.ItemEntry;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.ModTags;
+
+import com.immersiveconvergence.api.registration.BlockEntry;
+import com.immersiveconvergence.api.registration.ItemEntry;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -17,14 +18,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 public class ModItemTags extends ItemTagsProvider {
-    public ModItemTags(PackOutput output, CompletableFuture<Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blocks, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, blocks, Reference.MODID, existingFileHelper);
-    }
+    public ModItemTags(PackOutput output, CompletableFuture<Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blocks, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, blocks, Reference.MODID, existingFileHelper); }
 
     @Override protected void addTags(@Nonnull Provider provider) {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "salts"))).add(ModItems.SALT.get());

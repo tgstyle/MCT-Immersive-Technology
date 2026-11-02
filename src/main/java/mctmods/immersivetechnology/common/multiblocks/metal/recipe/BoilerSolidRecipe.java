@@ -14,13 +14,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class BoilerSolidRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, BoilerSolidRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<BoilerSolidRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_SOLID);
-
     public ICIngredientWithSize input;
     private final double heatPerTick;
     private final double targetHeat;
@@ -40,17 +38,13 @@ public class BoilerSolidRecipe extends ICMultiblockRecipe {
     public static BoilerSolidRecipe findRecipe(Level level, ItemStack input) { return findRecipe(level, input, null); }
 
     public static BoilerSolidRecipe findRecipe(Level level, ItemStack input, @Nullable BoilerSolidRecipe hint) {
-        if (input.isEmpty()) return null;
+        if (input.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.input.testIgnoringSize(input), hint);
     }
 
     @Override protected ICRecipeSerializer<?> getICSerializer() { return SERIALIZER.get(); }
 
-    public double getHeatPerTick() {
-        return heatPerTick;
-    }
+    public double getHeatPerTick() { return heatPerTick; }
 
-    public double getTargetHeat() {
-        return targetHeat;
-    }
+    public double getTargetHeat() { return targetHeat; }
 }

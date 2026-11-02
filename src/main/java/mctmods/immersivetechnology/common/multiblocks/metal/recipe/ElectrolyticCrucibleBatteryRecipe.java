@@ -15,13 +15,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, ElectrolyticCrucibleBatteryRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
-
     public final TagKey<Fluid> fluidTag;
     private final int amount;
     @Nullable public final FluidStack fluidOutput0;
@@ -47,14 +45,12 @@ public class ElectrolyticCrucibleBatteryRecipe extends ICMultiblockRecipe {
     public FluidStack fluidOutput2() { return fluidOutput2; }
     public ItemStack itemOutput() { return itemOutput; }
 
-    public boolean matches(FluidStack stack) {
-        return stack.is(this.fluidTag);
-    }
+    public boolean matches(FluidStack stack) { return stack.is(this.fluidTag); }
 
     public static RecipeHolder<ElectrolyticCrucibleBatteryRecipe> findRecipe(Level level, FluidStack input) { return findRecipe(level, input, null); }
 
     public static RecipeHolder<ElectrolyticCrucibleBatteryRecipe> findRecipe(Level level, FluidStack input, @Nullable RecipeHolder<ElectrolyticCrucibleBatteryRecipe> hint) {
-        if (input.isEmpty() || input.getAmount() <= 0) return null;
+        if (input.isEmpty() || input.getAmount() <= 0) { return null; }
         return RECIPES.findHolder(level, recipe -> recipe.matches(input), hint);
     }
 

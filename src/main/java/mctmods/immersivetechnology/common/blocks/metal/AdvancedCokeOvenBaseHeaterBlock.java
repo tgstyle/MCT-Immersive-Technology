@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
+import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
+
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.block.ModProperties;
-import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
@@ -70,9 +70,7 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
 
     @Override public void onIEBlockPlacedBy(BlockPlaceContext context, BlockState state) {
         Level level = context.getLevel();
-        if (level.isClientSide || state.getValue(ModProperties.MULTIBLOCKSLAVE)) {
-            return;
-        }
+        if (level.isClientSide || state.getValue(ModProperties.MULTIBLOCKSLAVE)) { return; }
 
         BlockPos pos = context.getClickedPos();
         Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -114,12 +112,10 @@ public class AdvancedCokeOvenBaseHeaterBlock extends ModEntityBlock<AdvancedCoke
     }
 
     @Override @Nonnull public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter world, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        if (state.getValue(ModProperties.MULTIBLOCKSLAVE)) return EMPTY_SHAPE;
+        if (state.getValue(ModProperties.MULTIBLOCKSLAVE)) { return EMPTY_SHAPE; }
         Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         return (facing.getAxis() == Direction.Axis.X) ? SHAPE_Z : SHAPE_X;
     }
 
-    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter world, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        return SINGLE_SHAPE;
-    }
+    @Override @Nonnull public VoxelShape getCollisionShape(@Nonnull BlockState state, @Nonnull BlockGetter world, @Nonnull BlockPos pos, @Nonnull CollisionContext context) { return SINGLE_SHAPE; }
 }

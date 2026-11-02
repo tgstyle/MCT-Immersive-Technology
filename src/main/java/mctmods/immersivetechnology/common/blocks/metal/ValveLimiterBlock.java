@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLimiterBlockEntity;
+
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -18,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
@@ -52,7 +52,8 @@ public class ValveLimiterBlock extends ModEntityBlock<ValveLimiterBlockEntity> {
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
-            if (player.isCrouching()) { valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1); valve.updateRedstoneState(); valve.efficientSetChanged(); }else {
+            if (player.isCrouching()) { valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1); valve.updateRedstoneState(); valve.efficientSetChanged(); }
+            else {
                 player.openMenu(valve, b -> b.writeBlockPos(pos));
             }
             return InteractionResult.SUCCESS;

@@ -1,14 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.config.ClientConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MirrorAnimation;
 import mctmods.immersivetechnology.core.util.SunTracking;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.blockimpl.InitialMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
@@ -16,11 +20,11 @@ import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
 import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
-import com.immersiveconvergence.api.multiblock.blockimpl.InitialMultiblockContext;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
-import net.minecraft.client.Minecraft;
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -31,11 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic.State>, IServerTickableComponent<SolarReflectorLogic.State>, IClientTickableComponent<SolarReflectorLogic.State> {
     public static BlockPos DANCE_SOUND_POI;
@@ -161,7 +160,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
     }
 
     private static float danceVolume(State state, Vec3 soundPos, boolean isLoop) {
-        long gt = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getGameTime() : 0;
+        long gt = ImmersiveTechnology.proxy.getClientWorld() != null ? ImmersiveTechnology.proxy.getClientWorld().getGameTime() : 0;
         float dd = (float) ClientConfig.solarReflectorDanceDuration;
         float cdp = (gt - state.danceStartTick) * 0.05f;
         if (cdp < 0) { return 0f; }
@@ -175,7 +174,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
             f = Mth.clamp(cdp / 3f, 0, 1);
             if (state.animation.phase == -3) { f *= Mth.clamp(1 - (cdp - dd), 0, 1); }
         }
-        return ClientUtils.attenuated(soundPos, 32, 0.05f + f * 0.45f);
+        return ImmersiveTechnology.proxy.attenuated(soundPos, 32, 0.05f + f * 0.45f);
     }
 
     private static void spawnBeamParticle(IMultiblockContext<State> ctx, State state) {

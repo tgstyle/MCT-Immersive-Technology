@@ -15,13 +15,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
 import javax.annotation.Nullable;
 
 public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public static DeferredHolder<RecipeSerializer<?>, CoolingTowerRecipeSerializer> SERIALIZER;
     public static final ICCachedRecipeList<CoolingTowerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.COOLING_TOWER);
-
     private final ResourceLocation id;
     public final TagKey<Fluid> inputTag0;
     private final int amount0;
@@ -43,9 +41,7 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
         this.fluidOutput2 = fluidOutput2;
     }
 
-    public CoolingTowerRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) {
-        this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), fluidOutput0, fluidOutput1, fluidOutput2, inputTag0, amount0, inputTag1, amount1, time);
-    }
+    public CoolingTowerRecipe(FluidStack fluidOutput0, FluidStack fluidOutput1, FluidStack fluidOutput2, TagKey<Fluid> inputTag0, int amount0, TagKey<Fluid> inputTag1, int amount1, int time) { this(ResourceLocation.fromNamespaceAndPath("immersivetechnology", "codec_generated"), fluidOutput0, fluidOutput1, fluidOutput2, inputTag0, amount0, inputTag1, amount1, time); }
 
     public ResourceLocation getId() { return id; }
     public TagKey<Fluid> inputTag0() { return inputTag0; }
@@ -58,14 +54,12 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public FluidStack fluidOutput1() { return fluidOutput1; }
     public FluidStack fluidOutput2() { return fluidOutput2; }
 
-    public boolean matches(FluidStack in0, FluidStack in1) {
-        return in0 != null && in0.is(this.inputTag0) && in1 != null && in1.is(this.inputTag1);
-    }
+    public boolean matches(FluidStack in0, FluidStack in1) { return in0 != null && in0.is(this.inputTag0) && in1 != null && in1.is(this.inputTag1); }
 
     @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) { return findRecipe(level, fluidInput0, fluidInput1, null); }
 
     @Nullable public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1, @Nullable CoolingTowerRecipe hint) {
-        if (fluidInput0 == null || fluidInput0.isEmpty() || fluidInput1 == null || fluidInput1.isEmpty()) return null;
+        if (fluidInput0 == null || fluidInput0.isEmpty() || fluidInput1 == null || fluidInput1.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluidInput0, fluidInput1) && fluidInput0.getAmount() >= recipe.getInput0Amount() && fluidInput1.getAmount() >= recipe.getInput1Amount(), hint);
     }
 

@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.client.gui;
 
-import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
-import mctmods.immersivetechnology.common.blocks.metal.gui.TrashItemMenu;
+import mctmods.immersivetechnology.common.gui.TrashItemMenu;
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 

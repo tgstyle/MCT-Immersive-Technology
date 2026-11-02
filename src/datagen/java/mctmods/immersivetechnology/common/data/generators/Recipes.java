@@ -1,5 +1,14 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.CoolingTowerRecipeBuilder;
+import mctmods.immersivetechnology.core.lib.Reference;
+import mctmods.immersivetechnology.core.registration.ModBlocks;
+import mctmods.immersivetechnology.core.registration.ModFluids;
+import mctmods.immersivetechnology.core.registration.ModItems;
+import mctmods.immersivetechnology.core.registration.ModTags;
+
 import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.immersiveconvergence.api.crafting.conditions.ICIEEnabledCondition;
@@ -13,14 +22,6 @@ import com.immersiveconvergence.api.crafting.builders.ICMetalPressRecipeBuilder;
 import com.immersiveconvergence.api.crafting.builders.ICMineralMixBuilder;
 import com.immersiveconvergence.api.crafting.builders.ICMixerRecipeBuilder;
 import com.immersiveconvergence.api.registration.ItemEntry;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.CoolingTowerRecipeBuilder;
-import mctmods.immersivetechnology.core.lib.Reference;
-import mctmods.immersivetechnology.core.registration.ModBlocks;
-import mctmods.immersivetechnology.core.registration.ModFluids;
-import mctmods.immersivetechnology.core.registration.ModItems;
-import mctmods.immersivetechnology.core.registration.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
@@ -46,7 +47,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -57,9 +57,7 @@ public class Recipes extends RecipeProvider {
     private final HashMap<String, Integer> PATH_COUNT = new HashMap<>();
     private final ICJsonRecipes ieRecipes = new ICJsonRecipes();
 
-    public Recipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries);
-    }
+    public Recipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) { super(output, registries); }
 
     @Override protected @Nonnull CompletableFuture<?> run(@Nonnull CachedOutput output, @Nonnull HolderLookup.Provider registries) {
         CompletableFuture<?> recipes = super.run(output, registries);
@@ -176,9 +174,7 @@ public class Recipes extends RecipeProvider {
         MeltingRecipeBuilder.builder().addInput(ModTags.fluidHeatedGravelSlurry, 1000).addOutput(new FluidStack(Fluids.LAVA, 500)).setTime(20).setRequiredTemp(1000.0).save(output, toResourceLocation("melting/heated_gravel_slurry"));
     }
 
-    private void recipesElectrolyticCrucibleBattery(RecipeOutput output) {
-        ElectrolyticCrucibleBatteryRecipeBuilder.builder().addInput(ModTags.fluidSaltSlurry, 1000).addOutput0(new FluidStack(ModFluids.CHLORINE.getStill(), 1000)).addOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).addItemOutput(ItemStack.EMPTY).setEnergy(614400).setTime(300).save(output, toResourceLocation("electrolytic_crucible_battery/hydrogen"));
-    }
+    private void recipesElectrolyticCrucibleBattery(RecipeOutput output) { ElectrolyticCrucibleBatteryRecipeBuilder.builder().addInput(ModTags.fluidSaltSlurry, 1000).addOutput0(new FluidStack(ModFluids.CHLORINE.getStill(), 1000)).addOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).addItemOutput(ItemStack.EMPTY).setEnergy(614400).setTime(300).save(output, toResourceLocation("electrolytic_crucible_battery/hydrogen")); }
 
     private void recipesGasTurbine(RecipeOutput output) {
         GasTurbineRecipeBuilder.builder().addInput(BIODIESEL, 160).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output, toResourceLocation("gas_turbine/biodiesel"));
@@ -188,9 +184,7 @@ public class Recipes extends RecipeProvider {
         GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "kerosene")), 150).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/kerosene"));
     }
 
-    private void recipesSteamTurbine(RecipeOutput output) {
-        SteamTurbineRecipeBuilder.builder().addInput(ModTags.fluidSteam, 100).addOutput(ModFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).save(output, toResourceLocation("steam_turbine/steam"));
-    }
+    private void recipesSteamTurbine(RecipeOutput output) { SteamTurbineRecipeBuilder.builder().addInput(ModTags.fluidSteam, 100).addOutput(ModFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).save(output, toResourceLocation("steam_turbine/steam")); }
 
     private void recipesStyleNOX(RecipeOutput output) {
         StyleNOXRecipeBuilder.builder()
@@ -204,9 +198,7 @@ public class Recipes extends RecipeProvider {
                 .save(output, toResourceLocation("stylenox/uranium"));
     }
 
-    private void recipesCoolingTower(RecipeOutput output) {
-        CoolingTowerRecipeBuilder.builder().addInput(ModTags.fluidHotWater, 8100).addInput(FluidTags.WATER, 900).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).save(output, toResourceLocation("cooling_tower/hot_water"));
-    }
+    private void recipesCoolingTower(RecipeOutput output) { CoolingTowerRecipeBuilder.builder().addInput(ModTags.fluidHotWater, 8100).addInput(FluidTags.WATER, 900).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).save(output, toResourceLocation("cooling_tower/hot_water")); }
 
     private void materialRecipes(RecipeOutput output) {
         oreMetal(output, "chromium", ModItems.INGOT_CHROMIUM, ModItems.DUST_CHROMIUM, ModItems.RAW_CHROMIUM, ModBlocks.Metal.STORAGE_CHROMIUM, ModBlocks.Metal.ORE_CHROMIUM, ModBlocks.Metal.DEEPSLATE_ORE_CHROMIUM);

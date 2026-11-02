@@ -1,9 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ClientConfig;
+import mctmods.immersivetechnology.core.config.ClientConfig;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import com.immersiveconvergence.api.block.IArgMenuProvider;
+import com.immersiveconvergence.api.gui.ArgContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
@@ -11,19 +14,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import com.immersiveconvergence.api.block.IArgMenuProvider;
-import com.immersiveconvergence.api.gui.ArgContainer;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TrashItemBlockEntity extends OSDCommonBlockEntity implements IItemHandlerModifiable, IArgMenuProvider<TrashItemBlockEntity>, Container {
     public TrashItemBlockEntity(BlockPos pos, BlockState state) { super(BlockEntities.TRASH_ITEM.get(), pos, state); }
 
-    @SuppressWarnings("unused")
-    public IItemHandlerModifiable getItemHandler(@Nullable Direction side) {
-        return this;
-    }
+    @SuppressWarnings("unused") public IItemHandlerModifiable getItemHandler(@Nullable Direction side) { return this; }
 
     @Override public int getSlots() { return 1; }
 

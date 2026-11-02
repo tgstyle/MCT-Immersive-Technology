@@ -3,18 +3,16 @@ package mctmods.immersivetechnology.common.data.generators;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.ModTags;
+
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 public class ModFluidTags extends FluidTagsProvider {
-    public ModFluidTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, Reference.MODID, existingFileHelper);
-    }
+    public ModFluidTags(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, Reference.MODID, existingFileHelper); }
 
     @Override protected void addTags(@Nonnull Provider provider) {
         tag(ModTags.fluidCarbonDioxide).add(ModFluids.CARBON_DIOXIDE.getStill());
