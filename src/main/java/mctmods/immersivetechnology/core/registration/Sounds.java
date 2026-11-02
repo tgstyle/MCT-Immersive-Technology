@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -9,7 +10,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class Sounds {
     private static final DeferredRegister<SoundEvent> REGISTER = DeferredRegister.create(Registries.SOUND_EVENT, Reference.MODID);
-
     public static final RegistryObject<SoundEvent> advancedCokeOvenFan = registerSound("advanced_coke_oven_fan");
     public static final RegistryObject<SoundEvent> advancedCokeOven = registerSound("advanced_coke_oven");
     public static final RegistryObject<SoundEvent> alternator = registerSound("alternator");

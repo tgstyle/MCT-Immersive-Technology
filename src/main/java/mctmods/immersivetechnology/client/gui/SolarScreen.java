@@ -1,17 +1,18 @@
 package mctmods.immersivetechnology.client.gui;
 
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
-import com.immersiveconvergence.api.client.gui.GuiFluidArea;
-import com.immersiveconvergence.api.client.gui.GuiInfoArea;
-import mctmods.immersivetechnology.common.multiblocks.gui.SolarMenu;
+import mctmods.immersivetechnology.common.gui.SolarMenu;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarTowerLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.MeltingRecipe;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SolarTowerRecipe;
-import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.gui.BaseContainerScreen;
+import com.immersiveconvergence.api.client.gui.GuiFluidArea;
+import com.immersiveconvergence.api.client.gui.GuiInfoArea;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -20,10 +21,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.fluids.FluidStack;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 public class SolarScreen extends BaseContainerScreen<SolarMenu> {
     private static final ResourceLocation TEXTURE = Reference.makeTextureLocation("solar");

@@ -1,15 +1,23 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.CommonConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.FluidContainers;
 import mctmods.immersivetechnology.core.util.HeatUtils;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 
+import com.immersiveconvergence.api.capability.HeatCapabilities;
+import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.capability.IHeatProvider;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
@@ -21,20 +29,16 @@ import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
 import com.immersiveconvergence.api.multiblock.blocks.util.StoredCapability;
 import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
-import com.immersiveconvergence.api.capability.HeatCapabilities;
-import com.immersiveconvergence.api.capability.IHeatConsumer;
-import com.immersiveconvergence.api.capability.IHeatProvider;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
-import net.minecraft.client.Minecraft;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -49,11 +53,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.State>, IServerTickableComponent<BoilerLiquidLogic.State>, IClientTickableComponent<BoilerLiquidLogic.State> {
     public static final int INPUT_FUEL_SLOT_FILLED = 0;
@@ -77,16 +76,12 @@ public class BoilerLiquidLogic implements IMultiblockLogic<BoilerLiquidLogic.Sta
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (Minecraft.getInstance().player == null) { return; }
+        if (ImmersiveTechnology.proxy.getClientPlayer() == null) { return; }
         Vec3 soundPos = Vec3.atCenterOf(ctx.getLevel().toAbsolute(SOUND_POI));
-        float vol = ClientUtils.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel));
-        if ((!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(() -> (!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0, ctx.isValid(), soundPos, Sounds.boiler_liquid, () -> ClientUtils.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel)), () -> (float) (state.heatLevel / state.workingHeatLevel));
-        }
-        if (state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) {
-            state.isPilotSoundPlaying = MachineSound.startSound(() -> state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0, ctx.isValid(), soundPos, Sounds.pilot, () -> ClientUtils.attenuated(soundPos, 8, 2 * (float) (pilotHeat() / state.workingHeatLevel)), () -> (float) (pilotHeat() / state.workingHeatLevel));
-        }
-        if (state.pilotLit) { ClientUtils.boilerExhaust(ctx.getLevel().getRawLevel(), ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0)), state.heatLevel > pilotHeat() && state.rsState.isEnabled(ctx) && HeatUtils.hasWater(state.boilerInput)); }
+        float vol = ImmersiveTechnology.proxy.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel));
+        if ((!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0 && vol > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> (!state.pilotLit || state.heatLevel > pilotHeat()) && state.heatLevel > 0, ctx.isValid(), soundPos, Sounds.boiler_liquid, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel)), () -> (float) (state.heatLevel / state.workingHeatLevel)); }
+        if (state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0 && vol > 0.01f && !state.isPilotSoundPlaying.getAsBoolean()) { state.isPilotSoundPlaying = MachineSound.startSound(() -> state.pilotLit && state.heatLevel <= pilotHeat() && state.heatLevel > 0, ctx.isValid(), soundPos, Sounds.pilot, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 8, 2 * (float) (pilotHeat() / state.workingHeatLevel)), () -> (float) (pilotHeat() / state.workingHeatLevel)); }
+        if (state.pilotLit) { ImmersiveTechnology.proxy.boilerExhaust(ctx.getLevel().getRawLevel(), ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0)), state.heatLevel > pilotHeat() && state.rsState.isEnabled(ctx) && HeatUtils.hasWater(state.boilerInput)); }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {

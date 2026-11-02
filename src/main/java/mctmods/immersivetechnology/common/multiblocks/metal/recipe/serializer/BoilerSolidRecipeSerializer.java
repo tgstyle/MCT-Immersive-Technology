@@ -1,17 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
-import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
-import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
-import com.google.gson.JsonObject;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.BoilerSolidLogic;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
+import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
+import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
+import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

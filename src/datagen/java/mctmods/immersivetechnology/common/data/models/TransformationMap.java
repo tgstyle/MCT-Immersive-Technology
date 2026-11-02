@@ -35,8 +35,7 @@ public class TransformationMap {
         return result;
     }
 
-    @SuppressWarnings("unused")
-    public void addFromJson(String json) {
+    @SuppressWarnings("unused") public void addFromJson(String json) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Transformation.class, new TransformationHelper.Deserializer())
                 .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
@@ -59,11 +58,13 @@ public class TransformationMap {
                 if (vanilla) {
                     ItemTransform vanillaTransform = gson.fromJson(forType, ItemTransform.class);
                     transform = fromItemTransform(vanillaTransform);
-                } else {
+                }
+                else {
                     transform = readMatrix(forType, gson);
                     if (type.map("no_corner_offset"::equals).orElse(false)) { transform = transform.blockCornerToCenter(); }
                 }
-            } else { transform = Transformation.identity(); }
+            }
+            else { transform = Transformation.identity(); }
             tempTransforms.put(perspective, transform);
         }
         Transformation baseTransform = obj.size() > 0 ? readMatrix(obj, gson) : Transformation.identity();

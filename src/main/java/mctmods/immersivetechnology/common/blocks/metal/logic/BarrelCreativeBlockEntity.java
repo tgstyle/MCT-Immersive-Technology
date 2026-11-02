@@ -1,11 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
+import mctmods.immersivetechnology.core.config.CommonConfig;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
 import com.immersiveconvergence.api.block.BlockInterfaces;
 import com.immersiveconvergence.api.fluid.IICFluidPipe;
-import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.registration.BlockEntities;
-
+import com.immersiveconvergence.api.util.ICFluidUtils;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,9 +33,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.registries.ForgeRegistries;
-import java.util.function.Consumer;
-import com.immersiveconvergence.api.util.ICFluidUtils;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -131,7 +130,8 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
                 level.playSound(null, worldPosition, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return true;
-        } else if (player.isShiftKeyDown()) {
+        }
+        else if (player.isShiftKeyDown()) {
             setOutputFluid(FluidStack.EMPTY);
             return true;
         }
@@ -158,9 +158,8 @@ public class BarrelCreativeBlockEntity extends OSDCommonBlockEntity implements B
     @Override public void onBEPlaced(BlockPlaceContext ctx) { onBEPlaced(ctx.getItemInHand()); }
 
     public void setOutputFluid(FluidStack fluidStack) {
-        if (fluidStack.isEmpty()) {
-            this.selectedFluid = FluidStack.EMPTY;
-        } else {
+        if (fluidStack.isEmpty()) { this.selectedFluid = FluidStack.EMPTY; }
+        else {
             this.selectedFluid = fluidStack.copy();
             this.selectedFluid.setAmount(1);
         }

@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.data;
 
 import mctmods.immersivetechnology.common.data.generators.*;
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
@@ -13,12 +14,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.Collections;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Reference.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class DataGenerators {
+@Mod.EventBusSubscriber(modid = Reference.MODID, bus = Mod.EventBusSubscriber.Bus.MOD) public class DataGenerators {
     public static Logger log = LogManager.getLogger(Reference.MODID + "/DataGenerator");
 
     @SubscribeEvent public static void generate(GatherDataEvent event) {

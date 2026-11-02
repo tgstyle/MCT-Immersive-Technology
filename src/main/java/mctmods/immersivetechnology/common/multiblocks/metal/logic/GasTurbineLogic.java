@@ -1,16 +1,26 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MechanicalLoad;
 import mctmods.immersivetechnology.core.util.TurbineProvider;
 
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
+import com.immersiveconvergence.api.capability.MechanicalCapabilities;
+import com.immersiveconvergence.api.capability.RotationInertiaProcess;
+import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
@@ -22,21 +32,15 @@ import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
 import com.immersiveconvergence.api.multiblock.blocks.util.StoredCapability;
 import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
-import com.immersiveconvergence.api.capability.MechanicalCapabilities;
-import com.immersiveconvergence.api.capability.RotationInertiaProcess;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.TankPair;
-import net.minecraft.client.Minecraft;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -55,11 +59,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>, IServerTickableComponent<GasTurbineLogic.State>, IClientTickableComponent<GasTurbineLogic.State>, IFluidOutputPump<GasTurbineLogic.State> {
     public static BlockPos REDSTONE_POI;
@@ -112,7 +111,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
         Level level = ctx.getLevel().getRawLevel();
-        if (Minecraft.getInstance().player == null) { return; }
+        if (ImmersiveTechnology.proxy.getClientPlayer() == null) { return; }
         float targetLevel = Reference.remapRange(0, state.effectiveMaxSpeed, 0.2f, 1.0f, state.speed);
         if (state.currentLevel == 0f) { state.currentLevel = targetLevel; }
         else { state.currentLevel = state.currentLevel * 0.9f + targetLevel * 0.1f; }
@@ -135,9 +134,9 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         Vec3 arcPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(ARC_SOUND_POI));
         Vec3 sparkPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(SPARK_SOUND_POI));
         Vec3 ignitePos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(IGNITE_SOUND_POI));
-        if (runningAudible(state) && ClientUtils.attenuated(runningPos, 32, 8 * (smoothedLevel - 0.2f)) > 0.01f && !state.runningSoundPlaying.getAsBoolean()) {
+        if (runningAudible(state) && ImmersiveTechnology.proxy.attenuated(runningPos, 32, 8 * (smoothedLevel - 0.2f)) > 0.01f && !state.runningSoundPlaying.getAsBoolean()) {
             int thisId = ++state.runningSoundId;
-            state.runningSoundPlaying = MachineSound.startSound(() -> runningAudible(state) && state.runningSoundId == thisId, ctx.isValid(), runningPos, Sounds.gasRunning, () -> ClientUtils.attenuated(runningPos, 32, 8 * (smoothedLevel - 0.2f)), () -> state.currentPitch);
+            state.runningSoundPlaying = MachineSound.startSound(() -> runningAudible(state) && state.runningSoundId == thisId, ctx.isValid(), runningPos, Sounds.gasRunning, () -> ImmersiveTechnology.proxy.attenuated(runningPos, 32, 8 * (smoothedLevel - 0.2f)), () -> state.currentPitch);
         }
         if (state.starterRunning) {
             if (starterVolume(starterPos, smoothedLevel) > 0.01f && !state.starterSoundPlaying.getAsBoolean()) {
@@ -161,7 +160,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         }
         if (state.starterRunning && state.speed >= state.effectiveMaxSpeed / 4 && level.random.nextInt(40) != 0) {
             Vec3 particlePos = ctx.getLevel().toAbsolute(new Vec3(SMOKE_POI0.getX() + 0.5, SMOKE_POI0.getY() - 0.5, SMOKE_POI0.getZ() + 0.5));
-            if (ClientUtils.particlesVisible(particlePos)) {
+            if (ImmersiveTechnology.proxy.particlesVisible(particlePos)) {
                 double px = particlePos.x + 2 - level.random.nextFloat() * 3;
                 double py = particlePos.y + 0.5;
                 double pz = particlePos.z + 2 - level.random.nextFloat() * 3;
@@ -170,15 +169,15 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         }
         if (state.active && ctx.getLevel().shouldTickModulo(2) && !isOutputConnected(ctx, 0)) {
             float normSpeed = Math.max(0f, Reference.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
-            ClientUtils.exhaust(level, ctx.getLevel().toAbsolute(SMOKE_POI1), ctx.getLevel().getOrientation().front(), normSpeed, state.tanks.output().getFluid());
+            ImmersiveTechnology.proxy.exhaust(level, ctx.getLevel().toAbsolute(SMOKE_POI1), ctx.getLevel().getOrientation().front(), normSpeed, state.tanks.output().getFluid());
         }
     }
 
     private static boolean runningAudible(State state) { return state.speed > 0 && ((state.everIgnited && !state.starterRunning) || (state.stall && state.ignited)); }
 
-    private static float starterVolume(Vec3 pos, float smoothedLevel) { return Math.min(ClientUtils.attenuated(pos, 64, smoothedLevel), 0.4f); }
+    private static float starterVolume(Vec3 pos, float smoothedLevel) { return Math.min(ImmersiveTechnology.proxy.attenuated(pos, 64, smoothedLevel), 0.4f); }
 
-    private static void playLocal(Level level, Vec3 pos, Supplier<SoundEvent> sound) { level.playLocalSound(pos.x, pos.y, pos.z, sound.get(), SoundSource.BLOCKS, ClientUtils.attenuated(pos, 64, 1), 1, false); }
+    private static void playLocal(Level level, Vec3 pos, Supplier<SoundEvent> sound) { level.playLocalSound(pos.x, pos.y, pos.z, sound.get(), SoundSource.BLOCKS, ImmersiveTechnology.proxy.attenuated(pos, 64, 1), 1, false); }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
         pumpOutputs(ctx);

@@ -12,13 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class BoilerLiquidRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<BoilerLiquidRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<BoilerLiquidRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_LIQUID);
-
     public final ICFluidTagInput input;
     private final double heatPerTick;
     private final double targetHeat;

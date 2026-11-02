@@ -12,11 +12,17 @@ import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.RecipeTypes;
 import mctmods.immersivetechnology.core.registration.Sounds;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.IEventBus;
 
-@SuppressWarnings("unused")
-public class CommonProxy {
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.FluidStack;
+
+@SuppressWarnings("unused") public class CommonProxy {
     public static void modConstruction(IEventBus event) {
         Reference.IT_LOGGER.info("Registering IT Content!");
         MultiblockRegistry.forceClassLoad();
@@ -36,4 +42,20 @@ public class CommonProxy {
     public void reinitializeGUI() {}
 
     public Level getClientWorld() { return null; }
+
+    public Player getClientPlayer() { return null; }
+
+    public boolean isShiftDown() { return false; }
+
+    public void addChatMessage(Component message) {}
+
+    public boolean particlesVisible(Vec3 pos) { return false; }
+
+    public float attenuated(Vec3 pos, double falloff, float volume) { return 0f; }
+
+    public float linearFalloff(Vec3 pos, double range) { return 0f; }
+
+    public void exhaust(Level level, BlockPos pos, Direction facing, float normSpeed, FluidStack fluid) {}
+
+    public void boilerExhaust(Level level, BlockPos exhaust, boolean smoking) {}
 }

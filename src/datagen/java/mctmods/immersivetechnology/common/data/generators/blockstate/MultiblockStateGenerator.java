@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.data.util.GeneratorUtils;
 import mctmods.immersivetechnology.common.data.generators.ModBlockState;
 import mctmods.immersivetechnology.common.data.builders.MirroredModelBuilder;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -22,7 +22,6 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,6 @@ import java.util.function.Supplier;
 public class MultiblockStateGenerator {
     private final ModBlockState main;
     private final ExistingFileHelper existingFileHelper;
-
     public final Map<Block, ModelFile> unsplitModels = new HashMap<>();
 
     public MultiblockStateGenerator(ModBlockState main, ExistingFileHelper helper) {

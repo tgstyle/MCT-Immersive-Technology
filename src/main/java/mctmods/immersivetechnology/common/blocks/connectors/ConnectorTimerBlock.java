@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
+import mctmods.immersivetechnology.core.registration.BlockEntities;
+
 import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.wires.ICWires;
-import mctmods.immersivetechnology.core.registration.BlockEntities;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,7 +29,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
@@ -61,7 +60,7 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
     @Override public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) { return BlockEntities.CONNECTOR_TIMER.get().create(pos, state); }
 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type) {
-        if (level.isClientSide) return null;
+        if (level.isClientSide) { return null; }
         return type == BlockEntities.CONNECTOR_TIMER.get() ? (l, p, s, be) -> ((ConnectorTimerBlockEntity) be).tickServer() : null;
     }
 
@@ -106,7 +105,7 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
 
     @Override public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) { timer.rsDirty = true; }
     }
@@ -118,7 +117,7 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
         if (BlockToolGates.isScrewdriver.test(held)) { return screwdriverUseSide(hit.getDirection(), player, hand, level, pos, hit); }
         if (player.isCrouching()) { return InteractionResult.PASS; }
 
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide) { return InteractionResult.SUCCESS; }
 
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ConnectorTimerBlockEntity timer) {

@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.client.renderer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
+
 import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.FluidRender;
 import com.immersiveconvergence.api.client.RenderTypes;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.SteelSheetmetalTankLogic.State;
-
 import com.immersiveconvergence.api.multiblock.blocks.registry.MultiblockBlockEntityMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.fluids.FluidStack;
 import org.joml.Matrix4f;
-
 import javax.annotation.Nonnull;
 
 public class SteelSheetmetalTankRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<State>> {

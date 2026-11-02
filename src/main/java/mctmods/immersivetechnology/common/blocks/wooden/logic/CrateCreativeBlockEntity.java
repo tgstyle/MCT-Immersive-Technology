@@ -1,13 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.wooden.logic;
 
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
-import mctmods.immersivetechnology.common.blocks.wooden.gui.CrateCreativeMenu;
+import mctmods.immersivetechnology.common.gui.CrateMenu;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
 
 import com.immersiveconvergence.api.block.BlockInterfaces;
+import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +28,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import java.util.function.Consumer;
-import javax.annotation.Nonnull;
 
 public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements MenuProvider, IItemHandlerModifiable, BlockInterfaces.IBlockEntityDrop, BlockInterfaces.IPlayerInteraction {
     private ItemStack template = ItemStack.EMPTY;
@@ -106,7 +106,7 @@ public class CrateCreativeBlockEntity extends OSDCommonBlockEntity implements Me
 
     @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_CRATE_CREATIVE.getLocation()); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return CrateCreativeMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return CrateMenu.makeServer(MenuTypes.CRATE_CREATIVE.getType(), id, inv, this); }
 
     public boolean stillValid(Player player) { return level != null && !level.isClientSide && Reach.within(this, player); }
 

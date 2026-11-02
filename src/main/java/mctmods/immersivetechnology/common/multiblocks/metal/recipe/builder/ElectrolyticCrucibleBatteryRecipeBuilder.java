@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
+
 import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.immersiveconvergence.api.crafting.ICFluidTagInput;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -20,18 +21,9 @@ public class ElectrolyticCrucibleBatteryRecipeBuilder extends ICFinishedRecipe<E
                 .setTime(time);
     }
 
-    @SuppressWarnings("unused")
-    public ElectrolyticCrucibleBatteryRecipeBuilder addFluidOutput1(FluidStack out) {
-        return this.addFluid("result1", out);
-    }
+    @SuppressWarnings("unused") public ElectrolyticCrucibleBatteryRecipeBuilder addFluidOutput1(FluidStack out) { return this.addFluid("result1", out); }
 
-    @SuppressWarnings("unused")
-    public ElectrolyticCrucibleBatteryRecipeBuilder addFluidOutput2(FluidStack out) {
-        return this.addFluid("result2", out);
-    }
+    @SuppressWarnings("unused") public ElectrolyticCrucibleBatteryRecipeBuilder addFluidOutput2(FluidStack out) { return this.addFluid("result2", out); }
 
-    @SuppressWarnings("unused")
-    public ElectrolyticCrucibleBatteryRecipeBuilder addItemOutput(ItemStack item) {
-        return this.addItem("item_output", item);
-    }
+    @SuppressWarnings("unused") public ElectrolyticCrucibleBatteryRecipeBuilder addItemOutput(ItemStack item) { return this.addItem("item_output", item); }
 }

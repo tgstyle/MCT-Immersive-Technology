@@ -1,17 +1,26 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.metal.logic.AdvancedCokeOvenBaseHeaterBlockEntity;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.stone.process.AdvancedCokeOvenProcess;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Particles;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.MachineSound;
 import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
+import com.immersiveconvergence.api.multiblock.IProcessContext;
+import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
+import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
@@ -23,17 +32,8 @@ import com.immersiveconvergence.api.multiblock.blocks.util.CapabilityPosition;
 import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
 import com.immersiveconvergence.api.multiblock.blocks.util.StoredCapability;
-import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.immersiveconvergence.api.multiblock.process.MultiblockProcessor;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.BurnProcessHandler;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.IProcessContext;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
-import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
-import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.ICUtils;
@@ -42,6 +42,12 @@ import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.SlotRangeItemHandler;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -62,12 +68,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import javax.annotation.Nullable;
 
 public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenLogic.State>, IServerTickableComponent<AdvancedCokeOvenLogic.State>, IClientTickableComponent<AdvancedCokeOvenLogic.State>, IFluidOutputPump<AdvancedCokeOvenLogic.State> {
     public static final int SLOT_INPUT = 0;
@@ -95,9 +95,9 @@ public class AdvancedCokeOvenLogic implements IMultiblockLogic<AdvancedCokeOvenL
             return;
         }
         Vec3 particlePos = level.toAbsolute(new Vec3(SMOKE_POI.getX() + 0.5, SMOKE_POI.getY() + 0.9, SMOKE_POI.getZ() + 0.5));
-        if (ClientUtils.particlesVisible(particlePos)) { level.getRawLevel().addAlwaysVisibleParticle(Particles.CAMPFIRE_SMOKE.get(), particlePos.x, particlePos.y, particlePos.z, ICUtils.RANDOM.nextDouble(-0.00625, 0.00625), 0.05, ICUtils.RANDOM.nextDouble(-0.00625, 0.00625)); }
+        if (ImmersiveTechnology.proxy.particlesVisible(particlePos)) { level.getRawLevel().addAlwaysVisibleParticle(Particles.CAMPFIRE_SMOKE.get(), particlePos.x, particlePos.y, particlePos.z, ICUtils.RANDOM.nextDouble(-0.00625, 0.00625), 0.05, ICUtils.RANDOM.nextDouble(-0.00625, 0.00625)); }
         Vec3 soundPos = level.toAbsolute(Vec3.atCenterOf(SOUND_POI));
-        if (ClientUtils.attenuated(soundPos, 8, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.advancedCokeOven, () -> ClientUtils.attenuated(soundPos, 8, 1), () -> 1f); }
+        if (ImmersiveTechnology.proxy.attenuated(soundPos, 8, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.advancedCokeOven, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 8, 1), () -> 1f); }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {

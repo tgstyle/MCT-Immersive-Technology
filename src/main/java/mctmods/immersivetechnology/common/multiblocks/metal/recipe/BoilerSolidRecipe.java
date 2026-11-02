@@ -12,13 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class BoilerSolidRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<BoilerSolidRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<BoilerSolidRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.BOILER_SOLID);
-
     public ICIngredientWithSize input;
     private final double heatPerTick;
     private final double targetHeat;

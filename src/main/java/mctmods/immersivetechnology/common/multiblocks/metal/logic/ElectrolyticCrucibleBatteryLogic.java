@@ -1,38 +1,43 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.ElectrolyticCrucibleBatteryProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.RedstoneInput;
 import mctmods.immersivetechnology.core.util.SyncEnergyStorage;
 
-import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
-import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
-import com.immersiveconvergence.api.multiblock.blocks.util.*;
-import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
-import com.immersiveconvergence.api.multiblock.process.MultiblockProcessor;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.energy.ICEnergyStorageAveraging;
 import com.immersiveconvergence.api.integration.DisplayLines;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.IProcessContext;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.util.*;
+import com.immersiveconvergence.api.multiblock.process.MultiblockProcessor;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -49,11 +54,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<ElectrolyticCrucibleBatteryLogic.State>, IServerTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IClientTickableComponent<ElectrolyticCrucibleBatteryLogic.State>, IFluidOutputPump<ElectrolyticCrucibleBatteryLogic.State> {
     private static List<PoIJSONSchema> RAW_POIS;
@@ -93,7 +93,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         List<BlockPos> soundPosList = MultiblockPOIHelper.getPosList(RAW_POIS, "sound0");
         if (soundPosList.isEmpty()) { return; }
         Vec3 soundPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(soundPosList.get(0)));
-        if (state.active && ClientUtils.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.electrolyticCrucibleBattery, () -> ClientUtils.attenuated(soundPos, 32, 1), () -> 1f); }
+        if (state.active && ImmersiveTechnology.proxy.attenuated(soundPos, 32, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundPos, Sounds.electrolyticCrucibleBattery, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 32, 1), () -> 1f); }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {
@@ -267,9 +267,7 @@ public class ElectrolyticCrucibleBatteryLogic implements IMultiblockLogic<Electr
         }
 
         @Override public void addDisplayLines(Level level, DisplayLines lines) {
-            for (int percent : processPercents) {
-                lines.percent(Math.max(percent, 0));
-            }
+            for (int percent : processPercents) { lines.percent(Math.max(percent, 0)); }
         }
     }
 

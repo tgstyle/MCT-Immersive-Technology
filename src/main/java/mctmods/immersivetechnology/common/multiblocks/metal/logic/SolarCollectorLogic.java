@@ -1,12 +1,14 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ISolarRecipe;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistryData;
+import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
+import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
 
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
@@ -63,9 +65,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MAX_RANGE;
-import static mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry.SOLAR_MIN_RANGE;
-
 public abstract class SolarCollectorLogic<R extends ICMultiblockRecipe & ISolarRecipe, S extends SolarCollectorLogic.CollectorState<R>> implements IMultiblockLogic<S>, IServerTickableComponent<S>, IClientTickableComponent<S>, IFluidOutputPump<S> {
     public static final int SLOT_INPUT_FILLED = 0;
     public static final int SLOT_INPUT_EMPTY = 1;
@@ -107,7 +106,7 @@ public abstract class SolarCollectorLogic<R extends ICMultiblockRecipe & ISolarR
         }
     }
 
-    private float soundVolume(CollectorState<R> state, Level level, Vec3 pos) { return ClientUtils.attenuated(pos, soundFalloff(), 2 * (float) (state.heatLevel / state.maxHeat(level))); }
+    private float soundVolume(CollectorState<R> state, Level level, Vec3 pos) { return ImmersiveTechnology.proxy.attenuated(pos, soundFalloff(), 2 * (float) (state.heatLevel / state.maxHeat(level))); }
 
     @Override public void tickServer(IMultiblockContext<S> ctx) {
         CollectorState<R> state = ctx.getState();

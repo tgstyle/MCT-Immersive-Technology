@@ -1,5 +1,7 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
 import net.minecraftforge.fluids.IFluidTank;
 import com.immersiveconvergence.api.multiblock.IDisplayContext;
 import com.immersiveconvergence.api.block.BaseBlockEntity;
@@ -9,8 +11,6 @@ import com.immersiveconvergence.api.block.IClientTickableBE;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-
 import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
@@ -38,7 +38,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import com.immersiveconvergence.api.util.ICFluidUtils;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -68,7 +67,8 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         if (sideCfgArray.length >= 2) {
             sideConfig.put(Direction.DOWN, IOSideConfig.VALUES[sideCfgArray[0]]);
             sideConfig.put(Direction.UP, IOSideConfig.VALUES[sideCfgArray[1]]);
-        } else {
+        }
+        else {
             sideConfig.put(Direction.DOWN, IOSideConfig.OUTPUT);
             sideConfig.put(Direction.UP, IOSideConfig.INPUT);
         }
@@ -76,7 +76,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         postRead(descPacket);
     }
 
-    protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
+    protected void postRead(boolean descPacket) { if (!descPacket) { updateState(); } }
 
     @Override public void writeCustomNBT(@Nonnull CompoundTag nbt, boolean descPacket) {
         int[] sideCfgArray = new int[2];
@@ -88,8 +88,8 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
     @Override @Nonnull public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
         if (capability == ForgeCapabilities.FLUID_HANDLER) {
-            if (facing == null) return nonsidedHandler.cast();
-            if (facing.getAxis() != Direction.Axis.Y) return super.getCapability(capability, facing);
+            if (facing == null) { return nonsidedHandler.cast(); }
+            if (facing.getAxis() != Direction.Axis.Y) { return super.getCapability(capability, facing); }
             return (facing == Direction.UP ? upHandler : downHandler).cast();
         }
         return super.getCapability(capability, facing);
@@ -105,7 +105,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     @Override public boolean interact(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
         FluidStack contained = FluidUtil.getFluidContained(heldItem).orElse(FluidStack.EMPTY);
         if (!contained.isEmpty() && !isFluidValid(contained)) {
-            if (level != null && !level.isClientSide) player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false);
+            if (level != null && !level.isClientSide) { player.displayClientMessage(Component.translatable(TranslationKey.NO_GAS_ALLOWED.text()), false); }
             return true;
         }
         if (FluidUtil.interactWithFluidHandler(player, hand, tank)) { setChanged(); markContainingBlockForUpdate(null); return true; }
@@ -113,7 +113,7 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     }
 
     @Override public Component[] getOverlayText(@Nonnull Player player, @Nonnull HitResult rtr, boolean hammer) {
-        if (rtr.getType() == HitResult.Type.MISS) return null;
+        if (rtr.getType() == HitResult.Type.MISS) { return null; }
         if (ICFluidUtils.isFluidRelatedItemStack(player.getItemInHand(InteractionHand.MAIN_HAND))) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty()) return new Component[]{Component.translatable(TranslationKey.GUI_EMPTY.text())};
@@ -128,16 +128,16 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
         ItemStack stack = new ItemStack(getBlockState().getBlock(), 1);
         CompoundTag tag = new CompoundTag();
         writeTank(tag, true);
-        if (!tag.isEmpty()) stack.setTag(tag);
+        if (!tag.isEmpty()) { stack.setTag(tag); }
         drop.accept(stack);
     }
 
-    @Override public void onBEPlaced(BlockPlaceContext ctx) { if (ctx.getItemInHand().hasTag()) readTank(ctx.getItemInHand().getOrCreateTag()); }
+    @Override public void onBEPlaced(BlockPlaceContext ctx) { if (ctx.getItemInHand().hasTag()) { readTank(ctx.getItemInHand().getOrCreateTag()); } }
 
     public void writeTank(CompoundTag nbt, boolean toItem) {
         boolean write = tank.getFluidAmount() > 0;
         CompoundTag tankTag = tank.writeToNBT(new CompoundTag());
-        if (!toItem || write) nbt.put("tank", tankTag);
+        if (!toItem || write) { nbt.put("tank", tankTag); }
     }
 
     public void readTank(CompoundTag nbt) { tank.readFromNBT(nbt.getCompound("tank")); }
@@ -147,8 +147,8 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
     @Override @Nonnull public IOSideConfig getSideConfig(@Nonnull Direction side) { return sideConfig.getOrDefault(side, IOSideConfig.NONE); }
 
     @Override public boolean toggleSide(Direction side, @Nonnull Player p) {
-        if (side.getAxis() != Direction.Axis.Y) return false;
-        if (!canConfigureSide(side)) return false;
+        if (side.getAxis() != Direction.Axis.Y) { return false; }
+        if (!canConfigureSide(side)) { return false; }
         IOSideConfig next = IOSideConfig.next(sideConfig.getOrDefault(side, IOSideConfig.NONE));
         sideConfig.put(side, next);
         setChanged();
@@ -193,10 +193,10 @@ public abstract class BarrelCommonBlockEntity extends BaseBlockEntity implements
 
         @Override public boolean isFluidValid(int tank, @Nonnull FluidStack stack) { return barrel.isFluidValid(stack); }
 
-        @Override public int fill(FluidStack resource, FluidAction action) { if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.INPUT)) return 0; return barrel.tank.fill(resource, action); }
+        @Override public int fill(FluidStack resource, FluidAction action) { if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.INPUT)) { return 0; } return barrel.tank.fill(resource, action); }
 
-        @Override @Nonnull public FluidStack drain(FluidStack resource, FluidAction action) { if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT)) return FluidStack.EMPTY; return barrel.tank.drain(resource, action); }
+        @Override @Nonnull public FluidStack drain(FluidStack resource, FluidAction action) { if (resource.isEmpty() || (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT)) { return FluidStack.EMPTY; } return barrel.tank.drain(resource, action); }
 
-        @Override @Nonnull public FluidStack drain(int maxDrain, FluidAction action) { if (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT) return FluidStack.EMPTY; return barrel.tank.drain(maxDrain, action); }
+        @Override @Nonnull public FluidStack drain(int maxDrain, FluidAction action) { if (facing != null && barrel.sideConfig.get(facing) != IOSideConfig.OUTPUT) { return FluidStack.EMPTY; } return barrel.tank.drain(maxDrain, action); }
     }
 }

@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.DistillerRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -13,7 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,7 +28,7 @@ public class DistillerRecipeSerializer extends ICRecipeSerializer<DistillerRecip
         if (json.has("item_output")) {
             JsonObject itemJson = GsonHelper.getAsJsonObject(json, "item_output");
             itemOutput = ShapedRecipe.itemStackFromJson(itemJson);
-            if (itemJson.has("chance")) chance = GsonHelper.getAsFloat(itemJson, "chance", 0.0f);
+            if (itemJson.has("chance")) { chance = GsonHelper.getAsFloat(itemJson, "chance", 0.0f); }
         }
         int time = GsonHelper.getAsInt(json, "time");
         int energy = GsonHelper.getAsInt(json, "energy");

@@ -11,13 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe {
     public static RegistryObject<ICRecipeSerializer<SolarTowerRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<SolarTowerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.SOLAR_TOWER);
-
     public final ICFluidTagInput input;
     public final FluidStack fluidOutput;
     public final double requiredTemp;
@@ -42,7 +40,7 @@ public class SolarTowerRecipe extends ICMultiblockRecipe implements ISolarRecipe
     @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid) { return findRecipe(level, fluid, null); }
 
     @Nullable public static SolarTowerRecipe findRecipe(Level level, FluidStack fluid, @Nullable SolarTowerRecipe hint) {
-        if (fluid == null || fluid.isEmpty()) return null;
+        if (fluid == null || fluid.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluid), hint);
     }
 

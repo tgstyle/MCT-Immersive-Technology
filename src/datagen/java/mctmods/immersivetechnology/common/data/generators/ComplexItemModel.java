@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.data.generators;
 import mctmods.immersivetechnology.common.data.models.TRSRModelBuilder;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.ItemLike;
@@ -13,16 +14,13 @@ import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Vector3f;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
-    public ComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, Reference.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper);
-    }
+    public ComplexItemModel(PackOutput output, ExistingFileHelper existingFileHelper) { super(output, Reference.MODID, ITEM_FOLDER, TRSRModelBuilder::new, existingFileHelper); }
 
     @Override @Nonnull public String getName() { return getClass().getSimpleName(); }
 
@@ -47,9 +45,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         generateMultiblockModel("steel_sheetmetal_tank", "metal", MultiblockRegistry.STEEL_SHEETMETAL_TANK.block(), new Vector3f(0f, -4.0f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
     }
 
-    private TRSRModelBuilder createObjModel(String modelPath, String jsonName) {
-        return getBuilder(jsonName).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + modelPath)).flipV(true).end();
-    }
+    private TRSRModelBuilder createObjModel(String modelPath, String jsonName) { return getBuilder(jsonName).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + modelPath)).flipV(true).end(); }
 
     private TRSRModelBuilder createTransformedObjModel(String modelPath, String jsonName, @Nullable Vector3f translation) {
         TRSRModelBuilder builder = createObjModel(modelPath, jsonName);
@@ -100,9 +96,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
 
     private TRSRModelBuilder obj(Supplier<? extends ItemLike> item, String model) { return obj(item.get(), model); }
 
-    private TRSRModelBuilder obj(ItemLike item, String model) {
-        return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end();
-    }
+    private TRSRModelBuilder obj(ItemLike item, String model) { return getBuilder(name(item)).customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/" + model)).flipV(true).end(); }
 
     private String name(ItemLike item) { return Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item.asItem())).getPath(); }
 

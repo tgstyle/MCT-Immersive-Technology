@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.items;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
+
 import com.immersiveconvergence.api.block.HammerUse;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 import com.immersiveconvergence.api.util.ICNBT;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.core.lib.ICLib;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
@@ -25,7 +26,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class FormationTool extends Item {
         if (!ICNBT.hasKey(stack, nbtKey, Tag.TAG_LIST)) { return; }
         MutableComponent title = Component.translatable(titleKey);
         ListTag tagList = stack.getOrCreateTag().getList(nbtKey, Tag.TAG_STRING);
-        if (!Screen.hasShiftDown()) { list.add(title.append(" ").append(Component.translatable(ICLib.DESC_INFO + "holdShift"))); }
+        if (!ImmersiveTechnology.proxy.isShiftDown()) { list.add(title.append(" ").append(Component.translatable(ICLib.DESC_INFO + "holdShift"))); }
         else {
             list.add(title);
             for (int i = 0; i < tagList.size(); i++) {
@@ -103,9 +103,7 @@ public class FormationTool extends Item {
 
     @Override public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) { return true; }
 
-    @Override @Nonnull public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity entity, @Nonnull InteractionHand hand) {
-        return HammerUse.onEntity(player, entity);
-    }
+    @Override @Nonnull public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity entity, @Nonnull InteractionHand hand) { return HammerUse.onEntity(player, entity); }
 
     @Override public boolean hasCraftingRemainingItem(@Nonnull ItemStack stack) { return true; }
 

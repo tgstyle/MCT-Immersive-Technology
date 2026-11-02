@@ -1,7 +1,5 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import com.immersiveconvergence.api.block.ModProperties;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarMelterLogic;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.network.OSDSyncBlock;
@@ -11,6 +9,8 @@ import mctmods.immersivetechnology.core.util.TranslationKey;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

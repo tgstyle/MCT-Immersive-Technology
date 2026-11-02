@@ -1,10 +1,11 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.loot.BlockEntityDropLootEntry;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.loot.BlockEntityDropLootEntry;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
@@ -13,7 +14,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.TagEntry;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.stream.Collectors;

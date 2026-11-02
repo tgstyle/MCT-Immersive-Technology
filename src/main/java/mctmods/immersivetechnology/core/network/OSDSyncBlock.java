@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.core.network;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.core.util.TranslationKey;
-import net.minecraft.client.Minecraft;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
-
 import java.util.function.Supplier;
 import com.immersiveconvergence.api.network.INetworkMessage;
 
@@ -29,7 +29,7 @@ public class OSDSyncBlock implements INetworkMessage {
                 Component msg;
                 if (distance >= 0) { msg = Component.translatable(actualKey, distance); }
                 else { msg = Component.translatable(actualKey); }
-                Minecraft.getInstance().gui.getChat().addMessage(msg);
+                ImmersiveTechnology.proxy.addChatMessage(msg);
             }
         });
         ctx.setPacketHandled(true);

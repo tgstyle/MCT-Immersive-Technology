@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
+
 import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;

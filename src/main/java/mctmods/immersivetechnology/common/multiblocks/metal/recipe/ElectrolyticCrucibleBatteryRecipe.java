@@ -11,13 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class ElectrolyticCrucibleBatteryRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<ElectrolyticCrucibleBatteryRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<ElectrolyticCrucibleBatteryRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.ELECTROLYTIC_CRUCIBLE_BATTERY);
-
     public final ICFluidTagInput fluidInput0;
     @Nullable public final FluidStack fluidOutput0;
     @Nullable public final FluidStack fluidOutput1;

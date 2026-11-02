@@ -11,13 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class RadiatorRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<RadiatorRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<RadiatorRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.RADIATOR);
-
     public final FluidStack fluidOutput;
     public final ICFluidTagInput input;
 
@@ -34,7 +32,7 @@ public class RadiatorRecipe extends ICMultiblockRecipe {
     public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput) { return findRecipe(level, fluidInput, null); }
 
     public static RadiatorRecipe findRecipe(Level level, FluidStack fluidInput, @Nullable RadiatorRecipe hint) {
-        if (fluidInput.isEmpty()) return null;
+        if (fluidInput.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluidInput), hint);
     }
 

@@ -1,16 +1,21 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.process.RadiatorProcess;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.RadiatorRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.Climate;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ProcessQueue;
 import mctmods.immersivetechnology.core.util.RedstoneInput;
 
+import com.google.common.collect.ImmutableList;
+import com.immersiveconvergence.api.client.MachineSound;
+import com.immersiveconvergence.api.integration.DisplayLines;
+import com.immersiveconvergence.api.multiblock.IDataReloadAware;
+import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
@@ -20,16 +25,15 @@ import com.immersiveconvergence.api.multiblock.blocks.util.CapabilityPosition;
 import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
 import com.immersiveconvergence.api.multiblock.blocks.util.StoredCapability;
-import com.google.common.collect.ImmutableList;
-import com.immersiveconvergence.api.client.MachineSound;
-import com.immersiveconvergence.api.integration.DisplayLines;
-import com.immersiveconvergence.api.multiblock.IDataReloadAware;
-import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.TankPair;
-import net.minecraft.client.Minecraft;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -44,11 +48,6 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
 
 public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBaseLogic.State>, IServerTickableComponent<RadiatorBaseLogic.State>, IClientTickableComponent<RadiatorBaseLogic.State>, IFluidOutputPump<RadiatorBaseLogic.State> {
     public static final int INPUT_TANK_CAPACITY = 8 * FluidType.BUCKET_VOLUME;
@@ -145,13 +144,13 @@ public abstract class RadiatorBaseLogic implements IMultiblockLogic<RadiatorBase
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (Minecraft.getInstance().player == null) { return; }
+        if (ImmersiveTechnology.proxy.getClientPlayer() == null) { return; }
         if (!state.active) {
             state.isSoundPlaying = () -> false;
             return;
         }
         Vec3 soundVec = ctx.getLevel().toAbsolute(Vec3.atCenterOf(soundPoi()));
-        if (ClientUtils.attenuated(soundVec, 16, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundVec, Sounds.solarTower, () -> ClientUtils.linearFalloff(soundVec, 16), () -> 1f); }
+        if (ImmersiveTechnology.proxy.attenuated(soundVec, 16, 1) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active, ctx.isValid(), soundVec, Sounds.solarTower, () -> ImmersiveTechnology.proxy.linearFalloff(soundVec, 16), () -> 1f); }
     }
 
     @Override public <T> LazyOptional<T> getCapability(IMultiblockContext<State> ctx, CapabilityPosition position, Capability<T> cap) {

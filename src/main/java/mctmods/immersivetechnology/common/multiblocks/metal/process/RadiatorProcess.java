@@ -7,7 +7,6 @@ import com.immersiveconvergence.api.util.MarkableFluidTank;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
-
 import javax.annotation.Nullable;
 
 public class RadiatorProcess {

@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.logic.BarrelOpenBlockEntity;
 
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import java.util.function.BiFunction;
-
 import javax.annotation.Nonnull;
 
 public class BarrelOpenBlock extends ModEntityBlock<BarrelOpenBlockEntity> {
@@ -28,6 +27,5 @@ public class BarrelOpenBlock extends ModEntityBlock<BarrelOpenBlockEntity> {
         builder.add(BOTTOM_CONFIG);
     }
 
-    @SuppressWarnings("deprecation")
-    @Override @Nonnull public RenderShape getRenderShape(@Nonnull BlockState state) { return RenderShape.MODEL; }
+    @SuppressWarnings("deprecation") @Override @Nonnull public RenderShape getRenderShape(@Nonnull BlockState state) { return RenderShape.MODEL; }
 }

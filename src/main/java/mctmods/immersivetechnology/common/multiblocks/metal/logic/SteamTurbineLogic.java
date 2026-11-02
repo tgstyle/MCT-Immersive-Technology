@@ -1,25 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.SteamTurbineRecipe;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MechanicalLoad;
 import mctmods.immersivetechnology.core.util.TurbineProvider;
 
-import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
-import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
-import com.immersiveconvergence.api.multiblock.blocks.util.CapabilityPosition;
-import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
-import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
-import com.immersiveconvergence.api.multiblock.blocks.util.StoredCapability;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.capability.MechanicalCapabilities;
@@ -30,10 +20,24 @@ import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.util.CapabilityPosition;
+import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
+import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
+import com.immersiveconvergence.api.multiblock.blocks.util.StoredCapability;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
 import com.immersiveconvergence.api.util.MultiTankFluidHandler;
 import com.immersiveconvergence.api.util.RecipeCache;
 import com.immersiveconvergence.api.util.TankPair;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -49,10 +53,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
 
 public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.State>, IServerTickableComponent<SteamTurbineLogic.State>, IClientTickableComponent<SteamTurbineLogic.State>, IFluidOutputPump<SteamTurbineLogic.State> {
     public static BlockPos REDSTONE_POI;
@@ -109,12 +109,10 @@ public class SteamTurbineLogic implements IMultiblockLogic<SteamTurbineLogic.Sta
         state.animation_fanRotation %= 360;
         Vec3 soundPos = ctx.getLevel().toAbsolute(Vec3.atCenterOf(RUNNING_SOUND_POI));
         boolean targetActive = state.active || state.speed > 0;
-        if (targetActive && ClientUtils.attenuated(soundPos, 32, 11 * (state.currentLevel - 0.5f)) > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(() -> state.active || state.speed > 0, ctx.isValid(), soundPos, Sounds.steamTurbine, () -> ClientUtils.attenuated(soundPos, 32, 11 * (state.currentLevel - 0.5f)), () -> state.currentPitch);
-        }
+        if (targetActive && ImmersiveTechnology.proxy.attenuated(soundPos, 32, 11 * (state.currentLevel - 0.5f)) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.active || state.speed > 0, ctx.isValid(), soundPos, Sounds.steamTurbine, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 32, 11 * (state.currentLevel - 0.5f)), () -> state.currentPitch); }
         if (state.active && ctx.getLevel().shouldTickModulo(2) && !isOutputConnected(ctx, 0)) {
             float normSpeed = Math.max(0f, Reference.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
-            ClientUtils.exhaust(ctx.getLevel().getRawLevel(), ctx.getLevel().toAbsolute(SMOKE_POI), ctx.getLevel().getOrientation().front(), normSpeed, state.tanks.output().getFluid());
+            ImmersiveTechnology.proxy.exhaust(ctx.getLevel().getRawLevel(), ctx.getLevel().toAbsolute(SMOKE_POI), ctx.getLevel().getOrientation().front(), normSpeed, state.tanks.output().getFluid());
         }
     }
 

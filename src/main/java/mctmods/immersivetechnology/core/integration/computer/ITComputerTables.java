@@ -16,7 +16,6 @@ import com.immersiveconvergence.api.compat.ICComputerTable;
 import com.immersiveconvergence.api.util.ComputerValues;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 

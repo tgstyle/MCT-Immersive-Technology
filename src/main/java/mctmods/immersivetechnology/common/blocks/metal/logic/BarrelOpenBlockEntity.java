@@ -1,8 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
+
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.biome.Biome;
@@ -11,9 +12,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-
 import java.util.Random;
-
 import javax.annotation.Nonnull;
 
 public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
@@ -24,7 +23,7 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
 
     @Override public void tickServer() {
         boolean update = false;
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) { return; }
         if (tank.getFluidAmount() < tank.getCapacity() && RANDOM.nextInt(20) == 0) {
             FluidStack fs = tank.getFluid();
             if (fs.isEmpty() || fs.getFluid() == Fluids.WATER) {
@@ -34,7 +33,8 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
                     int amount = level.isThundering() ? 200 : 100;
                     tank.fill(new FluidStack(Fluids.WATER, amount), IFluidHandler.FluidAction.EXECUTE);
                     update = true;
-                } else if (temp >= 2.0F) {
+                }
+                else if (temp >= 2.0F) {
                     tank.drain(Math.min(100, tank.getFluidAmount()), IFluidHandler.FluidAction.EXECUTE);
                     update = true;
                 }
@@ -59,14 +59,14 @@ public class BarrelOpenBlockEntity extends BarrelCommonBlockEntity {
 
     @Override protected boolean isFluidValid(@Nonnull FluidStack fluid) { return !fluid.isEmpty() && fluid.getFluid().getFluidType().getDensity(fluid) >= 0; }
 
-    @Override protected void postRead(boolean descPacket) { if (!descPacket) updateState(); }
+    @Override protected void postRead(boolean descPacket) { if (!descPacket) { updateState(); } }
 
     @Override protected boolean canConfigureSide(Direction side) { return side != Direction.UP; }
 
     @Override protected void updateState() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide) { return; }
         BlockState current = getBlockState();
         BlockState newState = current.setValue(BarrelOpenBlock.BOTTOM_CONFIG, sideConfig.getOrDefault(Direction.DOWN, IOSideConfig.OUTPUT));
-        if (!current.equals(newState)) level.setBlock(getBlockPos(), newState, 3);
+        if (!current.equals(newState)) { level.setBlock(getBlockPos(), newState, 3); }
     }
 }

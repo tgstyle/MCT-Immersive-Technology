@@ -1,14 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.metal.logic;
 
-import java.text.DecimalFormat;
+import mctmods.immersivetechnology.core.config.ClientConfig;
+import mctmods.immersivetechnology.core.network.OSDRequestMessage;
+import mctmods.immersivetechnology.core.network.PacketHandler;
+import mctmods.immersivetechnology.core.util.TranslationKey;
+
 import com.immersiveconvergence.api.block.BaseBlockEntity;
 import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.block.IClientTickableBE;
-import mctmods.immersivetechnology.core.network.PacketHandler;
-import mctmods.immersivetechnology.core.network.OSDRequestMessage;
-import mctmods.immersivetechnology.core.util.TranslationKey;
-import mctmods.immersivetechnology.core.ClientConfig;
+import com.immersiveconvergence.api.block.IServerTickableBE;
+import java.text.DecimalFormat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -16,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-
 import javax.annotation.Nonnull;
 
 public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IServerTickableBE, IClientTickableBE, BlockInterfaces.IBlockOverlayText {
@@ -24,7 +24,6 @@ public abstract class OSDCommonBlockEntity extends BaseBlockEntity implements IS
     public long lastAcceptedAmount = 0;
     public int secondCounter = 0;
     public int requestCooldown = 0;
-
     private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.###");
 
     protected OSDCommonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }

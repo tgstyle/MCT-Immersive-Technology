@@ -1,12 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks.metal;
 
-import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
-import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
+import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
+import com.immersiveconvergence.api.multiblock.MachineTemplateMultiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;

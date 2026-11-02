@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import com.immersiveconvergence.api.block.ModEntityBlock;
-import com.immersiveconvergence.api.block.ModProperties;
-import com.immersiveconvergence.api.wires.ICWires;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveLoadBlockEntity;
 import mctmods.immersivetechnology.core.registration.ModTags;
+
+import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.wires.ICWires;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,7 +29,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
-
 import javax.annotation.Nonnull;
 import java.util.function.BiFunction;
 
@@ -60,7 +60,8 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
                 if (alongX) {
                     connector1 = Shapes.box(0, baseThickness, centerMin, connectorSize, baseThickness + connectorLength, centerMax);
                     connector2 = Shapes.box(1 - connectorSize, baseThickness, centerMin, 1, baseThickness + connectorLength, centerMax);
-                } else {
+                }
+                else {
                     connector1 = Shapes.box(centerMin, baseThickness, 0, centerMax, baseThickness + connectorLength, connectorSize);
                     connector2 = Shapes.box(centerMin, baseThickness, 1 - connectorSize, centerMax, baseThickness + connectorLength, 1);
                 }
@@ -72,7 +73,8 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
                 if (alongX) {
                     connector1 = Shapes.box(0, 1 - baseThickness - connectorLength, centerMin, connectorSize, 1 - baseThickness, centerMax);
                     connector2 = Shapes.box(1 - connectorSize, 1 - baseThickness - connectorLength, centerMin, 1, 1 - baseThickness, centerMax);
-                } else {
+                }
+                else {
                     connector1 = Shapes.box(centerMin, 1 - baseThickness - connectorLength, 0, centerMax, 1 - baseThickness, connectorSize);
                     connector2 = Shapes.box(centerMin, 1 - baseThickness - connectorLength, 1 - connectorSize, centerMax, 1 - baseThickness, 1);
                 }
@@ -111,23 +113,24 @@ public class ValveLoadBlock extends ModEntityBlock<ValveLoadBlockEntity> {
 
     @Override public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block fromBlock, @Nonnull BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, fromBlock, fromPos, isMoving);
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) { valve.updateRedstoneState(); }
     }
 
     @Override @Nonnull public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.is(ModTags.formationTools)) return super.use(state, level, pos, player, hand, hit);
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (heldItem.is(ModTags.formationTools)) { return super.use(state, level, pos, player, hand, hit); }
+        if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {
             if (player.isCrouching()) {
                 valve.redstoneMode = (byte) (valve.redstoneMode == 1 ? 2 : 1);
                 valve.updateRedstoneState();
                 valve.efficientSetChanged();
-            } else {
-                if (ICWires.isWireCoil(heldItem)) return InteractionResult.PASS;
+            }
+            else {
+                if (ICWires.isWireCoil(heldItem)) { return InteractionResult.PASS; }
                 NetworkHooks.openScreen((ServerPlayer) player, valve, buf -> buf.writeBlockPos(pos));
             }
             return InteractionResult.SUCCESS;

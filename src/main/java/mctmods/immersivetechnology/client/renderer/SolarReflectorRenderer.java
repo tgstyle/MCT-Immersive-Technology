@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.client.renderer;
 
 import mctmods.immersivetechnology.client.models.multiblock.SolarReflectorModels;
+import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
+
 import com.immersiveconvergence.api.client.StandaloneModel;
 import com.immersiveconvergence.api.client.BaseBlockEntityRenderer;
 import com.immersiveconvergence.api.client.RenderUtils;
-import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
-
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockBEHelperMaster;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
@@ -23,7 +23,6 @@ import net.minecraftforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 
 public class SolarReflectorRenderer extends BaseBlockEntityRenderer<MultiblockBlockEntityMaster<SolarReflectorLogic.State>> {

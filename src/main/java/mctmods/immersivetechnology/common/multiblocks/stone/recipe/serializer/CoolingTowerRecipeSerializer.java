@@ -1,17 +1,17 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -42,11 +42,11 @@ public class CoolingTowerRecipeSerializer extends ICRecipeSerializer<CoolingTowe
         recipe.input0.write(buffer);
         recipe.input1.write(buffer);
         buffer.writeBoolean(recipe.fluidOutput0 != null);
-        if (recipe.fluidOutput0 != null) buffer.writeFluidStack(recipe.fluidOutput0);
+        if (recipe.fluidOutput0 != null) { buffer.writeFluidStack(recipe.fluidOutput0); }
         buffer.writeBoolean(recipe.fluidOutput1 != null);
-        if (recipe.fluidOutput1 != null) buffer.writeFluidStack(recipe.fluidOutput1);
+        if (recipe.fluidOutput1 != null) { buffer.writeFluidStack(recipe.fluidOutput1); }
         buffer.writeBoolean(recipe.fluidOutput2 != null);
-        if (recipe.fluidOutput2 != null) buffer.writeFluidStack(recipe.fluidOutput2);
+        if (recipe.fluidOutput2 != null) { buffer.writeFluidStack(recipe.fluidOutput2); }
         buffer.writeInt(recipe.getBaseTime());
     }
 }

@@ -1,24 +1,33 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.RedstoneInput;
 
-import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
-import com.immersiveconvergence.api.multiblock.blocks.util.*;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.block.IMBOverlayText;
 import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.IFluidOutputPump;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
+import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.util.*;
 import com.immersiveconvergence.api.util.ICFluidUtils;
 import com.immersiveconvergence.api.util.LayeredComparator;
 import com.immersiveconvergence.api.util.MarkableFluidTank;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,15 +44,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class SteelSheetmetalTankLogic implements IMultiblockLogic<SteelSheetmetalTankLogic.State>, IServerTickableComponent<SteelSheetmetalTankLogic.State>, IMBOverlayText<SteelSheetmetalTankLogic.State>, IFluidOutputPump<SteelSheetmetalTankLogic.State> {
     public static BlockPos REDSTONE_POI;

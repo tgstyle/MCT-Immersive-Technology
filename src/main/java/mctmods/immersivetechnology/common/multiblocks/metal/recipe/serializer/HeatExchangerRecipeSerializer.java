@@ -1,18 +1,18 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
+import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.crafting.ICFluidTagInput;
 import com.immersiveconvergence.api.crafting.ICRecipeSerializer;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.multiblocks.metal.recipe.HeatExchangerRecipe;
-import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 
 public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchangerRecipe> {
@@ -43,10 +43,10 @@ public class HeatExchangerRecipeSerializer extends ICRecipeSerializer<HeatExchan
     @Override public void toNetwork(@Nonnull FriendlyByteBuf buffer, HeatExchangerRecipe recipe) {
         recipe.input0.write(buffer);
         buffer.writeBoolean(recipe.input1 != null);
-        if (recipe.input1 != null) recipe.input1.write(buffer);
+        if (recipe.input1 != null) { recipe.input1.write(buffer); }
         buffer.writeFluidStack(recipe.output0);
         buffer.writeBoolean(recipe.output1 != null);
-        if (recipe.output1 != null) buffer.writeFluidStack(recipe.output1);
+        if (recipe.output1 != null) { buffer.writeFluidStack(recipe.output1); }
         buffer.writeInt(recipe.getBaseEnergy());
         buffer.writeInt(recipe.getBaseTime());
     }

@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModBlocks.BlockEntry;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.ModTags;
+
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -15,14 +16,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 public class ModItemTags extends ItemTagsProvider {
-    public ModItemTags(PackOutput output, CompletableFuture<Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blocks, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, blocks, Reference.MODID, existingFileHelper);
-    }
+    public ModItemTags(PackOutput output, CompletableFuture<Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blocks, ExistingFileHelper existingFileHelper) { super(output, lookupProvider, blocks, Reference.MODID, existingFileHelper); }
 
     @Override protected void addTags(@Nonnull Provider provider) {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "salts"))).add(ModItems.SALT.get());
@@ -48,7 +46,5 @@ public class ModItemTags extends ItemTagsProvider {
 
     static TagKey<Item> itTag(String path) { return ItemTags.create(Reference.rl(path)); }
 
-    private void ingredientTag(String path, String ieId, String ifabId) {
-        tag(itTag(path)).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", ieId)).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", ifabId));
-    }
+    private void ingredientTag(String path, String ieId, String ifabId) { tag(itTag(path)).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", ieId)).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", ifabId)); }
 }

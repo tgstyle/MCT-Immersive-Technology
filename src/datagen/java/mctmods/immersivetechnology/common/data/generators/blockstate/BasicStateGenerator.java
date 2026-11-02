@@ -1,12 +1,6 @@
 package mctmods.immersivetechnology.common.data.generators.blockstate;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.registration.BlockEntry;
-import com.google.common.collect.ImmutableMap;
-import com.immersiveconvergence.api.client.ConfigurableSidesModel;
 import mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock;
-import com.immersiveconvergence.api.block.Enums.IOSideConfig;
-import com.immersiveconvergence.api.block.ModProperties;
 import mctmods.immersivetechnology.common.blocks.metal.BarrelOpenBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveFluidBlock;
 import mctmods.immersivetechnology.common.blocks.metal.ValveLoadBlock;
@@ -17,6 +11,12 @@ import mctmods.immersivetechnology.common.data.builders.SideConfigBuilder;
 import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.registration.BlockEntry;
+import com.google.common.collect.ImmutableMap;
+import com.immersiveconvergence.api.client.ConfigurableSidesModel;
+import com.immersiveconvergence.api.block.Enums.IOSideConfig;
+import com.immersiveconvergence.api.block.ModProperties;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -31,13 +31,11 @@ import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import javax.annotation.Nullable;
 
 public class BasicStateGenerator {
@@ -66,7 +64,8 @@ public class BasicStateGenerator {
         if (facing.getAxis().isHorizontal()) {
             yRot = ((facing.get2DDataValue() + yRotOffset) % 4) * 90;
             xRot = config.horizontalXRot;
-        } else {
+        }
+        else {
             Direction hFacing = Direction.from2DDataValue(rotationVal);
             yRot = ((hFacing.get2DDataValue() + yRotOffset) % 4) * 90;
             xRot = (facing == Direction.DOWN) ? config.verticalDownXRot : config.verticalUpXRot;
@@ -117,9 +116,7 @@ public class BasicStateGenerator {
         for (BlockEntry<?> fluidEntry : ModFluids.ALL_FLUID_BLOCKS) {
             Block fluidBlock = fluidEntry.get();
             VariantBlockStateBuilder builder = main.getVariantBuilder(fluidBlock);
-            for (int level = 0; level < 16; level++) {
-                builder.partialState().with(LiquidBlock.LEVEL, level).modelForState().modelFile(emptyModel).addModel();
-            }
+            for (int level = 0; level < 16; level++) { builder.partialState().with(LiquidBlock.LEVEL, level).modelForState().modelFile(emptyModel).addModel(); }
         }
 
         createValveVariants();
@@ -199,8 +196,7 @@ public class BasicStateGenerator {
         return model;
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private ModelFile createTimerObjModel(String baseName, String objFolder, String baseVisibility) {
+    @SuppressWarnings("SameParameterValue") private ModelFile createTimerObjModel(String baseName, String objFolder, String baseVisibility) {
         String modelName = "block/connector/" + baseName;
         BlockModelBuilder builder = main.models().getBuilder(modelName);
         builder.renderType("translucent");

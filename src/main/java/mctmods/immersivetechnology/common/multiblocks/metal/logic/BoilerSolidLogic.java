@@ -1,23 +1,15 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.logic;
 
-import mctmods.immersivetechnology.client.util.ClientUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerSolidRecipe;
-import mctmods.immersivetechnology.core.CommonConfig;
-import mctmods.immersivetechnology.core.ServerConfig;
+import mctmods.immersivetechnology.core.config.CommonConfig;
+import mctmods.immersivetechnology.core.config.ServerConfig;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.HeatUtils;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 
-import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
-import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
-import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
-import com.immersiveconvergence.api.multiblock.blocks.util.*;
-import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.google.common.collect.ImmutableList;
 import com.immersiveconvergence.api.block.ModProperties;
 import com.immersiveconvergence.api.capability.HeatCapabilities;
@@ -29,10 +21,24 @@ import com.immersiveconvergence.api.multiblock.IDataReloadAware;
 import com.immersiveconvergence.api.multiblock.MultiblockPOIHelper;
 import com.immersiveconvergence.api.multiblock.PoIJSONSchema;
 import com.immersiveconvergence.api.multiblock.ShapeData;
+import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
+import com.immersiveconvergence.api.multiblock.blocks.component.RedstoneControl;
+import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
+import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
+import com.immersiveconvergence.api.multiblock.blocks.util.*;
+import com.immersiveconvergence.api.multiblock.util.CapabilityReference;
 import com.immersiveconvergence.api.util.ConstrainedItemHandler;
 import com.immersiveconvergence.api.util.MultiBlockInventoryUtils;
 import com.immersiveconvergence.api.util.RecipeCache;
-import net.minecraft.client.Minecraft;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -48,13 +54,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.registries.ForgeRegistries;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import javax.annotation.Nonnull;
 
 public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State>, IServerTickableComponent<BoilerSolidLogic.State>, IClientTickableComponent<BoilerSolidLogic.State> {
     private static final ShapeData SHAPE = ITShapes.get("boiler_solid");
@@ -83,12 +82,10 @@ public class BoilerSolidLogic implements IMultiblockLogic<BoilerSolidLogic.State
 
     @Override public void tickClient(IMultiblockContext<State> ctx) {
         State state = ctx.getState();
-        if (Minecraft.getInstance().player == null) { return; }
+        if (ImmersiveTechnology.proxy.getClientPlayer() == null) { return; }
         Vec3 soundPos = Vec3.atCenterOf(ctx.getLevel().toAbsolute(SOUND_POI));
-        if (state.heatLevel > 0 && ClientUtils.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel)) > 0.01f && !state.isSoundPlaying.getAsBoolean()) {
-            state.isSoundPlaying = MachineSound.startSound(() -> state.heatLevel > 0, ctx.isValid(), soundPos, Sounds.boiler_solid, () -> ClientUtils.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel)), () -> (float) (state.heatLevel / state.workingHeatLevel));
-        }
-        if (state.pilotLit) { ClientUtils.boilerExhaust(ctx.getLevel().getRawLevel(), ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0)), state.heatLevel > pilotHeat() && state.rsState.isEnabled(ctx) && HeatUtils.hasWater(state.boilerInput)); }
+        if (state.heatLevel > 0 && ImmersiveTechnology.proxy.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel)) > 0.01f && !state.isSoundPlaying.getAsBoolean()) { state.isSoundPlaying = MachineSound.startSound(() -> state.heatLevel > 0, ctx.isValid(), soundPos, Sounds.boiler_solid, () -> ImmersiveTechnology.proxy.attenuated(soundPos, 8, 2 * (float) (state.heatLevel / state.workingHeatLevel)), () -> (float) (state.heatLevel / state.workingHeatLevel)); }
+        if (state.pilotLit) { ImmersiveTechnology.proxy.boilerExhaust(ctx.getLevel().getRawLevel(), ctx.getLevel().toAbsolute(EXHAUST_POIS.get(0)), state.heatLevel > pilotHeat() && state.rsState.isEnabled(ctx) && HeatUtils.hasWater(state.boilerInput)); }
     }
 
     @Override public void tickServer(IMultiblockContext<State> ctx) {

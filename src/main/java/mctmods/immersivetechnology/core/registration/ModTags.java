@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.core.registration;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -23,7 +24,6 @@ public class ModTags {
     public static final TagKey<Fluid> fluidSaltSlurry = FluidTags.create(modLoc("salt_slurry"));
     public static final TagKey<Fluid> fluidSteam = FluidTags.create(modLoc("steam"));
     public static final TagKey<Fluid> fluidSteamForge = FluidTags.create(forgeLoc("steam"));
-
     public static final TagKey<Item> salt = ItemTags.create(modLoc("salt"));
     public static final TagKey<Item> saltForge = ItemTags.create(forgeLoc("dusts/salt"));
     public static final TagKey<Item> igniters = ItemTags.create(modLoc("igniters"));

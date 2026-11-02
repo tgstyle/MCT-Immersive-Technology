@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.data.builders;
 
 import mctmods.immersivetechnology.core.lib.Reference;
-import com.immersiveconvergence.api.client.mirror.MirrorModelLoader;
 
+import com.immersiveconvergence.api.client.mirror.MirrorModelLoader;
 import com.google.gson.JsonObject;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;

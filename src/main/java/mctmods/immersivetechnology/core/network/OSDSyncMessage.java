@@ -1,23 +1,19 @@
 package mctmods.immersivetechnology.core.network;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
-
 import java.util.function.Supplier;
 import com.immersiveconvergence.api.network.INetworkMessage;
 
 public record OSDSyncMessage(BlockPos pos, long lastAccepted, long average, int packetAverage) implements INetworkMessage {
-    public OSDSyncMessage(FriendlyByteBuf buf) {
-        this(buf.readBlockPos(), buf.readLong(), buf.readLong(), buf.readInt());
-    }
+    public OSDSyncMessage(FriendlyByteBuf buf) { this(buf.readBlockPos(), buf.readLong(), buf.readLong(), buf.readInt()); }
 
     @Override public void toBytes(FriendlyByteBuf buf) {
         buf.writeBlockPos(pos);
@@ -30,11 +26,9 @@ public record OSDSyncMessage(BlockPos pos, long lastAccepted, long average, int 
         NetworkEvent.Context ctx = context.get();
         ctx.enqueueWork(() -> {
             if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                if (Minecraft.getInstance().level != null) {
-                    BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
-                    if (te instanceof OSDCommonBlockEntity osd) {
-                        osd.lastAcceptedAmount = lastAccepted;
-                    }
+                if (ImmersiveTechnology.proxy.getClientWorld() != null) {
+                    BlockEntity te = ImmersiveTechnology.proxy.getClientWorld().getBlockEntity(pos);
+                    if (te instanceof OSDCommonBlockEntity osd) { osd.lastAcceptedAmount = lastAccepted; }
                     if (te instanceof ValveCommonBlockEntity valve) {
                         valve.lastAcceptedAmount = lastAccepted;
                         valve.average = average;

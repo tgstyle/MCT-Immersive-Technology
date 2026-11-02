@@ -10,13 +10,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class GasTurbineRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<GasTurbineRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<GasTurbineRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.GAS_TURBINE);
-
     public final ICFluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
     public final float torque;

@@ -12,13 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<CoolingTowerRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<CoolingTowerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.COOLING_TOWER);
-
     public final FluidStack fluidOutput0;
     public final FluidStack fluidOutput1;
     public final FluidStack fluidOutput2;
@@ -41,7 +39,7 @@ public class CoolingTowerRecipe extends ICMultiblockRecipe {
     public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1) { return findRecipe(level, fluidInput0, fluidInput1, null); }
 
     public static CoolingTowerRecipe findRecipe(Level level, FluidStack fluidInput0, FluidStack fluidInput1, @Nullable CoolingTowerRecipe hint) {
-        if (fluidInput0.isEmpty() || fluidInput1.isEmpty()) return null;
+        if (fluidInput0.isEmpty() || fluidInput1.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluidInput0, fluidInput1), hint);
     }
 

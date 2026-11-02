@@ -10,13 +10,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class MeltingRecipe extends ICMultiblockRecipe implements ISolarRecipe {
     public static RegistryObject<ICRecipeSerializer<MeltingRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<MeltingRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.MELTING);
-
     public final ICFluidTagInput input;
     public final FluidStack fluidOutput;
     public final double requiredTemp;
@@ -39,7 +37,7 @@ public class MeltingRecipe extends ICMultiblockRecipe implements ISolarRecipe {
     @Nullable public static MeltingRecipe findRecipe(Level level, FluidStack fluid) { return findRecipe(level, fluid, null); }
 
     @Nullable public static MeltingRecipe findRecipe(Level level, FluidStack fluid, @Nullable MeltingRecipe hint) {
-        if (fluid == null || fluid.isEmpty()) return null;
+        if (fluid == null || fluid.isEmpty()) { return null; }
         return RECIPES.find(level, recipe -> recipe.matches(fluid), hint);
     }
 

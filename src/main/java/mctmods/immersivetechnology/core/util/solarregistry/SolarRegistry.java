@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.core.util.solarregistry;
 
 import mctmods.immersivetechnology.common.multiblocks.metal.logic.SolarReflectorLogic;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-
 import java.util.*;
 
 public class SolarRegistry {
@@ -28,7 +28,7 @@ public class SolarRegistry {
 
     public static synchronized RegisterResult registerTower(Level level, BlockPos base) {
         RegisterResult result = new RegisterResult();
-        if (level.isClientSide) return result;
+        if (level.isClientSide) { return result; }
         SolarRegistryData data = getData(level);
         int y = base.getY();
         Set<BlockPos> towersAtY = data.towerBasesByY.computeIfAbsent(y, k -> new HashSet<>());
@@ -57,7 +57,7 @@ public class SolarRegistry {
     }
 
     public static synchronized void unregisterTower(Level level, BlockPos base) {
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         SolarRegistryData data = getData(level);
         int y = base.getY();
         Set<BlockPos> towers = data.towerBasesByY.get(y);
@@ -83,7 +83,7 @@ public class SolarRegistry {
     }
 
     public static synchronized void registerReflector(Level level, BlockPos poi) {
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         SolarRegistryData data = getData(level);
         int y = poi.getY();
         data.reflectorPOIsByY.computeIfAbsent(y, k -> new HashSet<>()).add(poi);
@@ -102,7 +102,7 @@ public class SolarRegistry {
     }
 
     public static synchronized void unregisterReflector(Level level, BlockPos poi) {
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         SolarRegistryData data = getData(level);
         int y = poi.getY();
         Set<BlockPos> reflectors = data.reflectorPOIsByY.get(y);
@@ -123,7 +123,7 @@ public class SolarRegistry {
     }
 
     public static synchronized void notifyTaken(Level level, BlockPos poi, boolean taken) {
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         SolarRegistryData data = getData(level);
         boolean changed;
         if (taken) { changed = data.untakenReflectors.remove(poi); }
@@ -140,7 +140,8 @@ public class SolarRegistry {
                     data.parent.remove(poi);
                     data.rank.remove(poi);
                     data.groupData.remove(poi);
-                } else {
+                }
+                else {
                     data.parent.put(poi, poi);
                     data.rank.put(poi, 0);
                     GroupData gd = new GroupData();
@@ -156,7 +157,7 @@ public class SolarRegistry {
     }
 
     public static synchronized void updateDance(Level level) {
-        if (level.isClientSide) return;
+        if (level.isClientSide) { return; }
         SolarRegistryData data = getData(level);
         if (data.groupsDirty) {
             buildGroups(level);
@@ -173,13 +174,15 @@ public class SolarRegistry {
                     gd.animationPhase = -2;
                     changed = true;
                 }
-            } else if (gd.animationPhase == -2) {
+            }
+            else if (gd.animationPhase == -2) {
                 float currentPhase = (level.getGameTime() - gd.danceStartTick) * 0.05f;
                 if (currentPhase >= danceDuration) {
                     gd.animationPhase = -3;
                     changed = true;
                 }
-            } else if (gd.animationPhase == -3) {
+            }
+            else if (gd.animationPhase == -3) {
                 float currentPhase = (level.getGameTime() - gd.danceStartTick) * 0.05f;
                 if (currentPhase >= danceDuration + 1) {
                     gd.animationPhase = -4;
@@ -187,7 +190,7 @@ public class SolarRegistry {
                 }
             }
         }
-        if (changed) data.setDirty();
+        if (changed) { data.setDirty(); }
     }
 
     private static synchronized void buildGroups(Level level) {
@@ -233,7 +236,7 @@ public class SolarRegistry {
             newGroupData.put(leader, gd);
             if (!leader.equals(root)) {
                 Integer r = data.rank.remove(root);
-                if (r != null) data.rank.put(leader, r);
+                if (r != null) { data.rank.put(leader, r); }
             }
             for (BlockPos p : members) { data.parent.put(p, leader); }
         }
@@ -243,7 +246,7 @@ public class SolarRegistry {
 
     public static BlockPos find(SolarRegistryData data, BlockPos pos) {
         BlockPos p = data.parent.get(pos);
-        if (p == null) return null;
+        if (p == null) { return null; }
         if (!pos.equals(p)) {
             BlockPos pp = find(data, p);
             data.parent.put(pos, pp);
@@ -254,32 +257,31 @@ public class SolarRegistry {
     public static void union(SolarRegistryData data, BlockPos a, BlockPos b) {
         BlockPos pa = find(data, a);
         BlockPos pb = find(data, b);
-        if (pa == null || pb == null) return;
-        if (pa.equals(pb)) return;
+        if (pa == null || pb == null) { return; }
+        if (pa.equals(pb)) { return; }
         int ra = data.rank.getOrDefault(pa, 0);
         int rb = data.rank.getOrDefault(pb, 0);
-        if (ra > rb) {
-            data.parent.put(pb, pa);
-        } else {
+        if (ra > rb) { data.parent.put(pb, pa); }
+        else {
             data.parent.put(pa, pb);
             if (ra == rb) { data.rank.put(pb, rb + 1); }
         }
     }
 
     public static BlockPos findRoot(Level level, BlockPos poi) {
-        if (level.isClientSide) return null;
+        if (level.isClientSide) { return null; }
         SolarRegistryData data = getData(level);
         return find(data, poi);
     }
 
     public static GroupData getGroupData(Level level, BlockPos root) {
-        if (level.isClientSide) return null;
+        if (level.isClientSide) { return null; }
         SolarRegistryData data = getData(level);
         return data.groupData.get(root);
     }
 
     public static synchronized Set<BlockPos> getReflectorsInRange(Level level, BlockPos base, double minDist, double maxDist) {
-        if (level.isClientSide) return new HashSet<>();
+        if (level.isClientSide) { return new HashSet<>(); }
         SolarRegistryData data = getData(level);
         int y = base.getY();
         Set<BlockPos> inRange = new HashSet<>();

@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.data.generators;
 
+import mctmods.immersivetechnology.core.registration.Particles;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.core.registration.Particles;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.HashMap;

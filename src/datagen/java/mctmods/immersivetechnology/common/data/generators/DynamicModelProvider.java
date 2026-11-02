@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.data.generators;
 
 import mctmods.immersivetechnology.core.lib.Reference;
+
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -10,7 +11,6 @@ import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
@@ -24,9 +24,7 @@ public class DynamicModelProvider extends ModelProvider<DynamicModelProvider.Sim
     }
 
     @Override protected void registerModels() {
-        for(Map.Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) {
-            withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation());
-        }
+        for(Map.Entry<Block, ModelFile> multiblock : multiblocks.unsplitModels.entrySet()) { withExistingParent(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(multiblock.getKey())).getPath(), multiblock.getValue().getLocation()); }
         getBuilder("dynamic/advanced_coke_oven_baseheater_fan")
                 .customLoader(ObjModelBuilder::begin)
                 .modelLocation(modLoc("models/block/metal/advanced_coke_oven_baseheater/advanced_coke_oven_baseheater_fan.obj"))

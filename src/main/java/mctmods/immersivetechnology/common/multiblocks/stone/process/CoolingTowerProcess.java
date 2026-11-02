@@ -7,7 +7,6 @@ import mctmods.immersivetechnology.core.util.ProcessUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
-
 import javax.annotation.Nullable;
 
 public class CoolingTowerProcess {

@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
@@ -25,7 +24,6 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<AdvancedCokeOvenRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<AdvancedCokeOvenRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.ADVANCED_COKE_OVEN);
     private static final String LEGACY_COPIED_PREFIX = "copied_ie/";
-
     public final ICIngredientWithSize input;
     public final Lazy<ItemStack> itemOutput;
     public final int creosoteOutput;
@@ -47,7 +45,7 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
     @Override public @Nonnull ItemStack getResultItem(@Nonnull RegistryAccess access) { return this.itemOutput.get(); }
 
     @Nullable public static AdvancedCokeOvenRecipe findRecipe(Level level, ItemStack input, @Nullable AdvancedCokeOvenRecipe hint) {
-        if (input.isEmpty()) return null;
+        if (input.isEmpty()) { return null; }
         AdvancedCokeOvenRecipe own = RECIPES.find(level, recipe -> recipe.matches(input), hint);
         return own != null ? own : wrap(ICCokeOvenRecipe.findRecipe(level, input));
     }
@@ -58,9 +56,7 @@ public class AdvancedCokeOvenRecipe extends ICMultiblockRecipe {
     }
 
     private static ResourceLocation ieId(ResourceLocation id) {
-        if (id.getNamespace().equals("immersivetechnology") && id.getPath().startsWith(LEGACY_COPIED_PREFIX)) {
-            return ICMods.ie(id.getPath().substring(LEGACY_COPIED_PREFIX.length()));
-        }
+        if (id.getNamespace().equals("immersivetechnology") && id.getPath().startsWith(LEGACY_COPIED_PREFIX)) { return ICMods.ie(id.getPath().substring(LEGACY_COPIED_PREFIX.length())); }
         return id;
     }
 

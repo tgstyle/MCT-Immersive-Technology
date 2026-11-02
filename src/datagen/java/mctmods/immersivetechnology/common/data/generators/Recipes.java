@@ -1,11 +1,5 @@
 package mctmods.immersivetechnology.common.data.generators;
 
-import com.google.gson.JsonObject;
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.crafting.ICFluidTagInput;
-import com.immersiveconvergence.api.crafting.builders.ICIEConditional;
-import com.immersiveconvergence.api.crafting.builders.ICIEContent;
-import com.immersiveconvergence.api.crafting.builders.ICMixerRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.AdvancedCokeOvenRecipeBuilder;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder.CoolingTowerRecipeBuilder;
@@ -14,6 +8,13 @@ import mctmods.immersivetechnology.core.registration.ModBlocks;
 import mctmods.immersivetechnology.core.registration.ModFluids;
 import mctmods.immersivetechnology.core.registration.ModItems;
 import mctmods.immersivetechnology.core.registration.ModTags;
+
+import com.google.gson.JsonObject;
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.crafting.ICFluidTagInput;
+import com.immersiveconvergence.api.crafting.builders.ICIEConditional;
+import com.immersiveconvergence.api.crafting.builders.ICIEContent;
+import com.immersiveconvergence.api.crafting.builders.ICMixerRecipeBuilder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -35,7 +36,6 @@ import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidStack;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -127,18 +127,14 @@ public class Recipes extends RecipeProvider {
         BoilerTankRecipeBuilder.builder(ModTags.fluidDistilledWater, 250).addOutput(ModFluids.STEAM.getStill(), 500).setTime(10).setRequiredHeat(600.0).build(out, toResourceLocation("boiler_tank/distilled_water"));
     }
 
-    private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) {
-        CoolingTowerRecipeBuilder.builder().addInput(ModTags.fluidHotWater, 8100).addInput(FluidTags.WATER, 900).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).build(out, toResourceLocation("cooling_tower/hot_water"));
-    }
+    private void recipesCoolingTower(@Nonnull Consumer<FinishedRecipe> out) { CoolingTowerRecipeBuilder.builder().addInput(ModTags.fluidHotWater, 8100).addInput(FluidTags.WATER, 900).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).addOutput(Fluids.WATER, 2925).setTime(3).build(out, toResourceLocation("cooling_tower/hot_water")); }
 
     private void recipesDistiller(@Nonnull Consumer<FinishedRecipe> out) {
         ItemStack salt = new ItemStack(ModItems.SALT.get(), 1);
         DistillerRecipeBuilder.builder(new ICFluidTagInput(FluidTags.WATER, 1000), new FluidStack(ModFluids.DISTILLED_WATER.getStill(), 500), 20, 10000).addItemOutput(salt, 0.5f).build(out, toResourceLocation("distiller/water"));
     }
 
-    private void recipesElectrolyticCrucibleBattery(@Nonnull Consumer<FinishedRecipe> out) {
-        ElectrolyticCrucibleBatteryRecipeBuilder.builder(new ICFluidTagInput(ModTags.fluidSaltSlurry, 1000), new FluidStack(ModFluids.CHLORINE.getStill(), 1000), 614400, 300).addFluidOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addFluidOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).build(out, toResourceLocation("electrolytic_crucible_battery/hydrogen"));
-    }
+    private void recipesElectrolyticCrucibleBattery(@Nonnull Consumer<FinishedRecipe> out) { ElectrolyticCrucibleBatteryRecipeBuilder.builder(new ICFluidTagInput(ModTags.fluidSaltSlurry, 1000), new FluidStack(ModFluids.CHLORINE.getStill(), 1000), 614400, 300).addFluidOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addFluidOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).build(out, toResourceLocation("electrolytic_crucible_battery/hydrogen")); }
 
     private void recipesHeatExchanger(@Nonnull Consumer<FinishedRecipe> out) {
         HeatExchangerRecipeBuilder.builder(new ICFluidTagInput(FluidTags.WATER, 250), new ICFluidTagInput(ModTags.fluidFlueGas, 1000), new FluidStack(ModFluids.STEAM.getStill(), 450), null, 640, 10).build(out, toResourceLocation("heat_exchanger/water_fluegas"));
@@ -202,11 +198,9 @@ public class Recipes extends RecipeProvider {
 
     private static TagKey<Item> forgeTag(String path) { return ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", path)); }
 
-    @SuppressWarnings("SameParameterValue")
-    private static TagKey<Fluid> forgeFluidTag(String path) { return FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", path)); }
+    @SuppressWarnings("SameParameterValue") private static TagKey<Fluid> forgeFluidTag(String path) { return FluidTags.create(ResourceLocation.fromNamespaceAndPath("forge", path)); }
 
-    @SuppressWarnings("SameParameterValue")
-    private static ICondition modLoaded(String modId) { return new ModLoadedCondition(modId); }
+    @SuppressWarnings("SameParameterValue") private static ICondition modLoaded(String modId) { return new ModLoadedCondition(modId); }
 
     private record ModLoadedRecipe(FinishedRecipe recipe, String modId) implements FinishedRecipe {
         @Override public void serializeRecipeData(@Nonnull JsonObject json) { recipe.serializeRecipeData(json); }

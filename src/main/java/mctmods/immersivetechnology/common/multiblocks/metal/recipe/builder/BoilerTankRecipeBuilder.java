@@ -1,9 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.recipe.builder;
 
-import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
-
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.BoilerTankRecipe;
 
+import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;

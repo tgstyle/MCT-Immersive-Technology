@@ -10,13 +10,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class HeatExchangerRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<HeatExchangerRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<HeatExchangerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.HEAT_EXCHANGER);
-
     public final ICFluidTagInput input0;
     public final ICFluidTagInput input1;
     public final FluidStack output0;

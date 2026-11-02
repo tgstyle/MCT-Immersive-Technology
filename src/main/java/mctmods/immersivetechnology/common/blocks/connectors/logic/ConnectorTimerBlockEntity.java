@@ -1,18 +1,20 @@
 package mctmods.immersivetechnology.common.blocks.connectors.logic;
 
-import com.immersiveconvergence.api.block.BlockToolGates;
-import com.immersiveconvergence.api.wires.ICConnectionPoint;
-import com.immersiveconvergence.api.wires.ICWireType;
-import com.immersiveconvergence.api.wires.connectors.ICConnectorRedstoneBlockEntity;
-import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
-import com.immersiveconvergence.core.lib.ICLib;
-import mctmods.immersivetechnology.common.blocks.connectors.gui.ConnectorTimerMenu;
-import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.block.IServerTickableBE;
+import mctmods.immersivetechnology.common.gui.TimerMenu;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 import mctmods.immersivetechnology.core.registration.MenuTypes;
 import mctmods.immersivetechnology.core.util.Reach;
 import mctmods.immersivetechnology.core.util.TranslationKey;
+import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
+
+import com.immersiveconvergence.api.block.BlockInterfaces;
+import com.immersiveconvergence.api.block.BlockToolGates;
+import com.immersiveconvergence.api.block.IServerTickableBE;
+import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
+import com.immersiveconvergence.api.wires.ICConnectionPoint;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.connectors.ICConnectorRedstoneBlockEntity;
+import com.immersiveconvergence.core.lib.ICLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,35 +33,25 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
-
 import javax.annotation.Nonnull;
 
 public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity implements IServerTickableBE, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction,BlockInterfaces.IBlockOverlayText, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
-
     private int target = 40;
-
     protected int lastOutput = 0;
     protected int rotation = 0;
     protected int ioMode = 0;
     protected int outputClient = 0;
     protected int pulseRemaining = 0;
-
     public DyeColor redstoneChannel = DyeColor.WHITE;
     public boolean rsDirty = false;
 
-    public ConnectorTimerBlockEntity(BlockPos pos, BlockState state) {
-        this(BlockEntities.CONNECTOR_TIMER.get(), pos, state);
-    }
+    public ConnectorTimerBlockEntity(BlockPos pos, BlockState state) { this(BlockEntities.CONNECTOR_TIMER.get(), pos, state); }
 
-    public ConnectorTimerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state);
-    }
+    public ConnectorTimerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
     @Override public void onLoad() {
         super.onLoad();
@@ -82,7 +74,8 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
             int power2 = neighborState.getDirectSignal(level, neighborPos, inputSideForRead);
             currentInput = Math.max(power1, power2);
             if (neighborState.hasProperty(RedStoneWireBlock.POWER)) { currentInput = Math.max(currentInput, neighborState.getValue(RedStoneWireBlock.POWER)); }
-        } else {
+        }
+        else {
             currentInput = redstoneNetworkValue(redstoneChannel.getId());
         }
 
@@ -90,9 +83,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         int syncedTick = (int) (worldTime % target);
 
         if (currentInput > 0) {
-            if (syncedTick == 0) {
-                pulseRemaining = PULSE_LENGTH;
-            }
+            if (syncedTick == 0) { pulseRemaining = PULSE_LENGTH; }
         }
 
         int desiredOutput = (pulseRemaining > 0) ? 15 : 0;
@@ -118,9 +109,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
 
     public Direction getInputSide() { return computeInputSide(); }
 
-    private Direction getInputSideForRead() {
-        return getInputSide();
-    }
+    private Direction getInputSideForRead() { return getInputSide(); }
 
     private Direction getRSOutputFace() {
         Direction facing = getFacing();
@@ -162,11 +151,16 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
     public void setTarget(int increment) {
         if (increment < 0) {
             if (target != MIN_TARGET) {
-                if (target < 200 && target > 100) { this.target -= 20; } else if (target < 100) { this.target -= 10; } else { this.target -= 40; }
+                if (target < 200 && target > 100) { this.target -= 20; }
+                else if (target < 100) { this.target -= 10; }
+                else { this.target -= 40; }
             }
-        } else if (increment > 0) {
+        }
+        else if (increment > 0) {
             if (target != MAX_TARGET) {
-                if (target < 200 && target > 100) { this.target += 20; } else if (target < 100) { this.target += 10; } else { this.target += 40; }
+                if (target < 200 && target > 100) { this.target += 20; }
+                else if (target < 100) { this.target += 10; }
+                else { this.target += 40; }
             }
         }
     }
@@ -269,17 +263,14 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
         Direction rsFace = getRSOutputFace();
         Direction facing = getFacing();
         boolean result;
-        if (facing.getAxis().isVertical()) {
-            result = (side != null) && (side == rsFace);
-        } else {
+        if (facing.getAxis().isVertical()) { result = (side != null) && (side == rsFace); }
+        else {
             result = (side != null) && (side == rsFace || side == Direction.UP);
         }
         return result;
     }
 
-    @Override public boolean accepts(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) {
-        return cable.getCategory() != null && "REDSTONE".equals(cable.getCategory().getName()) && (limitType == null || limitType == cable);
-    }
+    @Override public boolean accepts(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) { return cable.getCategory() != null && "REDSTONE".equals(cable.getCategory().getName()) && (limitType == null || limitType == cable); }
 
     @Nonnull public Direction getFacing() { return getBlockState().getValue(BlockStateProperties.FACING); }
 
@@ -299,11 +290,7 @@ public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity im
 
     public boolean stillValid(Player player) { return level != null && level.getBlockEntity(worldPosition) == this && Reach.within(this, player); }
 
-    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) {
-        return ConnectorTimerMenu.makeServer(MenuTypes.CONNECTOR_TIMER.getType(), id, inv, this);
-    }
+    @Override public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inv, @Nonnull Player player) { return TimerMenu.makeServer(MenuTypes.CONNECTOR_TIMER.getType(), id, inv, this); }
 
-    @Override @Nonnull public Component getDisplayName() {
-        return Component.translatable(TranslationKey.GUI_TIMER.location);
-    }
+    @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_TIMER.location); }
 }

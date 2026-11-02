@@ -1,9 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.recipe.builder;
 
+import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
+
 import com.immersiveconvergence.api.crafting.ICFinishedRecipe;
 import com.immersiveconvergence.api.crafting.ICIngredientWithSize;
 import com.google.gson.JsonObject;
-import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,15 +25,14 @@ public class AdvancedCokeOvenRecipeBuilder extends ICFinishedRecipe<AdvancedCoke
 
     public AdvancedCokeOvenRecipeBuilder addOutput(Item output) { return addItem("result", output); }
 
-    @SuppressWarnings("unused")
-    public AdvancedCokeOvenRecipeBuilder addOutput(ItemStack output) { return addItem("result", output); }
+    @SuppressWarnings("unused") public AdvancedCokeOvenRecipeBuilder addOutput(ItemStack output) { return addItem("result", output); }
 
     public AdvancedCokeOvenRecipeBuilder addOutput(TagKey<Item> output, int count) {
         addCondition(new NotCondition(new TagEmptyCondition(output.location())));
         return addWriter(jsonObject -> {
             JsonObject obj = new JsonObject();
             obj.addProperty("tag", output.location().toString());
-            if (count > 1) obj.addProperty("count", count);
+            if (count > 1) { obj.addProperty("count", count); }
             jsonObject.add("result", obj);
         });
     }

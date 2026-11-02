@@ -11,13 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.RegistryObject;
-
 import javax.annotation.Nullable;
 
 public class DistillerRecipe extends ICMultiblockRecipe {
     public static RegistryObject<ICRecipeSerializer<DistillerRecipe>> SERIALIZER;
     public static final ICCachedRecipeList<DistillerRecipe> RECIPES = new ICCachedRecipeList<>(RecipeTypes.DISTILLER);
-
     public final ICFluidTagInput input;
     @Nullable public final FluidStack fluidOutput;
     public final ItemStack itemOutput;

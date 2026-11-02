@@ -1,6 +1,5 @@
 package mctmods.immersivetechnology.core.registration;
 
-import com.immersiveconvergence.api.crafting.ICRecipeType;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.*;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.serializer.*;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.AdvancedCokeOvenRecipe;
@@ -8,6 +7,8 @@ import mctmods.immersivetechnology.common.multiblocks.stone.recipe.CoolingTowerR
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.AdvancedCokeOvenRecipeSerializer;
 import mctmods.immersivetechnology.common.multiblocks.stone.recipe.serializer.CoolingTowerRecipeSerializer;
 import mctmods.immersivetechnology.core.lib.Reference;
+
+import com.immersiveconvergence.api.crafting.ICRecipeType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -19,7 +20,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class RecipeTypes {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Reference.MODID);
     private static final DeferredRegister<RecipeType<?>> REGISTER = DeferredRegister.create(Registries.RECIPE_TYPE, Reference.MODID);
-
     public static final ICRecipeType<AdvancedCokeOvenRecipe> ADVANCED_COKE_OVEN = register("advanced_coke_oven", AdvancedCokeOvenRecipe.class);
     public static final ICRecipeType<BoilerLiquidRecipe> BOILER_LIQUID = register("boiler_liquid", BoilerLiquidRecipe.class);
     public static final ICRecipeType<BoilerSolidRecipe> BOILER_SOLID = register("boiler_solid", BoilerSolidRecipe.class);

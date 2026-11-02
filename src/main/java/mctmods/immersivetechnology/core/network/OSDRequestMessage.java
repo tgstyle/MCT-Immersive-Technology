@@ -1,9 +1,9 @@
 package mctmods.immersivetechnology.core.network;
 
-import java.util.function.Supplier;
-
 import mctmods.immersivetechnology.common.blocks.metal.logic.OSDCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
+
+import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -27,12 +27,8 @@ public record OSDRequestMessage(BlockPos pos) implements INetworkMessage {
                     @SuppressWarnings("resource")
                     ServerLevel level = player.serverLevel();
                     BlockEntity te = level.getBlockEntity(pos);
-                    if (te instanceof OSDCommonBlockEntity trash) {
-                        PacketHandler.sendToPlayer(player, new OSDSyncMessage(pos, trash.lastAcceptedAmount, 0, 0));
-                    }
-                    if (te instanceof ValveCommonBlockEntity valve) {
-                        PacketHandler.sendToPlayer(player, new OSDSyncMessage(pos, valve.lastAcceptedAmount, valve.average, valve.packetAverage));
-                    }
+                    if (te instanceof OSDCommonBlockEntity trash) { PacketHandler.sendToPlayer(player, new OSDSyncMessage(pos, trash.lastAcceptedAmount, 0, 0)); }
+                    if (te instanceof ValveCommonBlockEntity valve) { PacketHandler.sendToPlayer(player, new OSDSyncMessage(pos, valve.lastAcceptedAmount, valve.average, valve.packetAverage)); }
                 }
             }
         });
