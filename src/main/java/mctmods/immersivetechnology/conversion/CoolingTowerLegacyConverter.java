@@ -1,15 +1,14 @@
 package mctmods.immersivetechnology.conversion;
 
 
-import com.immersiveconvergence.api.block.ICProperties;
-import com.immersiveconvergence.api.util.ICUtils;
-
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityCoolingTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityCoolingTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityITMultiblockPartCoolingTower;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
 
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.util.ICUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

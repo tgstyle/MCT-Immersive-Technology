@@ -5,7 +5,7 @@
   "refmap": "mixins.immersivetech.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinIIMinecartCompat"
+    "integration.immersiveintelligence.common.compat.it.MixinImmersiveTechnologyHelper"
   ],
   "injectors": {
     "defaultRequire": 0

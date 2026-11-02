@@ -1,9 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks;
 
-import com.immersiveconvergence.api.multiblock.ShapeData;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
 
+import com.immersiveconvergence.api.multiblock.ShapeData;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

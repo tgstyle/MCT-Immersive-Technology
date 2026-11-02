@@ -1,16 +1,15 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.gui.ContainerBoilerLiquid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidMaster;
+
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
-
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidMaster;
-import mctmods.immersivetechnology.common.gui.ContainerBoilerLiquid;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
-
 import java.util.ArrayList;
 
 public class GuiBoilerLiquid extends GuiICContainerBase {

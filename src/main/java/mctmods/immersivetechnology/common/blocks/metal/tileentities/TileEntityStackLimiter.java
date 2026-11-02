@@ -1,23 +1,17 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 
-import com.immersiveconvergence.api.util.ICUtils;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.client.gui.GuiStackLimiter;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
+import mctmods.immersivetechnology.common.gui.ITGUI;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
-import net.minecraft.client.Minecraft;
+import com.immersiveconvergence.api.util.ICUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,9 +26,6 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 				ITGUI.GUIID_Stack_Limiter);
 	}
 
-	@SideOnly(Side.CLIENT)
-	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiStackLimiter(this)); }
-
 	public static class DummyInventory implements IItemHandler {
 
 		@Override public int getSlots() { return 0; }
@@ -48,14 +39,12 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 		@Override public int getSlotLimit(int slot) { return 0; }
 	}
 
-	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
 				&& (facing == null || facing.getAxis() == this.facing.getAxis());
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	@SuppressWarnings("unchecked") @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			if (facing == this.facing) { return (T)this; }
 			else if (facing == this.facing.getOpposite() || facing == null) { return (T)dummyInventory; }
@@ -83,8 +72,7 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 		return dest.getStackInSlot(slot);
 	}
 
-	@Override @Nonnull
-	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+	@Override @Nonnull public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		if (busy) { return stack; }
 		IItemHandler destination = getDestination();
 		if (destination == null) { return stack; }
@@ -105,9 +93,8 @@ public class TileEntityStackLimiter extends TileEntityCommonValve implements IIt
 			packets++;
 		}
 		int notInserted = stack.getCount() - actuallyInserted;
-		if (notInserted <= 0) {
-			return ItemStack.EMPTY;
-		} else {
+		if (notInserted <= 0) { return ItemStack.EMPTY; }
+		else {
 			ItemStack ret = stack.copy();
 			ret.setCount(notInserted);
 			return ret;

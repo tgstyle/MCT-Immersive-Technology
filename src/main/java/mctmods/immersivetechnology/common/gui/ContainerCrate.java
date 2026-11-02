@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.gui;
 
 import mctmods.immersivetechnology.common.blocks.wooden.tileentities.TileEntityCrate;
+import mctmods.immersivetechnology.common.util.ITContainerHelper;
 
 import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,9 +21,7 @@ public class ContainerCrate extends Container {
 		for (Slot slot : ITContainerHelper.playerInventorySlots(inventoryPlayer, 85)) { addSlotToContainer(slot); }
 	}
 
-	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) {
-		return tile != null && tile.getWorld().getTileEntity(tile.getPos()) == tile && player.getDistanceSq(tile.getPos().getX() + .5, tile.getPos().getY() + .5, tile.getPos().getZ() + .5) <= 64;
-	}
+	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) { return tile != null && tile.getWorld().getTileEntity(tile.getPos()) == tile && player.getDistanceSq(tile.getPos().getX() + .5, tile.getPos().getY() + .5, tile.getPos().getZ() + .5) <= 64; }
 
 	@Override @Nonnull public ItemStack slotClick(int slotId, int dragType, @Nonnull ClickType clickType, @Nonnull EntityPlayer player) {
 		if (slotId != 0) { return super.slotClick(slotId, dragType, clickType, player); }

@@ -1,11 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.metal.process;
 
-import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
+import mctmods.immersivetechnology.common.recipes.RadiatorRecipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-
 import javax.annotation.Nullable;
 
 public class RadiatorProcess {

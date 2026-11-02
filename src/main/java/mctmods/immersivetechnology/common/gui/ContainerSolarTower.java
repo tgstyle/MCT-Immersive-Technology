@@ -1,10 +1,11 @@
 package mctmods.immersivetechnology.common.gui;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solartower.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.util.ITContainerHelper;
+
 import com.immersiveconvergence.api.gui.ICContainerBase;
 import com.immersiveconvergence.api.gui.ICSlot;
-
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
-
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -17,13 +18,11 @@ public class ContainerSolarTower extends ICContainerBase<TileEntitySolarTowerMas
 		slotCount = TileEntitySolarTowerMaster.slotCount;
 		final TileEntitySolarTowerMaster tileF = tile;
 		this.addSlotToContainer(new ICSlot.FluidContainer(this, this.inv, 0, 80, 17, 2) {
-			@Override public boolean isItemValid(ItemStack itemStack) { return ITContainerHelper.acceptsMatchingFluid(itemStack, tileF.tanks[0]); }
+			@Override public boolean isItemValid(@Nonnull ItemStack itemStack) { return ITContainerHelper.acceptsMatchingFluid(itemStack, tileF.tanks[0]); }
 		});
 		this.addSlotToContainer(new ICSlot.Output(this, this.inv, 1, 80, 53));
 		this.addSlotToContainer(new ICSlot.FluidContainer(this, this.inv, 2, 148, 17, 0) {
-			@Override public boolean isItemValid(ItemStack itemStack) {
-				return super.isItemValid(itemStack) || itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-			}
+			@Override public boolean isItemValid(@Nonnull ItemStack itemStack) { return super.isItemValid(itemStack) || itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null); }
 		});
 		this.addSlotToContainer(new ICSlot.Output(this, this.inv, 3, 148, 53));
 

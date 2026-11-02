@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.client.models;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
+
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.block.ICSideConfig;
 import com.immersiveconvergence.api.client.ICClientUtils;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import mctmods.immersivetechnology.ImmersiveTechnology;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -22,7 +22,6 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import org.lwjgl.util.vector.Vector3f;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -60,7 +59,6 @@ public class ModelConfigurableSides implements IBakedModel {
 	}
 
 	public static final Map<String, List<BakedQuad>> modelCache = new ConcurrentHashMap<>();
-
 	final String name;
 	public TextureAtlasSprite[][] textures;
 
@@ -82,7 +80,7 @@ public class ModelConfigurableSides implements IBakedModel {
 		}
 		return modelCache.computeIfAbsent(name + String.copyValueOf(keyArray), k -> {
 			TextureAtlasSprite[] tex = new TextureAtlasSprite[6];
-			for (int i = 0; i < tex.length; i++) tex[i] = this.textures[i][Character.digit(k.charAt(k.length() - 6 + i), 10)];
+			for (int i = 0; i < tex.length; i++) { tex[i] = this.textures[i][Character.digit(k.charAt(k.length() - 6 + i), 10)]; }
 			return bakeQuads(tex);
 		});
 	}
@@ -113,8 +111,7 @@ public class ModelConfigurableSides implements IBakedModel {
 
 	@Override @Nonnull public TextureAtlasSprite getParticleTexture() { return this.textures[0][0]; }
 
-	@SuppressWarnings("deprecation")
-	static final ItemCameraTransforms defaultTransforms = new ItemCameraTransforms(
+	@SuppressWarnings("deprecation") static final ItemCameraTransforms defaultTransforms = new ItemCameraTransforms(
 			new ItemTransformVec3f(new Vector3f(75, 45, 0), new Vector3f(0, .25f, 0), new Vector3f(0.375f, 0.375f, 0.375f)),
 			new ItemTransformVec3f(new Vector3f(75, 45, 0), new Vector3f(0, .15625f, 0), new Vector3f(0.375f, 0.375f, 0.375f)),
 			new ItemTransformVec3f(new Vector3f(0, 45, 0), new Vector3f(0, 0, 0), new Vector3f(.4f, .4f, .4f)),
@@ -124,8 +121,7 @@ public class ModelConfigurableSides implements IBakedModel {
 			new ItemTransformVec3f(new Vector3f(0, 0, 0), new Vector3f(0, .1875f, 0), new Vector3f(.25f, .25f, .25f)),
 			new ItemTransformVec3f(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(.5f, .5f, .5f)));
 
-	@SuppressWarnings("deprecation")
-	@Override @Nonnull public ItemCameraTransforms getItemCameraTransforms() { return defaultTransforms; }
+	@SuppressWarnings("deprecation") @Override @Nonnull public ItemCameraTransforms getItemCameraTransforms() { return defaultTransforms; }
 
 	@Override @Nonnull public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
 
@@ -182,7 +178,7 @@ public class ModelConfigurableSides implements IBakedModel {
 			for (EnumFacing f : EnumFacing.VALUES) {
 				for (ICSideConfig cfg : ICSideConfig.values()) {
 					ResourceLocation rl = textures.get(f.getName() + "_" + cfg.getTextureName());
-					if (rl != null) tex[f.ordinal()][cfg.ordinal()] = ICClientUtils.getRegisterSprite(ICClientUtils.mc().getTextureMapBlocks(), rl);
+					if (rl != null) { tex[f.ordinal()][cfg.ordinal()] = ICClientUtils.getRegisterSprite(ICClientUtils.mc().getTextureMapBlocks(), rl); }
 				}
 			}
 			return new ModelConfigurableSides(name, tex);
@@ -195,18 +191,19 @@ public class ModelConfigurableSides implements IBakedModel {
 				for (ICSideConfig cfg : ICSideConfig.values()) {
 					String key = f.getName() + "_" + cfg.getTextureName();
 					ResourceLocation rl = this.textures.get(key);
-					if (textures.containsKey(key)) rl = new ResourceLocation(textures.get(key));
+					if (textures.containsKey(key)) { rl = new ResourceLocation(textures.get(key)); }
 					else if (textures.containsKey(f.getName())) {
 						rl = new ResourceLocation(textures.get(f.getName()));
 						ITextureNamer namer = TYPES.get(type);
 						if (namer != null) {
 							String c = namer.nameFromCfg(f, cfg);
-							if (c != null) rl = new ResourceLocation(textures.get(f.getName()) + "_" + c);
+							if (c != null) { rl = new ResourceLocation(textures.get(f.getName()) + "_" + c); }
 						}
-					} else if (textures.containsKey("name")) {
+					}
+					else if (textures.containsKey("name")) {
 						newName = textures.get("name");
 						ITextureNamer namer = TYPES.get(type);
-						if (namer != null) rl = new ResourceLocation(newName + "_" + namer.getTextureName(f, cfg));
+						if (namer != null) { rl = new ResourceLocation(newName + "_" + namer.getTextureName(f, cfg)); }
 					}
 					builder.put(key, rl);
 				}
@@ -219,9 +216,9 @@ public class ModelConfigurableSides implements IBakedModel {
 		default String getTextureName(EnumFacing side, ICSideConfig cfg) {
 			String s = nameFromSide(side, cfg);
 			String c = nameFromCfg(side, cfg);
-			if (s != null && c != null) return s + "_" + c;
-			if (s != null) return s;
-			if (c != null) return c;
+			if (s != null && c != null) { return s + "_" + c; }
+			if (s != null) { return s; }
+			if (c != null) { return c; }
 			return "";
 		}
 

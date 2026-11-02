@@ -1,9 +1,8 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import com.immersiveconvergence.api.block.ICBlockBase;
-
 import mctmods.immersivetechnology.common.ITBlockContext;
 
+import com.immersiveconvergence.api.block.ICBlockBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 

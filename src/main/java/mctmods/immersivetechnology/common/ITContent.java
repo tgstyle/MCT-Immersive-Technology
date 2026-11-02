@@ -1,21 +1,12 @@
 package mctmods.immersivetechnology.common;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.ICIntegration;
-import com.immersiveconvergence.api.block.ICBlockBase;
-import com.immersiveconvergence.api.multiblock.BlockMatcher;
-import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.common.Config.ITConfig;
 import mctmods.immersivetechnology.common.blocks.BlockITFluid;
 import mctmods.immersivetechnology.common.blocks.BlockITSlab;
 import mctmods.immersivetechnology.common.blocks.BlockValve;
 import mctmods.immersivetechnology.common.blocks.connectors.BlockConnectors;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.metal.*;
-import com.immersiveconvergence.api.fluid.ICPipes;
-import com.immersiveconvergence.common.blocks.pipes.ICPipeRegistry;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.*;
 import mctmods.immersivetechnology.common.blocks.stone.BlockStoneDecoration;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
@@ -27,18 +18,73 @@ import mctmods.immersivetechnology.common.items.ItemITBase;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock1;
 import mctmods.immersivetechnology.common.multiblocks.metal.BlockMetalMultiblock2;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentitiesmultiblockpart.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.alternator.TileEntityAlternatorMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.alternator.TileEntityAlternatorSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.alternator.TileEntityITMultiblockPartAlternator;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityITMultiblockPartBoilerLiquid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilersolid.TileEntityBoilerSolidMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilersolid.TileEntityBoilerSolidSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilersolid.TileEntityITMultiblockPartBoilerSolid;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilertank.TileEntityBoilerTankMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilertank.TileEntityBoilerTankSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilertank.TileEntityITMultiblockPartBoilerTank;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.distiller.TileEntityDistillerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.distiller.TileEntityDistillerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.distiller.TileEntityITMultiblockPartDistiller;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.electrolyticcruciblebattery.TileEntityElectrolyticCrucibleBatteryMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.electrolyticcruciblebattery.TileEntityElectrolyticCrucibleBatterySlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.electrolyticcruciblebattery.TileEntityITMultiblockPartElectrolyticCrucibleBattery;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityGasTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityGasTurbineSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityITMultiblockPartGasTurbine;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.heatexchanger.TileEntityHeatExchangerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.heatexchanger.TileEntityHeatExchangerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.heatexchanger.TileEntityITMultiblockPartHeatExchanger;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.highpressuresteamturbine.TileEntityHighPressureSteamTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.highpressuresteamturbine.TileEntityHighPressureSteamTurbineSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.highpressuresteamturbine.TileEntityITMultiblockPartHighPressureSteamTurbine;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.meltingcrucible.TileEntityITMultiblockPartMeltingCrucible;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.meltingcrucible.TileEntityMeltingCrucibleMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.meltingcrucible.TileEntityMeltingCrucibleSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.radiator.TileEntityITMultiblockPartRadiator;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.radiator.TileEntityITMultiblockPartRadiatorHorizontal;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.radiator.TileEntityRadiatorMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.radiator.TileEntityRadiatorSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntityITMultiblockPartSolarMelter;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntitySolarMelterMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntitySolarMelterSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarreflector.TileEntityITMultiblockPartSolarReflector;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarreflector.TileEntitySolarReflectorMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarreflector.TileEntitySolarReflectorSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solartower.TileEntityITMultiblockPartSolarTower;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solartower.TileEntitySolarTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solartower.TileEntitySolarTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.steamturbine.TileEntityITMultiblockPartSteamTurbine;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.steamturbine.TileEntitySteamTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.steamturbine.TileEntitySteamTurbineSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.steelsheetmetaltank.TileEntityITMultiblockPartSteelSheetmetalTank;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.steelsheetmetaltank.TileEntitySteelSheetmetalTankMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.steelsheetmetaltank.TileEntitySteelSheetmetalTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.BlockStoneMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartAdvancedCokeOven;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentitiesmultiblockpart.TileEntityITMultiblockPartCoolingTower;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityAdvancedCokeOvenMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityAdvancedCokeOvenSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityITMultiblockPartAdvancedCokeOven;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityCoolingTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityCoolingTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityITMultiblockPartCoolingTower;
+import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
 import mctmods.immersivetechnology.common.util.ITRecipeLoader;
+import mctmods.immersivetechnology.core.config.Config.ITConfig;
 
+import com.immersiveconvergence.api.ICIntegration;
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.block.ICBlockBase;
+import com.immersiveconvergence.api.multiblock.BlockMatcher;
+import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
+import com.immersiveconvergence.api.fluid.ICPipes;
+import com.immersiveconvergence.common.blocks.pipes.ICPipeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -55,11 +101,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-
 import java.util.ArrayList;
 
-@EventBusSubscriber(modid = ImmersiveTechnology.MODID)
-public class ITContent {
+@EventBusSubscriber(modid = ImmersiveTechnology.MODID) public class ITContent {
     /*BLOCKS*/
     public static ArrayList<Block> registeredITBlocks = new ArrayList<>();
 
@@ -116,8 +160,6 @@ public class ITContent {
     public static Fluid fluidMoltenSodium;
     public static Fluid fluidSuperheatedMoltenSodium;
     public static Fluid fluidChlorine;
-
-
     public static TileEntityITMultiblockPartAdvancedCokeOven multiblockAdvancedCokeOven;
     public static TileEntityITMultiblockPartBoilerTank multiblockBoilerTank;
     public static TileEntityITMultiblockPartBoilerLiquid multiblockBoilerLiquid;
@@ -345,15 +387,13 @@ public class ITContent {
 
     @SubscribeEvent public static void registerRecipes(RegistryEvent.Register<IRecipe> event) { ITRecipeLoader.loadRecipes(); }
 
-    @SuppressWarnings("deprecation")
-    public static void registerTile(Class<? extends TileEntity> tile) {
+    @SuppressWarnings("deprecation") public static void registerTile(Class<? extends TileEntity> tile) {
         String tileEntity = tile.getSimpleName();
         tileEntity = tileEntity.substring(tileEntity.indexOf("TileEntity") + "TileEntity".length());
         GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + tileEntity);
     }
 
-    @SuppressWarnings("deprecation")
-    public static void registerTileAlias(Class<? extends TileEntity> tile, String alias) { GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + alias); }
+    @SuppressWarnings("deprecation") public static void registerTileAlias(Class<? extends TileEntity> tile, String alias) { GameRegistry.registerTileEntity(tile, ImmersiveTechnology.MODID + ":" + alias); }
 
     @SubscribeEvent public static void registerBlocks(RegistryEvent.Register<Block> event) {
         for (Block block : registeredITBlocks) { event.getRegistry().register(block.setRegistryName(createRegistryName(block.getTranslationKey()))); }

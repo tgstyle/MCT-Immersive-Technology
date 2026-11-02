@@ -1,15 +1,13 @@
 package mctmods.immersivetechnology.common.multiblocks;
 
-import com.immersiveconvergence.api.block.ICBlockBase;
-import com.immersiveconvergence.api.block.ICBlockMultiblock;
-
 import mctmods.immersivetechnology.common.ITBlockContext;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 
+import com.immersiveconvergence.api.block.ICBlockBase;
+import com.immersiveconvergence.api.block.ICBlockMultiblock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
-
 import javax.annotation.Nonnull;
 
 public abstract class BlockITMultiblock<E extends Enum<E> & ICBlockBase.IBlockEnum> extends ICBlockMultiblock<E> {

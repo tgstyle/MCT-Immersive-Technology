@@ -1,14 +1,13 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
+
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.network.TileSyncMessage;
-
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -68,9 +67,7 @@ public abstract class GuiCommonValve extends GuiScreen {
 		destinationKeep.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
-	@Override public boolean doesGuiPauseGame() {
-		return false;
-	}
+	@Override public boolean doesGuiPauseGame() { return false; }
 
 	@Override protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == Keyboard.KEY_TAB) {
@@ -78,18 +75,20 @@ public abstract class GuiCommonValve extends GuiScreen {
 				limitPacket.setFocused(false);
 				limitTime.setFocused(true);
 				destinationKeep.setFocused(false);
-			} else if (limitTime.isFocused()) {
+			}
+			else if (limitTime.isFocused()) {
 				limitPacket.setFocused(false);
 				limitTime.setFocused(false);
 				destinationKeep.setFocused(true);
-			} else {
+			}
+			else {
 				limitPacket.setFocused(true);
 				limitTime.setFocused(false);
 				destinationKeep.setFocused(false);
 			}
-		} else if (keyCode == Keyboard.KEY_E || keyCode == Keyboard.KEY_ESCAPE) {
-			super.keyTyped(typedChar, 1);
-		} else if (Arrays.stream(acceptedKeys).anyMatch(x -> x == keyCode)) {
+		}
+		else if (keyCode == Keyboard.KEY_E || keyCode == Keyboard.KEY_ESCAPE) { super.keyTyped(typedChar, 1); }
+		else if (Arrays.stream(acceptedKeys).anyMatch(x -> x == keyCode)) {
 			limitPacket.textboxKeyTyped(typedChar, keyCode);
 			limitTime.textboxKeyTyped(typedChar, keyCode);
 			destinationKeep.textboxKeyTyped(typedChar, keyCode);

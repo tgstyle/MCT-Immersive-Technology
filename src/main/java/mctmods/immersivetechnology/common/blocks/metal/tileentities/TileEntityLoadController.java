@@ -1,5 +1,9 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.gui.ITGUI;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
+import mctmods.immersivetechnology.common.util.TranslationKey;
+
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICTargetingInfo;
@@ -9,14 +13,7 @@ import com.immersiveconvergence.api.wires.ICWireRole;
 import com.immersiveconvergence.api.wires.ICWireType;
 import com.immersiveconvergence.api.wires.ICWires;
 import com.immersiveconvergence.api.wires.IICEnergyConnector;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.client.gui.GuiLoadController;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
-import mctmods.immersivetechnology.common.util.TranslationKey;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,11 +26,10 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyStorage, IICEnergyConnector {
 
@@ -250,11 +246,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 		movedThisTick = 0;
 	}
 
-	@SideOnly(Side.CLIENT)
-	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiLoadController(this)); }
-
-	@SideOnly(Side.CLIENT)
-	@Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nullable TRSRTransformation transform) { return valveTransform(object, transform, 270, 180, 0, 0, 1); }
+	@SideOnly(Side.CLIENT) @Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nullable TRSRTransformation transform) { return valveTransform(object, transform, 270, 180, 0, 0, 1); }
 
 	public static class DummyBattery implements IEnergyStorage {
 
@@ -271,15 +263,13 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 		@Override public boolean canReceive() { return false; }
 	}
 
-	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side) {
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side) {
 		return capability == CapabilityEnergy.ENERGY
 				&& (side == null || side.getAxis() == perpDirection().getAxis())
 				|| super.hasCapability(capability, side);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side) {
+	@SuppressWarnings("unchecked") @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side) {
 		if (capability == CapabilityEnergy.ENERGY) {
 			if (side == inputDir()) { return (T)this; }
 			else if (side == outputDir() || side == null) { return (T)dummyBattery; }

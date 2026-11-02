@@ -1,6 +1,6 @@
 package mctmods.immersivetechnology.common.util;
 
-import net.minecraft.client.resources.I18n;
+import mctmods.immersivetechnology.ImmersiveTechnology;
 
 public enum TranslationKey {
     OVERLAY_OSD_TRASH_ITEM_NORMAL_FIRST_LINE("overlay.immersivetech.osd.trash_item.normal.firstline"),
@@ -53,31 +53,17 @@ public enum TranslationKey {
     GUI_IF_PER_TICK("gui.immersivetech.if_per_tick");
 
     public final String location;
-    TranslationKey(String location) {
-        this.location = location;
-    }
+    TranslationKey(String location) { this.location = location; }
 
-    public String text(boolean addSpaceBefore, boolean addSpaceAfter) {
-        return (addSpaceBefore? " ":"") + I18n.format(location) + (addSpaceAfter? " ":"");
-    }
+    public String text(boolean addSpaceBefore, boolean addSpaceAfter) { return (addSpaceBefore? " ":"") + ImmersiveTechnology.proxy.format(location) + (addSpaceAfter? " ":""); }
 
-    public String text(boolean addSpaceBefore) {
-        return text(addSpaceBefore, false);
-    }
+    public String text(boolean addSpaceBefore) { return text(addSpaceBefore, false); }
 
-    public String text() {
-        return text(false, false);
-    }
+    public String text() { return text(false, false); }
 
-    public String format(boolean addSpaceBefore, boolean addSpaceAfter, Object... parameters) {
-        return (addSpaceBefore? " ":"") + I18n.format(location, parameters) + (addSpaceAfter? " ":"");
-    }
+    public String format(boolean addSpaceBefore, boolean addSpaceAfter, Object... parameters) { return (addSpaceBefore? " ":"") + ImmersiveTechnology.proxy.format(location, parameters) + (addSpaceAfter? " ":""); }
 
-    public String format(boolean addSpaceBefore, Object... parameters) {
-        return format(addSpaceBefore, false, parameters);
-    }
+    public String format(boolean addSpaceBefore, Object... parameters) { return format(addSpaceBefore, false, parameters); }
 
-    public String format(Object... parameters) {
-        return format(false, false, parameters);
-    }
+    public String format(Object... parameters) { return format(false, false, parameters); }
 }

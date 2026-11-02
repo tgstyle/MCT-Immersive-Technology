@@ -1,14 +1,14 @@
 package mctmods.immersivetechnology.common.items;
 
-import com.immersiveconvergence.api.ICMultiblockNames;
 import mctmods.immersivetechnology.common.util.ITLib;
+
+import com.immersiveconvergence.api.ICMultiblockNames;
 import com.immersiveconvergence.api.ICLib;
 import com.immersiveconvergence.api.IICTool;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
 import com.immersiveconvergence.api.util.ICNBT;
 import com.immersiveconvergence.api.util.ICUtils;
-
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -39,14 +39,12 @@ import java.util.Set;
 public class ItemFormationTool extends ItemITBase implements IICTool {
     public ItemFormationTool() { super("formation_tool", 1); }
 
-    @SideOnly(Side.CLIENT)
-    @Override public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
+    @SideOnly(Side.CLIENT) @Override public void addInformation(@Nonnull ItemStack stack, @Nullable World world, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flag) {
         addInfo(tooltip, ITLib.DESC_INFO + "multiblocksAllowed", stack, "multiblockPermission");
         addInfo(tooltip, ITLib.DESC_INFO + "multiblockForbidden", stack, "multiblockInterdiction");
     }
 
-    @SideOnly(Side.CLIENT)
-    private void addInfo(List<String> tooltip, String titleKey, ItemStack stack, String nbtKey) {
+    @SideOnly(Side.CLIENT) private void addInfo(List<String> tooltip, String titleKey, ItemStack stack, String nbtKey) {
         if (!ICNBT.hasKey(stack, nbtKey)) { return; }
         NBTTagList tagList = ICNBT.getTag(stack).getTagList(nbtKey, Constants.NBT.TAG_STRING);
         String title = I18n.format(titleKey);

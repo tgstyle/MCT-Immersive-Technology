@@ -1,10 +1,10 @@
 package mctmods.immersivetechnology.client.gui;
 
-import com.immersiveconvergence.api.client.ICClientUtils;
-import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
-
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.gui.ContainerTrashItem;
+
+import com.immersiveconvergence.api.client.ICClientUtils;
+import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
 import net.minecraft.entity.player.InventoryPlayer;
 
 public class GuiTrashItem extends GuiICContainerBase {

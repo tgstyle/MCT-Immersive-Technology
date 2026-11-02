@@ -1,10 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
 
-import mctmods.immersivetechnology.common.Config.ITConfig.Multiblocks;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
-import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityAdvancedCokeOvenSlave;
 import mctmods.immersivetechnology.common.util.ITSounds;
+import mctmods.immersivetechnology.common.util.ITUtils;
+import mctmods.immersivetechnology.core.config.Config.ITConfig.Multiblocks;
+
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.block.ICSideConfig;
 import com.immersiveconvergence.api.block.ICTileEntityBase;
@@ -16,11 +18,9 @@ import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IDirectionalTil
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IHasDummyBlocks;
 import com.immersiveconvergence.api.network.MessageStopSound;
 import com.immersiveconvergence.api.util.ICFluxStorage;
-
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,7 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import javax.annotation.Nonnull;
 
 public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase implements IICInternalFluxHandler, IDirectionalTile, IHasDummyBlocks, IActiveState, ITickable {
@@ -39,11 +38,9 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
     public boolean dummy = false;
     public boolean active = false;
     public BlockPos masterPos;
-
     private float soundVolume = 0f;
     private int soundGracePeriod = 0;
     private boolean isRunning = false;
-
     @SideOnly(Side.CLIENT) private float fanRotation;
     @SideOnly(Side.CLIENT) private float prevFanRotation;
 
@@ -95,9 +92,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
         world.notifyBlockUpdate(dummyPos, dummyState, dummyState, 3);
     }
 
-    @Override @Nonnull public ICSideConfig getSideConfig(EnumFacing facing) {
-        return !dummy && facing == EnumFacing.UP ? ICSideConfig.INPUT : ICSideConfig.NONE;
-    }
+    @Override @Nonnull public ICSideConfig getSideConfig(EnumFacing facing) { return !dummy && facing == EnumFacing.UP ? ICSideConfig.INPUT : ICSideConfig.NONE; }
 
     ICFluxWrapper wrapper = new ICFluxWrapper(this, EnumFacing.UP);
 
@@ -128,12 +123,11 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
             if (masterPos == null) { findMaster(); }
             if (masterPos != null && !masterPos.equals(getPos())) {
                 TileEntity tile = world.getTileEntity(masterPos);
-                if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) {
-                    ((TileEntityAdvancedCokeOvenBaseheater)tile).breakDummies(masterPos, world.getBlockState(masterPos));
-                }
+                if (tile instanceof TileEntityAdvancedCokeOvenBaseheater) { ((TileEntityAdvancedCokeOvenBaseheater)tile).breakDummies(masterPos, world.getBlockState(masterPos)); }
             }
             world.setBlockToAir(getPos());
-        } else {
+        }
+        else {
             ImmersiveConvergence.packetHandler.sendToAllTracking(new MessageStopSound(getPos()), new NetworkRegistry.TargetPoint(world.provider.getDimension(), getPos().getX(), getPos().getY(), getPos().getZ(), 0));
             BlockPos dummyPos0 = getPos().offset(facing.rotateY());
             BlockPos dummyPos1 = getPos().offset(facing.rotateYCCW());
@@ -233,9 +227,7 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
             }
             boolean wasRunning = isRunning;
             isRunning = soundGracePeriod > 0;
-            if (isRunning != wasRunning) {
-                markContainingBlockForUpdate(null);
-            }
+            if (isRunning != wasRunning) { markContainingBlockForUpdate(null); }
         }
         if (world.isRemote && !dummy) {
             prevFanRotation = fanRotation;
@@ -247,18 +239,16 @@ public class TileEntityAdvancedCokeOvenBaseheater extends ICTileEntityBase imple
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public float getFanRotation(float partialTicks) {
-        return prevFanRotation + (fanRotation - prevFanRotation) * partialTicks;
-    }
+    @SideOnly(Side.CLIENT) public float getFanRotation(float partialTicks) { return prevFanRotation + (fanRotation - prevFanRotation) * partialTicks; }
 
-    @SideOnly(Side.CLIENT)
-    public void handleSounds() {
+    @SideOnly(Side.CLIENT) public void handleSounds() {
         float targetSoundLevel = isRunning ? 1f : 0f;
-        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); } else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
+        if (soundVolume < targetSoundLevel) { soundVolume = Math.min(soundVolume + 0.01f, targetSoundLevel); }
+        else if (soundVolume > targetSoundLevel) { soundVolume = Math.max(soundVolume - 0.01f, targetSoundLevel); }
         if (soundVolume <= 0f) { ICSoundHandler.stopSound(getPos()); }
         else {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            EntityPlayer player = ImmersiveTechnology.proxy.getClientPlayer();
+            if (player == null) { return; }
             float attenuation = Math.max((float)player.getDistanceSq(getPos().getX() + .5, getPos().getY() + .5, getPos().getZ() + .5) / 8, 1);
             float level = ITUtils.remapRange(0, 1, 0.5f, 1.0f, soundVolume);
             ITSounds.advancedCokeOvenFan.PlayRepeating(getPos(), (5 * soundVolume) / attenuation, level);

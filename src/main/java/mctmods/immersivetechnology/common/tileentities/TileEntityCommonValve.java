@@ -1,0 +1,343 @@
+package mctmods.immersivetechnology.common.tileentities;
+
+import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.blocks.BlockValve;
+import mctmods.immersivetechnology.common.util.TranslationKey;
+
+import com.immersiveconvergence.ImmersiveConvergence;
+import com.immersiveconvergence.api.ICIntegration;
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.IICOBJModelCallback;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
+import com.immersiveconvergence.api.network.IBinaryMessageReceiver;
+import com.immersiveconvergence.api.network.ITileSyncReceiver;
+import com.immersiveconvergence.api.network.TileSyncMessage;
+import com.immersiveconvergence.api.util.ICUtils;
+import com.immersiveconvergence.api.wires.ICConnectionPoint;
+import com.immersiveconvergence.api.wires.ICWireType;
+import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectable;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.fml.common.thread.SidedThreadGroups;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+
+public abstract class TileEntityCommonValve extends ICTileEntityConnectable implements ICBlockInterfaces.IDirectionalTile, ITickable, ICBlockInterfaces.IBlockOverlayText, ICBlockInterfaces.IPlayerInteraction, ICBlockInterfaces.IGuiTile, ICBlockInterfaces.IActiveState, ICBlockInterfaces.IAttachedIntegerProperties, ICBlockInterfaces.IHasObjProperty, IICOBJModelCallback<IBlockState>, IBinaryMessageReceiver, ITileSyncReceiver {
+
+	final TranslationKey overlayNormal;
+	final TranslationKey overlaySneakingFirstLine;
+	final TranslationKey overlaySneakingSecondLine;
+	final int GuiID;
+
+	public TileEntityCommonValve(TranslationKey overlayNormal, TranslationKey overlaySneakingFirstLine, TranslationKey overlaySneakingSecondLine, int GuiID) {
+		this.overlayNormal = overlayNormal;
+		this.overlaySneakingFirstLine = overlaySneakingFirstLine;
+		this.overlaySneakingSecondLine = overlaySneakingSecondLine;
+		this.GuiID = GuiID;
+	}
+
+	public EnumFacing facing = EnumFacing.NORTH;
+	public int packetLimit = -1;
+	public int timeLimit = -1;
+	public int keepSize = -1;
+	public byte redstoneMode = 1;
+	public int rotation = 0;
+	public boolean open = true;
+	public long acceptedAmount;
+	public long lastAcceptedAmount;
+	public int secondCounter;
+	public int minuteCounter;
+	public long average;
+	public long lastAverage;
+	public int packets;
+	public int packetAverage;
+	public int lastPacketAverage;
+	public long[] averages = new long[60];
+	public long[] packetTotals = new long[60];
+
+	@Override public void onLoad() {
+		super.onLoad();
+		if (!world.isRemote) { updateOpenState(); }
+	}
+
+	@Override public boolean getIsActive() { return open; }
+
+	@Override @Nonnull public Vec3d offset(@Nonnull ICConnectionPoint point, @Nonnull ICWireType cable) {
+		double radius = cable.getRenderDiameter() / 2;
+		return new Vec3d(.5 + (.5 - radius) * facing.getXOffset(), .5 + (.5 - radius) * facing.getYOffset(), .5 + (.5 - radius) * facing.getZOffset());
+	}
+
+	public boolean isOpenForRedstone() {
+		if (redstoneMode == 0) { return true; }
+		int power = getRSPower();
+		return redstoneMode == 1 ? power == 0 : power > 0;
+	}
+
+	public void updateOpenState() {
+		boolean shouldOpen = isOpenForRedstone();
+		if (open == shouldOpen) { return; }
+		open = shouldOpen;
+		efficientMarkDirty();
+		markContainingBlockForUpdate(null);
+	}
+
+	public void efficientMarkDirty() { world.getChunk(getPos()).markDirty(); }
+
+	public void calculateAverages() {
+		long sum = 0;
+		for (long avg : averages) { sum += avg; }
+		average = sum / 60;
+		sum = 0;
+		for (long total : packetTotals) { sum += total; }
+		packetAverage = (int)sum;
+	}
+
+	@Override public void update() {
+		if (world.isRemote) {
+			if (requestCooldown > 0) { requestCooldown--; }
+			return;
+		}
+		if (acceptedAmount != lastDirtyAmount || packets != lastDirtyPackets) {
+			lastDirtyAmount = acceptedAmount;
+			lastDirtyPackets = packets;
+			efficientMarkDirty();
+		}
+		if (++secondCounter < 20) { return; }
+		if (average == 0 && acceptedAmount > 0) {
+			for (int i = 0; i < 60; i++) { averages[i] = acceptedAmount; }
+			packetTotals[minuteCounter] = packets;
+			calculateAverages();
+		}
+		if (averages[minuteCounter] != acceptedAmount || packetTotals[minuteCounter] != packets) {
+			averages[minuteCounter] = acceptedAmount;
+			packetTotals[minuteCounter] = packets;
+			calculateAverages();
+		}
+		lastAcceptedAmount = acceptedAmount;
+		acceptedAmount = 0;
+		packets = 0;
+		secondCounter = 0;
+		if (++minuteCounter == 60) {
+			lastPacketAverage = packetAverage;
+			lastAverage = average;
+			minuteCounter = 0;
+		}
+	}
+
+	@Override public boolean interact(@Nonnull EnumFacing side, @Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull ItemStack heldItem, float hitX, float hitY, float hitZ) {
+		if (!world.isRemote && player.isSneaking() && !ICUtils.isHammer(heldItem)) {
+			if (hand != EnumHand.MAIN_HAND) { return true; }
+			redstoneMode = (byte)(redstoneMode == 1 ? 2 : 1);
+			efficientMarkDirty();
+			updateOpenState();
+			return true;
+		}
+		else if (ICIntegration.isWireCoil(heldItem)) { return false; }
+		else if (!world.isRemote && !ICUtils.isHammer(heldItem)) {
+			NBTTagCompound tag = new NBTTagCompound();
+			tag.setInteger("packetLimit", packetLimit);
+			tag.setInteger("timeLimit", timeLimit);
+			tag.setInteger("keepSize", keepSize);
+			ImmersiveConvergence.packetHandler.sendTo(new TileSyncMessage(this, tag), (EntityPlayerMP)player);
+			return true;
+		}
+		else if (player.isSneaking() && ICUtils.isHammer(heldItem)) {
+			if (++redstoneMode > 2) { redstoneMode = 0; }
+			String translationKey;
+			switch (redstoneMode) {
+				case 1:
+					translationKey = TranslationKey.OVERLAY_REDSTONE_NORMAL.location;
+					break;
+				case 2:
+					translationKey = TranslationKey.OVERLAY_REDSTONE_INVERTED.location;
+					break;
+				default:
+					translationKey = TranslationKey.OVERLAY_REDSTONE_OFF.location;
+					break;
+			}
+			ICUtils.sendServerNoSpamMessages(player, new TextComponentTranslation(translationKey));
+			efficientMarkDirty();
+			updateOpenState();
+			return true;
+		}
+		return false;
+	}
+
+	private long lastDirtyAmount = -1;
+	private int lastDirtyPackets = -1;
+	int requestCooldown = 0;
+
+	@Override @Nonnull public String[] getOverlayText(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop, boolean hammer) {
+		if (requestCooldown == 0) {
+			ByteBuf message = Unpooled.copyBoolean(true);
+			BinaryTileSyncMessage.sendToServer(getPos(), message);
+			requestCooldown = 20;
+		}
+		if (player.isSneaking()) {
+			return new String[]{
+					overlaySneakingFirstLine.format((double)average / 20),
+					overlaySneakingSecondLine.format(packetAverage)
+			};
+		}
+		return new String[]{ overlayNormal.format(lastAcceptedAmount) };
+	}
+
+	@Override public void receiveMessageFromClient(ByteBuf buf, EntityPlayerMP player) {
+		ByteBuf message = Unpooled.copyInt(Math.max(packets, packetAverage));
+		message.writeLong(average);
+		message.writeLong(lastAcceptedAmount);
+		BinaryTileSyncMessage.sendToPlayer(player, getPos(), message);
+	}
+
+	@Override public void receiveMessageFromServer(ByteBuf buf) {
+		packetAverage = buf.readInt();
+		average = buf.readLong();
+		lastAcceptedAmount = buf.readLong();
+	}
+
+	@Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+		super.readCustomNBT(nbt, descPacket);
+		facing = EnumFacing.byIndex(nbt.getByte("facing"));
+		packetLimit = nbt.getInteger("packetLimit");
+		timeLimit = nbt.getInteger("timeLimit");
+		keepSize = nbt.getInteger("keepSize");
+		redstoneMode = nbt.getByte("redstoneMode");
+		int oldRotation = rotation;
+		boolean wasOpen = open;
+		rotation = nbt.getInteger("rotation");
+		open = nbt.getBoolean("open");
+		if (hasWorld() && world.isRemote && (wasOpen != open || oldRotation != rotation)) { world.markBlockRangeForRenderUpdate(pos, pos); }
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
+		lastAcceptedAmount = acceptedAmount = nbt.getLong("acceptedAmount");
+		secondCounter = nbt.getInteger("secondCounter");
+		long avg = nbt.getLong("averages");
+		for (int i = 0; i < 60; i++) { averages[i] = avg; }
+		calculateAverages();
+	}
+
+	@Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) {
+		super.writeCustomNBT(nbt, descPacket);
+		nbt.setByte("facing", (byte)facing.getIndex());
+		nbt.setInteger("packetLimit", packetLimit);
+		nbt.setInteger("timeLimit", timeLimit);
+		nbt.setInteger("keepSize", keepSize);
+		nbt.setByte("redstoneMode", redstoneMode);
+		nbt.setInteger("rotation", rotation);
+		nbt.setBoolean("open", open);
+		if (Thread.currentThread().getThreadGroup() != SidedThreadGroups.SERVER) { return; }
+		nbt.setLong("acceptedAmount", acceptedAmount);
+		nbt.setInteger("secondCounter", secondCounter);
+		calculateAverages();
+		nbt.setLong("averages", average);
+	}
+
+	@Override public boolean canOpenGui() { return true; }
+
+	@Override public int getGuiID() { return GuiID; }
+
+	@Nullable @Override public TileEntity getGuiMaster() { return this; }
+
+	@SideOnly(Side.CLIENT) @Override public void receiveMessageFromServer(@Nonnull NBTTagCompound message) {
+		if (message.hasKey("packetLimit")) {
+			packetLimit = message.getInteger("packetLimit");
+			timeLimit = message.getInteger("timeLimit");
+			keepSize = message.getInteger("keepSize");
+			ImmersiveTechnology.proxy.showValveGui(this);
+		}
+	}
+
+	@Override public void receiveMessageFromClient(@Nonnull NBTTagCompound message) {
+		packetLimit = message.getInteger("packetLimit");
+		timeLimit = message.getInteger("timeLimit");
+		keepSize = message.getInteger("keepSize");
+		efficientMarkDirty();
+	}
+
+	@Override public boolean useNixieFont(@Nonnull EntityPlayer player, @Nonnull RayTraceResult mop) { return false; }
+
+	@Override @Nonnull public EnumFacing getFacing() { return facing; }
+
+	@Override public void setFacing(@Nonnull EnumFacing facing) { this.facing = facing; }
+
+	@Override public int getFacingLimitation() { return 0; }
+
+	@Override public boolean mirrorFacingOnPlacement(@Nonnull EntityLivingBase placer) { return false; }
+
+	@Override public boolean canHammerRotate(@Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EntityLivingBase entity) { return !entity.isSneaking(); }
+
+	@Override public boolean cannotRotate(@Nonnull EnumFacing axis) { return false; }
+
+	@Override @Nonnull public String getCacheKey(@Nonnull IBlockState object) { return rotation + ";" + facing.getIndex() + ";" + open; }
+
+	@Override public ArrayList<String> compileDisplayList() { return new ArrayList<>(Arrays.asList(objBaseGroup(), open ? "Handle_Open" : "Handle_Closed")); }
+
+	protected String objBaseGroup() { return "Base"; }
+
+	@SideOnly(Side.CLIENT) @Override public boolean shouldRenderGroup(@Nonnull IBlockState object, @Nonnull String group) {
+		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+		if (layer != null && layer != BlockRenderLayer.CUTOUT) { return false; }
+		boolean isOpen = !object.getPropertyKeys().contains(ICProperties.BOOLEANS[0]) || object.getValue(ICProperties.BOOLEANS[0]);
+		if ("Handle_Open".equals(group)) { return isOpen; }
+		if ("Handle_Closed".equals(group)) { return !isOpen; }
+		return true;
+	}
+
+	@SideOnly(Side.CLIENT) @Nullable protected TRSRTransformation valveTransform(IBlockState state, @Nullable TRSRTransformation transform, int horizontalXRot, int verticalDownXRot, int verticalUpXRot, int horizontalYOffset, int verticalYOffset) {
+		EnumFacing stateFacing = state.getValue(ICProperties.FACING_ALL);
+		int angleX;
+		int angleY;
+		if (stateFacing.getAxis().isHorizontal()) {
+			angleX = horizontalXRot;
+			angleY = ((stateFacing.getHorizontalIndex() + horizontalYOffset) % 4) * 90;
+		}
+		else {
+			angleX = stateFacing == EnumFacing.DOWN ? verticalDownXRot : verticalUpXRot;
+			angleY = ((state.getValue(BlockValve.ROTATION) + verticalYOffset) % 4) * 90;
+		}
+		TRSRTransformation rotate = ImmersiveTechnology.proxy.modelRotation(angleX, angleY);
+		return transform == null ? rotate : rotate.compose(transform);
+	}
+
+	@Override @Nonnull public String[] getIntPropertyNames() { return new String[]{"rotation"}; }
+
+	@Override @Nonnull public PropertyInteger getIntProperty(@Nonnull String name) { return BlockValve.ROTATION; }
+
+	@Override public int getIntPropertyValue(@Nonnull String name) { return rotation; }
+
+	@Override public void setValue(@Nonnull String name, int value) { this.rotation = value; }
+
+	public int getRSPower() {
+		int power = 0;
+		for (EnumFacing dir : EnumSet.complementOf(EnumSet.of(facing, facing.getOpposite()))) { power = Math.max(world.getRedstonePower(pos.offset(dir, -1), dir), power); }
+		return power;
+	}
+
+	public static int longToInt(long value) {
+		if (value > Integer.MAX_VALUE) { return Integer.MAX_VALUE; }
+		if (value < Integer.MIN_VALUE) { return Integer.MIN_VALUE; }
+		return (int)value;
+	}
+}

@@ -15,14 +15,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = "mct_mixin", name = "MCT Mixin", version = "1.0", acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:mixinbooter@[10.7,);")
-@IFMLLoadingPlugin.Name("MCTMixin")
-@IFMLLoadingPlugin.SortingIndex(1001)
-public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {
+@Mod(modid = "mct_mixin", name = "MCT Mixin", version = "1.0", acceptedMinecraftVersions = "[1.12.2]", dependencies = "required-after:mixinbooter@[10.7,);") @IFMLLoadingPlugin.Name("MCTMixin") @IFMLLoadingPlugin.SortingIndex(1001) public class MCTMixin implements IFMLLoadingPlugin, IEarlyMixinLoader {
     public static final Logger LOGGER = LogManager.getLogger("MCT_Mixin");
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
+    @Mod.EventHandler public void preInit(FMLPreInitializationEvent event) {
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             System.err.println("Uncaught exception in thread " + thread.getName() + ":");
             t.printStackTrace(System.err);

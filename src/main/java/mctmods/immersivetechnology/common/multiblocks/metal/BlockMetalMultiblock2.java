@@ -2,8 +2,8 @@ package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerSolidSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilersolid.TileEntityBoilerSolidMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilersolid.TileEntityBoilerSolidSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock2;
 
 import com.immersiveconvergence.api.block.ICProperties;

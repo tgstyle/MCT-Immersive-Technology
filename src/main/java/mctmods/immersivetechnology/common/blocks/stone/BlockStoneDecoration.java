@@ -3,6 +3,7 @@ package mctmods.immersivetechnology.common.blocks.stone;
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.stone.types.BlockType_StoneDecoration;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 

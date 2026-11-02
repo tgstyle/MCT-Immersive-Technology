@@ -1,16 +1,14 @@
 package mctmods.immersivetechnology;
 
-import com.immersiveconvergence.api.ICIntegration;
-import com.immersiveconvergence.common.blocks.pipes.TileEntityFluidPipeAlternative;
-
-import mctmods.immersivetechnology.common.CommonProxy;
 import mctmods.immersivetechnology.common.ITContent;
 import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.util.ITSounds;
-import mctmods.immersivetechnology.common.util.compat.ITCompatModule;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
+import mctmods.immersivetechnology.core.integration.ITCompatModule;
+import mctmods.immersivetechnology.core.proxy.CommonProxy;
+import mctmods.immersivetechnology.core.registration.ITCreativeTab;
+import mctmods.immersivetechnology.core.util.ITServerHooks;
+
+import com.immersiveconvergence.api.ICIntegration;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -19,20 +17,17 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import javax.annotation.Nonnull;
-
-@Mod(modid = ImmersiveTechnology.MODID, name = ImmersiveTechnology.NAME, acceptedMinecraftVersions = "[1.12.2,1.13)", dependencies = "after:immersiveengineering@[0.12-92,);" + "after:immersivefabrication;" + "required-after:immersiveconvergence@[1.0.177,);" + "required-after:mixinbooter@[10.7,);" + "required-after:forge@[14.23.3.2655,);")
-public class ImmersiveTechnology {
+@Mod(modid = ImmersiveTechnology.MODID, name = ImmersiveTechnology.NAME, acceptedMinecraftVersions = "[1.12.2,1.13)", dependencies = "after:immersiveengineering@[0.12-92,);" + "after:immersivefabrication;" + "required-after:immersiveconvergence@[1.0.177,);" + "required-after:mixinbooter@[10.7,);" + "required-after:forge@[14.23.3.2655,);") public class ImmersiveTechnology {
 
     public static final String MODID = "immersivetech";
     public static final String NAME = "Immersive Technology";
-
-    @SidedProxy(clientSide = "mctmods.immersivetechnology.client.ClientProxy" , serverSide = "mctmods.immersivetechnology.common.CommonProxy")
-    public static CommonProxy proxy;
-
+    @SidedProxy(clientSide = "mctmods.immersivetechnology.core.proxy.ClientProxy" , serverSide = "mctmods.immersivetechnology.core.proxy.CommonProxy") public static CommonProxy proxy;
     @Instance(MODID) public static ImmersiveTechnology instance;
 
-    static { FluidRegistry.enableUniversalBucket(); }
+    static {
+        FluidRegistry.enableUniversalBucket();
+        ITCreativeTab.register();
+    }
 
     @EventHandler public void preInit(FMLPreInitializationEvent event) {
         ITLogger.logger = event.getModLog();
@@ -62,9 +57,5 @@ public class ImmersiveTechnology {
 
     @EventHandler public void serverStarted(FMLServerStartedEvent event) { }
 
-    @EventHandler public void serverStopping(FMLServerStoppingEvent event) { if (Loader.isModLoaded("immersiveengineering")) { TileEntityFluidPipeAlternative.indirectConnections.clear(); } }
-
-    public static CreativeTabs creativeTab = new CreativeTabs(MODID) {
-        @Override @Nonnull public ItemStack createIcon() { return new ItemStack(ITContent.blockValve != null ? ITContent.blockValve : ITContent.blockMetalDecoration, 1, 0); }
-    };
+    @EventHandler public void serverStopping(FMLServerStoppingEvent event) { ITServerHooks.serverStopping(); }
 }

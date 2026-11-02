@@ -1,20 +1,19 @@
 package mctmods.immersivetechnology.conversion;
 
 
-import com.immersiveconvergence.api.block.ICProperties;
-import com.immersiveconvergence.api.util.ICUtils;
-import com.immersiveconvergence.api.multiblock.TemplateData;
-
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.ITContent;
-import mctmods.immersivetechnology.common.util.ITLogger;
 import mctmods.immersivetechnology.common.multiblocks.ITShapes;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerLiquidSlave;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankMaster;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityBoilerTankSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilertank.TileEntityBoilerTankMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilertank.TileEntityBoilerTankSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
+import mctmods.immersivetechnology.common.util.ITLogger;
 
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.multiblock.TemplateData;
+import com.immersiveconvergence.api.util.ICUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

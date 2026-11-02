@@ -1,0 +1,49 @@
+package mctmods.immersivetechnology.core.integration.opencomputers;
+
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityGasTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityGasTurbineSlave;
+import mctmods.immersivetechnology.core.integration.computer.ITComputerTables;
+
+import com.immersiveconvergence.api.compat.opencomputers.ManagedEnvironmentIC;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.ManagedEnvironment;
+import li.cil.oc.api.prefab.DriverSidedTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+@SuppressWarnings("unused") public class GasTurbineDriver extends DriverSidedTileEntity {
+    @Override public ManagedEnvironment createEnvironment(World world, BlockPos pos, EnumFacing facing) {
+        TileEntity tile = world.getTileEntity(pos);
+
+        if (tile instanceof TileEntityGasTurbineSlave) {
+            TileEntityGasTurbineSlave te = (TileEntityGasTurbineSlave) tile;
+            TileEntityGasTurbineMaster tem = te.master();
+            if (tem != null && te.isRedstonePos()) { return new SteamTurbineEnvironment(world, tem.getPos()); }
+        }
+        return null;
+    }
+
+    @Override public Class<?> getTileEntityClass() { return TileEntityGasTurbineSlave.class; }
+
+    public static class SteamTurbineEnvironment extends ManagedEnvironmentIC.ManagedEnvMultiblock<TileEntityGasTurbineMaster> {
+        public SteamTurbineEnvironment(World world, BlockPos pos) { super(world, pos, TileEntityGasTurbineMaster.class); }
+
+        @Callback(doc = "function():number -- get the turbine speed in RPM") public Object[] getSpeed(Context context, Arguments args) { return call(ITComputerTables.GAS_TURBINE, "getSpeed"); }
+
+        @Callback(doc = "function():table -- get information about the turbine fuel level") public Object[] getInputTankInfo(Context context, Arguments args) { return call(ITComputerTables.GAS_TURBINE, "getInputTankInfo"); }
+
+        @Callback(doc = "function():table -- get information about the turbine output tank level") public Object[] getOutputTankInfo(Context context, Arguments args) { return call(ITComputerTables.GAS_TURBINE, "getOutputTankInfo"); }
+
+        @Callback(doc = "function(enabled:bool):nil -- Enables or disables computer control for the attached machine") public Object[] enableComputerControl(Context context, Arguments args) { return super.enableComputerControl(context, args); }
+
+        @Callback(doc = "function(enabled:bool):nil") public Object[] setEnabled(Context context, Arguments args) { return super.setEnabled(context, args); }
+
+        @Override public String preferredName() { return "it_gas_turbine"; }
+
+        @Override public int priority() { return 1000; }
+    }
+}

@@ -1,16 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import com.immersiveconvergence.api.util.ICUtils;
-import com.immersiveconvergence.api.fluid.IICFluidPipe;
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.client.gui.GuiFluidValve;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
+import mctmods.immersivetechnology.common.gui.ITGUI;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
 import mctmods.immersivetechnology.common.util.TranslationKey;
 
+import com.immersiveconvergence.api.fluid.IICFluidPipe;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.util.ICUtils;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,7 +19,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,11 +39,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 
 	@Override protected String objBaseGroup() { return "Pipe"; }
 
-	@SideOnly(Side.CLIENT)
-	@Override public void showGui() { Minecraft.getMinecraft().displayGuiScreen(new GuiFluidValve(this)); }
-
-	@SideOnly(Side.CLIENT)
-	@Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nullable TRSRTransformation transform) { return valveTransform(object, transform, 0, 90, 270, 2, 2); }
+	@SideOnly(Side.CLIENT) @Override @Nullable public TRSRTransformation applyTransformations(@Nonnull IBlockState object, @Nonnull String group, @Nullable TRSRTransformation transform) { return valveTransform(object, transform, 0, 90, 270, 2, 2); }
 
 	public static class DummyTank implements IFluidHandler {
 
@@ -66,8 +58,7 @@ public class TileEntityFluidValve extends TileEntityCommonValve implements IFlui
 				|| super.hasCapability(capability, facing);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	@SuppressWarnings("unchecked") @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			if (facing == this.facing) { return (T)this; }
 			else if (facing == this.facing.getOpposite() || facing == null) { return (T)dummyTank; }

@@ -1,7 +1,7 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityITSlab;
+import mctmods.immersivetechnology.common.tileentities.TileEntityITSlab;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
@@ -16,7 +16,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import javax.annotation.Nonnull;
 
 public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends BlockITTileProvider<E> {
@@ -31,13 +30,11 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 	@Override @Nonnull public IBlockState getActualState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getActualState(state, world, pos);
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile instanceof TileEntityITSlab) return state.withProperty(prop_SlabType, ((TileEntityITSlab)tile).slabType);
+		if (tile instanceof TileEntityITSlab) { return state.withProperty(prop_SlabType, ((TileEntityITSlab)tile).slabType); }
 		return state;
 	}
 
-	@Override public TileEntity createBasicTE(World worldIn, E meta) {
-		return new TileEntityITSlab();
-	}
+	@Override public TileEntity createBasicTE(World worldIn, E meta) { return new TileEntityITSlab(); }
 
 	@Override public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {}
 
@@ -49,25 +46,22 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		super.harvestBlock(world, player, pos, state, tile, stack);
 	}
 
-    @SuppressWarnings("deprecation")
-	@Override public boolean isSideSolid(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    @SuppressWarnings("deprecation") @Override public boolean isSideSolid(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
-			if (type  ==  0)	return side == EnumFacing.DOWN;
-			else if (type == 1)
-				return side == EnumFacing.UP;
+			if (type  ==  0) { return side == EnumFacing.DOWN; }
+			else if (type == 1) { return side == EnumFacing.UP; }
 		}
 		return true;
 	}
 
-    @SuppressWarnings("deprecation")
-	@Override @Nonnull public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
+    @SuppressWarnings("deprecation") @Override @Nonnull public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess world, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
-			if (type == 2) return BlockFaceShape.SOLID;
-			else if ((type == 0 && side == EnumFacing.DOWN) || (type == 1 && side == EnumFacing.UP)) return BlockFaceShape.SOLID;
+			if (type == 2) { return BlockFaceShape.SOLID; }
+			else if ((type == 0 && side == EnumFacing.DOWN) || (type == 1 && side == EnumFacing.UP)) { return BlockFaceShape.SOLID; }
 			else return BlockFaceShape.UNDEFINED;
 		}
 		return BlockFaceShape.SOLID;
@@ -77,8 +71,8 @@ public class BlockITSlab<E extends Enum<E> & BlockITBase.IBlockEnum> extends Blo
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TileEntityITSlab) {
 			int type = ((TileEntityITSlab)te).slabType;
-			if (type == 0) return new AxisAlignedBB(0, 0, 0, 1, .5f, 1);
-			else if (type == 1) return new AxisAlignedBB(0, .5f, 0, 1, 1, 1);
+			if (type == 0) { return new AxisAlignedBB(0, 0, 0, 1, .5f, 1); }
+			else if (type == 1) { return new AxisAlignedBB(0, .5f, 0, 1, 1, 1); }
 			else return FULL_BLOCK_AABB;
 		}
 		else return new AxisAlignedBB(0, 0, 0, 1, .5f, 1);

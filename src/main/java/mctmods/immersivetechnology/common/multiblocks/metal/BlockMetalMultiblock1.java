@@ -2,7 +2,22 @@ package mctmods.immersivetechnology.common.multiblocks.metal;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.*;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilerliquid.TileEntityBoilerLiquidSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.electrolyticcruciblebattery.TileEntityElectrolyticCrucibleBatteryMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.electrolyticcruciblebattery.TileEntityElectrolyticCrucibleBatterySlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityGasTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.gasturbine.TileEntityGasTurbineSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.heatexchanger.TileEntityHeatExchangerMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.heatexchanger.TileEntityHeatExchangerSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.highpressuresteamturbine.TileEntityHighPressureSteamTurbineMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.highpressuresteamturbine.TileEntityHighPressureSteamTurbineSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.meltingcrucible.TileEntityMeltingCrucibleMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.meltingcrucible.TileEntityMeltingCrucibleSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.radiator.TileEntityRadiatorMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.radiator.TileEntityRadiatorSlave;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntitySolarMelterMaster;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntitySolarMelterSlave;
 import mctmods.immersivetechnology.common.multiblocks.metal.types.BlockType_MetalMultiblock1;
 
 import com.immersiveconvergence.api.block.ICProperties;

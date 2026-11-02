@@ -1,16 +1,15 @@
 package mctmods.immersivetechnology.common.util;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
 import java.util.HashSet;
 import java.util.Set;
 
-@SuppressWarnings("unused")
-public class ITSounds {
+@SuppressWarnings("unused") public class ITSounds {
 	static Set<ITSoundEvent> registeredEvents = new HashSet<>();
 	public static ITSoundEvent advancedCokeOven = registerSound("advancedCokeOven");
 	public static ITSoundEvent advancedCokeOvenFan = registerSound("advancedCokeOvenFan");

@@ -1,0 +1,43 @@
+package mctmods.immersivetechnology.core.integration.crafttweaker;
+
+import com.immersiveconvergence.api.fluid.ICPipes;
+
+import crafttweaker.CraftTweakerAPI;
+import crafttweaker.IAction;
+import crafttweaker.api.liquid.ILiquidStack;
+import net.minecraftforge.fluids.Fluid;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenMethod;
+
+@ZenClass("mods.immersivetechnology.PressurizedFluid") public class PressurizedFluid {
+
+    @ZenMethod public static void add(ILiquidStack fluid) {
+        Fluid actualFluid = CraftTweakerHelper.toFluidStack(fluid).getFluid();
+        if (ICPipes.isNormallyPressurized(actualFluid)) { return; }
+        CraftTweakerAPI.apply(new Add(actualFluid));
+    }
+
+    @ZenMethod public static void remove(ILiquidStack fluid) {
+        Fluid actualFluid = CraftTweakerHelper.toFluidStack(fluid).getFluid();
+        if (!ICPipes.isNormallyPressurized(actualFluid)) { return; }
+        CraftTweakerAPI.apply(new Remove(actualFluid));
+    }
+
+    private static class Add implements IAction {
+        public Fluid fluid;
+        public Add(Fluid fluid) { this.fluid = fluid; }
+
+        @Override public void apply() { ICPipes.addNormallyPressurized(fluid); }
+
+        @Override public String describe() { return "Adding Naturally Pressurized Fluid " + fluid.getName(); }
+    }
+
+    private static class Remove implements IAction {
+        public Fluid fluid;
+        public Remove(Fluid fluid) { this.fluid = fluid; }
+
+        @Override public void apply() { ICPipes.removeNormallyPressurized(fluid); }
+
+        @Override public String describe() { return "Removing Naturally Pressurized Fluid " + fluid.getName(); }
+    }
+}

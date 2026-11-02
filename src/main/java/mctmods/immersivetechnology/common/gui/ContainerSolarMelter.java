@@ -1,11 +1,11 @@
 package mctmods.immersivetechnology.common.gui;
 
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntitySolarMelterMaster;
+import mctmods.immersivetechnology.common.recipes.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.common.util.ITContainerHelper;
+
 import com.immersiveconvergence.api.gui.ICContainerBase;
 import com.immersiveconvergence.api.gui.ICSlot;
-
-import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarMelterMaster;
-
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -20,14 +20,10 @@ public class ContainerSolarMelter extends ICContainerBase<TileEntitySolarMelterM
 
         slotCount = TileEntitySolarMelterMaster.slotCount;
         this.addSlotToContainer(new Slot(Objects.requireNonNull(this.inv), 0, 80, 17) {
-            @Override public boolean isItemValid(@Nonnull ItemStack itemStack) {
-                return MeltingCrucibleRecipe.findRecipe(itemStack) != null;
-            }
+            @Override public boolean isItemValid(@Nonnull ItemStack itemStack) { return MeltingCrucibleRecipe.findRecipe(itemStack) != null; }
         });
         this.addSlotToContainer(new ICSlot.FluidContainer(this, this.inv, 1, 148, 17, 2) {
-            @Override public boolean isItemValid(ItemStack itemStack) {
-                return itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) || FluidUtil.getFluidHandler(itemStack) != null;
-            }
+            @Override public boolean isItemValid(@Nonnull ItemStack itemStack) { return itemStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null) || FluidUtil.getFluidHandler(itemStack) != null; }
         });
         this.addSlotToContainer(new ICSlot.Output(this, this.inv, 2, 148, 53));
 

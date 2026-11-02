@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
 
+import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityAdvancedCokeOvenBaseheater;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityHeatCreative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityRotorCreative;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalDevice;
-import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -23,7 +23,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
-
 import javax.annotation.Nonnull;
 
 public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice> {
@@ -50,10 +49,7 @@ public class BlockMetalDevice extends BlockITTileProvider<BlockType_MetalDevice>
     @Override public boolean canITBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack) {
         if (stack.getItemDamage() == BlockType_MetalDevice.ADVANCED_COKE_OVEN_BASEHEATER.getMeta()) {
             EnumFacing f = EnumFacing.fromAngle(player.rotationYaw);
-            if (f.getAxis() == Axis.Z) {
-                return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0))
-                        && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0));
-            }
+            if (f.getAxis() == Axis.Z) { return world.getBlockState(pos.add(1, 0, 0)).getBlock().isReplaceable(world, pos.add(1, 0, 0)) && world.getBlockState(pos.add(-1, 0, 0)).getBlock().isReplaceable(world, pos.add(-1, 0, 0)); }
             return world.getBlockState(pos.add(0, 0, 1)).getBlock().isReplaceable(world, pos.add(0, 0, 1))
                     && world.getBlockState(pos.add(0, 0, -1)).getBlock().isReplaceable(world, pos.add(0, 0, -1));
         }

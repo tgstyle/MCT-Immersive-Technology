@@ -1,28 +1,26 @@
 package mctmods.immersivetechnology.common.util;
 
+import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.common.recipes.BoilerLiquidRecipe;
+import mctmods.immersivetechnology.common.recipes.BoilerSolidRecipe;
+import mctmods.immersivetechnology.common.recipes.BoilerTankRecipe;
+import mctmods.immersivetechnology.common.recipes.CoolingTowerRecipe;
+import mctmods.immersivetechnology.common.recipes.DistillerRecipe;
+import mctmods.immersivetechnology.common.recipes.ElectrolyticCrucibleBatteryRecipe;
+import mctmods.immersivetechnology.common.recipes.GasTurbineRecipe;
+import mctmods.immersivetechnology.common.recipes.HeatExchangerRecipe;
+import mctmods.immersivetechnology.common.recipes.HighPressureSteamTurbineRecipe;
+import mctmods.immersivetechnology.common.recipes.MeltingCrucibleRecipe;
+import mctmods.immersivetechnology.common.recipes.RadiatorRecipe;
+import mctmods.immersivetechnology.common.recipes.SolarTowerRecipe;
+import mctmods.immersivetechnology.common.recipes.SteamTurbineRecipe;
+
 import com.immersiveconvergence.api.crafting.ICIngredientStack;
 import com.immersiveconvergence.api.crafting.MultiblockRecipeLoader;
-
-import mctmods.immersivetechnology.ImmersiveTechnology;
-import mctmods.immersivetechnology.api.crafting.BoilerLiquidRecipe;
-import mctmods.immersivetechnology.api.crafting.BoilerSolidRecipe;
-import mctmods.immersivetechnology.api.crafting.BoilerTankRecipe;
-import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
-import mctmods.immersivetechnology.api.crafting.DistillerRecipe;
-import mctmods.immersivetechnology.api.crafting.ElectrolyticCrucibleBatteryRecipe;
-import mctmods.immersivetechnology.api.crafting.GasTurbineRecipe;
-import mctmods.immersivetechnology.api.crafting.HeatExchangerRecipe;
-import mctmods.immersivetechnology.api.crafting.HighPressureSteamTurbineRecipe;
-import mctmods.immersivetechnology.api.crafting.MeltingCrucibleRecipe;
-import mctmods.immersivetechnology.api.crafting.RadiatorRecipe;
-import mctmods.immersivetechnology.api.crafting.SolarTowerRecipe;
-import mctmods.immersivetechnology.api.crafting.SteamTurbineRecipe;
-
 import com.google.gson.JsonObject;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.common.crafting.CraftingHelper;
-
 import static com.immersiveconvergence.api.crafting.MultiblockRecipeLoader.getFluidStack;
 import static com.immersiveconvergence.api.crafting.MultiblockRecipeLoader.optionalFluidStack;
 

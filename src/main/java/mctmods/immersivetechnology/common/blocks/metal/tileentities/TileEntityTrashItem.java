@@ -1,12 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
-import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
-
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
-import mctmods.immersivetechnology.common.shared.ITrashCanBounds;
+import mctmods.immersivetechnology.common.blocks.ITrashCanBounds;
+import mctmods.immersivetechnology.common.gui.ITGUI;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.config.Config.ITConfig.Settings;
+
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -66,8 +65,7 @@ public class TileEntityTrashItem extends TileEntityCommonOSD implements IItemHan
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY; }
 
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @SuppressWarnings("unchecked") @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) { return (T)this; }
         return super.getCapability(capability, facing);
     }

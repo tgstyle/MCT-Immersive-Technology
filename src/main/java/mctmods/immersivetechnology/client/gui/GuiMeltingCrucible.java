@@ -1,18 +1,15 @@
 package mctmods.immersivetechnology.client.gui;
 
 
+import mctmods.immersivetechnology.common.gui.ContainerMeltingCrucible;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.meltingcrucible.TileEntityMeltingCrucibleMaster;
+
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
-
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntityMeltingCrucibleMaster;
-import mctmods.immersivetechnology.common.gui.ContainerMeltingCrucible;
-
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.text.TextFormatting;
-
 import org.lwjgl.opengl.GL11;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -31,8 +28,7 @@ public class GuiMeltingCrucible extends GuiICContainerBase {
 
         ICClientUtils.handleGuiTank(tile.tanks[0], guiLeft + 126, guiTop + 21, 15, 47, 177, 31, 20, 51, mx, my, "immersivetech:textures/gui/melting_crucible.png", tooltip);
 
-        if (mx > guiLeft + 16 && mx < guiLeft + 23 && my > guiTop + 21 && my < guiTop + 68)
-            tooltip.add(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF");
+        if (mx > guiLeft + 16 && mx < guiLeft + 23 && my > guiTop + 21 && my < guiTop + 68) { tooltip.add(tile.getEnergyStored(null) + "/" + tile.getMaxEnergyStored(null) + " RF"); }
         if (mx >= guiLeft + 30 && mx < guiLeft + 79 && my >= guiTop + 9 && my < guiTop + 18) {
             DecimalFormat df = new DecimalFormat("0.00");
             tooltip.add("Temperature");

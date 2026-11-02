@@ -1,23 +1,19 @@
 package mctmods.immersivetechnology.common.blocks;
 
-import com.immersiveconvergence.api.ICMods;
-import com.immersiveconvergence.api.block.ICProperties;
-import com.immersiveconvergence.api.client.IICOBJModelCallback;
-
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityFluidValve;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityLoadController;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
-import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonValve;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.common.property.Properties;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonValve;
+
+import com.immersiveconvergence.api.ICMods;
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.IICOBJModelCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
@@ -27,11 +23,13 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import java.util.Arrays;
 import java.util.Locale;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> {
 
@@ -51,17 +49,11 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		LOAD_CONTROLLER,
 		STACK_LIMITER;
 
-		@Override @Nonnull public String getName() {
-			return this.toString().toLowerCase(Locale.ENGLISH);
-		}
+		@Override @Nonnull public String getName() { return this.toString().toLowerCase(Locale.ENGLISH); }
 
-		@Override public int getMeta() {
-			return ordinal();
-		}
+		@Override public int getMeta() { return ordinal(); }
 
-		@Override public boolean listForCreative() {
-			return true;
-		}
+		@Override public boolean listForCreative() { return true; }
 	}
 
 	public BlockValve() {
@@ -74,8 +66,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		this.setAllNotNormalBlock();
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override @Nonnull protected BlockStateContainer createBlockState() {
+	@SuppressWarnings("rawtypes") @Override @Nonnull protected BlockStateContainer createBlockState() {
 		BlockStateContainer base = super.createBlockState();
 		IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState)base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
 		unlisted = ICProperties.appendConnections(unlisted);
@@ -87,8 +78,7 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 
 	@Override @Nonnull public String getCustomStateMapping(int meta, boolean itemBlock) { return BlockType_Valve.values()[meta].getName(); }
 
-	@SuppressWarnings("deprecation")
-	@Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedSide, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer) {
+	@SuppressWarnings("deprecation") @Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedSide, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer) {
 		IBlockState state = super.getStateForPlacement(world, pos, clickedSide, hitX, hitY, hitZ, meta, placer);
 		return state.withProperty(ROTATION, EnumFacing.fromAngle(placer.rotationYaw).getHorizontalIndex());
 	}
@@ -100,7 +90,5 @@ public class BlockValve extends BlockITTileProvider<BlockValve.BlockType_Valve> 
 		if (te instanceof TileEntityCommonValve) { ((TileEntityCommonValve)te).updateOpenState(); }
 	}
 
-	@Override public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
-		return true;
-	}
+	@Override public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) { return true; }
 }

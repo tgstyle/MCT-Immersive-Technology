@@ -1,0 +1,97 @@
+package mctmods.immersivetechnology.core.integration;
+
+import mctmods.immersivetechnology.common.util.ITLogger;
+import mctmods.immersivetechnology.core.integration.computercraft.CCHelper;
+import mctmods.immersivetechnology.core.integration.crafttweaker.CraftTweakerHelper;
+import mctmods.immersivetechnology.core.integration.opencomputers.OCHelper;
+import mctmods.immersivetechnology.core.integration.top.OneProbeHelper;
+
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Consumer;
+
+@SuppressWarnings("unused") public abstract class ITCompatModule {
+	public static HashMap<String, Class<? extends ITCompatModule>> moduleClasses = new HashMap<>();
+	public static Set<ITCompatModule> modules = new HashSet<>();
+
+	public static Consumer<Object> jeiAddFunc = o -> {};
+	public static Consumer<Object> jeiRemoveFunc = o -> {};
+
+	public static boolean isAdvancedRocketryLoaded = false;
+
+	static {
+		moduleClasses.put("crafttweaker", CraftTweakerHelper.class);
+		moduleClasses.put("theoneprobe", OneProbeHelper.class);
+		moduleClasses.put("opencomputers", OCHelper.class);
+		moduleClasses.put("computercraft", CCHelper.class);
+	}
+
+	public static void doModulesPreInit() {
+		for (Entry<String, Class<? extends ITCompatModule>> e : moduleClasses.entrySet()) {
+			if (Loader.isModLoaded(e.getKey())) {
+				try {
+					ITCompatModule m = e.getValue().newInstance();
+					modules.add(m);
+					m.preInit();
+				} catch(Exception exception) {
+                    ITLogger.logger.error("Compat module for {} could not be preInitialized. Report this and include the error message below!", e.getKey(), exception);
+				}
+			}
+		}
+		if (Loader.isModLoaded("advancedrocketry")) { isAdvancedRocketryLoaded = true; }
+	}
+
+	public static void doModulesInit() {
+		for (ITCompatModule compat : ITCompatModule.modules) {
+			try {
+				compat.init();
+			} catch(Exception exception) {
+                ITLogger.logger.error("Compat module for {} could not be initialized. Report this and include the error message below!", compat, exception);
+			}
+		}
+	}
+
+	public static void doModulesPostInit() {
+		for (ITCompatModule compat : ITCompatModule.modules) {
+			try {
+				compat.postInit();
+			} catch(Exception exception) {
+                ITLogger.logger.error("Compat module for {} could not be postInitialized. Report this and include the error message below!", compat, exception);
+			}
+		}
+	}
+
+	public static boolean serverStartingDone = false;
+	public static void doModulesLoadComplete() {
+		if (!serverStartingDone) {
+			serverStartingDone = true;
+			for (ITCompatModule compat : ITCompatModule.modules) {
+				try {
+					compat.loadComplete();
+				} catch(Exception exception) {
+                    ITLogger.logger.error("Compat module for {} could not be initialized. Report this and include the error message below!", compat, exception);
+				}
+			}
+		}
+	}
+
+	public abstract void preInit();
+
+	public abstract void init();
+
+	public abstract void postInit();
+
+	public void loadComplete() { }
+
+	@SideOnly(Side.CLIENT) public void clientPreInit() { }
+
+	@SideOnly(Side.CLIENT) public void clientInit() { }
+
+	@SideOnly(Side.CLIENT) public void clientPostInit() { }
+}
+

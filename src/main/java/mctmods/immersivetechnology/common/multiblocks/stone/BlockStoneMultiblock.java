@@ -2,13 +2,13 @@ package mctmods.immersivetechnology.common.multiblocks.stone;
 
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.multiblocks.BlockITMultiblock;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenSlave;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerMaster;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityCoolingTowerSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityAdvancedCokeOvenMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityAdvancedCokeOvenSlave;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityCoolingTowerMaster;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.coolingtower.TileEntityCoolingTowerSlave;
 import mctmods.immersivetechnology.common.multiblocks.stone.types.BlockType_StoneMultiblock;
-import com.immersiveconvergence.api.block.ICProperties;
 
+import com.immersiveconvergence.api.block.ICProperties;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -18,7 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.Properties;
-
 import javax.annotation.Nonnull;
 
 public class BlockStoneMultiblock extends BlockITMultiblock<BlockType_StoneMultiblock> {

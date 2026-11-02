@@ -1,11 +1,12 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashEnergy;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashFluid;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalTrash;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -13,7 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import javax.annotation.Nonnull;
 
 public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
@@ -30,9 +30,7 @@ public class BlockMetalTrash extends BlockITTileProvider<BlockType_MetalTrash> {
 		return state;
 	}
 
-	@Override public boolean allowHammerHarvest(IBlockState state) {
-		return true;
-	}
+	@Override public boolean allowHammerHarvest(IBlockState state) { return true; }
 
 	@Override public TileEntity createBasicTE(World worldIn, BlockType_MetalTrash type) {
 		switch(type) {

@@ -1,6 +1,7 @@
 package mctmods.immersivetechnology.common.gui;
 
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityTrashItem;
+import mctmods.immersivetechnology.common.util.ITContainerHelper;
 
 import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,9 +19,7 @@ public class ContainerTrashItem extends Container {
 		for (Slot slot : ITContainerHelper.playerInventorySlots(inventoryPlayer, 85)) { addSlotToContainer(slot); }
 	}
 
-	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) {
-		return tile != null && tile.getWorld().getTileEntity(tile.getPos()) == tile && player.getDistanceSq(tile.getPos().getX() + .5, tile.getPos().getY() + .5, tile.getPos().getZ() + .5) <= 64;
-	}
+	@Override public boolean canInteractWith(@Nonnull EntityPlayer player) { return tile != null && tile.getWorld().getTileEntity(tile.getPos()) == tile && player.getDistanceSq(tile.getPos().getX() + .5, tile.getPos().getY() + .5, tile.getPos().getZ() + .5) <= 64; }
 
 	@Override @Nonnull public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int index) {
 		Slot slot = getSlot(index);

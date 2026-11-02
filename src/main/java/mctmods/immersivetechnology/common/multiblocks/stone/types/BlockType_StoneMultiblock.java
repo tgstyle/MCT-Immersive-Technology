@@ -1,8 +1,8 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.types;
 
 import mctmods.immersivetechnology.common.blocks.BlockITBase;
-import net.minecraft.util.IStringSerializable;
 
+import net.minecraft.util.IStringSerializable;
 import javax.annotation.Nonnull;
 import java.util.Locale;
 

@@ -1,19 +1,16 @@
 package mctmods.immersivetechnology.client.gui;
 
-import com.immersiveconvergence.api.client.ICClientUtils;
-
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityStackLimiter;
 import mctmods.immersivetechnology.common.util.TranslationKey;
+
+import com.immersiveconvergence.api.client.ICClientUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
-
 import java.awt.*;
 
 public class GuiStackLimiter extends GuiCommonValve {
-	public GuiStackLimiter(TileEntityStackLimiter tile) {
-		this.tile = tile;
-	}
+	public GuiStackLimiter(TileEntityStackLimiter tile) { this.tile = tile; }
 
 	@Override public void initGui() {
 		super.initGui();

@@ -1,20 +1,18 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.gui.ContainerAdvancedCokeOven;
+import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.advancedcokeoven.TileEntityAdvancedCokeOvenMaster;
+
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
-
-import mctmods.immersivetechnology.common.gui.ContainerAdvancedCokeOven;
-import mctmods.immersivetechnology.common.multiblocks.stone.tileentities.TileEntityAdvancedCokeOvenMaster;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
-
 import java.util.ArrayList;
 
 public class GuiAdvancedCokeOven extends GuiICContainerBase {
     private static final String TEXTURE = "immersivetech:textures/gui/advanced_coke_oven.png";
-
     TileEntityAdvancedCokeOvenMaster tile;
 
     public GuiAdvancedCokeOven(InventoryPlayer inventoryPlayer, TileEntityAdvancedCokeOvenMaster tile) {

@@ -2,6 +2,7 @@ package mctmods.immersivetechnology.common.fluid;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
 import mctmods.immersivetechnology.common.util.ITLogger;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -13,7 +14,6 @@ public class FluidColored extends Fluid {
 	static final ResourceLocation ICON_Flowing = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_flowing");
 	static final ResourceLocation ICON_GasStill = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_gas_still");
 	static final ResourceLocation ICON_GasFlowing = new ResourceLocation(ImmersiveTechnology.MODID + ":block/fluid/fluid_gas_flowing");
-
 	int color;
 
 	public FluidColored(String name, int color, int temp, int density, int viscosity) {
@@ -50,7 +50,5 @@ public class FluidColored extends Fluid {
 		return FluidRegistry.getFluid(fluid.getName());
 	}
 
-	@Override public int getColor() {
-		return color|0xff000000;
-	}
+	@Override public int getColor() { return color|0xff000000; }
 }

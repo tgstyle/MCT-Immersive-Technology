@@ -1,18 +1,15 @@
 package mctmods.immersivetechnology.client.gui;
 
 
+import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solartower.TileEntitySolarTowerMaster;
+
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
-
-import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.TileEntitySolarTowerMaster;
-import mctmods.immersivetechnology.common.gui.ContainerSolarTower;
-
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.text.TextFormatting;
-
 import org.lwjgl.opengl.GL11;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 

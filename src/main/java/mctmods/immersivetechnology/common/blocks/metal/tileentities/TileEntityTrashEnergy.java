@@ -1,15 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.blocks.ITrashCanBounds;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.config.Config.ITConfig.Settings;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
-import mctmods.immersivetechnology.common.shared.ITrashCanBounds;
-import mctmods.immersivetechnology.common.util.TranslationKey;
-
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -18,8 +16,7 @@ public class TileEntityTrashEnergy extends TileEntityCommonOSD implements IEnerg
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityEnergy.ENERGY; }
 
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @SuppressWarnings("unchecked") @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityEnergy.ENERGY) { return (T)this; }
         return super.getCapability(capability, facing);
     }

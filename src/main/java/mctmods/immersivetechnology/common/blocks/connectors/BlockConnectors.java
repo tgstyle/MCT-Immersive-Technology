@@ -1,15 +1,14 @@
 package mctmods.immersivetechnology.common.blocks.connectors;
 
 
-import com.immersiveconvergence.api.block.ICProperties;
-import com.immersiveconvergence.api.client.IICOBJModelCallback;
-import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectorRedstone;
-
+import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
 import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Connectors;
-import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
 
+import com.immersiveconvergence.api.block.ICProperties;
+import com.immersiveconvergence.api.client.IICOBJModelCallback;
+import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectorRedstone;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -27,7 +26,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,8 +41,7 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         setAllNotNormalBlock();
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override @Nonnull protected BlockStateContainer createBlockState() {
+    @SuppressWarnings("rawtypes") @Override @Nonnull protected BlockStateContainer createBlockState() {
         BlockStateContainer base = super.createBlockState();
         IUnlistedProperty[] unlisted = (base instanceof ExtendedBlockState) ? ((ExtendedBlockState) base).getUnlistedProperties().toArray(new IUnlistedProperty[0]) : new IUnlistedProperty[0];
         unlisted = ICProperties.appendConnections(unlisted);
@@ -62,12 +59,11 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
                 connector.getWorld().setBlockToAir(pos);
                 return;
             }
-            if (connector.isRSInput()) connector.rsDirty = true;
+            if (connector.isRSInput()) { connector.rsDirty = true; }
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedSide, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer) {
+    @SuppressWarnings("deprecation") @Override @Nonnull public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing clickedSide, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer) {
         IBlockState state = super.getStateForPlacement(world, pos, clickedSide, hitX, hitY, hitZ, meta, placer);
         state = state.withProperty(ICProperties.FACING_ALL, clickedSide.getOpposite());
         if (BlockType_Connectors.values()[meta] == BlockType_Connectors.CONNECTORS_TIMER) { state = state.withProperty(ROTATION, rotationFor(placer)); }
@@ -94,14 +90,12 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
     }
 
     @Override public TileEntity createBasicTE(@Nonnull World world, @Nonnull BlockType_Connectors type) {
-        if (type == BlockType_Connectors.CONNECTORS_TIMER) {
-            return new TileEntityTimer();
-        }
+        if (type == BlockType_Connectors.CONNECTORS_TIMER) { return new TileEntityTimer(); }
         return null;
     }
 
     @Override public boolean canConnectRedstone(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
-        if (side == null) return false;
+        if (side == null) { return false; }
         BlockType_Connectors type = state.getValue(property);
         if (type == BlockType_Connectors.CONNECTORS_TIMER) {
             TileEntity te = world.getTileEntity(pos);

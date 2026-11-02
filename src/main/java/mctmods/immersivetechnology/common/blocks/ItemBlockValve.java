@@ -14,6 +14,5 @@ public class ItemBlockValve extends ItemBlockITBase implements IICOBJModelCallba
 
 	public ItemBlockValve(Block b) { super(b); }
 
-	@SideOnly(Side.CLIENT)
-	@Override public boolean shouldRenderGroup(@Nonnull ItemStack object, @Nonnull String group) { return !"Handle_Closed".equals(group); }
+	@SideOnly(Side.CLIENT) @Override public boolean shouldRenderGroup(@Nonnull ItemStack object, @Nonnull String group) { return !"Handle_Closed".equals(group); }
 }

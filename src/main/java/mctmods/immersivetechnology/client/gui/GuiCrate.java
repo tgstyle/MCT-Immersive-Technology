@@ -5,7 +5,6 @@ import mctmods.immersivetechnology.common.gui.ContainerCrate;
 
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
-
 import net.minecraft.entity.player.InventoryPlayer;
 
 public class GuiCrate extends GuiICContainerBase {

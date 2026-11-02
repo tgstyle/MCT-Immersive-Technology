@@ -1,0 +1,28 @@
+package mctmods.immersivetechnology.client.renderer.multiblock;
+
+import mctmods.immersivetechnology.client.util.ITTESRHelper;
+import mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarmelter.TileEntitySolarMelterMaster;
+
+import com.immersiveconvergence.api.particles.ColoredBeamRenderer;
+import com.immersiveconvergence.api.multiblock.PoICache;
+import javax.annotation.Nonnull;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.math.BlockPos;
+
+public class TileRenderSolarMelter extends TileEntitySpecialRenderer<TileEntitySolarMelterMaster> {
+    @Override public void render(@Nonnull TileEntitySolarMelterMaster te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        if (ITTESRHelper.outOfRenderRange(x, y, z)) { return; }
+        if (!te.formed || te.isInvalid()) { return; }
+        if (te.heatLevel < te.targetTemperature() || te.reflectorStrength <= 0) { return; }
+        for (PoICache beam : te.pois("particle0")) {
+            BlockPos offset = te.poiWorldPos(beam).subtract(te.getPos());
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x, y, z);
+            ColoredBeamRenderer.renderBeam(offset.getX(), offset.getY(), offset.getZ(), 16F, partialTicks, 1F, 1F, 0F, 1F, 1F, 0F, 0.2F);
+            GlStateManager.popMatrix();
+        }
+    }
+
+    @Override public boolean isGlobalRenderer(@Nonnull TileEntitySolarMelterMaster te) { return true; }
+}

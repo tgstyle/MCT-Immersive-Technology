@@ -1,0 +1,63 @@
+package mctmods.immersivetechnology.client.integration.jei.heatexchanger;
+
+import mctmods.immersivetechnology.client.integration.jei.ITMultiblockIngredients;
+import mctmods.immersivetechnology.client.integration.jei.ITRecipeCategory;
+import mctmods.immersivetechnology.client.integration.jei.JEIHelper;
+import mctmods.immersivetechnology.common.recipes.HeatExchangerRecipe;
+
+import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.gui.*;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
+import java.util.List;
+import javax.annotation.Nonnull;
+
+public class HeatExchangerRecipeCategory extends ITRecipeCategory<HeatExchangerRecipe, HeatExchangerRecipeWrapper> {
+
+    public static ResourceLocation background = new ResourceLocation("immersivetech:textures/gui/heat_exchanger_jei.png");
+    private final IDrawable tankOverlay;
+    private final IDrawableAnimated arrow;
+    private final IDrawableAnimated drops;
+
+    public HeatExchangerRecipeCategory(IGuiHelper helper) {
+        super("heatExchanger", "tile.immersivetech.metal_multiblock1.heat_exchanger.name", helper.createDrawable(background, 0, 0, 176, 64), HeatExchangerRecipe.class, ITMultiblockIngredients.HEAT_EXCHANGER);
+        tankOverlay = helper.drawableBuilder(background, 178, 2, 16, 47).addPadding(-2, 2, -2, 2).build();
+        IDrawableStatic staticImage = helper.createDrawable(background, 196, 0, 32, 9);
+        this.arrow = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.LEFT, false);
+        staticImage = helper.createDrawable(background, 196, 9, 20, 15);
+        this.drops = helper.createAnimatedDrawable(staticImage, 200, IDrawableAnimated.StartDirection.BOTTOM, false);
+    }
+
+    @Override public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull HeatExchangerRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+        List<List<FluidStack>> inputs = ingredients.getInputs(VanillaTypes.FLUID);
+        List<List<FluidStack>> outputs = ingredients.getOutputs(VanillaTypes.FLUID);
+
+        int tankSize = getMaxFluidAmount(inputs, outputs);
+
+        int tankIndex = 0;
+        IGuiFluidStackGroup guiFluidStacks = recipeLayout.getFluidStacks();
+        guiFluidStacks.init(tankIndex, true, 35, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, !inputs.isEmpty() ? inputs.get(0) : null);
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, true, 12, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, inputs.size() > 1 ? inputs.get(1) : null);
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 125, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, !outputs.isEmpty() ? outputs.get(0) : null);
+        tankIndex++;
+        guiFluidStacks.init(tankIndex, false, 148, 12, 16, 47, tankSize, true, tankOverlay);
+        guiFluidStacks.set(tankIndex, outputs.size() > 1 ? outputs.get(1) : null);
+        guiFluidStacks.addTooltipCallback(JEIHelper.fluidTooltipCallback);
+    }
+
+    @Override @Nonnull public IRecipeWrapper getRecipeWrapper(@Nonnull HeatExchangerRecipe recipe) { return new HeatExchangerRecipeWrapper(recipe); }
+
+    @Override public void drawExtras(@Nonnull Minecraft minecraft) {
+        arrow.draw(minecraft, 73, 50);
+        drops.draw(minecraft, 73, 40);
+    }
+}

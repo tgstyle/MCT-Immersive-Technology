@@ -1,0 +1,73 @@
+package mctmods.immersivetechnology.common.multiblocks.metal.tileentities.solarreflector;
+
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.recipes.DummyRecipe;
+import mctmods.immersivetechnology.common.util.ITUtils;
+
+import com.immersiveconvergence.api.crafting.ICMultiblockRecipe;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.ICTickingRegistry;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import javax.annotation.Nonnull;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
+
+public class TileEntitySolarReflectorSlave extends TileEntityTemplateMultiblock<TileEntitySolarReflectorSlave, ICMultiblockRecipe, TileEntitySolarReflectorMaster> implements ICBlockInterfaces.IBlockBounds, ICBlockInterfaces.ICollisionBounds, ICBlockInterfaces.ISelectionBounds {
+    private int loadGrace = 0;
+
+    public TileEntitySolarReflectorSlave() {
+        super(TileEntityITMultiblockPartSolarReflector.instance, 0, false);
+        this.shouldDropInventory = false;
+    }
+
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+
+    @Override public void update() {
+        if (isDummy()) { ICTickingRegistry.removeFromTicking(this); }
+        super.update();
+        if (!formed) { return; }
+        if (world.isRemote) { return; }
+        if (master() == null) { if (loadGrace++ > 100) { invalidate(); } }
+        else loadGrace = 0;
+    }
+
+    @Override public boolean isDummy() { return true; }
+
+    @Override public TileEntitySolarReflectorMaster master() { return resolveMaster(TileEntitySolarReflectorMaster.class); }
+
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("solar_reflector"); }
+
+    @Override protected boolean useMirroredShape() { return false; }
+
+    @Override public NonNullList<ItemStack> getInventory() { return NonNullList.create(); }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return false; }
+
+    @Override public int getSlotLimit(int slot) { return 0; }
+
+    @Override @Nonnull public IFluidTank[] getInternalTanks() { return new IFluidTank[0]; }
+
+    @Override protected @Nonnull ICMultiblockRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
+
+    @Override @Nonnull public int[] getOutputTanks() { return ITUtils.EMPTY_INT_ARRAY; }
+
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<ICMultiblockRecipe> process) { return true; }
+
+    @Override public int getMaxProcessPerTick() { return 1; }
+
+    @Override public int getProcessQueueMaxLength() { return 1; }
+
+    @Override protected @Nonnull IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) { return ITUtils.emptyIFluidTankList; }
+
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) { return false; }
+
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) { return false; }
+}

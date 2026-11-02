@@ -1,13 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal;
 
-import com.immersiveconvergence.api.block.ICProperties;
-
-import mctmods.immersivetechnology.common.shared.BlockITTileProvider;
+import mctmods.immersivetechnology.common.blocks.BlockITTileProvider;
 import mctmods.immersivetechnology.common.blocks.ItemBlockITBase;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelCreative;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelOpen;
 import mctmods.immersivetechnology.common.blocks.metal.tileentities.TileEntityBarrelSteel;
 import mctmods.immersivetechnology.common.blocks.metal.types.BlockType_MetalBarrel;
+
+import com.immersiveconvergence.api.block.ICProperties;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -16,7 +16,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import javax.annotation.Nonnull;
 
 public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel> {
@@ -28,18 +27,14 @@ public class BlockMetalBarrel extends BlockITTileProvider<BlockType_MetalBarrel>
 		this.setAllNotNormalBlock();
 	}
 
-	@Override protected EnumFacing getDefaultFacing() {
-		return EnumFacing.UP;
-	}
+	@Override protected EnumFacing getDefaultFacing() { return EnumFacing.UP; }
 
 	@Override @Nonnull public IBlockState getExtendedState(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
 		state = super.getExtendedState(state, world, pos);
 		return state;
 	}
 
-	@Override public boolean allowHammerHarvest(IBlockState state) {
-		return true;
-	}
+	@Override public boolean allowHammerHarvest(IBlockState state) { return true; }
 
 	@Override public TileEntity createBasicTE(World worldIn, BlockType_MetalBarrel type) {
 		switch(type) {

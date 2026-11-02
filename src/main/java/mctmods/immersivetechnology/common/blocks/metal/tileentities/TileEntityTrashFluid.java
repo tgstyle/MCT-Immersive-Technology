@@ -1,15 +1,13 @@
 package mctmods.immersivetechnology.common.blocks.metal.tileentities;
 
+import mctmods.immersivetechnology.common.blocks.ITrashCanBounds;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.util.TranslationKey;
+import mctmods.immersivetechnology.core.config.Config.ITConfig.Settings;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import mctmods.immersivetechnology.common.Config.ITConfig.Settings;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
-import mctmods.immersivetechnology.common.shared.ITrashCanBounds;
-import mctmods.immersivetechnology.common.util.TranslationKey;
-
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -26,8 +24,7 @@ public class TileEntityTrashFluid extends TileEntityCommonOSD implements IFluidT
 
     @Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY; }
 
-    @SuppressWarnings("unchecked")
-    @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+    @SuppressWarnings("unchecked") @Override @Nullable public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) { return (T)this; }
         return super.getCapability(capability, facing);
     }

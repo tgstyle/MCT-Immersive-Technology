@@ -1,18 +1,17 @@
 package mctmods.immersivetechnology.client.gui;
 
+import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
+import mctmods.immersivetechnology.common.gui.ContainerTimer;
+
 import com.immersiveconvergence.ImmersiveConvergence;
 import com.immersiveconvergence.api.client.gui.ICGuiButton;
 import com.immersiveconvergence.api.client.ICClientUtils;
 import com.immersiveconvergence.api.client.gui.GuiICContainerBase;
 import com.immersiveconvergence.api.network.TileSyncMessage;
-
-import mctmods.immersivetechnology.common.blocks.connectors.tileentities.TileEntityTimer;
-import mctmods.immersivetechnology.common.gui.ContainerTimer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
-
 import javax.annotation.Nonnull;
 
 public class GuiTimer extends GuiICContainerBase {

@@ -1,15 +1,15 @@
 package mctmods.immersivetechnology.common.blocks.wooden.tileentities;
 
+import mctmods.immersivetechnology.common.gui.ITGUI;
+import mctmods.immersivetechnology.common.tileentities.TileEntityCommonOSD;
+import mctmods.immersivetechnology.common.util.TranslationKey;
+
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IGuiTile;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IPlayerInteraction;
 import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ITileDrop;
 import com.immersiveconvergence.api.network.BinaryTileSyncMessage;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import mctmods.immersivetechnology.client.ITGUI;
-import mctmods.immersivetechnology.common.shared.tileentities.TileEntityCommonOSD;
-import mctmods.immersivetechnology.common.util.TranslationKey;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +24,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -68,23 +67,16 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 		nbt.setTag("item", interactiveItemStack.writeToNBT(new NBTTagCompound()));
 	}
 
-	@Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
-    }
+	@Override public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) { return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY; }
 
-	@SuppressWarnings("unchecked")
-	@Override public @Nullable <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T)this;
+	@SuppressWarnings("unchecked") @Override public @Nullable <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) { return (T)this; }
 		return super.getCapability(capability, facing);
 	}
 
-	@Override public int getSlots() {
-		return 1;
-	}
+	@Override public int getSlots() { return 1; }
 
-	@Override @Nonnull public ItemStack getStackInSlot(int i) {
-		return visibleItemStack;
-	}
+	@Override @Nonnull public ItemStack getStackInSlot(int i) { return visibleItemStack; }
 
 	@Override @Nonnull public ItemStack insertItem(int i, @Nonnull ItemStack itemStack, boolean simulate) {
 		if (i != 0 || itemStack.isEmpty()) { return itemStack; }
@@ -100,15 +92,9 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 		return toReturn;
 	}
 
-	@Override
-	public int getSlotLimit(int slot) {
-		return slot == 0 ? (interactiveItemStack.isEmpty() ? 64 : interactiveItemStack.getMaxStackSize()) : 0;
-	}
+	@Override public int getSlotLimit(int slot) { return slot == 0 ? (interactiveItemStack.isEmpty() ? 64 : interactiveItemStack.getMaxStackSize()) : 0; }
 
-	@Override
-	public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-		return slot == 0 && !stack.isEmpty();
-	}
+	@Override public boolean isItemValid(int slot, @Nonnull ItemStack stack) { return slot == 0 && !stack.isEmpty(); }
 
 	@Override public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
 		if (slot == 0) { setItemStack(stack.copy()); }
@@ -158,7 +144,5 @@ public class TileEntityCrate extends TileEntityCommonOSD implements IItemHandler
 		setItemStack(ByteBufUtils.readItemStack(buf));
 	}
 	
-	@Override public TranslationKey text() {
-		return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE;
-	}
+	@Override public TranslationKey text() { return TranslationKey.OVERLAY_OSD_CREATIVE_CRATE_NORMAL_FIRST_LINE; }
 }

@@ -1,11 +1,10 @@
 package mctmods.immersivetechnology.common.multiblocks.stone.process;
 
-import mctmods.immersivetechnology.api.crafting.CoolingTowerRecipe;
+import mctmods.immersivetechnology.common.recipes.CoolingTowerRecipe;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-
 import javax.annotation.Nullable;
 
 public class CoolingTowerProcess {
@@ -50,9 +49,7 @@ public class CoolingTowerProcess {
         }
     }
 
-    private static boolean missing(@Nullable FluidStack drained, FluidStack wanted) {
-        return drained == null || drained.amount < wanted.amount || !drained.isFluidEqual(wanted);
-    }
+    private static boolean missing(@Nullable FluidStack drained, FluidStack wanted) { return drained == null || drained.amount < wanted.amount || !drained.isFluidEqual(wanted); }
 
     private static void fill(FluidTank tank, @Nullable FluidStack output, int amount) {
         if (output == null || output.getFluid() == null || amount <= 0) { return; }

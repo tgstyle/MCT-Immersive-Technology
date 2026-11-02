@@ -1,0 +1,116 @@
+package mctmods.immersivetechnology.common.multiblocks.metal.tileentities.boilertank;
+
+import mctmods.immersivetechnology.common.gui.ITGUI;
+import mctmods.immersivetechnology.common.multiblocks.ITShapes;
+import mctmods.immersivetechnology.common.recipes.DummyRecipe;
+
+import com.immersiveconvergence.api.capability.IHeatConsumer;
+import com.immersiveconvergence.api.multiblock.GenericShape;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IBlockBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ICollisionBounds;
+import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.ISelectionBounds;
+import com.immersiveconvergence.api.multiblock.ICTickingRegistry;
+import com.immersiveconvergence.api.multiblock.TileEntityTemplateMultiblock;
+import com.immersiveconvergence.api.util.IICInventory;
+import javax.annotation.Nonnull;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
+
+public class TileEntityBoilerTankSlave extends TileEntityTemplateMultiblock<TileEntityBoilerTankSlave, DummyRecipe, TileEntityBoilerTankMaster>
+        implements ICBlockInterfaces.IGuiTile, IBlockBounds, ICollisionBounds, ISelectionBounds,
+        IICInventory, ICBlockInterfaces.IComparatorOverride, IHeatConsumer {
+    private int loadGrace = 0;
+
+    public TileEntityBoilerTankSlave() {
+        super(TileEntityITMultiblockPartBoilerTank.instance, 0, true);
+        this.shouldDropInventory = false;
+    }
+
+    @Override public void readCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.readCustomNBT(nbt, descPacket); }
+
+    @Override public void writeCustomNBT(@Nonnull NBTTagCompound nbt, boolean descPacket) { super.writeCustomNBT(nbt, descPacket); }
+
+    @Override public void update() {
+        if (!formed) { return; }
+        if (isDummy()) { ICTickingRegistry.removeFromTicking(this); }
+        super.update();
+        TileEntityBoilerTankMaster m = master();
+        if (m == null) { if (loadGrace++ > 20) { disassemble(); } }
+        else { loadGrace = 0; }
+    }
+
+    @Override public boolean isDummy() { return true; }
+
+    @Override public TileEntityBoilerTankMaster master() { return resolveMaster(TileEntityBoilerTankMaster.class); }
+
+    @Override protected GenericShape getShapeGetter() { return ITShapes.get("boiler_tank"); }
+
+    @Override public int getFluidAmount() {
+        TileEntityBoilerTankMaster m = master();
+        if (m == null || !formed || !m.isHeatInputPoI(posInMultiblock())) { return 0; }
+        return m.tanks[0].getFluidAmount();
+    }
+
+    @Override public boolean acceptsHeatFrom(EnumFacing side) {
+        TileEntityBoilerTankMaster m = master();
+        if (m == null || !formed) { return false; }
+        return m.isPoI("heat_input0", side, posInMultiblock());
+    }
+
+    @Override @Nonnull public NonNullList<ItemStack> getInventory() {
+        TileEntityBoilerTankMaster m = master();
+        return (m == null || !formed) ? NonNullList.withSize(TileEntityBoilerTankMaster.slotCount, ItemStack.EMPTY) : m.inventory;
+    }
+
+    @Override public boolean isStackValid(int slot, ItemStack stack) { return true; }
+
+    @Override public int getSlotLimit(int slot) { return 64; }
+
+    @Override public void doGraphicalUpdates(int slot) {
+        TileEntityBoilerTankMaster m = master();
+        if (m != null) { m.doGraphicalUpdates(slot); }
+    }
+
+    @Override @Nonnull public IFluidTank[] getInternalTanks() {
+        TileEntityBoilerTankMaster m = master();
+        return m == null ? new IFluidTank[0] : m.tanks;
+    }
+
+    @Override protected @Nonnull DummyRecipe readRecipeFromNBT(@Nonnull NBTTagCompound tag) { return DummyRecipe.loadFromNBT(tag); }
+
+    @Override @Nonnull public int[] getOutputTanks() { return new int[]{1}; }
+
+    @Override public boolean additionalCanProcessCheck(@Nonnull MultiblockProcess<DummyRecipe> process) { return true; }
+
+    @Override public int getMaxProcessPerTick() { return 1; }
+
+    @Override public int getProcessQueueMaxLength() { return 1; }
+
+    @Override @Nonnull protected IFluidTank[] getAccessibleFluidTanks(EnumFacing side, BlockPos position) { return new IFluidTank[0]; }
+
+    @Override protected boolean canFillTankFrom(int iTank, @Nonnull EnumFacing side, @Nonnull FluidStack resource, BlockPos position) { return false; }
+
+    @Override protected boolean canDrainTankFrom(int iTank, @Nonnull EnumFacing side, BlockPos position) { return false; }
+
+    @Override public boolean canOpenGui() { return formed; }
+
+    @Override public int getGuiID() { return ITGUI.GUIID_Boiler_Tank; }
+
+    @Override public TileEntity getGuiMaster() {
+        TileEntityBoilerTankMaster m = master();
+        return m == null ? this : m;
+    }
+
+    @Override public int getComparatorInputOverride() {
+        TileEntityBoilerTankMaster m = master();
+        return m == null || !isComparatorPos() ? 0 : m.comparatorValue();
+    }
+
+}
