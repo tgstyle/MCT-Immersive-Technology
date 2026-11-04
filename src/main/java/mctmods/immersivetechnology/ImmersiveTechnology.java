@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-@Mod(modid = ImmersiveTechnology.MODID, name = ImmersiveTechnology.NAME, acceptedMinecraftVersions = "[1.12.2,1.13)", dependencies = "after:immersiveengineering@[0.12-92,);" + "after:immersivefabrication;" + "required-after:immersiveconvergence@[1.0.177,);" + "required-after:mixinbooter@[10.7,);" + "required-after:forge@[14.23.3.2655,);") public class ImmersiveTechnology {
+@Mod(modid = ImmersiveTechnology.MODID, name = ImmersiveTechnology.NAME, acceptedMinecraftVersions = "[1.12.2,1.13)", dependencies = "after:immersiveengineering@[0.12-92,);" + "after:immersivefabrication;" + "required-after:immersiveconvergence@[1.0.183,);" + "required-after:mixinbooter@[10.7,);" + "required-after:forge@[14.23.3.2655,);") public class ImmersiveTechnology {
 
     public static final String MODID = "immersivetech";
     public static final String NAME = "Immersive Technology";
