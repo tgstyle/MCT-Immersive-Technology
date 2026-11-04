@@ -108,7 +108,7 @@ public class TileEntityBarrelCreative extends TileEntityCommonOSD implements IPl
                 if (toOffer == null) { continue; }
                 int accepted = output.fill(toOffer, false);
                 if (accepted <= 0) { continue; }
-                acceptedAmount += output.fill(ICUtils.copyFluidStackWithAmount(toOffer, accepted, true), true);
+                acceptedAmount += output.fill(ICUtils.copyFluidStackWithAmount(toOffer, accepted, false), true);
             }
         }
     }
