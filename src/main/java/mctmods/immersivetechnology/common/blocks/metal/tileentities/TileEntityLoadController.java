@@ -307,7 +307,7 @@ public class TileEntityLoadController extends TileEntityCommonValve implements I
 			}
 			return accepted;
 		}
-		int accepted = Math.min(maxReceive, transferLimit(null));
+		int accepted = Math.min(maxReceive, Math.min(transferLimit(null) - movedThisTick, bufferRoom(null)));
 		if (accepted <= 0) { return 0; }
 		if (!simulate) {
 			bufferedEnergy += accepted;
