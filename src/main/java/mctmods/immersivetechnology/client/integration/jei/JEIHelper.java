@@ -76,7 +76,7 @@ import javax.annotation.Nonnull;
         if (Multiblocks.enable.enable_electrolyticCrucibleBattery) { categories.put(ElectrolyticCrucibleBatteryRecipe.class, new ElectrolyticCrucibleBatteryRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_meltingCrucible || Multiblocks.enable.enable_solarMelter) { categories.put(MeltingCrucibleRecipe.class, new MeltingCrucibleRecipeCategory(guiHelper)); }
         if (Multiblocks.enable.enable_radiator) { categories.put(RadiatorRecipe.class, new RadiatorRecipeCategory(guiHelper)); }
-        registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory[0]));
+        registry.addRecipeCategories(categories.values().toArray(new IRecipeCategory<?>[0]));
     }
 
     @SuppressWarnings("unchecked") @Override public void register(@Nonnull IModRegistry registryIn) {

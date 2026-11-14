@@ -27,7 +27,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -94,7 +94,7 @@ import java.util.Random;
 
 	public void showValveGui(TileEntityCommonValve tile) {}
 
-	@SuppressWarnings("deprecation") public String format(String key, Object... args) { return I18n.translateToLocalFormatted(key, args); }
+	public String format(String key, Object... args) { return new TextComponentTranslation(key, args).getUnformattedText(); }
 
 	public TRSRTransformation modelRotation(int angleX, int angleY) { return TRSRTransformation.identity(); }
 
