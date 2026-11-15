@@ -13,7 +13,7 @@ import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICWireType;
-import com.immersiveconvergence.api.wires.connectors.ICConnectorRedstoneBlockEntity;
+import com.immersiveconvergence.api.wires.fittings.ICFittingRedstoneBlockEntity;
 import com.immersiveconvergence.core.lib.ICLib;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import javax.annotation.Nonnull;
 
-public class ConnectorTimerBlockEntity extends ICConnectorRedstoneBlockEntity implements IServerTickableBE, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction,BlockInterfaces.IBlockOverlayText, MenuProvider , ITileSyncReceiver {
+public class ConnectorTimerBlockEntity extends ICFittingRedstoneBlockEntity implements IServerTickableBE, BlockInterfaces.IRedstoneInputOutput, BlockInterfaces.IScrewdriverInteraction,BlockInterfaces.IBlockOverlayText, MenuProvider , ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private static final int MIN_TARGET = 10;
     private static final int MAX_TARGET = 600;
