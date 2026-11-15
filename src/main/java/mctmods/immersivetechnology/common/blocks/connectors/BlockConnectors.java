@@ -8,7 +8,7 @@ import mctmods.immersivetechnology.common.blocks.connectors.types.BlockType_Conn
 
 import com.immersiveconvergence.api.block.ICProperties;
 import com.immersiveconvergence.api.client.IICOBJModelCallback;
-import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectorRedstone;
+import com.immersiveconvergence.api.wires.fittings.ICTileEntityFittingRedstone;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -52,14 +52,14 @@ public class BlockConnectors extends BlockITTileProvider<BlockType_Connectors> {
         super.neighborChanged(state, world, pos, blockIn, fromPos);
         TileEntity te = world.getTileEntity(pos);
 
-        if (te instanceof ICTileEntityConnectorRedstone) {
-            ICTileEntityConnectorRedstone connector = (ICTileEntityConnectorRedstone) te;
-            if (world.isAirBlock(pos.offset(connector.facing))) {
-                this.dropBlockAsItem(connector.getWorld(), pos, world.getBlockState(pos), 0);
-                connector.getWorld().setBlockToAir(pos);
+        if (te instanceof ICTileEntityFittingRedstone) {
+            ICTileEntityFittingRedstone fitting = (ICTileEntityFittingRedstone) te;
+            if (world.isAirBlock(pos.offset(fitting.facing))) {
+                this.dropBlockAsItem(fitting.getWorld(), pos, world.getBlockState(pos), 0);
+                fitting.getWorld().setBlockToAir(pos);
                 return;
             }
-            if (connector.isRSInput()) { connector.rsDirty = true; }
+            if (fitting.isRSInput()) { fitting.rsDirty = true; }
         }
     }
 

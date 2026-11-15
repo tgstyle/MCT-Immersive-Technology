@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.wires.ICWireCause;
 import com.immersiveconvergence.api.wires.ICWireRole;
 import com.immersiveconvergence.api.wires.ICWireType;
 import com.immersiveconvergence.api.wires.ICWires;
-import com.immersiveconvergence.api.wires.IICEnergyConnector;
+import com.immersiveconvergence.api.wires.IICEnergyFitting;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -31,7 +31,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyStorage, IICEnergyConnector {
+public class TileEntityLoadController extends TileEntityCommonValve implements IEnergyStorage, IICEnergyFitting {
 
 	public static final DummyBattery dummyBattery = new DummyBattery();
 

@@ -12,7 +12,7 @@ import com.immersiveconvergence.api.multiblock.ICBlockInterfaces.IHammerInteract
 import com.immersiveconvergence.api.network.ITileSyncReceiver;
 import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.wires.ICWireType;
-import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectorRedstone;
+import com.immersiveconvergence.api.wires.fittings.ICTileEntityFittingRedstone;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityTimer extends ICTileEntityConnectorRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperties, ITileSyncReceiver {
+public class TileEntityTimer extends ICTileEntityFittingRedstone implements IGuiTile, IHammerInteraction, IAttachedIntegerProperties, ITileSyncReceiver {
     private static final int PULSE_LENGTH = 2;
     private int lastOutput = 0;
     private int pulseRemaining = 0;

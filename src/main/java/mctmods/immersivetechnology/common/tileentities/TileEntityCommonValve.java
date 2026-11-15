@@ -16,7 +16,7 @@ import com.immersiveconvergence.api.network.TileSyncMessage;
 import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICWireType;
-import com.immersiveconvergence.api.wires.connectors.ICTileEntityConnectable;
+import com.immersiveconvergence.api.wires.fittings.ICTileEntityConnectable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.properties.PropertyInteger;
