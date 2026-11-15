@@ -24,7 +24,7 @@ import com.immersiveconvergence.api.block.FacingLimitation;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICWireType;
-import com.immersiveconvergence.api.wires.connectors.ICConnectableBlockEntity;
+import com.immersiveconvergence.api.wires.fittings.ICConnectableBlockEntity;
 import javax.annotation.Nonnull;
 
 public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity implements IServerTickableBE, MenuProvider, BlockInterfaces.IDirectionalBE, BlockInterfaces.IBlockOverlayText, BlockInterfaces.IHammerInteraction {

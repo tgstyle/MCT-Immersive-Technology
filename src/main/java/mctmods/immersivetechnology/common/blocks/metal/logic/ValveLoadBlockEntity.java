@@ -17,7 +17,7 @@ import com.immersiveconvergence.api.wires.ICWireCause;
 import com.immersiveconvergence.api.wires.ICWireRole;
 import com.immersiveconvergence.api.wires.ICWireType;
 import com.immersiveconvergence.api.wires.ICWires;
-import com.immersiveconvergence.api.wires.IICEnergyConnector;
+import com.immersiveconvergence.api.wires.IICEnergyFitting;
 import com.immersiveconvergence.api.wires.IICEnergySource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,7 +38,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IICEnergyConnector, IICEnergySource, BlockInterfaces.IMirrorAble {
+public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements IServerTickableBE, IICEnergyFitting, IICEnergySource, BlockInterfaces.IMirrorAble {
     protected static final int RIGHT_INDEX = 0;
     protected static final int LEFT_INDEX = 1;
     protected ICWireType leftType;
