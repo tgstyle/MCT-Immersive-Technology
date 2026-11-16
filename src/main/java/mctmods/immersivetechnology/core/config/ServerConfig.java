@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.core.config;
 
 import mctmods.immersivetechnology.core.lib.Reference;
 
-import com.immersiveconvergence.api.fluid.ICPipes;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,8 +43,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY;
     public static final ForgeConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO;
-    public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_PRESSURIZED;
-    public static final ForgeConfigSpec.IntValue FLUID_PIPE_AMOUNT_UNPRESSURIZED;
     public static final ForgeConfigSpec.IntValue GAS_TURBINE_INPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue GAS_TURBINE_OUTPUT_TANK_CAPACITY;
     public static final ForgeConfigSpec.IntValue GAS_TURBINE_ENERGY_CAPACITY_HV;
@@ -133,8 +130,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
     public static int electrolyticCrucibleBatteryOutputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
     public static int electrolyticCrucibleBatteryEnergyMaxIO = 4096;
-    public static int fluidPipeAmountPressurized = 2500;
-    public static int fluidPipeAmountUnpressurized = 100;
     public static int gasTurbineInputTankCapacity = 12000;
     public static int gasTurbineOutputTankCapacity = 12000;
     public static int gasTurbineEnergyCapacityHV = 8192;
@@ -339,11 +334,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
         BUILDER.pop();
 
         BUILDER.pop();
-
-        BUILDER.push("fluid_pipe");
-        FLUID_PIPE_AMOUNT_PRESSURIZED = BUILDER.defineInRange("amount_pressurized", 2500, 1, Integer.MAX_VALUE);
-        FLUID_PIPE_AMOUNT_UNPRESSURIZED = BUILDER.defineInRange("amount_unpressurized", 100, 1, Integer.MAX_VALUE);
-        BUILDER.pop();
     }
 
     public static final ForgeConfigSpec SPEC = BUILDER.build();
@@ -390,10 +380,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
             electrolyticCrucibleBatteryOutputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyMaxIO = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO.get();
-
-            fluidPipeAmountPressurized = FLUID_PIPE_AMOUNT_PRESSURIZED.get();
-            fluidPipeAmountUnpressurized = FLUID_PIPE_AMOUNT_UNPRESSURIZED.get();
-            ICPipes.setTransferableAmounts(fluidPipeAmountUnpressurized, fluidPipeAmountPressurized);
 
             gasTurbineInputTankCapacity = GAS_TURBINE_INPUT_TANK_CAPACITY.get();
             gasTurbineOutputTankCapacity = GAS_TURBINE_OUTPUT_TANK_CAPACITY.get();

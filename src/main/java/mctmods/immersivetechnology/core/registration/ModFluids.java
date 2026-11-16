@@ -3,8 +3,10 @@ package mctmods.immersivetechnology.core.registration;
 import mctmods.immersivetechnology.core.lib.Reference;
 import static mctmods.immersivetechnology.core.lib.Reference.rl;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.fluid.FluidEntry;
 import com.immersiveconvergence.api.fluid.FluidRegisters;
+import com.immersiveconvergence.api.fluid.ICPipes;
 import com.immersiveconvergence.api.registration.BlockEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -116,6 +119,14 @@ public class ModFluids {
         FLUID_REGISTRY_MAP.put("molten_salt", MOLTEN_SALT.getStillGetter());
         FLUID_REGISTRY_MAP.put("salt_slurry", SALT_SLURRY.getStillGetter());
         FLUID_REGISTRY_MAP.put("steam", STEAM.getStillGetter());
+    }
+
+    public static void registerNormallyPressurized() {
+        if (!ICMods.immersiveEngineering()) { return; }
+        ICPipes.addNormallyPressurized(Fluids.WATER);
+        ICPipes.addNormallyPressurized(STEAM.getStillGetter().get());
+        ICPipes.addNormallyPressurized(FLUE_GAS.getStillGetter().get());
+        ICPipes.addNormallyPressurized(EXHAUST_STEAM.getStillGetter().get());
     }
 
     private static FluidEntry make(String name, ResourceLocation stillTex, ResourceLocation flowingTex, @Nullable Consumer<FluidType.Properties> buildAttributes, int tintColor) {
