@@ -2,7 +2,6 @@ package mctmods.immersivetechnology.core.config;
 
 import mctmods.immersivetechnology.core.lib.Reference;
 
-import com.immersiveconvergence.api.fluid.ICPipes;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -44,8 +43,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
     public static final ModConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY;
     public static final ModConfigSpec.IntValue ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO;
-    public static final ModConfigSpec.IntValue FLUID_PIPE_AMOUNT_PRESSURIZED;
-    public static final ModConfigSpec.IntValue FLUID_PIPE_AMOUNT_UNPRESSURIZED;
     public static final ModConfigSpec.IntValue GAS_TURBINE_INPUT_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue GAS_TURBINE_ENERGY_CAPACITY_HV;
     public static final ModConfigSpec.IntValue GAS_TURBINE_ENERGY_CAPACITY_MV;
@@ -138,8 +135,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
     public static int electrolyticCrucibleBatteryOutputTankCapacity = 10000;
     public static int electrolyticCrucibleBatteryEnergyCapacity = 16000;
     public static int electrolyticCrucibleBatteryEnergyMaxIO = 4096;
-    public static int fluidPipeAmountPressurized = 2500;
-    public static int fluidPipeAmountUnpressurized = 100;
     public static int gasTurbineInputTankCapacity = 12000;
     public static int gasTurbineEnergyCapacityHV = 8192;
     public static int gasTurbineEnergyCapacityMV = 2048;
@@ -362,11 +357,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
         BUILDER.pop();
 
         BUILDER.pop();
-
-        BUILDER.push("fluid_pipe");
-        FLUID_PIPE_AMOUNT_PRESSURIZED = BUILDER.defineInRange("amount_pressurized", 2500, 1, Integer.MAX_VALUE);
-        FLUID_PIPE_AMOUNT_UNPRESSURIZED = BUILDER.defineInRange("amount_unpressurized", 100, 1, Integer.MAX_VALUE);
-        BUILDER.pop();
     }
 
     public static final ModConfigSpec SPEC = BUILDER.build();
@@ -413,10 +403,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
             electrolyticCrucibleBatteryOutputTankCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_OUTPUT_TANK_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyCapacity = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_CAPACITY.get();
             electrolyticCrucibleBatteryEnergyMaxIO = ELECTROLYTIC_CRUCIBLE_BATTERY_ENERGY_MAX_IO.get();
-
-            fluidPipeAmountPressurized = FLUID_PIPE_AMOUNT_PRESSURIZED.get();
-            fluidPipeAmountUnpressurized = FLUID_PIPE_AMOUNT_UNPRESSURIZED.get();
-            ICPipes.setTransferableAmounts(fluidPipeAmountUnpressurized, fluidPipeAmountPressurized);
 
             gasTurbineInputTankCapacity = GAS_TURBINE_INPUT_TANK_CAPACITY.get();
             gasTurbineEnergyCapacityHV = GAS_TURBINE_ENERGY_CAPACITY_HV.get();

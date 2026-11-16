@@ -46,6 +46,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
         Reference.IT_LOGGER.info("HELLO FROM COMMON SETUP");
         ToolGateHooks.install();
         FluidEntry.registerDispenserBehavior(ModFluids.ALL_ENTRIES);
+        event.enqueueWork(ModFluids::registerNormallyPressurized);
     }
 
 
