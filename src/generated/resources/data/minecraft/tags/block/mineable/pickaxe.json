@@ -20,6 +20,18 @@
     "immersivetechnology:steam_turbine",
     "immersivetechnology:steel_sheetmetal_tank",
     "immersivetechnology:stylenox",
+    {
+      "id": "immersivetechnology:valve_fluid",
+      "required": false
+    },
+    {
+      "id": "immersivetechnology:valve_limiter",
+      "required": false
+    },
+    {
+      "id": "immersivetechnology:valve_load",
+      "required": false
+    },
     "immersivetechnology:barrel_creative",
     "immersivetechnology:barrel_open",
     "immersivetechnology:barrel_steel",
@@ -40,18 +52,6 @@
     "immersivetechnology:technology_engineering",
     "immersivetechnology:trash_energy",
     "immersivetechnology:trash_fluid",
-    "immersivetechnology:trash_item",
-    {
-      "id": "immersivetechnology:valve_fluid",
-      "required": false
-    },
-    {
-      "id": "immersivetechnology:valve_limiter",
-      "required": false
-    },
-    {
-      "id": "immersivetechnology:valve_load",
-      "required": false
-    }
+    "immersivetechnology:trash_item"
   ]
 }
