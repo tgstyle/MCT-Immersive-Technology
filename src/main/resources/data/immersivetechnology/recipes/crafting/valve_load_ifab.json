@@ -19,13 +19,13 @@
       "item": "immersivefabrication:circuit_board"
     },
     "I": {
-      "item": "immersivefabrication:component_iron"
+      "item": "immersivefabrication:assembly_iron"
     },
     "L": {
       "tag": "forge:plates/iron"
     },
     "P": {
-      "item": "immersivefabrication:coil_hv"
+      "item": "immersivefabrication:coil_acsr"
     },
     "R": {
       "item": "minecraft:repeater"

@@ -2,8 +2,8 @@
   "parent": "minecraft:recipes/root",
   "conditions": [
     {
-      "modid": "immersiveengineering",
-      "type": "forge:mod_loaded"
+      "type": "forge:mod_loaded",
+      "modid": "immersiveengineering"
     }
   ],
   "criteria": {
