@@ -1,7 +1,9 @@
 package mctmods.immersivetechnology.common.items;
 
 import mctmods.immersivetechnology.ImmersiveTechnology;
+import mctmods.immersivetechnology.core.integration.ie.IESideToggle;
 
+import com.immersiveconvergence.api.ICMods;
 import com.immersiveconvergence.api.block.HammerUse;
 import com.immersiveconvergence.api.multiblock.MultiblockRegistry;
 import com.immersiveconvergence.core.lib.ICLib;
@@ -94,6 +96,10 @@ public class FormationTool extends Item {
         final List<ResourceLocation> interdicted = interdictedMultiblocks;
         Predicate<ResourceLocation> allowed = name -> permitted != null ? permitted.contains(name) : interdicted == null || !interdicted.contains(name);
         if (MultiblockRegistry.formFirstMatching(world, pos, multiblockSide, player, stack, allowed)) { return InteractionResult.SUCCESS; }
+        if (player != null && ICMods.immersiveEngineering()) {
+            InteractionResult sideResult = IESideToggle.toggle(world, pos, side, player);
+            if (sideResult != null) { return sideResult; }
+        }
         return HammerUse.onBlock(world, pos, side, player, context.getHand(), context.getClickLocation());
     }
 
