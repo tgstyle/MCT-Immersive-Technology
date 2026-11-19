@@ -5,7 +5,7 @@
       "required": false
     },
     {
-      "id": "immersivefabrication:steel_sheetmetal",
+      "id": "immersivefabrication:steel_cladding",
       "required": false
     }
   ]
