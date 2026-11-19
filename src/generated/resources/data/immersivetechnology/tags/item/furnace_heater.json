@@ -5,7 +5,7 @@
       "required": false
     },
     {
-      "id": "immersivefabrication:furnace_heater",
+      "id": "immersivefabrication:heating_element",
       "required": false
     }
   ]

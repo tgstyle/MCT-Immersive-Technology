@@ -31,14 +31,14 @@ public class ModItemTags extends ItemTagsProvider {
         tag(ModTags.igniters_consume).add(Items.TORCH);
         tag(ModTags.formationTools).add(ModItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
         tag(ModTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "screwdriver"));
-        tag(ModTags.sheetmetalIron).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "sheetmetal_iron")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "iron_sheetmetal"));
-        tag(ModTags.slabSheetmetalIron).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "slab_sheetmetal_iron")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "iron_sheetmetal_slab"));
-        tag(ModTags.sheetmetalSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "sheetmetal_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "steel_sheetmetal"));
-        tag(ModTags.slabSheetmetalSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "slab_sheetmetal_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "steel_sheetmetal_slab"));
-        tag(ModTags.coilHv).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "coil_hv")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "coil_hv"));
-        tag(ModTags.componentSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "component_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "component_steel"));
+        tag(ModTags.sheetmetalIron).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "sheetmetal_iron")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "iron_cladding"));
+        tag(ModTags.slabSheetmetalIron).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "slab_sheetmetal_iron")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "iron_cladding_slab"));
+        tag(ModTags.sheetmetalSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "sheetmetal_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "steel_cladding"));
+        tag(ModTags.slabSheetmetalSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "slab_sheetmetal_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "steel_cladding_slab"));
+        tag(ModTags.coilHv).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "coil_hv")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "coil_acsr"));
+        tag(ModTags.componentSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "component_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "assembly_steel"));
         tag(ModTags.cokeBrick).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "cokebrick")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "coke_brick"));
-        tag(ModTags.furnaceHeater).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "furnace_heater")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "furnace_heater"));
+        tag(ModTags.furnaceHeater).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "furnace_heater")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "heating_element"));
         tag(ModTags.fluidPump).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "fluid_pump")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "fluid_pump"));
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "tools/hammers"))).add(ModItems.FORMATION_TOOL.get());
 
