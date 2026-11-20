@@ -5,6 +5,7 @@ import mctmods.immersivetechnology.common.multiblocks.ITShapes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.ISolarRecipe;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.ItemOutputs;
+import mctmods.immersivetechnology.core.util.MultiblockLookup;
 import mctmods.immersivetechnology.core.util.SunTracking;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistryData;
@@ -15,12 +16,9 @@ import com.immersiveconvergence.api.multiblock.blocks.component.IClientTickableC
 import com.immersiveconvergence.api.multiblock.blocks.component.IMultiblockComponent;
 import com.immersiveconvergence.api.multiblock.blocks.component.IServerTickableComponent;
 import com.immersiveconvergence.api.multiblock.blocks.env.IInitialMultiblockContext;
-import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockBEHelper;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockContext;
 import com.immersiveconvergence.api.multiblock.blocks.env.IMultiblockLevel;
-import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockBE;
 import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockLogic;
-import com.immersiveconvergence.api.multiblock.blocks.logic.IMultiblockState;
 import com.immersiveconvergence.api.multiblock.blocks.util.MultiblockOrientation;
 import com.immersiveconvergence.api.multiblock.blocks.util.RelativeBlockFace;
 import com.immersiveconvergence.api.multiblock.blocks.util.ShapeType;
@@ -198,7 +196,7 @@ public abstract class SolarReceiverLogic<R extends ICMultiblockRecipe & ISolarRe
         BlockPos collectorPos = mlevel.toAbsolute(reflectorPoi());
         Set<BlockPos> unattached = new HashSet<>();
         for (BlockPos poiPos : SolarRegistry.getReflectorsInRange(level, basePos, SOLAR_MIN_RANGE, SOLAR_MAX_RANGE)) {
-            if (!(stateAt(level, poiPos) instanceof SolarReflectorLogic.State reflector)) { continue; }
+            if (!(MultiblockLookup.stateAt(level, poiPos) instanceof SolarReflectorLogic.State reflector)) { continue; }
             if (!reflector.getTowerCollectorPosition().equals(collectorPos)) { unattached.add(poiPos); }
             else if (reflector.setTowerCollectorPosition(collectorPos)) {
                 totalMirrorStrength += reflector.getSolarCollectorStrength();
@@ -208,7 +206,7 @@ public abstract class SolarReceiverLogic<R extends ICMultiblockRecipe & ISolarRe
         }
         for (BlockPos poiPos : unattached) {
             if (count >= 24) { break; }
-            if (stateAt(level, poiPos) instanceof SolarReflectorLogic.State reflector && !reflector.isMirrorTaken && reflector.setTowerCollectorPosition(collectorPos)) {
+            if (MultiblockLookup.stateAt(level, poiPos) instanceof SolarReflectorLogic.State reflector && !reflector.isMirrorTaken && reflector.setTowerCollectorPosition(collectorPos)) {
                 totalMirrorStrength += reflector.getSolarCollectorStrength();
                 dirCountsTemp[getReflectorDir(poiPos, basePos)]++;
                 count++;
@@ -224,12 +222,6 @@ public abstract class SolarReceiverLogic<R extends ICMultiblockRecipe & ISolarRe
         int dz = poiPos.getZ() - basePos.getZ();
         if (Math.abs(dx) > Math.abs(dz)) { return dx > 0 ? 1 : 3; }
         return dz > 0 ? 2 : 0;
-    }
-
-    static IMultiblockState stateAt(Level level, BlockPos pos) {
-        if (!(level.getBlockEntity(pos) instanceof IMultiblockBE<?> mbe)) { return null; }
-        IMultiblockBEHelper<?> helper = mbe.getHelper();
-        return helper != null ? helper.getState() : null;
     }
 
     private boolean heatLogic(ReceiverState<R> state, Level level, boolean enabled) {
@@ -292,7 +284,7 @@ public abstract class SolarReceiverLogic<R extends ICMultiblockRecipe & ISolarRe
         Level level = state.levelSupplier.get();
         if (level == null || level.isClientSide) { return; }
         for (BlockPos poiPos : SolarRegistry.getReflectorsInRange(level, state.basePos, SOLAR_MIN_RANGE, SOLAR_MAX_RANGE)) {
-            if (stateAt(level, poiPos) instanceof SolarReflectorLogic.State reflector) { reflector.detachTower(state.collectorPos); }
+            if (MultiblockLookup.stateAt(level, poiPos) instanceof SolarReflectorLogic.State reflector) { reflector.detachTower(state.collectorPos); }
         }
     }
 

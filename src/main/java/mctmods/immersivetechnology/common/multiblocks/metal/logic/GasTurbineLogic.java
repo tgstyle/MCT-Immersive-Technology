@@ -10,6 +10,8 @@ import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MechanicalLoad;
 import mctmods.immersivetechnology.core.util.TurbineProvider;
 
+import com.immersiveconvergence.api.capability.ExhaustCapabilities;
+import com.immersiveconvergence.api.capability.IExhaustReceiver;
 import com.immersiveconvergence.api.capability.IMechanicalEnergyProvider;
 import com.immersiveconvergence.api.capability.MechanicalCapabilities;
 import com.immersiveconvergence.api.capability.RotationInertiaProcess;
@@ -36,6 +38,7 @@ import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -142,7 +145,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 level.addParticle(ParticleTypes.SMOKE, px, py, pz, side.x * 0.1, 0.02, side.z * 0.1);
             }
         }
-        if (state.active && ctx.getLevel().shouldTickModulo(2)) {
+        if (state.active && ctx.getLevel().shouldTickModulo(2) && exhaustReceiver(ctx) == null) {
             float normSpeed = Math.max(0f, Reference.remapRange(100, state.effectiveMaxSpeed, 0f, 1f, state.speed));
             Vec3 exhaustPos = ctx.getLevel().toAbsolute(new Vec3(SMOKE_POI1.getX() + 0.5, SMOKE_POI1.getY() + 0.1, SMOKE_POI1.getZ() + 1.0));
             ImmersiveTechnology.proxy.exhaust(level, exhaustPos, ctx.getLevel().getOrientation().front().getOpposite(), normSpeed, FluidStack.EMPTY, 3.5, 2.0F);
@@ -219,7 +222,7 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
                 state.burnRemaining--;
                 burn(state, ctx, effectiveMax);
             }
-            else if (consumeFuel(state, level)) {
+            else if (consumeFuel(state, ctx)) {
                 burn(state, ctx, effectiveMax);
                 ctx.markMasterDirty();
             }
@@ -231,14 +234,23 @@ public class GasTurbineLogic implements IMultiblockLogic<GasTurbineLogic.State>,
         if (wasActive != state.active || wasStall != state.stall || state.speed % 20 == 0 || comparatorChanged) { ctx.markDirtyAndSync(); }
     }
 
-    private static boolean consumeFuel(State state, Level level) {
+    private static boolean consumeFuel(State state, IMultiblockContext<State> ctx) {
         FluidStack fluid = state.tank.getFluid();
-        GasTurbineRecipe recipe = state.recipeGetter.apply(level, fluid);
+        GasTurbineRecipe recipe = state.recipeGetter.apply(ctx.getLevel().getRawLevel(), fluid);
         if (recipe == null || fluid.getAmount() < recipe.getInputAmount()) { return false; }
         state.tank.drain(recipe.getInputAmount(), FluidAction.EXECUTE);
+        IExhaustReceiver receiver = exhaustReceiver(ctx);
+        if (receiver != null) { receiver.acceptExhaust(recipe.fluidOutput(), recipe.carbonDioxide()); }
         state.currentTorque = recipe.torque();
         state.burnRemaining = recipe.getTotalProcessTime() - 1;
         return true;
+    }
+
+    @Nullable private static IExhaustReceiver exhaustReceiver(IMultiblockContext<?> ctx) {
+        Level level = ctx.getLevel().getRawLevel();
+        Direction front = ctx.getLevel().getOrientation().front();
+        BlockPos cell = ctx.getLevel().toAbsolute(SMOKE_POI1).relative(front.getOpposite());
+        return level.isLoaded(cell) ? level.getCapability(ExhaustCapabilities.EXHAUST_RECEIVER, cell, front) : null;
     }
 
     private static void burn(State state, IMultiblockContext<State> ctx, int effectiveMax) {

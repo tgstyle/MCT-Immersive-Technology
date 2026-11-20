@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 
 public enum TranslationKey {
     CATEGORY_DISTILLER_CHANCE("category." + Reference.MODID + ".metal_multiblock.distiller.chance"),
+    CATEGORY_GAS_TURBINE_CO2("category." + Reference.MODID + ".metal_multiblock.gas_turbine.co2"),
     CATEGORY_SOLAR_MELTER_TEMP("category." + Reference.MODID + ".metal_multiblock.solar_melter.temp"),
     CATEGORY_SOLAR_MELTER_TIME("category." + Reference.MODID + ".metal_multiblock.solar_melter.time"),
     CATEGORY_SOLAR_TOWER_TEMP("category." + Reference.MODID + ".metal_multiblock.solar_tower.temp"),

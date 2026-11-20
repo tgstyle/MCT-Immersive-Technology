@@ -1,0 +1,10 @@
+Sběrač CO2
+Zachytává výfuk turbíny a CO2 pro reaktor StyleNOX
+<&multiblock>Sběrač CO2 je multiblock 5x3x3, který se staví na výfukovou stranu plynové turbíny, s krátkou stěnou 3x3 obrácenou k turbíně. Sestavte ho Kladivem na spouštěcím bloku, který leží uprostřed stěny protilehlé turbíně.
+
+
+Při každém palivovém cyklu turbína předá sběrači své spaliny v množství daném jejím receptem a také své CO2. Množství CO2 závisí na palivu: nejvíce dává nafta, následují bionafta, kerosin a benzín, a vodík nedává žádné. Množství pro každé palivo najdete na stránce plynové turbíny v JEI.
+
+§lSpaliny§r odcházejí výstupem na levém konci základny, pohledem od spouštěcího bloku. §lCO2§r odchází výstupem na pravém konci základny. Oba výstupy tlačí do připojeného potrubí. Nádrž na spaliny pojme <config;i;co2_collector.flue_tank_capacity> mB a nádrž na CO2 pojme <config;i;co2_collector.co2_tank_capacity> mB.
+
+Když nádrž nepřijme výstup cyklu a k jejímu výstupu není nic připojeno, sběrač přebytek vypustí jako kouř. Bez běžící turbíny je sběrač nečinný. Jeho CO2 zásobuje reaktor StyleNOX: dvě plynové turbíny na nejlepší palivo stačí jednomu reaktoru, jehož regulační tyče jsou na 100 %.

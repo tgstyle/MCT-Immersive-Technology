@@ -1,0 +1,10 @@
+CO2 Collector
+Captures turbine exhaust and CO2 for the StyleNOX reactor
+<&multiblock>The CO2 Collector is a 5x3x3 multiblock built against the exhaust end of a Gas Turbine, with its short 3x3 face toward the turbine. Form it with the Engineer's Hammer on the trigger block, which sits in the middle of the face opposite the turbine.
+
+
+Each fuel cycle the turbine pushes its flue gas, in the amount set by its recipe, and its CO2 into the collector. The CO2 amount depends on the fuel: Diesel gives the most, followed by Biodiesel, Kerosene and Gasoline, and Hydrogen gives none. JEI's Gas Turbine page shows the amount for each fuel.
+
+§lFlue Gas§r is output from the port at the left end of the base, as seen from the trigger block. §lCO2§r is output from the port at the right end of the base. Both ports push into connected pipes. The flue gas tank holds <config;i;co2_collector.flue_tank_capacity> mB and the CO2 tank holds <config;i;co2_collector.co2_tank_capacity> mB.
+
+When a tank cannot take the output of a cycle and its port is not connected, the collector vents the excess as smoke. With no turbine running, the collector idles. Its CO2 feeds the StyleNOX reactor: two Gas Turbines running on the best fuel supply one reactor with its control rods at 100%.

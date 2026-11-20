@@ -177,11 +177,11 @@ public class Recipes extends RecipeProvider {
     private void recipesElectrolyticCrucibleBattery(RecipeOutput output) { ElectrolyticCrucibleBatteryRecipeBuilder.builder().addInput(ModTags.fluidSaltSlurry, 1000).addOutput0(new FluidStack(ModFluids.CHLORINE.getStill(), 1000)).addOutput1(new FluidStack(ModFluids.HYDROGEN.getStill(), 3000)).addOutput2(new FluidStack(ModFluids.HEATED_SALT.getStill(), 700)).addItemOutput(ItemStack.EMPTY).setEnergy(614400).setTime(300).save(output, toResourceLocation("electrolytic_crucible_battery/hydrogen")); }
 
     private void recipesGasTurbine(RecipeOutput output) {
-        GasTurbineRecipeBuilder.builder().addInput(BIODIESEL, 160).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output, toResourceLocation("gas_turbine/biodiesel"));
+        GasTurbineRecipeBuilder.builder().addInput(BIODIESEL, 160).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).setCarbonDioxide(1900).save(output, toResourceLocation("gas_turbine/biodiesel"));
         GasTurbineRecipeBuilder.builder().addInput(ModTags.fluidHydrogen, 100).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output, toResourceLocation("gas_turbine/hydrogen"));
-        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "gasoline")), 800).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/gasoline"));
-        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "diesel")), 114).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/diesel"));
-        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "kerosene")), 150).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/kerosene"));
+        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "gasoline")), 800).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).setCarbonDioxide(1500).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/gasoline"));
+        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "diesel")), 114).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).setCarbonDioxide(2000).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/diesel"));
+        GasTurbineRecipeBuilder.builder().addInput(FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", "kerosene")), 150).addOutput(ModFluids.FLUE_GAS.getStill(), 1000).setTime(10).setTorque(1.0f).setCarbonDioxide(1700).save(output.withConditions(new ModLoadedCondition("immersivepetroleum")), toResourceLocation("gas_turbine/kerosene"));
     }
 
     private void recipesSteamTurbine(RecipeOutput output) { SteamTurbineRecipeBuilder.builder().addInput(ModTags.fluidSteam, 100).addOutput(ModFluids.EXHAUST_STEAM.getStill(), 100).setTime(1).setTorque(1.0f).save(output, toResourceLocation("steam_turbine/steam")); }
@@ -191,7 +191,7 @@ public class Recipes extends RecipeProvider {
                 .addInput(new ICIngredientWithSize(Ingredient.of(ModItems.FUEL_ELEMENT.get()), 8))
                 .addOutput(new ItemStack(ModItems.SPENT_ELEMENT.get(), 8))
                 .addWater(ModTags.fluidDistilledWater, 200)
-                .addCO2(ModTags.fluidCarbonDioxide, 10)
+                .addCO2(ModTags.fluidCarbonDioxide, 400)
                 .addSteamOutput(new FluidStack(ModFluids.STEAM.getStill(), 400))
                 .setTime(72000)
                 .setEnergy(800000)

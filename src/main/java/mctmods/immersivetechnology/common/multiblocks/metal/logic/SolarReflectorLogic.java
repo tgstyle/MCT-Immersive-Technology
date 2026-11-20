@@ -6,6 +6,7 @@ import mctmods.immersivetechnology.core.config.ClientConfig;
 import mctmods.immersivetechnology.core.registration.Sounds;
 import mctmods.immersivetechnology.core.util.IDisplaySyncState;
 import mctmods.immersivetechnology.core.util.MirrorAnimation;
+import mctmods.immersivetechnology.core.util.MultiblockLookup;
 import mctmods.immersivetechnology.core.util.SunTracking;
 import mctmods.immersivetechnology.core.util.solarregistry.SolarRegistry;
 
@@ -207,7 +208,7 @@ public class SolarReflectorLogic implements IMultiblockLogic<SolarReflectorLogic
         if (state.loadTicks > 20 && state.reAttachOnLoad && !level.isClientSide) {
             state.reAttachOnLoad = false;
             if (level.isLoaded(state.towerCollectorPosition)) {
-                if (SolarReceiverLogic.stateAt(level, state.towerCollectorPosition) instanceof SolarReceiverLogic.ReceiverState<?> receiver && receiver.registered) { state.setTowerCollectorPosition(state.towerCollectorPosition); }
+                if (MultiblockLookup.stateAt(level, state.towerCollectorPosition) instanceof SolarReceiverLogic.ReceiverState<?> receiver && receiver.registered) { state.setTowerCollectorPosition(state.towerCollectorPosition); }
                 else {
                     state.isMirrorTaken = false;
                     state.towerCollectorPosition = state.poiPos;

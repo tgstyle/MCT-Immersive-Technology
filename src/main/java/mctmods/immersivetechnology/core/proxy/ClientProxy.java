@@ -108,7 +108,7 @@ import java.util.function.Supplier;
             ICManual.addEntry(main, Reference.rl("intro"));
             ICManualCategory power = main.sub(Reference.rl("it_power"), 0);
             ICManualCategory processing = main.sub(Reference.rl("it_processing"), 1);
-            addManualEntries(power, "alternator", "boiler_liquid", "boiler_solid", "boiler_tank", "cooling_tower", "gas_turbine", "heat_exchanger", "radiator", "solar_collector", "solar_reflector", "solar_tower", "steam_turbine", "stylenox");
+            addManualEntries(power, "alternator", "boiler_liquid", "boiler_solid", "boiler_tank", "co2_collector", "cooling_tower", "gas_turbine", "heat_exchanger", "radiator", "solar_collector", "solar_reflector", "solar_tower", "steam_turbine", "stylenox");
             addManualEntries(processing, "advanced_coke_oven", "distiller", "electrolytic_crucible_battery", "melting_crucible", "solar_melter", "steel_sheetmetal_tank");
             addManualEntries(main, "open_barrel", "steel_barrel", "barrel_creative", "valves", "technologists_wrench", "fluid_pipes");
         });

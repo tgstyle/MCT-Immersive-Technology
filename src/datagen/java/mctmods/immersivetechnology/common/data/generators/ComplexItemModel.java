@@ -39,6 +39,7 @@ public class ComplexItemModel extends ModelProvider<TRSRModelBuilder> {
         generateMultiblockModel("boiler_liquid", "metal", MultiblockRegistry.BOILER_LIQUID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("boiler_solid", "metal", MultiblockRegistry.BOILER_SOLID.block(), new Vector3f(-2.0f, -0.525f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("boiler_tank", "metal", MultiblockRegistry.BOILER_TANK.block(), new Vector3f(-3.2f, 0.5f, 0.5f), 0.1875f, 0.0625f, 0.0625f);
+        generateMultiblockModel("co2_collector", "metal", MultiblockRegistry.CO2_COLLECTOR.block(), new Vector3f(-4.0f, 1.0f, -2.0f), 0.1f, 0.0625f, 0.0625f);
         generateMultiblockModel("cooling_tower", "stone", MultiblockRegistry.COOLING_TOWER.block(), new Vector3f(-3.0f, -2.9f, -1.5f), 0.075f, 0.0375f, 0.0375f);
         generateMultiblockModel("distiller", "metal", MultiblockRegistry.DISTILLER.block(), new Vector3f(0.5f, -0.5f, -0.5f), 0.1875f, 0.0625f, 0.0625f);
         generateMultiblockModel("electrolytic_crucible_battery", "metal", MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.block(), new Vector3f(-4.5f, -0.5f, -0.5f), 0.11f, 0.0625f, 0.0625f);

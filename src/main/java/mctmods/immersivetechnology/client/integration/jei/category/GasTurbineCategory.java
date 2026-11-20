@@ -4,6 +4,7 @@ import mctmods.immersivetechnology.client.integration.jei.JEIRecipeTypes;
 import mctmods.immersivetechnology.common.multiblocks.metal.recipe.GasTurbineRecipe;
 import mctmods.immersivetechnology.core.lib.Reference;
 import mctmods.immersivetechnology.core.registration.MultiblockRegistry;
+import mctmods.immersivetechnology.core.util.TranslationKey;
 
 import com.immersiveconvergence.api.client.gui.GuiFluidArea;
 import com.immersiveconvergence.api.integration.jei.BaseRecipeCategory;
@@ -18,6 +19,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.FluidStack;
 import java.util.List;
@@ -74,5 +76,9 @@ public class GasTurbineCategory extends BaseRecipeCategory<GasTurbineRecipe> {
         tankOverlay.draw(guiGraphics, 11, 11);
         tankOverlay.draw(guiGraphics, 89, 11);
         turbineAndArrow.draw(guiGraphics, 42, 18);
+        if (recipe.carbonDioxide() > 0) {
+            Component co2 = Component.translatable(TranslationKey.CATEGORY_GAS_TURBINE_CO2.getLocation(), recipe.carbonDioxide());
+            guiGraphics.drawString(font, co2, getWidth() / 2 - font.width(co2) / 2, 0, 0xAAAAAA, true);
+        }
     }
 }

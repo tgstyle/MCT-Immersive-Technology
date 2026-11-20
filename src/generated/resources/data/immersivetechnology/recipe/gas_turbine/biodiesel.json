@@ -1,5 +1,6 @@
 {
   "type": "immersivetechnology:gas_turbine",
+  "carbonDioxide": 1900,
   "inputAmount": 160,
   "inputTag": "c:biodiesel",
   "output": {

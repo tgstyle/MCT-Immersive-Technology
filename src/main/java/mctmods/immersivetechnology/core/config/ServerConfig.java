@@ -31,6 +31,8 @@ import net.neoforged.neoforge.common.ModConfigSpec;
     public static final ModConfigSpec.IntValue BOILER_SOLID_BURN_TIME_DIVIDER;
     public static final ModConfigSpec.IntValue BOILER_TANK_CAPACITY;
     public static final ModConfigSpec.IntValue BOILER_TANK_PROGRESS_LOSS_PER_TICK;
+    public static final ModConfigSpec.IntValue CO2_COLLECTOR_FLUE_TANK_CAPACITY;
+    public static final ModConfigSpec.IntValue CO2_COLLECTOR_CO2_TANK_CAPACITY;
     public static final ModConfigSpec.DoubleValue COOLING_TOWER_BIOME_TEMP_FACTOR;
     public static final ModConfigSpec.DoubleValue COOLING_TOWER_BIOME_HUMIDITY_FACTOR;
     public static final ModConfigSpec.IntValue COOLING_TOWER_INPUT_TANK_CAPACITY;
@@ -123,6 +125,8 @@ import net.neoforged.neoforge.common.ModConfigSpec;
     public static int boilerSolidBurnTimeDivider = 10;
     public static int boilerTankCapacity = 24000;
     public static int boilerTankProgressLossPerTick = 1;
+    public static int co2CollectorFlueTankCapacity = 64000;
+    public static int co2CollectorCo2TankCapacity = 64000;
     public static double coolingTowerBiomeTempFactor = 0.5D;
     public static double coolingTowerBiomeHumidityFactor = 3.0D;
     public static int coolingTowerInputTankCapacity = 24000;
@@ -191,7 +195,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
     public static int steelSheetmetalTankTransferSpeed = 1000;
     public static int stylenoxWaterTankCapacity = 48000;
     public static int stylenoxSteamTankCapacity = 96000;
-    public static int stylenoxCo2TankCapacity = 24000;
+    public static int stylenoxCo2TankCapacity = 64000;
     public static int stylenoxEnergyCapacity = 1000000;
     public static int stylenoxStartupTime = 400;
 
@@ -232,6 +236,11 @@ import net.neoforged.neoforge.common.ModConfigSpec;
         BUILDER.push("boiler_tank");
         BOILER_TANK_CAPACITY = BUILDER.defineInRange("tank_capacity", 24000, 1000, Integer.MAX_VALUE);
         BOILER_TANK_PROGRESS_LOSS_PER_TICK = BUILDER.defineInRange("progress_loss_per_tick", 1, 0, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("co2_collector");
+        CO2_COLLECTOR_FLUE_TANK_CAPACITY = BUILDER.defineInRange("flue_tank_capacity", 64000, 1000, Integer.MAX_VALUE);
+        CO2_COLLECTOR_CO2_TANK_CAPACITY = BUILDER.defineInRange("co2_tank_capacity", 64000, 1000, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("cooling_tower");
@@ -349,7 +358,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
         BUILDER.push("stylenox");
         STYLENOX_WATER_TANK_CAPACITY = BUILDER.defineInRange("water_tank_capacity", 48000, 1000, Integer.MAX_VALUE);
         STYLENOX_STEAM_TANK_CAPACITY = BUILDER.defineInRange("steam_tank_capacity", 96000, 1000, Integer.MAX_VALUE);
-        STYLENOX_CO2_TANK_CAPACITY = BUILDER.defineInRange("co2_tank_capacity", 24000, 1000, Integer.MAX_VALUE);
+        STYLENOX_CO2_TANK_CAPACITY = BUILDER.defineInRange("co2_tank_capacity", 64000, 1000, Integer.MAX_VALUE);
         STYLENOX_ENERGY_CAPACITY = BUILDER.defineInRange("energy_capacity", 1000000, 1000, Integer.MAX_VALUE);
         STYLENOX_STARTUP_TIME = BUILDER
                 .comment("Ticks of powered startup before the reactor goes critical. The recipe's energy is drawn evenly across this time.")
@@ -388,6 +397,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
             boilerTankCapacity = BOILER_TANK_CAPACITY.get();
             boilerTankProgressLossPerTick = BOILER_TANK_PROGRESS_LOSS_PER_TICK.get();
+
+            co2CollectorFlueTankCapacity = CO2_COLLECTOR_FLUE_TANK_CAPACITY.get();
+            co2CollectorCo2TankCapacity = CO2_COLLECTOR_CO2_TANK_CAPACITY.get();
 
             coolingTowerInputTankCapacity = COOLING_TOWER_INPUT_TANK_CAPACITY.get();
             coolingTowerOutputTankCapacity = COOLING_TOWER_OUTPUT_TANK_CAPACITY.get();

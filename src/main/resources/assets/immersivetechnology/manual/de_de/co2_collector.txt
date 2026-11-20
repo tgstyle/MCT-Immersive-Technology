@@ -1,0 +1,10 @@
+CO2-Sammler
+Fängt Turbinenabgas und CO2 für den StyleNOX-Reaktor auf
+<&multiblock>Der CO2-Sammler ist ein 5x3x3-Multiblock, der am Abgasende einer Gasturbine errichtet wird, wobei seine kurze 3x3-Seite zur Turbine zeigt. Geformt wird er mit dem Ingenieurshammer am Auslöseblock, der in der Mitte der Seite gegenüber der Turbine sitzt.
+
+
+Bei jedem Brennstoffzyklus schiebt die Turbine ihr Rauchgas, in der Menge laut Rezept, sowie ihr CO2 in den Sammler. Die CO2-Menge hängt vom Brennstoff ab: Diesel liefert am meisten, gefolgt von Biodiesel, Kerosin und Benzin, Wasserstoff liefert keines. Die JEI-Seite der Gasturbine zeigt die Menge für jeden Brennstoff.
+
+§lRauchgas§r wird über den Ausgang am linken Ende des Sockels ausgegeben, von dem Auslöseblock aus gesehen. §lCO2§r wird über den Ausgang am rechten Ende des Sockels ausgegeben. Beide Ausgänge drücken in angeschlossene Rohre. Der Rauchgastank fasst <config;i;co2_collector.flue_tank_capacity> mB und der CO2-Tank <config;i;co2_collector.co2_tank_capacity> mB.
+
+Kann ein Tank die Ausgabe eines Zyklus nicht aufnehmen und ist sein Ausgang nicht verbunden, lässt der Sammler den Überschuss als Rauch entweichen. Ohne laufende Turbine ist der Sammler im Leerlauf. Sein CO2 speist den StyleNOX-Reaktor: Zwei Gasturbinen mit dem besten Brennstoff versorgen einen Reaktor, dessen Steuerstäbe auf 100 % stehen.

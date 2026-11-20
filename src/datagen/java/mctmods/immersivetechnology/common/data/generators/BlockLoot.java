@@ -61,6 +61,7 @@ public class BlockLoot extends BlockLootSubProvider {
         add(MultiblockRegistry.BOILER_LIQUID.block().get(), noDrop());
         add(MultiblockRegistry.BOILER_SOLID.block().get(), noDrop());
         add(MultiblockRegistry.BOILER_TANK.block().get(), noDrop());
+        add(MultiblockRegistry.CO2_COLLECTOR.block().get(), noDrop());
         add(MultiblockRegistry.COOLING_TOWER.block().get(), noDrop());
         add(MultiblockRegistry.DISTILLER.block().get(), noDrop());
         add(MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.block().get(), noDrop());

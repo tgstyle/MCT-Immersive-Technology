@@ -22,13 +22,15 @@ public class GasTurbineRecipe extends ICMultiblockRecipe {
     private final int amount;
     @Nullable public final FluidStack fluidOutput;
     public final float torque;
+    private final int carbonDioxide;
 
-    public GasTurbineRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time, float torque) {
+    public GasTurbineRecipe(TagKey<Fluid> fluidTag, int amount, @Nullable FluidStack fluidOutput, int time, float torque, int carbonDioxide) {
         super(ICTagOutput.EMPTY, RecipeTypes.GAS_TURBINE, time, 0);
         this.fluidTag = fluidTag;
         this.amount = amount;
         this.fluidOutput = fluidOutput;
         this.torque = torque;
+        this.carbonDioxide = carbonDioxide;
     }
 
     public TagKey<Fluid> fluidTag() { return fluidTag; }
@@ -36,6 +38,7 @@ public class GasTurbineRecipe extends ICMultiblockRecipe {
     public int getInputAmount() { return amount; }
     public FluidStack fluidOutput() { return fluidOutput; }
     public float torque() { return torque; }
+    public int carbonDioxide() { return carbonDioxide; }
 
     public boolean matches(FluidStack fluid) { return fluid.is(this.fluidTag); }
 

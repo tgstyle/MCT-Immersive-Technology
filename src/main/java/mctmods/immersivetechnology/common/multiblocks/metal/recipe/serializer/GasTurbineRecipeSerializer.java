@@ -31,12 +31,15 @@ public class GasTurbineRecipeSerializer extends ICRecipeSerializer<GasTurbineRec
         MapCodec<Integer> timeCodec = Codec.INT.fieldOf("time");
         MapCodec<Float> torqueCodec = Codec.FLOAT.optionalFieldOf("torque", 1.0f);
 
+        MapCodec<Integer> carbonDioxideCodec = Codec.INT.optionalFieldOf("carbonDioxide", 0);
+
         MapCodec<GasTurbineRecipe> mapCodec = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 fluidTagCodec.forGetter(GasTurbineRecipe::fluidTag),
                 amountCodec.forGetter(GasTurbineRecipe::amount),
                 fluidOutputCodec.forGetter(r -> java.util.Objects.requireNonNullElse(r.fluidOutput(), FluidStack.EMPTY)),
                 timeCodec.forGetter(GasTurbineRecipe::getBaseTime),
-                torqueCodec.forGetter(GasTurbineRecipe::torque)
+                torqueCodec.forGetter(GasTurbineRecipe::torque),
+                carbonDioxideCodec.forGetter(GasTurbineRecipe::carbonDioxide)
         ).apply(instance, GasTurbineRecipe::new));
 
         StreamCodec<RegistryFriendlyByteBuf, GasTurbineRecipe> streamCodec = new StreamCodec<>() {
@@ -46,7 +49,8 @@ public class GasTurbineRecipeSerializer extends ICRecipeSerializer<GasTurbineRec
                 FluidStack fluidOutput = FluidStack.OPTIONAL_STREAM_CODEC.decode(buf);
                 int time = buf.readVarInt();
                 float torque = buf.readFloat();
-                return new GasTurbineRecipe(fluidTag, amount, fluidOutput.isEmpty() ? null : fluidOutput, time, torque);
+                int carbonDioxide = buf.readVarInt();
+                return new GasTurbineRecipe(fluidTag, amount, fluidOutput.isEmpty() ? null : fluidOutput, time, torque, carbonDioxide);
             }
 
             @Override public void encode(@Nonnull RegistryFriendlyByteBuf buf, GasTurbineRecipe recipe) {
@@ -55,6 +59,7 @@ public class GasTurbineRecipeSerializer extends ICRecipeSerializer<GasTurbineRec
                 FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, java.util.Objects.requireNonNullElse(recipe.fluidOutput(), FluidStack.EMPTY));
                 buf.writeVarInt(recipe.getBaseTime());
                 buf.writeFloat(recipe.torque());
+                buf.writeVarInt(recipe.carbonDioxide());
             }
         };
         return new DualMapCodec<>(mapCodec, streamCodec);

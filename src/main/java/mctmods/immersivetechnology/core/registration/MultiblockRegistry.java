@@ -101,6 +101,12 @@ public class MultiblockRegistry {
                     .withComparator()
                     .build();
 
+    public static final MultiblockRegistration<Co2CollectorLogic.State> CO2_COLLECTOR =
+            metalNoMirror(new Co2CollectorLogic(), "co2_collector")
+                    .structure(() -> Co2Collector.INSTANCE)
+                    .component(new ClearTank<>(() -> Co2CollectorLogic.OUTPUT_POSITIONS, s -> { s.flue.drain(Integer.MAX_VALUE, FluidAction.EXECUTE); s.co2.drain(Integer.MAX_VALUE, FluidAction.EXECUTE); }, Component.translatable(ClearTankRegistry.KEY_TANKS_CLEARED)))
+                    .build();
+
     public static final MultiblockRegistration<CoolingTowerLogic.State> COOLING_TOWER =
             stone(new CoolingTowerLogic(), "cooling_tower")
                     .structure(() -> CoolingTower.INSTANCE)
@@ -222,6 +228,7 @@ public class MultiblockRegistry {
                 BOILER_LIQUID.block().get().getClass(),
                 BOILER_SOLID.block().get().getClass(),
                 BOILER_TANK.block().get().getClass(),
+                CO2_COLLECTOR.block().get().getClass(),
                 COOLING_TOWER.block().get().getClass(),
                 DISTILLER.block().get().getClass(),
                 ELECTROLYTIC_CRUCIBLE_BATTERY.block().get().getClass(),
@@ -249,6 +256,7 @@ public class MultiblockRegistry {
         registerMB("boiler_liquid", BoilerLiquid.INSTANCE, BOILER_LIQUID);
         registerMB("boiler_solid", BoilerSolid.INSTANCE, BOILER_SOLID);
         registerMB("boiler_tank", BoilerTank.INSTANCE, BOILER_TANK);
+        registerMB("co2_collector", Co2Collector.INSTANCE, CO2_COLLECTOR);
         registerMB("cooling_tower", CoolingTower.INSTANCE, COOLING_TOWER);
         registerMB("distiller", Distiller.INSTANCE, DISTILLER);
         registerMB("electrolytic_crucible_battery", ElectrolyticCrucibleBattery.INSTANCE, ELECTROLYTIC_CRUCIBLE_BATTERY);

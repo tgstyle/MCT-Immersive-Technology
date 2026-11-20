@@ -1,6 +1,6 @@
 {
   "type": "immersivetechnology:stylenox",
-  "co2Amount": 10,
+  "co2Amount": 400,
   "co2Tag": "immersivetechnology:carbon_dioxide",
   "energy": 800000,
   "input": {

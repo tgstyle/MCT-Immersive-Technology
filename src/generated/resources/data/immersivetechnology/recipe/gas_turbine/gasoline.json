@@ -6,6 +6,7 @@
     }
   ],
   "type": "immersivetechnology:gas_turbine",
+  "carbonDioxide": 1500,
   "inputAmount": 800,
   "inputTag": "c:gasoline",
   "output": {

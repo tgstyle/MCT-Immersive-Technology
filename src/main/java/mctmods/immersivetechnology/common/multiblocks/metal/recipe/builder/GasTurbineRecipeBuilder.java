@@ -26,6 +26,7 @@ public class GasTurbineRecipeBuilder implements RecipeBuilder {
     private FluidStack fluidOutput;
     private int time;
     private float torque;
+    private int carbonDioxide;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
     private GasTurbineRecipeBuilder() {}
@@ -53,6 +54,11 @@ public class GasTurbineRecipeBuilder implements RecipeBuilder {
         return this;
     }
 
+    public GasTurbineRecipeBuilder setCarbonDioxide(int carbonDioxide) {
+        this.carbonDioxide = carbonDioxide;
+        return this;
+    }
+
     @Override public @Nonnull GasTurbineRecipeBuilder unlockedBy(@Nonnull String name, @Nonnull Criterion<?> criterion) {
         this.criteria.put(name, criterion);
         return this;
@@ -70,7 +76,7 @@ public class GasTurbineRecipeBuilder implements RecipeBuilder {
         this.criteria.forEach(advancement::addCriterion);
 
         GasTurbineRecipe recipe = new GasTurbineRecipe(
-                this.fluidTag, this.amount, this.fluidOutput, this.time, this.torque);
+                this.fluidTag, this.amount, this.fluidOutput, this.time, this.torque, this.carbonDioxide);
 
         output.accept(id, recipe, advancement.build(id.withPrefix("recipes/")));
     }

@@ -44,6 +44,7 @@ public class MultiblockStateGenerator {
         generateMultiblockConfig("boiler_liquid", "metal", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
         generateMultiblockConfig("boiler_solid", "metal", true, ImmutableMap.of("cube_front", main.modLoc("multiblock/metal/boiler_solid")), ImmutableMap.of("cube_front", main.modLoc("multiblock/metal/boiler_solid_active")), "cutout_mipped");
         generateMultiblockConfig("boiler_tank", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
+        generateMultiblockConfig("co2_collector", "metal", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
         generateMultiblockConfig("cooling_tower", "stone", false, ImmutableMap.of(), ImmutableMap.of(), "cutout_mipped");
         generateMultiblockConfig("distiller", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);
         generateMultiblockConfig("electrolytic_crucible_battery", "metal", false, ImmutableMap.of(), ImmutableMap.of(), null);

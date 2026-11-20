@@ -1,0 +1,10 @@
+Collettore di CO2
+Raccoglie i gas di scarico della turbina e la CO2 per il reattore StyleNOX
+<&multiblock>Il Collettore di CO2 è un multiblocco 5x3x3 costruito contro l'estremità di scarico di una Turbina a gas, con la faccia corta 3x3 rivolta verso la turbina. Si forma usando il Martello dell'ingegnere sul blocco trigger, che si trova al centro della faccia opposta alla turbina.
+
+
+Ad ogni ciclo di combustibile la turbina spinge il suo gas di scarico, nella quantità definita dalla sua ricetta, e la sua CO2 nel collettore. La quantità di CO2 dipende dal combustibile: il Diesel ne produce di più, seguito da Biodiesel, Cherosene e Benzina, mentre l'Idrogeno non ne produce affatto. La pagina della Turbina a gas in JEI mostra la quantità per ogni combustibile.
+
+§lGas di scarico§r esce dalla porta sul lato sinistro della base, guardando dal blocco trigger. §lCO2§r esce dalla porta sul lato destro della base. Entrambe le porte inviano ai tubi collegati. Il serbatoio del gas di scarico contiene <config;i;co2_collector.flue_tank_capacity> mB e il serbatoio della CO2 contiene <config;i;co2_collector.co2_tank_capacity> mB.
+
+Quando un serbatoio non riesce a contenere ciò che produce un ciclo e la sua porta non è collegata, il collettore sfoga l'eccesso sotto forma di fumo. Senza una turbina in funzione, il collettore resta inattivo. La sua CO2 alimenta il reattore StyleNOX: due Turbine a gas che girano con il combustibile migliore alimentano un solo reattore con le barre di controllo al 100%.

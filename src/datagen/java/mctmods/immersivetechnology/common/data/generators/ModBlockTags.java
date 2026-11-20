@@ -27,6 +27,7 @@ public class ModBlockTags extends BlockTagsProvider {
             MultiblockRegistry.BOILER_LIQUID.block(),
             MultiblockRegistry.BOILER_SOLID.block(),
             MultiblockRegistry.BOILER_TANK.block(),
+            MultiblockRegistry.CO2_COLLECTOR.block(),
             MultiblockRegistry.COOLING_TOWER.block(),
             MultiblockRegistry.DISTILLER.block(),
             MultiblockRegistry.ELECTROLYTIC_CRUCIBLE_BATTERY.block(),

@@ -1,0 +1,10 @@
+Colector de CO2
+Captura el escape de la turbina y el CO2 para el reactor StyleNOX
+<&multiblock>El Colector de CO2 es un multibloque de 5x3x3 construido contra el extremo de escape de una Turbina de gas, con su cara corta de 3x3 orientada hacia la turbina. Fórmalo con el Martillo del ingeniero sobre el bloque disparador, que está en el centro de la cara opuesta a la turbina.
+
+
+Cada ciclo de combustible la turbina envía su gas de combustión, en la cantidad que fija su receta, y su CO2 al colector. La cantidad de CO2 depende del combustible: el Diésel da la mayor cantidad, seguido del Biodiésel, el Queroseno y la Gasolina, y el Hidrógeno no da ninguno. La página de la Turbina de gas en JEI muestra la cantidad para cada combustible.
+
+§lGas de combustión§r sale por el puerto del extremo izquierdo de la base, visto desde el bloque disparador. §lCO2§r sale por el puerto del extremo derecho de la base. Ambos puertos empujan hacia las tuberías conectadas. El tanque de gas de combustión almacena <config;i;co2_collector.flue_tank_capacity> mB y el tanque de CO2 almacena <config;i;co2_collector.co2_tank_capacity> mB.
+
+Cuando un tanque no puede recibir la salida de un ciclo y su puerto no está conectado, el colector libera el exceso como humo. Sin ninguna turbina en funcionamiento, el colector queda en reposo. Su CO2 alimenta el reactor StyleNOX: dos Turbinas de gas funcionando con el mejor combustible abastecen a un reactor con sus barras de control al 100%.

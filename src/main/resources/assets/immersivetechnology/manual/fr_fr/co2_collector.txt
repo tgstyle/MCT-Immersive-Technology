@@ -1,0 +1,10 @@
+Collecteur de CO2
+Capte les gaz de combustion de la turbine et le CO2 pour le réacteur StyleNOX
+<&multiblock>Le Collecteur de CO2 est un multibloc de 5x3x3 construit contre l'extrémité d'échappement d'une Turbine à gaz, sa face courte 3x3 tournée vers la turbine. Formez-le avec le Marteau de l'ingénieur sur le bloc déclencheur, qui se trouve au centre de la face opposée à la turbine.
+
+
+À chaque cycle de combustible, la turbine envoie ses gaz de combustion, selon la quantité fixée par sa recette, ainsi que son CO2, dans le collecteur. La quantité de CO2 dépend du combustible : le Diesel en produit le plus, suivi du Biodiesel, du Kérosène et de l'Essence, et l'Hydrogène n'en produit aucun. La page Turbine à gaz de JEI indique la quantité pour chaque combustible.
+
+§lGaz de combustion§r sort par l'orifice situé à l'extrémité gauche de la base, vu depuis le bloc déclencheur. §lCO2§r sort par l'orifice à l'extrémité droite de la base. Les deux orifices alimentent des tuyaux raccordés. Le réservoir de gaz de combustion contient <config;i;co2_collector.flue_tank_capacity> mB et le réservoir de CO2 contient <config;i;co2_collector.co2_tank_capacity> mB.
+
+Lorsqu'un réservoir ne peut pas accueillir la sortie d'un cycle et que son orifice n'est pas raccordé, le collecteur évacue l'excédent sous forme de fumée. Sans turbine en fonctionnement, le collecteur reste au repos. Son CO2 alimente le réacteur StyleNOX : deux Turbines à gaz fonctionnant au meilleur combustible alimentent un réacteur dont les barres de commande sont à 100 %.
