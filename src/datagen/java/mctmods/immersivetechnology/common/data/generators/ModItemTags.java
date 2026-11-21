@@ -29,8 +29,6 @@ public class ModItemTags extends ItemTagsProvider {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/salt"))).add(ModItems.SALT.get());
         tag(ModTags.igniters).add(Items.TORCH, Items.FLINT_AND_STEEL);
         tag(ModTags.igniters_consume).add(Items.TORCH);
-        tag(ModTags.formationTools).add(ModItems.FORMATION_TOOL.get()).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "hammer"));
-        tag(ModTags.screwdrivers).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "screwdriver")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "screwdriver"));
         tag(ModTags.sheetmetalIron).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "sheetmetal_iron")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "iron_cladding"));
         tag(ModTags.slabSheetmetalIron).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "slab_sheetmetal_iron")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "iron_cladding_slab"));
         tag(ModTags.sheetmetalSteel).addOptional(ResourceLocation.fromNamespaceAndPath("immersiveengineering", "sheetmetal_steel")).addOptional(ResourceLocation.fromNamespaceAndPath("immersivefabrication", "steel_cladding"));
