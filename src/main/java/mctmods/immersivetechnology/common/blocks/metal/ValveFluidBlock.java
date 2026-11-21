@@ -2,10 +2,10 @@ package mctmods.immersivetechnology.common.blocks.metal;
 
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveCommonBlockEntity;
 import mctmods.immersivetechnology.common.blocks.metal.logic.ValveFluidBlockEntity;
-import mctmods.immersivetechnology.core.registration.ModTags;
 
 import com.immersiveconvergence.api.block.ModEntityBlock;
 import com.immersiveconvergence.api.block.ModProperties;
+import com.immersiveconvergence.api.util.ICUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,7 +64,7 @@ public class ValveFluidBlock extends ModEntityBlock<ValveFluidBlockEntity> {
 
     @Override @Nonnull public InteractionResult use(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, Player player, @Nonnull InteractionHand hand, @Nonnull BlockHitResult hit) {
         ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.is(ModTags.formationTools)) { return super.use(state, level, pos, player, hand, hit); }
+        if (ICUtils.isHammer(heldItem)) { return super.use(state, level, pos, player, hand, hit); }
         if (level.isClientSide) { return InteractionResult.SUCCESS; }
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ValveCommonBlockEntity valve) {

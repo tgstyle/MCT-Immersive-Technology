@@ -3,8 +3,8 @@ package mctmods.immersivetechnology.common.blocks.connectors;
 import mctmods.immersivetechnology.common.blocks.connectors.logic.ConnectorTimerBlockEntity;
 import mctmods.immersivetechnology.core.registration.BlockEntities;
 
-import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.block.ModEntityBlock;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.wires.ICWires;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -114,7 +114,7 @@ public class ConnectorTimerBlock extends ModEntityBlock<ConnectorTimerBlockEntit
         ItemStack held = player.getItemInHand(hand);
 
         if (ICWires.isWireCoil(held)) { return InteractionResult.PASS; }
-        if (BlockToolGates.isScrewdriver.test(held)) { return screwdriverUseSide(hit.getDirection(), player, hand, level, pos, hit); }
+        if (ICUtils.isScrewdriver(held)) { return screwdriverUseSide(hit.getDirection(), player, hand, level, pos, hit); }
         if (player.isCrouching()) { return InteractionResult.PASS; }
 
         if (level.isClientSide) { return InteractionResult.SUCCESS; }

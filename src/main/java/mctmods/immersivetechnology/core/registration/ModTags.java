@@ -28,8 +28,6 @@ public class ModTags {
     public static final TagKey<Item> saltForge = ItemTags.create(forgeLoc("dusts/salt"));
     public static final TagKey<Item> igniters = ItemTags.create(modLoc("igniters"));
     public static final TagKey<Item> igniters_consume = ItemTags.create(modLoc("igniters_consume"));
-    public static final TagKey<Item> formationTools = ItemTags.create(modLoc("formation_tools"));
-    public static final TagKey<Item> screwdrivers = ItemTags.create(modLoc("screwdrivers"));
 
     private static ResourceLocation forgeLoc(String path) { return ResourceLocation.fromNamespaceAndPath("forge", path); }
 

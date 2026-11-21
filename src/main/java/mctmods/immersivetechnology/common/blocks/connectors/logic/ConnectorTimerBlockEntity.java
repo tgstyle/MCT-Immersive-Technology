@@ -8,9 +8,9 @@ import mctmods.immersivetechnology.core.util.TranslationKey;
 import static mctmods.immersivetechnology.common.blocks.connectors.ConnectorTimerBlock.ROTATION;
 
 import com.immersiveconvergence.api.block.BlockInterfaces;
-import com.immersiveconvergence.api.block.BlockToolGates;
 import com.immersiveconvergence.api.block.IServerTickableBE;
 import com.immersiveconvergence.api.multiblock.util.SafeChunkUtils;
+import com.immersiveconvergence.api.util.ICUtils;
 import com.immersiveconvergence.api.wires.ICConnectionPoint;
 import com.immersiveconvergence.api.wires.ICWireType;
 import com.immersiveconvergence.api.wires.fittings.ICFittingRedstoneBlockEntity;
@@ -230,7 +230,7 @@ public class ConnectorTimerBlockEntity extends ICFittingRedstoneBlockEntity impl
     @Override @Nonnull public Component[] getOverlayText(Player player, HitResult mop, boolean hammer) {
         if (!hammer) {
             ItemStack held = player.getMainHandItem();
-            if (held.isEmpty() || !BlockToolGates.isScrewdriver.test(held)) { return new Component[0]; }
+            if (held.isEmpty() || !ICUtils.isScrewdriver(held)) { return new Component[0]; }
         }
         float time = (float) this.target / 20;
         DyeColor color = redstoneChannel;

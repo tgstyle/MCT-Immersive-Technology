@@ -5,7 +5,7 @@
       "required": false
     },
     {
-      "id": "immersivefabrication:coil_hv",
+      "id": "immersivefabrication:coil_acsr",
       "required": false
     }
   ]
