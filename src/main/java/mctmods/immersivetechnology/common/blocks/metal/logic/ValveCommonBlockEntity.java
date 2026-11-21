@@ -195,11 +195,28 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
 
     @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
         if (level == null || level.isClientSide) { return false; }
-        boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
-        Direction oldFacing = facing;
-        Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
+        if (player.isShiftKeyDown()) {
+            cycleRedstoneMode(player);
+            return true;
+        }
+        Direction newFacing = side == Direction.DOWN ? facing.getCounterClockWise(side.getAxis()) : facing.getClockWise(side.getAxis());
+        if (!canHammerFace(newFacing)) { return false; }
         setFacing(newFacing);
         return true;
+    }
+
+    protected boolean canHammerFace(Direction newFacing) { return true; }
+
+    public void cycleRedstoneMode(Player player) {
+        redstoneMode = (byte) (redstoneMode >= 2 ? 0 : redstoneMode + 1);
+        TranslationKey message = switch (redstoneMode) {
+            case 1 -> TranslationKey.OVERLAY_REDSTONE_NORMAL;
+            case 2 -> TranslationKey.OVERLAY_REDSTONE_INVERTED;
+            default -> TranslationKey.OVERLAY_REDSTONE_OFF;
+        };
+        player.displayClientMessage(Component.translatable(message.getLocation()), true);
+        efficientSetChanged();
+        updateRedstoneState();
     }
 
     public int getRSPower() {
@@ -207,10 +224,14 @@ public abstract class ValveCommonBlockEntity extends ICConnectableBlockEntity im
         return level.getBestNeighborSignal(worldPosition);
     }
 
+    public boolean isOpenForRedstone() {
+        if (redstoneMode == 0) { return true; }
+        int power = getRSPower();
+        return redstoneMode == 1 ? power == 0 : power > 0;
+    }
+
     public void updateRedstoneState() {
-        if (redstoneMode == 0) { return; }
-        int rs = getRSPower();
-        boolean shouldOpen = (redstoneMode == 1 ? rs == 0 : rs > 0);
+        boolean shouldOpen = isOpenForRedstone();
         BlockState state = getBlockState();
         if (state.getValue(OPEN) != shouldOpen) {
             if (level != null) { level.setBlock(worldPosition, state.setValue(OPEN, shouldOpen), 3); }
