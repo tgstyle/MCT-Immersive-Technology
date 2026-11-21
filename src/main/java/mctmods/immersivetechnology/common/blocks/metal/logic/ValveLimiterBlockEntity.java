@@ -11,14 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import javax.annotation.Nonnull;
@@ -175,15 +173,6 @@ public class ValveLimiterBlockEntity extends ValveCommonBlockEntity implements I
         timeLimit = nbt.getInt("timeLimit");
         keepSize = nbt.getInt("keepSize");
         efficientSetChanged();
-    }
-
-    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
-        if (level == null || level.isClientSide) { return false; }
-        boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
-        Direction oldFacing = facing;
-        Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
-        setFacing(newFacing);
-        return true;
     }
 
     @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {

@@ -60,6 +60,9 @@ public enum TranslationKey {
     OVERLAY_OSD_VALVE_LOAD_NORMAL_FIRST_LINE("overlay." + Reference.MODID + ".osd.valve_load.normal.firstline"),
     OVERLAY_OSD_VALVE_LOAD_SNEAKING_FIRST_LINE("overlay." + Reference.MODID + ".osd.valve_load.sneaking.firstline"),
     OVERLAY_OSD_VALVE_LOAD_SNEAKING_SECOND_LINE("overlay." + Reference.MODID + ".osd.valve_load.sneaking.secondline"),
+    OVERLAY_REDSTONE_INVERTED("overlay." + Reference.MODID + ".redstone_inverted"),
+    OVERLAY_REDSTONE_NORMAL("overlay." + Reference.MODID + ".redstone_normal"),
+    OVERLAY_REDSTONE_OFF("overlay." + Reference.MODID + ".redstone_off"),
     SOLAR_TOO_CLOSE("block." + Reference.MODID + ".solartower.osd.too_close"),
     SOLAR_VERTICAL_STACK("block." + Reference.MODID + ".solartower.osd.vertical_stack");
 

@@ -24,7 +24,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -326,15 +325,7 @@ public class ValveLoadBlockEntity extends ValveCommonBlockEntity implements ISer
 
     @Override @Nonnull public Component getDisplayName() { return Component.translatable(TranslationKey.GUI_VALVE_LOAD.location); }
 
-    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
-        if (level == null || level.isClientSide) { return false; }
-        if (leftType != null || rightType != null) { return false; }
-        boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
-        Direction oldFacing = facing;
-        Direction newFacing = counter ? oldFacing.getCounterClockWise(side.getAxis()) : oldFacing.getClockWise(side.getAxis());
-        setFacing(newFacing);
-        return true;
-    }
+    @Override protected boolean canHammerFace(Direction newFacing) { return leftType == null && rightType == null; }
 
     @Override public boolean isSource(@Nonnull ICConnectionPoint point) {
         boolean mirrored = getIsMirrored();

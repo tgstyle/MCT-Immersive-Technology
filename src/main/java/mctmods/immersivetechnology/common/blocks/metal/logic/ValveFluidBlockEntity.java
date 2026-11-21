@@ -12,14 +12,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -169,14 +167,7 @@ public class ValveFluidBlockEntity extends ValveCommonBlockEntity implements ISe
         efficientSetChanged();
     }
 
-    @Override public boolean hammerUseSide(@Nonnull Direction side, @Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Vec3 hit) {
-        if (level == null || level.isClientSide) { return false; }
-        boolean counter = player.isShiftKeyDown() != (side == Direction.DOWN);
-        Direction newFacing = counter ? facing.getCounterClockWise(side.getAxis()) : facing.getClockWise(side.getAxis());
-        if (newFacing.getAxis() == Direction.Axis.Y) { return false; }
-        setFacing(newFacing);
-        return true;
-    }
+    @Override protected boolean canHammerFace(Direction newFacing) { return newFacing.getAxis() != Direction.Axis.Y; }
 
     @Override public void readCustomNBT(CompoundTag nbt, boolean descPacket) {
         super.readCustomNBT(nbt, descPacket);
