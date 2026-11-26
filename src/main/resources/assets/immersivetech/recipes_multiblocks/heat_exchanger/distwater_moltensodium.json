@@ -7,7 +7,7 @@
   },
   "input1": {
     "amount": 80,
-    "fluid": "moltensodium"
+    "fluid": "superheatedmoltensodium"
   },
   "output0": {
     "amount": 500,
@@ -15,7 +15,7 @@
   },
   "output1": {
     "amount": 80,
-    "fluid": "superheatedmoltensodium"
+    "fluid": "moltensodium"
   },
   "time": 10
 }
