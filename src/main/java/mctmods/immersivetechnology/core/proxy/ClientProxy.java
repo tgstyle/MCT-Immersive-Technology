@@ -89,6 +89,8 @@ import java.util.function.Supplier;
                 case "alternator.alternator_energy_capacity" -> ServerConfig.alternatorEnergyCapacity;
                 case "alternator.alternator_max_output" -> ServerConfig.alternatorMaxOutput;
                 case "boiler_tank.tank_capacity" -> ServerConfig.boilerTankCapacity;
+                case "co2_collector.co2_tank_capacity" -> ServerConfig.co2CollectorCo2TankCapacity;
+                case "co2_collector.flue_tank_capacity" -> ServerConfig.co2CollectorFlueTankCapacity;
                 case "distiller.energy_capacity" -> ServerConfig.distillerEnergyCapacity;
                 case "electrolytic_crucible_battery.energy_capacity" -> ServerConfig.electrolyticCrucibleBatteryEnergyCapacity;
                 case "heat_exchanger.energy_capacity" -> ServerConfig.heatExchangerEnergyCapacity;
